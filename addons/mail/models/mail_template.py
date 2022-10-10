@@ -575,7 +575,7 @@ class MailTemplate(models.Model):
         records.check_access_rule('read')
 
     def send_mail(self, res_id, force_send=False, raise_exception=False, email_values=None,
-                  email_layout_xmlid=False):
+                  email_layout_xmlid=False, subtitles=False, subtitles_highlight_2nd=False):
         """ Generates a new mail.mail. Template is rendered on record given by
         res_id and model coming from template.
 
@@ -586,6 +586,9 @@ class MailTemplate(models.Model):
             customize the mail;
         :param str email_layout_xmlid: optional notification layout to encapsulate the
             generated email;
+        :param list[str] subtitles: titles to display in the header (maximum 2)
+        :param str subtitles_highlight_2nd: if set, highlight the second subtitle instead
+            the first one.
         :returns: id of the mail.mail that was created """
 
         # Grant access to send_mail only if access to related document
@@ -639,7 +642,8 @@ class MailTemplate(models.Model):
                 'model_description': model.display_name,
                 'record': record,
                 'record_name': False,
-                'subtitles': False,
+                'subtitles': subtitles,
+                'subtitles_highlight_2nd': subtitles_highlight_2nd,
                 # user / environment
                 'company': 'company_id' in record and record['company_id'] or self.env.company,
                 'email_add_signature': False,
