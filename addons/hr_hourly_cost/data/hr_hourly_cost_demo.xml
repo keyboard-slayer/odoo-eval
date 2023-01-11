@@ -80,4 +80,16 @@
     <record id="hr.employee_han" model="hr.employee">
         <field name="hourly_cost">35</field>
     </record>
+
+    <record id="hr.employee_sad" model="hr.employee">
+        <field name="hourly_cost">20</field>
+    </record>
+
+    <record id="hr.employee_frd" model="hr.employee">
+        <field name="hourly_cost">42</field>
+    </record>
+
+    <record id="hr.employee_kar" model="hr.employee">
+        <field name="hourly_cost">27</field>
+    </record>
 </odoo>
