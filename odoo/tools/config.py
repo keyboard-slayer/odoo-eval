@@ -19,6 +19,8 @@ crypt_context = CryptContext(schemes=['pbkdf2_sha512', 'plaintext'],
                              deprecated=['plaintext'],
                              pbkdf2_sha512__rounds=600_000)
 
+_dangerous_logger = logging.getLogger(__name__)  # use config._log() instead
+
 class MyOption (optparse.Option, object):
     """ optparse Option with two additional attributes.
 
@@ -364,6 +366,31 @@ class configmanager(object):
         # generate default config
         self._parse_config()
 
+    _log_entries = []   # helpers for log() and warn(), accumulate messages
+    _warn_entries = []  # until logging is configured and the entries flushed
+
+    @classmethod
+    def _log(cls, loglevel, message, *args, **kwargs):
+        # is replaced by logger.log once logging is ready
+        cls._log_entries.append((loglevel, message, args, kwargs))
+
+    @classmethod
+    def _warn(cls, message, *args, **kwargs):
+        # is replaced by warnings.warn once logging is ready
+        cls._warn_entries.append((message, args, kwargs))
+
+    @classmethod
+    def _flush_log_and_warn_entries(cls):
+        for loglevel, message, args, kwargs in cls._log_entries:
+            _dangerous_logger.log(loglevel, message, *args, **kwargs)
+        cls._log_entries.clear()
+        cls._log = _dangerous_logger.log
+
+        for message, args, kwargs in cls._warn_entries:
+            warnings.warn(message, *args, **kwargs)
+        cls._warn_entries.clear()
+        cls._warn = warnings.warn
+
     def parse_config(self, args=None):
         """ Parse the configuration file (if any) and the command-line
         arguments.
@@ -382,6 +409,7 @@ class configmanager(object):
         opt = self._parse_config(args)
         odoo.netsvc.init_logger()
         self._warn_deprecated_options()
+        self._flush_log_and_warn_entries()
         odoo.modules.module.initialize_sys_path()
         return opt
 
@@ -561,7 +589,7 @@ class configmanager(object):
 
     def _warn_deprecated_options(self):
         if self.options.get('longpolling_port', 0):
-            warnings.warn(
+            self._warn(
                 "The longpolling-port is a deprecated alias to "
                 "the gevent-port option, please use the latter.",
                 DeprecationWarning)
@@ -587,7 +615,7 @@ class configmanager(object):
                     # deprecated_value != current_value == default_value
                     # assume the new option was not set
                     self.options[new_option_name] = deprecated_value
-                    warnings.warn(
+                    self._warn(
                         f"The {old_option_name!r} option found in the "
                         "configuration file is a deprecated alias to "
                         f"{new_option_name!r}, please use the latter.",
