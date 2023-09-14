@@ -722,6 +722,16 @@ export class WebsiteSnippetsMenu extends weSnippetEditor.SnippetsMenu {
     _onGetSwitchableRelatedViews(ev) {
         this.props.getSwitchableRelatedViews().then(ev.data.onSuccess);
     }
+    /**
+     * Returns the drag and drop helper.
+     *
+     * @private
+     * @returns {Object} the drag and drop helper.
+     */
+    _getDragAndDropHelper(draggedItemEl) {
+        const isDraggedItemElSnippet = !!draggedItemEl.dataset.snippet;
+        return new dragAndDropHelperWebsite(this.options, draggedItemEl, this.$body[0], "dragAndDropCreateSnippet", isDraggedItemElSnippet);
+    }
 }
 
 weSnippetEditor.SnippetEditor.include({
@@ -747,7 +757,8 @@ weSnippetEditor.SnippetEditor.include({
      * @returns {Object} the drag and drop helper.
      */
     _getDragAndDropHelper() {
-        return new dragAndDropHelperWebsite(this.options, this.$target[0], this.$body[0]);
+        const isTargetSnippet = !!this.$target[0].dataset.snippet;
+        return new dragAndDropHelperWebsite(this.options, this.$target[0], this.$body[0], "dragAndDropMoveSnippet", isTargetSnippet);
     },
 });
 
