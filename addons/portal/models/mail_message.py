@@ -3,7 +3,7 @@
 
 from odoo import models
 from odoo.http import request
-from odoo.tools import format_datetime
+from odoo.tools import format_datetime, groupby
 
 
 class MailMessage(models.Model):
@@ -47,7 +47,10 @@ class MailMessage(models.Model):
             'id',
             'is_internal',
             'is_message_subtype_note',
+            'message_type',
+            'model',
             'published_date_str',
+            'res_id',
             'subtype_id',
         }
 
@@ -105,6 +108,35 @@ class MailMessage(models.Model):
                 values['is_message_subtype_note'] = (values.get('subtype_id') or [False, ''])[0] == note_id
             if 'published_date_str' in properties_names:
                 values['published_date_str'] = format_datetime(self.env, values['date']) if values.get('date') else ''
+            reaction_groups = []
+            for content, reactions in groupby(message.sudo().reaction_ids, lambda r: r.content):
+                reactions = self.env["mail.message.reaction"].union(*reactions)
+                reaction_groups.append(
+                    {
+                        "content": content,
+                        "count": len(reactions),
+                        "personas": [
+                                        {"id": guest.id, "name": guest.name, "type": "guest"}
+                                        for guest in reactions.guest_id
+                                    ]
+                                    + [
+                                        {"id": partner.id, "name": partner.name, "type": "partner"}
+                                        for partner in reactions.partner_id
+                                    ],
+                        "message": message.id,
+                    }
+                )
+            values.update(
+                {
+                    "reactions": reaction_groups,
+                    "author": {
+                        "id": message.author_id.id,
+                        "name": message.author_id.name,
+                        "type": "partner",
+                    },
+                    "thread": {"model": values["model"], "id": values["res_id"]},
+                }
+            )
         return vals_list
 
     def _portal_message_format_attachments(self, attachment_values):

@@ -57,7 +57,7 @@
                             <t t-if="message.is_note and !message.isPending" t-call="mail.Message.actions"/>
                         </div>
                         <div
-                            class="position-relative d-flex"
+                            class="o-mail-Message-contentContainer position-relative d-flex"
                             t-att-class="{
                                    'flex-row-reverse': isAlignedRight,
                                    }"

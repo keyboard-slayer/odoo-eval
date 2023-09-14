@@ -159,7 +159,9 @@ export class Composer extends Component {
         );
         useEffect(
             () => {
-                this.ref.el.style.height = this.fakeTextarea.el.scrollHeight + "px";
+                if (this.fakeTextarea.el.scrollHeight) {
+                    this.ref.el.style.height = this.fakeTextarea.el.scrollHeight + "px";
+                }
                 this.saveContentDebounced();
             },
             () => [this.props.composer.text, this.ref.el]
@@ -294,6 +296,10 @@ export class Composer extends Component {
 
     get message() {
         return this.props.composer.message ?? null;
+    }
+
+    get extraData() {
+        return this.thread.rpcParams;
     }
 
     get isSendButtonDisabled() {
@@ -604,16 +610,20 @@ export class Composer extends Component {
             return;
         }
         await this.processMessage(async (value) => {
-            const postData = {
-                attachments: composer.attachments,
-                isNote: this.props.type === "note",
-                mentionedChannels: composer.mentionedChannels,
-                mentionedPartners: composer.mentionedPartners,
-                cannedResponseIds: composer.cannedResponses.map((c) => c.id),
-                parentId: this.props.messageToReplyTo?.message?.id,
-            };
-            await this._sendMessage(value, postData);
+            await this._sendMessage(value, this.postData, this.extraData);
         });
+    }
+
+    get postData() {
+        const composer = toRaw(this.props.composer);
+        return {
+            attachments: composer.attachments || [],
+            isNote: this.props.type === "note",
+            mentionedChannels: composer.mentionedChannels || [],
+            mentionedPartners: composer.mentionedPartners || [],
+            cannedResponseIds: composer.cannedResponses.map((c) => c.id),
+            parentId: this.props.messageToReplyTo?.message?.id,
+        };
     }
 
     /**
@@ -628,11 +638,12 @@ export class Composer extends Component {
     /**
      * @param {string} value message body
      * @param {postData} postData Message meta data info
+     * @param {extraData} extraData Message extra meta data info needed by other modules
      */
-    async _sendMessage(value, postData) {
+    async _sendMessage(value, postData, extraData) {
         const thread = toRaw(this.props.composer.thread);
         const postThread = toRaw(this.thread);
-        const post = postThread.post.bind(postThread, value, postData);
+        const post = postThread.post.bind(postThread, value, postData, extraData);
         if (postThread.model === "discuss.channel") {
             // feature of (optimistic) temp message
             post();
