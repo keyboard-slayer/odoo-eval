@@ -42,8 +42,8 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
             url=f'{self.invoice_base_url}/portal/attachment/add',
             data={
                 'name': "new attachment",
-                'res_model': self.out_invoice._name,
-                'res_id': self.out_invoice.id,
+                'thread_model': self.out_invoice._name,
+                'thread_id': self.out_invoice.id,
                 'csrf_token': http.Request.csrf_token(self),
             },
             files=[('file', ('test.txt', b'test', 'plain/text'))],
@@ -56,8 +56,8 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
             url=f'{self.invoice_base_url}/portal/attachment/add',
             data={
                 'name': "new attachment",
-                'res_model': self.out_invoice._name,
-                'res_id': self.out_invoice.id,
+                'thread_model': self.out_invoice._name,
+                'thread_id': self.out_invoice.id,
                 'csrf_token': http.Request.csrf_token(self),
                 'access_token': self.out_invoice._portal_ensure_token(),
             },
@@ -80,8 +80,8 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
             url=f'{self.invoice_base_url}/portal/attachment/add',
             data={
                 'name': "new attachment",
-                'res_model': self.out_invoice._name,
-                'res_id': self.out_invoice.id,
+                'thread_model': self.out_invoice._name,
+                'thread_id': self.out_invoice.id,
                 'csrf_token': http.Request.csrf_token(self),
                 'access_token': self.out_invoice._portal_ensure_token(),
             },
@@ -171,14 +171,16 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
 
         # Test attachment can't be associated if no attachment token.
         res = self.opener.post(
-            url=f'{self.invoice_base_url}/mail/chatter_post',
+            url=f'{self.invoice_base_url}/mail/message/post',
             json={
                 'params': {
-                    'res_model': self.out_invoice._name,
-                    'res_id': self.out_invoice.id,
-                    'message': "test message 1",
-                    'attachment_ids': [attachment.id],
-                    'attachment_tokens': ['false'],
+                    'thread_model': self.out_invoice._name,
+                    'thread_id': self.out_invoice.id,
+                    'post_data': {
+                        'body': "test message 1",
+                        'attachment_ids': [attachment.id],
+                        'attachment_tokens': ['false'],
+                    },
                     'csrf_token': http.Request.csrf_token(self),
                 },
             },
@@ -188,14 +190,16 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
 
         # Test attachment can't be associated if no main document token
         res = self.opener.post(
-            url=f'{self.invoice_base_url}/mail/chatter_post',
+            url=f'{self.invoice_base_url}/mail/message/post',
             json={
                 'params': {
-                    'res_model': self.out_invoice._name,
-                    'res_id': self.out_invoice.id,
-                    'message': "test message 1",
-                    'attachment_ids': [attachment.id],
-                    'attachment_tokens': [attachment.access_token],
+                    'thread_model': self.out_invoice._name,
+                    'thread_id': self.out_invoice.id,
+                    'post_data': {
+                        'body': "test message 1",
+                        'attachment_ids': [attachment.id],
+                        'attachment_tokens': [attachment.access_token],
+                    },
                     'csrf_token': http.Request.csrf_token(self),
                 },
             },
@@ -207,16 +211,20 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
         self.assertFalse(self.out_invoice.message_ids)
         attachment.write({'res_model': 'model'})
         res = self.opener.post(
-            url=f'{self.invoice_base_url}/mail/chatter_post',
+            url=f'{self.invoice_base_url}/mail/message/post',
             json={
                 'params': {
-                    'res_model': self.out_invoice._name,
-                    'res_id': self.out_invoice.id,
-                    'message': "test message 1",
-                    'attachment_ids': [attachment.id],
-                    'attachment_tokens': [attachment.access_token],
+                    'thread_model': self.out_invoice._name,
+                    'thread_id': self.out_invoice.id,
+                    'post_data': {
+                        'body': "test message 1",
+                        'attachment_ids': [attachment.id],
+                        'attachment_tokens': [attachment.access_token],
+                        'portal_security': {
+                            'token': self.out_invoice._portal_ensure_token(),
+                        }
+                    },
                     'csrf_token': http.Request.csrf_token(self),
-                    'token': self.out_invoice._portal_ensure_token(),
                 },
             },
         )
@@ -229,16 +237,20 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
         # Test attachment can't be associated if not correct user
         attachment.write({'res_model': 'mail.compose.message'})
         res = self.opener.post(
-            url=f'{self.invoice_base_url}/mail/chatter_post',
+            url=f'{self.invoice_base_url}/mail/message/post',
             json={
                 'params': {
-                    'res_model': self.out_invoice._name,
-                    'res_id': self.out_invoice.id,
-                    'message': "test message 2",
-                    'attachment_ids': [attachment.id],
-                    'attachment_tokens': [attachment.access_token],
+                    'thread_model': self.out_invoice._name,
+                    'thread_id': self.out_invoice.id,
+                    'post_data': {
+                        'body': "test message 2",
+                        'attachment_ids': [attachment.id],
+                        'attachment_tokens': [attachment.access_token],
+                        'portal_security': {
+                            'token': self.out_invoice._portal_ensure_token(),
+                        }
+                    },
                     'csrf_token': http.Request.csrf_token(self),
-                    'token': self.out_invoice._portal_ensure_token(),
                 },
             },
         )
@@ -255,8 +267,8 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
             url=f'{self.invoice_base_url}/portal/attachment/add',
             data={
                 'name': "final attachment",
-                'res_model': self.out_invoice._name,
-                'res_id': self.out_invoice.id,
+                'thread_model': self.out_invoice._name,
+                'thread_id': self.out_invoice.id,
                 'csrf_token': http.Request.csrf_token(self),
                 'access_token': self.out_invoice._portal_ensure_token(),
             },
@@ -267,21 +279,27 @@ class TestPortalAttachment(AccountTestInvoicingHttpCommon):
         self.assertEqual(create_res['name'], "final attachment")
 
         res = self.opener.post(
-            url=f'{self.invoice_base_url}/mail/chatter_post',
+            url=f'{self.invoice_base_url}/mail/message/post',
             json={
                 'params': {
-                    'res_model': self.out_invoice._name,
-                    'res_id': self.out_invoice.id,
-                    'message': "test message 3",
-                    'attachment_ids': [create_res['id']],
-                    'attachment_tokens': [create_res['access_token']],
+                    'thread_model': self.out_invoice._name,
+                    'thread_id': self.out_invoice.id,
+                    'post_data': {
+                        'body': "test message 3",
+                        'attachment_ids': [create_res['id']],
+                        'attachment_tokens': [create_res['access_token']],
+                        'portal_security': {
+                            'token': self.out_invoice._portal_ensure_token(),
+                        }
+                    },
                     'csrf_token': http.Request.csrf_token(self),
-                    'token': self.out_invoice._portal_ensure_token(),
                 },
             },
         )
         self.assertEqual(res.status_code, 200)
         self.out_invoice.invalidate_recordset(['message_ids'])
-        self.assertEqual(len(self.out_invoice.message_ids), 3)
-        self.assertEqual(self.out_invoice.message_ids[0].body, "<p>test message 3</p>")
-        self.assertEqual(len(self.out_invoice.message_ids[0].attachment_ids), 1)
+        # Only messages from the current user not OdooBot
+        messages = self.out_invoice.message_ids.filtered(lambda msg: msg.author_id == self.partner_a)
+        self.assertEqual(len(messages), 3)
+        self.assertEqual(messages[0].body, "<p>test message 3</p>")
+        self.assertEqual(len(messages[0].attachment_ids), 1)

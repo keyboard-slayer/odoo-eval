@@ -122,7 +122,7 @@ export class AttachmentUploadService {
         );
     }
 
-    get uploadURL() {
+    getUploadURL(threadModel) {
         return "/mail/attachment/upload";
     }
 
@@ -143,7 +143,7 @@ export class AttachmentUploadService {
         this.hookersByTmpId.set(tmpId, hooker);
         this.uploadingAttachmentIds.add(tmpId);
         await this.fileUploadService
-            .upload(this.uploadURL, [file], {
+            .upload(this.getUploadURL(hooker.thread.model), [file], {
                 buildFormData: (formData) => {
                     this._makeFormData(formData, file, hooker, tmpId, options);
                 },

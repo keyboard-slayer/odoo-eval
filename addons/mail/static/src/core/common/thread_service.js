@@ -147,6 +147,10 @@ export class ThreadService {
         if (thread.model === "mail.box") {
             return `/mail/${thread.id}/messages`;
         }
+        return this.chatterFetchRoute;
+    }
+
+    get chatterFetchRoute() {
         return "/mail/thread/messages";
     }
 
@@ -575,6 +579,7 @@ export class ThreadService {
             mentionedChannels = [],
             mentionedPartners = [],
             cannedResponseIds,
+            options,
         } = {}
     ) {
         let tmpMsg;
@@ -586,6 +591,7 @@ export class ThreadService {
             mentionedChannels,
             mentionedPartners,
             thread,
+            options,
         });
         const tmpId = this.messageService.getNextTemporaryId();
         params.context = { ...user.context, ...params.context, temporary_id: tmpId };
@@ -660,6 +666,7 @@ export class ThreadService {
         mentionedChannels,
         mentionedPartners,
         thread,
+        options,
     }) {
         const subtype = isNote ? "mail.mt_note" : "mail.mt_comment";
         const validMentions =
@@ -698,6 +705,7 @@ export class ThreadService {
                 subtype_xmlid: subtype,
                 partner_emails: recipientEmails,
                 partner_additional_values: recipientAdditionalValues,
+                ...options,
             },
             thread_id: thread.id,
             thread_model: thread.model,

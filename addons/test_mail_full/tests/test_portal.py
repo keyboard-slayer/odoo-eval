@@ -100,17 +100,20 @@ class TestPortalControllers(TestPortal):
 
     def test_portal_avatar_with_hash_pid(self):
         self.authenticate(None, None)
-        post_url = f"{self.record_portal.get_base_url()}/mail/chatter_post"
+        post_url = f"{self.record_portal.get_base_url()}/mail/message/post"
         res = self.opener.post(
             url=post_url,
             json={
                 'params': {
-                    'csrf_token': http.Request.csrf_token(self),
-                    'message': 'Test',
-                    'res_model': self.record_portal._name,
-                    'res_id': self.record_portal.id,
-                    'hash': self.record_portal._sign_token(self.partner_2.id),
-                    'pid': self.partner_2.id,
+                    'thread_model': self.record_portal._name,
+                    'thread_id': self.record_portal.id,
+                    'post_data': {
+                        'body': "Test",
+                        'portal_security': {
+                            'hash': self.record_portal._sign_token(self.partner_2.id),
+                            'pid': self.partner_2.id,
+                        },
+                    },
                 },
             },
         )
@@ -129,63 +132,34 @@ class TestPortalControllers(TestPortal):
         self.assertEqual(placeholder_response.headers.get('Content-Type'), 'image/png')
         self.assertRegex(placeholder_response.headers.get('Content-Disposition', ''), r'placeholder\.png')
 
-    def test_portal_message_fetch(self):
-        """Test retrieving chatter messages through the portal controller"""
-        self.authenticate(None, None)
-        message_fetch_url = '/mail/chatter_fetch'
-
-        def get_chatter_message_count():
-            return self.make_jsonrpc_request(message_fetch_url, {
-                'res_model': 'mail.test.portal',
-                'res_id': self.record_portal.id,
-                'token': self.record_portal.access_token,
-            }).get('message_count', 0)
-
-        self.assertEqual(get_chatter_message_count(), 0)
-
-        for _ in range(8):
-            self.record_portal.message_post(
-                body='Test',
-                author_id=self.partner_1.id,
-                message_type='comment',
-                subtype_id=self.env.ref('mail.mt_comment').id,
-            )
-
-        self.assertEqual(get_chatter_message_count(), 8)
-
-        # Empty the body of a few messages
-        for i in (2, 5, 6):
-            self.record_portal.message_ids[i].body = ""
-
-        # Empty messages should be ignored
-        self.assertEqual(get_chatter_message_count(), 5)
-
     def test_portal_share_comment(self):
         """ Test posting through portal controller allowing to use a hash to
         post wihtout access rights. """
         self.authenticate(None, None)
-        post_url = f"{self.record_portal.get_base_url()}/mail/chatter_post"
+        post_url = f"{self.record_portal.get_base_url()}/mail/message/post"
 
         # test as not logged
         self.opener.post(
             url=post_url,
             json={
                 'params': {
-                    'csrf_token': http.Request.csrf_token(self),
-                    'hash': self.record_portal._sign_token(self.partner_2.id),
-                    'message': 'Test',
-                    'pid': self.partner_2.id,
-                    'redirect': '/',
-                    'res_model': self.record_portal._name,
-                    'res_id': self.record_portal.id,
-                    'token': self.record_portal.access_token,
+                    'thread_model': self.record_portal._name,
+                    'thread_id': self.record_portal.id,
+                    'post_data': {
+                        'body': "Test",
+                        'portal_security': {
+                            'token': self.record_portal.access_token,
+                            'hash': self.record_portal._sign_token(self.partner_2.id),
+                            'pid': self.partner_2.id,
+                        }
+                    },
                 },
             },
         )
-        message = self.record_portal.message_ids[0]
+        # Only messages from the current user not OdooBot
+        messages = self.record_portal.message_ids.filtered(lambda msg: msg.author_id == self.partner_2)
 
-        self.assertIn('Test', message.body)
-        self.assertEqual(message.author_id, self.partner_2)
+        self.assertIn('Test', messages[0].body)
 
 
 @tagged('portal')

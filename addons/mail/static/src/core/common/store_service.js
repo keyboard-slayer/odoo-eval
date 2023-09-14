@@ -50,7 +50,7 @@ export class Store extends BaseStore {
     Notification;
     /** @type {typeof import("@mail/core/common/persona_model").Persona} */
     Persona;
-    /** @type {typeof import("@mail/discuss/call/common/rtc_session_model").RtcSession} */
+    /** @type {typeof import("@mail/core/common/rtc_session_model").RtcSession} */
     RtcSession;
     /** @type {typeof import("@mail/core/common/settings_model").Settings} */
     Settings;

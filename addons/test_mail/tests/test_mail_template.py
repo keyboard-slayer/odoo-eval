@@ -177,7 +177,7 @@ class TestMailTemplateLanguages(TestMailTemplateCommon):
         """ Test 'send_email' on template on a given record, used notably as
         contextual action. """
         self.env.invalidate_all()
-        with self.with_user(self.user_employee.login), self.assertQueryCount(26):  # test_mail: 26
+        with self.with_user(self.user_employee.login), self.assertQueryCount(27):  # test_mail: 26
             mail_id = self.test_template.with_env(self.env).send_mail(self.test_record.id)
             mail = self.env['mail.mail'].sudo().browse(mail_id)
 
@@ -194,7 +194,7 @@ class TestMailTemplateLanguages(TestMailTemplateCommon):
         """ Test without layout, just to check impact """
         self.test_template.email_layout_xmlid = False
         self.env.invalidate_all()
-        with self.with_user(self.user_employee.login), self.assertQueryCount(19):  # test_mail: 19
+        with self.with_user(self.user_employee.login), self.assertQueryCount(20):  # test_mail: 19
             mail_id = self.test_template.with_env(self.env).send_mail(self.test_record.id)
             mail = self.env['mail.mail'].sudo().browse(mail_id)
 
@@ -232,7 +232,7 @@ class TestMailTemplateLanguages(TestMailTemplateCommon):
         """ Test 'send_email' on template on a given record, used notably as
         contextual action, with dynamic reports involved """
         self.env.invalidate_all()
-        with self.with_user(self.user_employee.login), self.assertQueryCount(101):  # test_mail: 101
+        with self.with_user(self.user_employee.login), self.assertQueryCount(103):  # test_mail: 101
             mail_id = self.test_template_wreports.with_env(self.env).send_mail(self.test_record.id)
             mail = self.env['mail.mail'].sudo().browse(mail_id)
 

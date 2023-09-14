@@ -100,8 +100,8 @@ var PortalComposer = publicWidget.Widget.extend({
         return {
             'name': file.name,
             'file': file,
-            'res_id': this.options.res_id,
-            'res_model': this.options.res_model,
+            'thread_id': this.options.res_id,
+            'thread_model': this.options.res_model,
             'access_token': this.options.token,
         };
     },

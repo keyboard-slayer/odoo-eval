@@ -27,6 +27,7 @@ export class Composer extends Record {
     mentionedChannels = Record.many("Thread");
     cannedResponses = Record.many("CannedResponse");
     textInputContent = "";
+    portalComment = false;
     thread = Record.one("Thread");
     /** @type {{ start: number, end: number, direction: "forward" | "backward" | "none"}}*/
     selection = {

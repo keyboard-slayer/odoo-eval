@@ -5,7 +5,7 @@ from odoo.exceptions import UserError
 from odoo.tests.common import users
 from odoo.addons.website.tools import MockRequest
 from odoo.addons.website_blog.tests.common import TestWebsiteBlogCommon
-from odoo.addons.portal.controllers.mail import PortalChatter
+from odoo.addons.mail.controllers.thread import ThreadController
 
 
 class TestWebsiteBlogFlow(TestWebsiteBlogCommon):
@@ -78,12 +78,11 @@ class TestWebsiteBlogFlow(TestWebsiteBlogCommon):
         })
 
         with MockRequest(self.env):
-            PortalChatter().portal_chatter_post(
+            ThreadController().mail_message_post(
                 'blog.post',
                 self.test_blog_post.id,
-                'Test message blog post',
-                attachment_ids=[attachment.id],
-                attachment_tokens=[attachment.access_token]
+                {'body': 'Test message blog post', 'message_type': 'comment', 'attachment_ids': [attachment.id],
+                 'attachment_tokens': [attachment.access_token], 'subtype_xmlid': 'mail.mt_comment'},
             )
 
         self.assertTrue(self.env['mail.message'].sudo().search(
@@ -98,12 +97,11 @@ class TestWebsiteBlogFlow(TestWebsiteBlogCommon):
         })
 
         with self.assertRaises(UserError), MockRequest(self.env):
-            PortalChatter().portal_chatter_post(
+            ThreadController().mail_message_post(
                 'blog.post',
                 self.test_blog_post.id,
-                'Test message blog post',
-                attachment_ids=[second_attachment.id],
-                attachment_tokens=['wrong_token']
+                {'body': 'Test message blog post', 'message_type': 'comment', 'attachment_ids': [second_attachment.id],
+                 'attachment_tokens': ['wrong_token'], 'subtype_xmlid': 'mail.mt_comment'},
             )
 
         self.assertFalse(self.env['mail.message'].sudo().search(
