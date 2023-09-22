@@ -2793,6 +2793,7 @@ class SnippetsMenu extends Component {
         var $html = $(html);
 
         this.templateOptions = [];
+        this.snippetsDimensionInGrid = {"height":{}, "width":{}};
         var selectors = [];
         var $styles = $html.find('[data-selector]');
         const snippetAdditionDropIn = $styles.filter('#so_snippet_addition').data('drop-in');
@@ -2907,6 +2908,12 @@ class SnippetsMenu extends Component {
                     snippet.renameTitle = _t("Rename %s", snippet.displayName);
                     snippet.deleteTitle = _t("Delete %s", snippet.displayName);
                     snippet.isRenaming = false;
+                }
+                if (snippetEl.dataset.oeHeightInGrid) {
+                    this.snippetsDimensionInGrid["height"][snippetEl.getAttribute("name")] = snippetEl.dataset.oeHeightInGrid;
+                }
+                if (snippetEl.dataset.oeWidthInGrid) {
+                    this.snippetsDimensionInGrid["width"][snippetEl.getAttribute("name")] = snippetEl.dataset.oeWidthInGrid;
                 }
 
                 this.snippets.set(snippet.id, snippet);
@@ -3224,28 +3231,41 @@ class SnippetsMenu extends Component {
 
                 if (selectorGridsToActivate.size) {
                     // The item can potentially be dragged over a grid dropzone:
-                    // insert (temporarily) the dragged item on the DOM in order
-                    // to extract its correct dimensions.
+                    // store its dimensions.
                     const rowEl = selectorGridsToActivate.keys().next().value;
-                    const draggedItemEl = this.dragAndDropHelper.draggedItemEl;
-                    rowEl.after(draggedItemEl);
+                    let nbrColGrid = this.snippetsDimensionInGrid["width"][$snippet[0].getAttribute("name")];
+                    let nbrRowGrid = this.snippetsDimensionInGrid["height"][$snippet[0].getAttribute("name")];
+                    if (nbrColGrid || nbrRowGrid) {
+                        // The grid dimensions of some snippets (for example
+                        // dynamically built snippets) are stored and do not
+                        // have to be computed.
+                        nbrColGrid = nbrColGrid ? parseFloat(nbrColGrid) : 6;
+                        nbrRowGrid = nbrRowGrid ? parseFloat(nbrRowGrid) : 2;
+                        const gridProp = gridUtils._getGridProperties(rowEl);
+                        this.dragState.columnWidth = nbrColGrid * (gridProp.columnSize + gridProp.columnGap) - gridProp.columnGap;
+                        this.dragState.columnHeight = nbrRowGrid * (gridProp.rowSize + gridProp.rowGap) - gridProp.rowGap;
+                    } else {
+                        // Insert (temporarily) the dragged item on the DOM in
+                        // order to extract its correct dimensions.
+                        const draggedItemEl = this.dragAndDropHelper.draggedItemEl;
+                        rowEl.after(draggedItemEl);
 
-                    // Take the margin and the border of the snippet into
-                    // account. Do not set it too wide on the grid.
-                    const style = window.getComputedStyle(draggedItemEl);
-                    const borderX = parseFloat(style.borderLeft) + parseFloat(style.borderRight);
-                    const marginX = parseFloat(style.marginLeft) + parseFloat(style.marginRight);
-                    const borderY = parseFloat(style.borderTop) + parseFloat(style.borderBottom);
-                    const marginY = parseFloat(style.marginTop) + parseFloat(style.marginBottom);
-                    const gridProp = gridUtils._getGridProperties(rowEl);
+                        // Take the margin and the border of the snippet into
+                        // account. Do not set it too wide on the grid.
+                        const style = window.getComputedStyle(draggedItemEl);
+                        const borderX = parseFloat(style.borderLeft) + parseFloat(style.borderRight);
+                        const marginX = parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+                        const borderY = parseFloat(style.borderTop) + parseFloat(style.borderBottom);
+                        const marginY = parseFloat(style.marginTop) + parseFloat(style.marginBottom);
+                        const gridProp = gridUtils._getGridProperties(rowEl);
 
-                    this.dragState.columnWidth = Math.min(
-                        parseFloat(draggedItemEl.scrollWidth) + borderX + marginX,
-                        6 * (gridProp.columnSize + gridProp.columnGap) - gridProp.columnGap);
-                    this.dragState.columnHeight = parseFloat(draggedItemEl.scrollHeight) + borderY + marginY;
-                    draggedItemEl.remove();
+                        this.dragState.columnWidth = Math.min(
+                            parseFloat(draggedItemEl.scrollWidth) + borderX + marginX,
+                            6 * (gridProp.columnSize + gridProp.columnGap) - gridProp.columnGap);
+                        this.dragState.columnHeight = parseFloat(draggedItemEl.scrollHeight) + borderY + marginY;
+                        draggedItemEl.remove();
+                    }
                 }
-
                 this._onDropZoneStart();
             },
             onDrag: ({x, y}) => {
