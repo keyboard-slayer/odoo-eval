@@ -211,7 +211,6 @@ export function useDragAndDrop(initialParams) {
 export class dragAndDropHelper {
     constructor(options, draggedItemEl, bodyEl) {
         this.dragState = {};
-        this.dropped = false;
         this.draggedItemEl = draggedItemEl;
         this.options = options;
         this.bodyEl = bodyEl;
@@ -249,7 +248,7 @@ export class dragAndDropHelper {
 
             gridUtils._gridCleanUp(rowEl, this.draggedItemEl);
             this._removeGridAndDragHelper(rowEl);
-        } else if (this.draggedItemEl.classList.contains("o_grid_item") && this.dropped) {
+        } else if (this.draggedItemEl.classList.contains("o_grid_item") && this.isDropped()) {
             // Case when dropping a grid item in a non-grid dropzone
             this.options.wysiwyg.odooEditor.observerActive("dragAndDropMoveSnippet");
             gridUtils._convertToNormalColumn(this.draggedItemEl);
@@ -289,7 +288,7 @@ export class dragAndDropHelper {
             gridUtils._convertToNormalColumn(this.draggedItemEl);
             this.options.wysiwyg.odooEditor.observerUnactive("dragAndDropMoveSnippet");
         }
-        this.dropped = true;
+        this.dragState.currentDropzoneEl = dropzoneEl;
     }
     /**
      * Handles the insertion of an element in a dropzone.
@@ -298,15 +297,14 @@ export class dragAndDropHelper {
      * dragged.
      */
     dropzoneOver(dropzoneEl) {
-        this.dropped = true;
         dropzoneEl.after(this.draggedItemEl);
         dropzoneEl.classList.add("invisible");
 
         // Checking if the "out" event happened before dropzoneEl "over": if
-        // `this.dragState.currentDropzoneEl` exists, "out" didn't happen
-        // because it deletes it. We are therefore in the case of an "over"
-        // after an "over" and we need to escape the previous dropzone first.
-        if (this.dragState.currentDropzoneEl) {
+        // `isDropped()` is "true", "out" didn't happen because it sets it to
+        // "false". We are therefore in the case of an "over" after an "over"
+        // and we need to escape the previous dropzone first.
+        if (this.isDropped()) {
             this._outPreviousDropzone(dropzoneEl);
         }
         this.dragState.currentDropzoneEl = dropzoneEl;
@@ -389,12 +387,8 @@ export class dragAndDropHelper {
                 dropzoneEl.style.gridRowEnd = Math.max(rowCount + 1, 1);
             }
 
-            var prev = $(this.draggedItemEl).prev();
-            if (dropzoneEl === prev[0]) {
-                this.dropped = false;
-                this.draggedItemEl.remove();
-                dropzoneEl.classList.remove("invisible");
-            }
+            this.draggedItemEl.remove();
+            dropzoneEl.classList.remove("invisible");
 
             delete this.dragState.currentDropzoneEl;
         }
@@ -429,6 +423,15 @@ export class dragAndDropHelper {
         filterOutSelectorGrids($selectorSiblings, (el) => el.parentElement);
         filterOutSelectorGrids($selectorChildren, (el) => el);
         return selectorGrids;
+    }
+    /**
+     * Checks if we are currently over a dropzone, that is, if
+     * `currentDropzoneEl` is defined.
+     *
+     * @returns {Boolean}
+     */
+    isDropped() {
+        return !!this.dragState.currentDropzoneEl;
     }
     /**
      * Places a column in a grid on mouse move.
