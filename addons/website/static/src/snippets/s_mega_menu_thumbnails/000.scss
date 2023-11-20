@@ -1,2 +1,15 @@
-.s_mega_menu_thumbnails:not([data-vcss]) {
+.o_mega_menu_is_offcanvas {
+    .s_mega_menu_thumbnails:not([data-vcss]) {
+        .s_mega_menu_thumbnails_highlight {
+            width: 100%;
+        }
+
+        .s_mega_menu_thumbnails_nav .col {
+            width: 50%;
+        }
+
+        .s_mega_menu_thumbnails_footer .col {
+            width: 100%;
+        }
+    }
 }
