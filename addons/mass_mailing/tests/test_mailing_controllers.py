@@ -434,7 +434,7 @@ class TestMailingControllers(TestMailingControllersCommon):
         self.assertEqual(
             message_sub.body,
             Markup(f'<p>{contact_l3.display_name} subscribed to the following mailing list(s)</p>'
-                   f'<ul><li>{self.mailing_list_3.name}</li><li>{self.mailing_list_2.name}</li></ul>')
+                   f'<ul><li>{self.mailing_list_2.name}</li></ul>')
         )
 
         # posted messages on exclusion list record: activated, deactivated, activated again, feedback
@@ -522,7 +522,8 @@ class TestMailingControllers(TestMailingControllersCommon):
         self.assertTrue(subscription_l1.opt_out)
         self.assertEqual(subscription_l1.opt_out_datetime, self._reference_now,
                          'Subscription: opt-outed during test, datetime should have been set')
-        self.assertEqual(subscription_l1.opt_out_reason_id, opt_out_reasons[-1])
+        # No feedback when going to mailing/my to unsubscribe
+        self.assertFalse(subscription_l1.opt_out_reason_id)
         self.assertFalse(subscription_l2.opt_out)
         self.assertFalse(subscription_l2.opt_out_datetime)
         self.assertFalse(subscription_l2.opt_out_reason_id)
@@ -531,11 +532,7 @@ class TestMailingControllers(TestMailingControllersCommon):
                          'Subscription: opt-in during test, datetime should have been reset')
         self.assertFalse(subscription_l3.opt_out_reason_id)
         # message on contact for list 1: opt-out L1, join L2
-        msg_fb, msg_sub, msg_uns = contact_l1.message_ids
-        self.assertEqual(
-            msg_fb.body,
-            Markup(f'<p>Feedback from {portal_user.name} ({test_email_normalized})<br>{test_feedback}</p>')
-        )
+        msg_uns, msg_sub = contact_l1.message_ids
         self.assertEqual(
             msg_sub.body,
             Markup(f'<p>{contact_l1.name} subscribed to the following mailing list(s)</p>'
@@ -546,16 +543,19 @@ class TestMailingControllers(TestMailingControllersCommon):
             Markup(f'<p>{contact_l1.name} unsubscribed from the following mailing list(s)</p>'
                    f'<ul><li>{self.mailing_list_1.name}</li></ul>')
         )
-        # message on contact for list 2: opt-in L3 and L2
-        msg_fb, msg_sub = contact_l3.message_ids
+        # messages on contact for list 2: opt-in L3 and L2 - as from toggle button is directly sub/unsub, no common message anymore.
+        msg_sub_l2, msg_sub_l3 = contact_l3.message_ids
         self.assertEqual(
-            msg_fb.body,
-            Markup(f'<p>Feedback from {portal_user.name} ({test_email_normalized})<br>{test_feedback}</p>')
-        )
-        self.assertEqual(
-            msg_sub.body,
+            msg_sub_l2.body,
             Markup(f'<p>{contact_l3.name} subscribed to the following mailing list(s)</p>'
-                   f'<ul><li>{self.mailing_list_3.name}</li><li>{self.mailing_list_2.name}</li></ul>')
+                   f'<ul><li>{self.mailing_list_2.name}</li></ul>')
+        )
+
+        self.assertEqual(
+            msg_sub_l3.body,
+            Markup(
+                f'<p>{contact_l3.name} subscribed to the following mailing list(s)</p>'
+                f'<ul><li>{self.mailing_list_3.name}</li></ul>')
         )
 
         # block list record created, feedback logged

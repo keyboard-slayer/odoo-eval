@@ -16,8 +16,8 @@ registry.category("web_tour.tours").add('mailing_portal_unsubscribe_from_documen
             content: "No warning should be displayed",
             trigger: "div#o_mailing_subscription_form_blocklisted:not(:has(p:contains('You will not receive any news from those mailing lists you are a member of')))",
         }, {
-            contnet: "Warning will not receive anything anymore",
-            trigger: "div#o_mailing_subscription_form_blocklisted p:contains('You will not hear from us anymore.')",
+            content: "Warning will not receive anything anymore",
+            trigger: "div#o_mailing_subscription_form_blocklisted p:contains('No mass mailing will be sent to it until you re-allow mailings.')",
         }, {
             content: "Feedback textarea not displayed (see data)",
             trigger: "div#o_mailing_portal_subscription:not(textarea)",
