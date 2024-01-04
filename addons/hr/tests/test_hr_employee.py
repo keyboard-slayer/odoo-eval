@@ -285,7 +285,6 @@ class TestHrEmployee(TestHrCommon):
         with mute_logger('odoo.sql_db'), self.assertRaises(UniqueViolation), self.assertRaises(ValidationError), self.cr.savepoint():
             employee_2_form.save()
 
-
     @users('admin')
     def test_change_user_on_employee(self):
         test_other_user = self.env['res.users'].create({

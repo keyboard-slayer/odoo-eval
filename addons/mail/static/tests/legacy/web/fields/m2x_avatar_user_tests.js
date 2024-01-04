@@ -367,16 +367,15 @@ test("avatar card preview", async (assert) => {
         im_status: "online",
     });
     const mockRPC = (route, args) => {
-        if (route === "/web/dataset/call_kw/res.users/read") {
-            assert.deepEqual(args.args[1], [
-                "name",
-                "email",
-                "phone",
-                "im_status",
-                "share",
-                "partner_id",
-            ]);
-            step("user read");
+        if (route === "/web/dataset/call_kw/res.users/web_read") {
+            assert.deepEqual(args.kwargs.specification, {
+                email: {},
+                im_status: {},
+                name: {},
+                phone: {},
+                share: {},
+            });
+            assert.step("user read");
         }
     };
     const avatarUserId = pyEnv["m2x.avatar.user"].create({ user_id: userId });

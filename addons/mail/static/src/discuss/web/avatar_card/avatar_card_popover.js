@@ -7,20 +7,43 @@ export class AvatarCardPopover extends Component {
 
     static props = {
         id: { type: Number, required: true },
+        recordModel: {
+            type: String,
+            optional: true,
+        },
         close: { type: Function, required: true },
+    };
+
+    static defaultProps = {
+        recordModel: "res.users",
     };
 
     setup() {
         this.actionService = useService("action");
         this.orm = useService("orm");
         this.openChat = useOpenChat("res.users");
-        onWillStart(async () => {
-            [this.user] = await this.orm.read("res.users", [this.props.id], this.fieldNames);
+        this.record = {};
+        onWillStart(this.onWillStart);
+    }
+
+    async onWillStart() {
+        [this.record.data] = await this.orm.webRead(this.props.recordModel, [this.props.id], {
+            specification: this.fieldSpecification,
         });
     }
 
-    get fieldNames() {
-        return ["name", "email", "phone", "im_status", "share", "partner_id"];
+    get fieldSpecification() {
+        return {
+            name: {},
+            email: {},
+            phone: {},
+            im_status: {},
+            share: {},
+        };
+    }
+
+    get user() {
+        return this.record.data;
     }
 
     get email() {
@@ -56,5 +79,9 @@ export class AvatarCardPopover extends Component {
     async onClickViewProfile() {
         const action = await this.getProfileAction();
         this.actionService.doAction(action);
+    }
+
+    get displayAvatar() {
+        return this.props.id && this.props.recordModel;
     }
 }
