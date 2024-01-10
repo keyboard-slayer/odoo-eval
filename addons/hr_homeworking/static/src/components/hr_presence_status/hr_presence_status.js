@@ -11,7 +11,7 @@ const patchHrPresenceStatus = () => ({
         if (this.location) {
             let color = "text-muted";
             if (this.props.record.data.hr_presence_state !== "to_define") {
-                color = this.props.record.data.hr_presence_state === "present" ?  "text-success" : "text-warning";
+                color = this.props.record.data.hr_presence_state === "present" ?  "text-success" : "text-warning";//TODO add hr_presence state in avatar card popover ???
             }
             return color;
         }
@@ -33,7 +33,7 @@ const patchHrPresenceStatus = () => ({
     },
 
     get location() {
-        let location = this.value?.split("_")[1] || "";
+        let location = this.status && this.status.split("_")[1] || "";
         if (location && !['home', 'office', 'other'].includes(location)) {
             location = "";
         }
@@ -42,7 +42,7 @@ const patchHrPresenceStatus = () => ({
 
     get label() {
         if (this.location) {
-            return this.props.record.data.work_location_name || _t("Unspecified");
+            return this.props.record.data.name_work_location_display;//TODO add this field in hr avatar card popover ??
         }
         return super.label;
     },
