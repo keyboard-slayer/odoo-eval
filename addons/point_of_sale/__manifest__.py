@@ -78,6 +78,7 @@
             'point_of_sale/static/src/app/utils/hooks.js',
         ],
         'web.assets_tests': [
+            'barcodes/static/tests/helpers.js',
             'point_of_sale/static/tests/tours/**/*',
         ],
 
@@ -238,7 +239,6 @@
             'web/static/lib/ace/mode-qweb.js',
             'web/static/lib/stacktracejs/stacktrace.js',
             ('include', "web.chartjs_lib"),
-
             # 'web/static/tests/legacy/main_tests.js',
             'web/static/tests/legacy/helpers/**/*.js',
             'web/static/tests/legacy/views/helpers.js',
@@ -261,6 +261,8 @@
         ],
         'point_of_sale.customer_display_assets_test': [
             ('include', 'point_of_sale.base_tests'),
+            'barcodes/static/tests/helpers.js',
+            "web/static/tests/legacy/helpers/utils.js",
             "point_of_sale/static/tests/tours/**/*",
         ],
     },
