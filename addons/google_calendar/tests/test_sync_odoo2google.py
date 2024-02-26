@@ -843,3 +843,38 @@ class TestSyncOdoo2Google(TestSyncGoogle):
             'extendedProperties': {'shared': {'%s_odoo_id' % self.env.cr.dbname: event.id}},
             'transparency': 'opaque',
         })
+
+    @patch_api
+    def test_event_sync_after_pause_period(self):
+        partner_1 = self.env['res.partner'].create({'name': 'Jean-Luc', 'email': 'jean-luc@opoo.com'})
+        self.env.user.google_synchronization_stopped = False
+        self.env.user.sudo().pause_google_synchronization()
+        google_service = GoogleCalendarService(self.env['google.service'])
+
+        record = self.env['calendar.event'].create({
+            'name': "Event",
+            'start': datetime(2020, 1, 15, 8, 0),
+            'stop': datetime(2020, 1, 15, 18, 0),
+            'partner_ids': [(4, partner_1.id)],
+        })
+        self.env.user._sync_google_calendar(google_service)
+        self.assertFalse(self.env.user.google_synchronization_stopped)
+        self.assertEqual(self.env.user._get_google_sync_status(), "sync_paused")
+        self.assertTrue(record.need_sync)
+        self.assertGoogleEventNotInserted()
+        self.env.user.sudo().unpause_google_synchronization()
+        record._sync_odoo2google(google_service)
+        self.assertGoogleEventInserted({
+            'id': False,
+            'start': {'dateTime': '2020-01-15T08:00:00+00:00', 'date': None},
+            'end': {'dateTime': '2020-01-15T18:00:00+00:00', 'date': None},
+            'summary': 'Event',
+            'description': '',
+            'location': '',
+            'visibility': 'public',
+            'guestsCanModify': True,
+            'reminders': {'overrides': [], 'useDefault': False},
+            'organizer': {'email': 'odoobot@example.com', 'self': True},
+            'attendees': [{'email': 'jean-luc@opoo.com', 'responseStatus': 'needsAction'}],
+            'extendedProperties': {'shared': {'%s_odoo_id' % self.env.cr.dbname: record.id}},
+        })
