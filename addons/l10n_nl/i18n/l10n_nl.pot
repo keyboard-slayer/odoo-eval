@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-26 08:10+0000\n"
-"PO-Revision-Date: 2024-01-26 08:10+0000\n"
+"POT-Creation-Date: 2024-09-17 13:28+0000\n"
+"PO-Revision-Date: 2024-09-17 13:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -92,8 +92,13 @@ msgid ""
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.report.line,name:l10n_nl.tax_report_rub_3bl
-msgid "3bl. Deliveries to/services in countries within the EU (turnover)"
+#: model:account.report.line,name:l10n_nl.tax_report_rub_3bg
+msgid "3bg. Leveringen producten naar landen binnen de EU (omzet)"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.report.line,name:l10n_nl.tax_report_rub_3bs
+msgid "3bs. Diensten in landen binnen de EU (omzet)"
 msgstr ""
 
 #. module: l10n_nl
@@ -163,17 +168,12 @@ msgid "5g. Total payable/reclaimable (VAT)"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_2
-msgid "Accommodation costs"
-msgstr ""
-
-#. module: l10n_nl
 #: model:ir.model,name:l10n_nl.model_account_chart_template
 msgid "Account Chart Template"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_22
+#: model:account.account.tag,name:l10n_nl.account_tag_idep
 msgid "Amortisation of intangible assets"
 msgstr ""
 
@@ -183,23 +183,37 @@ msgid "Balance"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_25
+#: model:account.account.tag,name:l10n_nl.account_tag_cash
 msgid "Cash at bank and in hand"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_10
-#: model:account.account.tag,name:l10n_nl.account_tag_7
+#: model:account.account.tag,name:l10n_nl.account_tag_sale
+msgid "Cost of goods sold"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_cogs
 msgid "Cost of sales"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_21
+#: model:account.account.tag,name:l10n_nl.account_tag_cred
+msgid "Creditors"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_sh_debt
+msgid "Current Liabilities"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_mdep
 msgid "Depreciation of property, plant and equipment"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_26
+#: model:account.account.tag,name:l10n_nl.account_tag_distr
 msgid "Distribution costs"
 msgstr ""
 
@@ -209,32 +223,37 @@ msgid "Dutch Localization"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_29
+#: model:account.account.tag,name:l10n_nl.account_tag_err
 msgid "Error account"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_3
-msgid "Financial fixed assets"
+#: model:account.account.tag,name:l10n_nl.account_tag_fin
+msgid "Financial Fixed Active"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_8
+#: model:account.account.tag,name:l10n_nl.account_tag_gen
 msgid "General expenses"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_17
-msgid "Intangible assets"
+#: model:account.account.tag,name:l10n_nl.account_tag_hous
+msgid "Housing costs"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_31
+#: model:account.account.tag,name:l10n_nl.account_tag_immat
+msgid "Intangible Fixed Asset"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_intl
 msgid "Interest and other financial charges"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_30
+#: model:account.account.tag,name:l10n_nl.account_tag_interest
 msgid "Interest income"
 msgstr ""
 
@@ -244,58 +263,83 @@ msgid "Journal"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_11
-msgid "Net turnover"
+#: model:account.account.tag,name:l10n_nl.account_tag_legal_res
+msgid "Legal and Statutory Reserves"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_15
-msgid "Non-current liabilities"
+#: model:account.account.tag,name:l10n_nl.account_tag_long_debt
+msgid "Long-term liabilities"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_5
+#: model:account.account.tag,name:l10n_nl.account_tag_net
+msgid "Net sales"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_off
 msgid "Office costs"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_13
-msgid "Other current liabilities"
+#: model:account.account.tag,name:l10n_nl.account_tag_other_res
+msgid "Other Reserves"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_16
+#: model:account.account.tag,name:l10n_nl.account_tag_oth
 msgid "Other operating income"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_19
+#: model:account.account.tag,name:l10n_nl.account_tag_opc
 msgid "Other personnel costs"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_20
+#: model:account.account.tag,name:l10n_nl.account_tag_cap
+msgid "Paid-up and Called-up Capital"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_pens
 msgid "Pension charges"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_23
+#: model:account.account.tag,name:l10n_nl.account_tag_premium
+msgid "Premium"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_prev_years_earnings
+msgid "Previous Years Profit"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_mat
 msgid "Property, plant and equipment"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_14
+#: model:account.account.tag,name:l10n_nl.account_tag_provisions
 msgid "Provisions"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_27
+#: model:account.account.tag,name:l10n_nl.account_tag_claims
 msgid "Receivables"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_12
-msgid "Result on other assets"
+#: model:account.account.tag,name:l10n_nl.account_tag_reso
+msgid "Result other assets"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_revaluation_res
+msgid "Revaluation reserve"
 msgstr ""
 
 #. module: l10n_nl
@@ -339,28 +383,13 @@ msgid "Section 5: Input tax, small business scheme and total (VAT)"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_24
-msgid "Securities"
-msgstr ""
-
-#. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_9
-msgid "Shareholders' equity"
-msgstr ""
-
-#. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_18
+#: model:account.account.tag,name:l10n_nl.account_tag_soc
 msgid "Social charges"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_4
+#: model:account.account.tag,name:l10n_nl.account_tag_stock
 msgid "Stocks"
-msgstr ""
-
-#. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_28
-msgid "Suspense accounts"
 msgstr ""
 
 #. module: l10n_nl
@@ -369,21 +398,21 @@ msgid "Tax report"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_33
+#: model:account.account.tag,name:l10n_nl.account_tag_taxes
 msgid "Taxes"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_32
-msgid "Taxes & social charges"
-msgstr ""
-
-#. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_6
+#: model:account.account.tag,name:l10n_nl.account_tag_trans
 msgid "Transport costs"
 msgstr ""
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_1
+#: model:account.account.tag,name:l10n_nl.account_tag_undist_profit
+msgid "Undistributed Profit"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_sala
 msgid "Wages and salaries"
 msgstr ""

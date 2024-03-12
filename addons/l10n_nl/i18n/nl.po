@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-26 08:17+0000\n"
-"PO-Revision-Date: 2024-01-26 08:17+0000\n"
+"POT-Creation-Date: 2024-09-17 13:34+0000\n"
+"PO-Revision-Date: 2024-09-17 13:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -94,12 +94,19 @@ msgstr "3a. Leveringen naar landen buiten de EU (uitvoer) (omzet)"
 msgid ""
 "3b. Deliveries to/services in countries within the EU and A-B-C supply chain"
 " transactions (turnover)"
-msgstr "3b. Leveringen aan/diensten in landen binnen de EU en transacties in de toeleveringsketen A-B-C (omzet)"
+msgstr ""
+"3b. Leveringen aan/diensten in landen binnen de EU en transacties in de "
+"toeleveringsketen A-B-C (omzet)"
 
 #. module: l10n_nl
-#: model:account.report.line,name:l10n_nl.tax_report_rub_3bl
-msgid "3bl. Deliveries to/services in countries within the EU (turnover)"
-msgstr "3bl. Leveringen aan/diensten in landen binnen de EU (omzet)"
+#: model:account.report.line,name:l10n_nl.tax_report_rub_3bg
+msgid "3bg. Leveringen producten naar landen binnen de EU (omzet)"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.report.line,name:l10n_nl.tax_report_rub_3bs
+msgid "3bs. Diensten in landen binnen de EU (omzet)"
+msgstr ""
 
 #. module: l10n_nl
 #: model:account.report.line,name:l10n_nl.tax_report_rub_3bt
@@ -168,17 +175,12 @@ msgid "5g. Total payable/reclaimable (VAT)"
 msgstr "5g. Totaal te betalen/terug te vragen (BTW)"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_2
-msgid "Accommodation costs"
-msgstr "Huisvestingskosten"
-
-#. module: l10n_nl
 #: model:ir.model,name:l10n_nl.model_account_chart_template
 msgid "Account Chart Template"
 msgstr "Grootboekschema sjabloon"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_22
+#: model:account.account.tag,name:l10n_nl.account_tag_idep
 msgid "Amortisation of intangible assets"
 msgstr "Afschrijving immateriële vaste activa"
 
@@ -188,23 +190,37 @@ msgid "Balance"
 msgstr "Balans"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_25
+#: model:account.account.tag,name:l10n_nl.account_tag_cash
 msgid "Cash at bank and in hand"
 msgstr "Liquide middelen"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_10
-#: model:account.account.tag,name:l10n_nl.account_tag_7
+#: model:account.account.tag,name:l10n_nl.account_tag_sale
+msgid "Cost of goods sold"
+msgstr "Kostprijs van de omzet"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_cogs
 msgid "Cost of sales"
 msgstr "Verkoopkosten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_21
+#: model:account.account.tag,name:l10n_nl.account_tag_cred
+msgid "Creditors"
+msgstr "Schuldeisers"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_sh_debt
+msgid "Current Liabilities"
+msgstr "Kortlopende verplichtingen"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_mdep
 msgid "Depreciation of property, plant and equipment"
 msgstr "Afschrijving materiële vaste activa"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_26
+#: model:account.account.tag,name:l10n_nl.account_tag_distr
 msgid "Distribution costs"
 msgstr "Distributiekosten"
 
@@ -214,32 +230,37 @@ msgid "Dutch Localization"
 msgstr "Nederlandse lokalisatie"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_29
+#: model:account.account.tag,name:l10n_nl.account_tag_err
 msgid "Error account"
 msgstr "Foutenrekening"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_3
-msgid "Financial fixed assets"
-msgstr "Financiële vaste activa"
+#: model:account.account.tag,name:l10n_nl.account_tag_fin
+msgid "Financial Fixed Active"
+msgstr "Financieel Vast Actief"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_8
+#: model:account.account.tag,name:l10n_nl.account_tag_gen
 msgid "General expenses"
 msgstr "Algemene Kosten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_17
-msgid "Intangible assets"
+#: model:account.account.tag,name:l10n_nl.account_tag_hous
+msgid "Housing costs"
+msgstr "Huisvestingskosten"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_immat
+msgid "Intangible Fixed Asset"
 msgstr "Immateriële vaste activa"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_31
+#: model:account.account.tag,name:l10n_nl.account_tag_intl
 msgid "Interest and other financial charges"
 msgstr "Rente- en overige financiële lasten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_30
+#: model:account.account.tag,name:l10n_nl.account_tag_interest
 msgid "Interest income"
 msgstr "Rente baten"
 
@@ -249,59 +270,84 @@ msgid "Journal"
 msgstr "Dagboek"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_11
-msgid "Net turnover"
-msgstr "Netto omzet"
+#: model:account.account.tag,name:l10n_nl.account_tag_legal_res
+msgid "Legal and Statutory Reserves"
+msgstr "Wettelijke en statutaire reserves"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_15
-msgid "Non-current liabilities"
-msgstr "Langlopende schulden"
+#: model:account.account.tag,name:l10n_nl.account_tag_long_debt
+msgid "Long-term liabilities"
+msgstr "Langlopende verplichtingen"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_5
+#: model:account.account.tag,name:l10n_nl.account_tag_net
+msgid "Net sales"
+msgstr "Nettoverkoop"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_off
 msgid "Office costs"
 msgstr "Kantoorkosten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_13
-msgid "Other current liabilities"
-msgstr "Overige kortlopende schulden"
+#: model:account.account.tag,name:l10n_nl.account_tag_other_res
+msgid "Other Reserves"
+msgstr "Overige reserves"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_16
+#: model:account.account.tag,name:l10n_nl.account_tag_oth
 msgid "Other operating income"
 msgstr "Overige bedrijfsopbrengsten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_19
+#: model:account.account.tag,name:l10n_nl.account_tag_opc
 msgid "Other personnel costs"
 msgstr "Overige personeelskosten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_20
+#: model:account.account.tag,name:l10n_nl.account_tag_cap
+msgid "Paid-up and Called-up Capital"
+msgstr "Gestort en opgevraagd kapitaal"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_pens
 msgid "Pension charges"
 msgstr "Pensioenlasten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_23
+#: model:account.account.tag,name:l10n_nl.account_tag_premium
+msgid "Premium"
+msgstr ""
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_prev_years_earnings
+msgid "Previous Years Profit"
+msgstr "Winst vorig jaar"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_mat
 msgid "Property, plant and equipment"
 msgstr "Materiële vaste activa"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_14
+#: model:account.account.tag,name:l10n_nl.account_tag_provisions
 msgid "Provisions"
 msgstr "Voorzieningen"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_27
+#: model:account.account.tag,name:l10n_nl.account_tag_claims
 msgid "Receivables"
 msgstr "Vorderingen"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_12
-msgid "Result on other assets"
+#: model:account.account.tag,name:l10n_nl.account_tag_reso
+msgid "Result other assets"
 msgstr "Resultaat overige activa"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_revaluation_res
+msgid "Revaluation reserve"
+msgstr "Herwaarderingsreserve"
 
 #. module: l10n_nl
 #: model:account.report.line,name:l10n_nl.tax_report_rub_1
@@ -344,29 +390,14 @@ msgid "Section 5: Input tax, small business scheme and total (VAT)"
 msgstr "Rubriek 5: Voorbelasting, kleineondernemersregeling en totaal (BTW)"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_24
-msgid "Securities"
-msgstr "Effecten"
-
-#. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_9
-msgid "Shareholders' equity"
-msgstr "Eigen vermogen"
-
-#. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_18
+#: model:account.account.tag,name:l10n_nl.account_tag_soc
 msgid "Social charges"
 msgstr "Sociale lasten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_4
+#: model:account.account.tag,name:l10n_nl.account_tag_stock
 msgid "Stocks"
 msgstr "Voorraden"
-
-#. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_28
-msgid "Suspense accounts"
-msgstr "Tussenrekeningen"
 
 #. module: l10n_nl
 #: model:account.report,name:l10n_nl.tax_report
@@ -374,21 +405,21 @@ msgid "Tax report"
 msgstr "Belastingrapport"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_33
+#: model:account.account.tag,name:l10n_nl.account_tag_taxes
 msgid "Taxes"
 msgstr "Belastingen"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_32
-msgid "Taxes & social charges"
-msgstr "Belastingen & sociale lasten"
-
-#. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_6
+#: model:account.account.tag,name:l10n_nl.account_tag_trans
 msgid "Transport costs"
 msgstr "Vervoerskosten"
 
 #. module: l10n_nl
-#: model:account.account.tag,name:l10n_nl.account_tag_1
+#: model:account.account.tag,name:l10n_nl.account_tag_undist_profit
+msgid "Undistributed Profit"
+msgstr "Onverdeelde winst"
+
+#. module: l10n_nl
+#: model:account.account.tag,name:l10n_nl.account_tag_sala
 msgid "Wages and salaries"
 msgstr "Lonen en salarissen"
