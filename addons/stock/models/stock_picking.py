@@ -2121,3 +2121,7 @@ class Picking(models.Model):
                 clean_action(action, self.env)
                 report_actions.append(action)
         return report_actions
+
+    def _can_return(self):
+        self.ensure_one()
+        return self.state == 'done'
