@@ -223,7 +223,7 @@ class Partner(models.Model):
                     field
                     for field in fields
                     if field
-                    not in ["country", "display_name", "isAdmin", "notification_type", "user"]
+                    not in ["country", "display_name", "isAdmin", "notification_type", "user", "userId"]
                 ],
                 load=False,
             )[0]
@@ -232,6 +232,8 @@ class Partner(models.Model):
                 data["country"] = {"code": c.code, "id": c.id, "name": c.name} if c else False
             if "display_name" in fields:
                 data["displayName"] = partner.display_name
+            if "userId" in fields:
+                data["userId"] = partner.user_id.id
             if 'user' in fields:
                 main_user = main_user_by_partner and main_user_by_partner.get(partner)
                 if not main_user:
