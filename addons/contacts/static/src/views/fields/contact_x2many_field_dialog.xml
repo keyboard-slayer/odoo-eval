@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="web.X2ManyFieldDialog" t-inherit-mode="extension">
+        <xpath expr="//t[@t-if='props.delete']" position="after">
+            <button t-if="props.record.resModel == 'res.partner'" t-on-click="moreOption" class="btn btn-link ms-auto" >More Options</button>
+        </xpath>
+    </t>
+</templates>
