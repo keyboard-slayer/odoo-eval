@@ -183,10 +183,14 @@ export class EditMenuDialog extends Component {
         }
     }
 
-    addMenu(isMegaMenu) {
+    addMenu(isMegaMenu, customUrl) {
         this.dialogs.add(MenuDialog, {
             isMegaMenu,
             save: (name, url, isNewWindow) => {
+                if (customUrl) {
+                    url = url.startsWith('/') ? url : '/' + url;
+                    url = customUrl + url;
+                }
                 const newMenu = {
                     fields: {
                         id: `menu_${(new Date).toISOString()}`,
