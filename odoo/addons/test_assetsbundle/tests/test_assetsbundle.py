@@ -592,7 +592,7 @@ class TestJavascriptAssetsBundle(FileTouchable):
 
         bundle = self.env['ir.qweb']._get_asset_bundle('test_assetsbundle.bundle4')
         links = bundle.get_links()
-        self.assertEqual(len(links), 7)
+        self.assertEqual(len(links), 6)
 
         self.assertEqual(str(html.strip()), (f"""<!DOCTYPE html>
 <html>
@@ -604,7 +604,6 @@ class TestJavascriptAssetsBundle(FileTouchable):
         <script type="text/javascript" src="http://test.external.link/javascript1.js"></script>
         <script type="text/javascript" src="http://test.external.link/javascript2.js"></script>
         <script type="text/javascript" src="{links[5]}" onerror="__odooAssetError=1"></script>
-        <script type="text/javascript" src="{links[6]}" onerror="__odooAssetError=1"></script>
     </head>
     <body>
     </body>
@@ -622,7 +621,6 @@ class TestJavascriptAssetsBundle(FileTouchable):
         <script type="text/javascript" src="http://test.external.link/javascript1.js"></script>
         <script type="text/javascript" src="http://test.external.link/javascript2.js"></script>
         <script type="text/javascript" src="/web/assets/debug/test_assetsbundle.bundle4.js" onerror="__odooAssetError=1"></script>
-        <script type="text/javascript" src="/web/assets/debug/test_assetsbundle.bundle4.xml.js" onerror="__odooAssetError=1"></script>
     </head>
     <body>
     </body>
