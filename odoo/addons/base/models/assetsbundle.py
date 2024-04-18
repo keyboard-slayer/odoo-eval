@@ -344,7 +344,7 @@ class AssetsBundle(object):
 
         return js_attachment[0]
 
-    def xml2(self):
+    def xml(self):
         if attachments := self.get_attachments('xml.js'):
             return attachments[0]
         bundle_content = textwrap.dedent(f"""
@@ -413,7 +413,7 @@ class AssetsBundle(object):
         content = []
         blocks = []
         try:
-            blocks = self.xml()
+            blocks = self.xml_blocks()
         except XMLAssetError as e:
             content.append(f'throw new Error({json.dumps(to_text(e))});')
 
@@ -450,7 +450,7 @@ class AssetsBundle(object):
 
         return '\n'.join(content)
 
-    def xml(self):
+    def xml_blocks(self):
         """
         Create a list of blocks. A block can have one of the two types "templates" or "extensions".
         A template with no parent or template with t-inherit-mode="primary" goes in a block of type "templates".
