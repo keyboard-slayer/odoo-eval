@@ -237,7 +237,9 @@ export class PosOrder extends Base {
                         uuid: line.uuid,
                         product_id: line.get_product().id,
                         name: line.get_full_product_name(),
-                        note: line.getNote(),
+                        // note: line.getNote(),
+                        // sjai update
+                        // note_ids: line.getNoteIds(),
                         quantity: line.get_quantity(),
                     };
                 }

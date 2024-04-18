@@ -18,7 +18,6 @@ export class PosOrderline extends Base {
         this.uuid = vals.uuid ? vals.uuid : uuidv4();
         this.skip_change = vals.skip_change || false;
         this.set_full_product_name();
-
         // Data that are not saved in the backend
         this.uiState = {
             hasChange: true,
@@ -58,7 +57,10 @@ export class PosOrderline extends Base {
     }
 
     get preparationKey() {
-        const note = this.getNote();
+        // sjai update paso bhai
+        const note = this.getNoteIds()
+            .map((note) => note.name)
+            .join(" ");
         return `${this.uuid} - ${note}`;
     }
 
@@ -308,7 +310,7 @@ export class PosOrderline extends Base {
         // only orderlines of the same product can be merged
         return (
             !this.skip_change &&
-            orderline.getNote() === this.getNote() &&
+            orderline.getNoteIds() === this.getNoteIds() &&
             this.get_product().id === orderline.get_product().id &&
             this.is_pos_groupable() &&
             // don't merge discounted orderlines
@@ -615,7 +617,10 @@ export class PosOrderline extends Base {
                 : "",
             discount: this.get_discount_str(),
             customerNote: this.get_customer_note() || "",
-            internalNote: this.getNote(),
+            internalNote: this.getNoteIds().map((note) => ({
+                name: note.name,
+                color: note.color,
+            })),
             comboParent: this.combo_parent_id?.get_full_product_name?.() || "",
             packLotLines: this.pack_lot_ids.map(
                 (l) =>
@@ -657,11 +662,33 @@ export class PosOrderline extends Base {
     set_price_extra(price_extra) {
         this.price_extra = parseFloat(price_extra) || 0.0;
     }
-    getNote() {
-        return this.note || "";
+    async setNoteIds(note) {
+        if (!note) {
+            this.note_ids = [];
+            return;
+        }
+        const notes = note.split("\n").filter((n) => n.trim() !== "");
+        const newNoteIds = [];
+        for (const noteText of notes) {
+            // Check if the note already exists in pos.note model
+            const existingNote = Object.values(this.records["pos.note"]).find(
+                (n) => n.name === noteText
+            );
+            if (existingNote) {
+                newNoteIds.push(existingNote);
+            } else {
+                const newNote = this.models["pos.note"].create({
+                    name: noteText,
+                    is_displayed: false,
+                    color: Math.floor(Math.random() * 11),
+                });
+                newNoteIds.push(newNote);
+            }
+        }
+        this.note_ids = newNoteIds;
     }
-    setNote(note) {
-        this.note = note;
+    getNoteIds() {
+        return this.note_ids || [];
     }
     setHasChange(isChange) {
         this.uiState.hasChange = isChange;

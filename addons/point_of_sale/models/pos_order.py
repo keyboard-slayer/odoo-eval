@@ -101,23 +101,36 @@ class PosOrder(models.Model):
                     "partner_id": False,
                     "to_invoice": False,
                 })
-
         pos_order = False
         combo_child_uuids_by_parent_uuid = self._prepare_combo_line_uuids(order)
 
         if not existing_order:
             pos_order = self.create(order)
+            pos_order._sync_product_note(order)
             pos_order = pos_order.with_company(pos_order.company_id)
         else:
             pos_order = self.env['pos.order'].browse(order.get('id'))
             line_ids = [line[2]['id'] for line in order.get('lines') if line[2].get('id')]
             pos_order.lines.filtered(lambda line: line.id not in line_ids).unlink()
+            print(pos_order.lines[0].note_ids)
+            pos_order._sync_product_note(order)
             pos_order.write(order)
 
         pos_order._link_combo_items(combo_child_uuids_by_parent_uuid)
         self = self.with_company(pos_order.company_id)
         self._process_payment_lines(order, pos_order, pos_session, draft)
         return pos_order._process_saved_order(draft)
+
+    def _sync_product_note(self, order_dict):
+        """Create new notes and update orders that are in draft status."""
+        for line in order_dict['lines']:
+            data = line[2]["note_ids"]
+            for i, item in enumerate(data):
+                if item[0] == 0 and item[1] == 0:
+                    record_data = item[2]
+                    new_note = self.env['pos.note'].create(record_data)
+                    data[i] = [4, new_note.id]
+        return order_dict
 
     def _prepare_combo_line_uuids(self, order_vals):
         acc = {}
@@ -300,7 +313,7 @@ class PosOrder(models.Model):
     picking_type_id = fields.Many2one('stock.picking.type', related='session_id.config_id.picking_type_id', string="Operation Type", readonly=False)
     procurement_group_id = fields.Many2one('procurement.group', 'Procurement Group', copy=False)
 
-    note = fields.Text(string='Internal Notes')
+    note = fields.Char('Internal Note')
     nb_print = fields.Integer(string='Number of Print', readonly=True, copy=False, default=0)
     pos_reference = fields.Char(string='Receipt Number', readonly=True, copy=False, index=True)
     sale_journal = fields.Many2one('account.journal', related='session_id.config_id.journal_id', string='Sales Journal', store=True, readonly=True, ondelete='restrict')
@@ -963,6 +976,7 @@ class PosOrder(models.Model):
             'pos.order': pos_order_ids.read(pos_order_ids._load_pos_data_fields(config_id), load=False) if config_id else [],
             'pos.payment': pos_order_ids.payment_ids.read(pos_order_ids.payment_ids._load_pos_data_fields(config_id), load=False) if config_id else [],
             'pos.order.line': pos_order_ids.lines.read(pos_order_ids.lines._load_pos_data_fields(config_id), load=False) if config_id else [],
+            'pos.note': pos_order_ids.lines.note_ids.read(pos_order_ids.lines.note_ids._load_pos_data_fields(config_id), load=False) if config_id else [],
             'pos.pack.operation.lot': pos_order_ids.lines.pack_lot_ids.read(pos_order_ids.lines.pack_lot_ids._load_pos_data_fields(config_id), load=False) if config_id else [],
             "product.attribute.custom.value": pos_order_ids.lines.custom_attribute_value_ids.read(pos_order_ids.lines.custom_attribute_value_ids._load_pos_data_fields(config_id), load=False) if config_id else [],
         }
@@ -1230,7 +1244,7 @@ class PosOrderLine(models.Model):
     refunded_orderline_id = fields.Many2one('pos.order.line', 'Refunded Order Line', help='If this orderline is a refund, then the refunded orderline is specified in this field.')
     refunded_qty = fields.Float('Refunded Quantity', compute='_compute_refund_qty', help='Number of items refunded in this orderline.')
     uuid = fields.Char(string='Uuid', readonly=True, copy=False)
-    note = fields.Char('Internal Note')
+    note_ids = fields.Many2many('pos.note', string='Internal Notes')
 
     combo_parent_id = fields.Many2one('pos.order.line', string='Combo Parent') # FIXME rename to parent_line_id
     combo_line_ids = fields.One2many('pos.order.line', 'combo_parent_id', string='Combo Lines') # FIXME rename to child_line_ids
@@ -1245,7 +1259,7 @@ class PosOrderLine(models.Model):
     @api.model
     def _load_pos_data_fields(self, config_id):
         return [
-            'qty', 'attribute_value_ids', 'custom_attribute_value_ids', 'price_unit', 'skip_change', 'uuid', 'price_subtotal', 'price_subtotal_incl', 'order_id', 'note', 'price_type',
+            'qty', 'attribute_value_ids', 'custom_attribute_value_ids', 'price_unit', 'skip_change', 'uuid', 'price_subtotal', 'price_subtotal_incl', 'order_id', 'note_ids', 'price_type',
             'product_id', 'discount', 'tax_ids', 'pack_lot_ids', 'customer_note', 'refunded_qty', 'price_extra', 'full_product_name', 'refunded_orderline_id', 'combo_parent_id', 'combo_line_ids', 'combo_item_id', 'refund_orderline_ids'
         ]
 

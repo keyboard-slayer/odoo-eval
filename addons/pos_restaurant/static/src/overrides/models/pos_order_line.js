@@ -13,6 +13,7 @@ patch(PosOrderline.prototype, {
         return orderline;
     },
     get_line_diff_hash() {
+        // paso bhai how this affects
         if (this.getNote()) {
             return this.id + "|" + this.getNote();
         } else {

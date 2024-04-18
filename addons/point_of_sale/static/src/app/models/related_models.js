@@ -209,12 +209,13 @@ export class Base {
                             typeof id === "number"
                         ) {
                             return [4, id];
+                        } else if (name == "note_ids") {
+                            // Do nothing
                         } else if (!SERIALIZABLE_MODELS.includes(params.relation)) {
                             throw new Error(
                                 "Trying to create a non serializable record" + params.relation
                             );
                         }
-
                         if (params.relation !== params.model) {
                             data = this.records[params.relation][id].serialize(options);
                             data.id = typeof id === "number" ? id : parseInt(id.split("_")[1]);
@@ -685,7 +686,6 @@ export function createRelatedModels(modelDefs, modelClasses = {}, indexes = {}) 
                     if ((orm && field.local) || (orm && field.related) || (orm && field.compute)) {
                         continue;
                     }
-
                     if (field.type === "many2one") {
                         result[name] = record[name]?.id || (!orm && record.raw[name]) || false;
                     } else if (X2MANY_TYPES.has(field.type)) {

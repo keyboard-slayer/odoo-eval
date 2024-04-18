@@ -27,24 +27,36 @@ export class OrderlineNoteButton extends Component {
     }
     async onClick() {
         const selectedOrderline = this.pos.get_order().get_selected_orderline();
-        const selectedNote = this.props.getter(selectedOrderline);
+        //it convert text in string before showing on textarea of internal note sjai
+        const selectedNote = this.props
+            .getter(selectedOrderline)
+            .map((note) => note.name)
+            .join("\n");
         const notes = this.pos.models["pos.note"].getAll();
         let buttons;
         if (this._isInternalNote()) {
             buttons = notes.map((note) => ({
                 label: note.name,
+                class: note.color ? `o_colorlist_item_color_${note.color}` : "",
                 isSelected: selectedNote.split("\n").includes(note.name), // Check if the note is already selected
+                isDisplayed: note.is_displayed,
             }));
         } else {
             buttons = [];
         }
 
-        const oldNote = selectedOrderline.getNote();
+        // sjai update
+        // filter and show only generic or perticular selected buttons
+        buttons = buttons.filter((button) => button.isDisplayed || button.isSelected);
+        const oldNote = selectedOrderline
+            .getNoteIds()
+            .map((note) => note.name)
+            .join("\n");
         const payload = await makeAwaitable(this.dialog, TextInputPopup, {
             title: _t("Add %s", this.props.label),
             buttons,
             rows: 4,
-            startingValue: this.props.getter(selectedOrderline),
+            startingValue: selectedNote,
         });
 
         var quantity_with_note = 0;
