@@ -28,6 +28,8 @@ import { formatDate, formatDateTime } from "@web/core/l10n/dates";
  * @property {string} res_name
  * @property {number|false} request_partner_id
  * @property {'overdue'|'planned'|'today'} state
+ * @property {string} start
+ * @property {string} stop
  * @property {string} summary
  * @property {[number, string]} user_id
  * @property {string} write_date
@@ -123,8 +125,12 @@ export class Activity extends Record {
     res_name;
     /** @type {number|false} */
     request_partner_id;
+    /** @type {luxon.DateTime} */
+    start = Record.attr(undefined, { type: "datetime" });
     /** @type {'overdue'|'planned'|'today'} */
     state;
+    /** @type {luxon.DateTime} */
+    stop = Record.attr(undefined, { type: "datetime" });
     /** @type {string} */
     summary;
     /** @type {[number, string]} */
@@ -134,8 +140,21 @@ export class Activity extends Record {
     /** @type {[number, string]} */
     write_uid;
 
+    get activityTime() {
+        if (this.start && this.stop) {
+            const start = this.start.toLocaleString(luxon.DateTime.TIME_24_SIMPLE);
+            const stop = this.stop.toLocaleString(luxon.DateTime.TIME_24_SIMPLE);
+            return ` (${start} - ${stop})`;
+        }
+        return "";
+    }
+
     get dateDeadlineFormatted() {
         return formatDate(this.date_deadline);
+    }
+
+    get dateDeadlineMED() {
+        return this.date_deadline.toLocaleString(luxon.DateTime.DATE_MED);
     }
 
     get dateDoneFormatted() {

@@ -48,15 +48,20 @@ export class ActivityListPopoverItem extends Component {
     get delayLabel() {
         const diff = computeDelay(this.props.activity.date_deadline);
         if (diff === 0) {
-            return _t("Today");
+            return _t("Today%s", this.props.activity.activityTime);
         } else if (diff === -1) {
             return _t("Yesterday");
         } else if (diff < 0) {
             return _t("%s days overdue", Math.round(Math.abs(diff)));
         } else if (diff === 1) {
-            return _t("Tomorrow");
+            return _t("Tomorrow%s", this.props.activity.activityTime);
         } else {
-            return _t("Due in %s days", Math.round(Math.abs(diff)));
+            return _t("%(dateDeadline)s%(activityTime)s", {
+                dateDeadline: this.props.activity.date_deadline.toLocaleString(
+                    luxon.DateTime.DATE_MED
+                ),
+                activityTime: this.props.activity.activityTime,
+            });
         }
     }
 

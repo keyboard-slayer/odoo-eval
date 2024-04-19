@@ -3,6 +3,7 @@
 
 from odoo import models, fields, tools, _
 from odoo.tools import is_html_empty
+from odoo.addons.mail.tools.discuss import Store
 
 
 class MailActivity(models.Model):
@@ -49,3 +50,17 @@ class MailActivity(models.Model):
         res = self.unlink()
         events.unlink()
         return res
+
+    # ------------------------------------------------------------
+    # OVERRIDE
+    # ------------------------------------------------------------
+
+    def _to_store(self, store: Store):
+        super()._to_store(store)
+        activities = self.filtered(lambda activity: activity.calendar_event_id).read()
+        calendar_events = self.env['calendar.event']
+        for activity in activities:
+            calendar_event = calendar_events.browse(activity['calendar_event_id'][0])
+            activity['start'] = calendar_event.start
+            activity['stop'] = calendar_event.stop
+            store.add("Activity", activity)
