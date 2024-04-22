@@ -1,5 +1,5 @@
 import { useVisible } from "@mail/utils/common/hooks";
-import { Component, useState } from "@odoo/owl";
+import { Component, onMounted, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { sprintf } from "@web/core/utils/strings";
@@ -12,7 +12,7 @@ import { sprintf } from "@web/core/utils/strings";
  */
 export class RecipientList extends Component {
     static template = "mail.RecipientList";
-    static props = ["thread", "close?"];
+    static props = ["thread", "close?", "load?"];
 
     setup() {
         super.setup();
@@ -20,6 +20,11 @@ export class RecipientList extends Component {
         this.loadMoreState = useVisible("load-more", () => {
             if (this.loadMoreState.isVisible) {
                 this.props.thread.loadMoreRecipients();
+            }
+        });
+        onMounted(() => {
+            if (this.props.load) {
+                this.props.load(this.props.thread, ["followers", "suggestedRecipients"]);
             }
         });
     }

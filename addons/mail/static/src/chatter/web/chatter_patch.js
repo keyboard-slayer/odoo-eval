@@ -300,7 +300,10 @@ patch(Chatter.prototype, {
         if (this.recipientsPopover.isOpen) {
             return this.recipientsPopover.close();
         }
-        this.recipientsPopover.open(ev.target, { thread: this.state.thread });
+        this.recipientsPopover.open(ev.target, {
+            thread: this.state.thread,
+            load: this.load.bind(this),
+        });
     },
 
     onClickSearch() {

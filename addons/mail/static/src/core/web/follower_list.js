@@ -1,4 +1,4 @@
-import { Component, useState } from "@odoo/owl";
+import { Component, onMounted, useState } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
 import { useService } from "@web/core/utils/hooks";
 import { FollowerSubtypeDialog } from "./follower_subtype_dialog";
@@ -16,7 +16,7 @@ import { DropdownItem } from "@web/core/dropdown/dropdown_item";
 export class FollowerList extends Component {
     static template = "mail.FollowerList";
     static components = { DropdownItem };
-    static props = ["onAddFollowers?", "onFollowerChanged?", "thread", "dropdown"];
+    static props = ["onAddFollowers?", "onFollowerChanged?", "thread", "dropdown", "load?"];
 
     setup() {
         super.setup();
@@ -25,6 +25,11 @@ export class FollowerList extends Component {
         useVisible("load-more", (isVisible) => {
             if (isVisible) {
                 this.props.thread.loadMoreFollowers();
+            }
+        });
+        onMounted(() => {
+            if (this.props.load) {
+                this.props.load(this.props.thread, ["followers", "suggestedRecipients"]);
             }
         });
     }
