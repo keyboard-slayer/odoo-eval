@@ -879,7 +879,7 @@ class account_journal(models.Model):
                 'name': 'Deco Addict',
                 'is_company': True,
             })
-        default_expense_account = self.env['ir.property'].with_company(company)._get('property_account_expense_categ_id', 'product.category')
+        default_expense_account = company.expense_account_id
         ref = 'DE%s' % invoice_date.strftime('%Y%m')
         bill = self.env['account.move'].with_context(default_extract_state='done').create({
             'move_type': 'in_invoice',

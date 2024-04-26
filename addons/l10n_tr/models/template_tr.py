@@ -11,8 +11,6 @@ class AccountChartTemplate(models.AbstractModel):
         return {
             'property_account_receivable_id': 'tr120',
             'property_account_payable_id': 'tr320',
-            'property_account_expense_categ_id': 'tr150',
-            'property_account_income_categ_id': 'tr600',
             'code_digits': '6',
         }
 
@@ -32,5 +30,7 @@ class AccountChartTemplate(models.AbstractModel):
                 'account_journal_payment_credit_account_id': 'tr102998',
                 'account_sale_tax_id': 'tr_s_20',
                 'account_purchase_tax_id': 'tr_p_20',
+                'expense_account_id': 'tr150',
+                'income_account_id': 'tr600',
             },
         }

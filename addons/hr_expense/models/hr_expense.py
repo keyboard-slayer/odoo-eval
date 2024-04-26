@@ -430,7 +430,7 @@ class HrExpense(models.Model):
         for _expense in self:
             expense = _expense.with_company(_expense.company_id)
             if not expense.product_id:
-                expense.account_id = self.env['ir.property']._get('property_account_expense_categ_id', 'product.category')
+                expense.account_id = _expense.company_id.expense_account_id
                 continue
             account = expense.product_id.product_tmpl_id._get_product_accounts()['expense']
             if account:
@@ -959,7 +959,7 @@ class HrExpense(models.Model):
         if self.product_id:
             account = self.product_id.product_tmpl_id._get_product_accounts()['expense']
         else:
-            account = self.env['ir.property']._get('property_account_expense_categ_id', 'product.category')
+            account = self.env.company.expense_account_id
 
         if account:
             return account
