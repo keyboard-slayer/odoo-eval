@@ -406,7 +406,7 @@ class HrExpense(models.Model):
             if expense.state not in {'draft', 'reported'}:
                 continue
             product_id = expense.product_id
-            if product_id and expense.product_has_cost and not expense.nb_attachment:
+            if product_id and expense.product_has_cost:
                 expense.price_unit = product_id._price_compute(
                     'standard_price',
                     uom=expense.product_uom_id,
@@ -960,6 +960,8 @@ class HrExpense(models.Model):
             vals['account_id'] = account.id
 
         expense = super().message_new(msg_dict, dict(custom_values or {}, **vals))
+        # We need to know the total_amount to compute the quantity
+        expense.quantity = expense.total_amount / expense.price_unit if expense.product_has_cost and expense.price_unit else 1
         self._send_expense_success_mail(msg_dict, expense)
         return expense
 
