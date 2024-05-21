@@ -51,23 +51,10 @@ class User(models.Model):
             status = "sync_stopped"
         return status
 
-    def _insert_records_created_in_paused_period(self, results, calendar_service: GoogleCalendarService):
-        events, default_reminders, full_sync = results.values()
-        events = self.env['calendar.event']._get_records_to_sync(full_sync=results.get('full_sync'))
-        recurrences = self.env['calendar.recurrence']._get_records_to_sync(full_sync=results.get('full_sync'))
-        if self._get_google_sync_status() != "sync_paused" and (events or recurrences):
-            send_updates = not full_sync
-            recurrences.with_context(send_updates=send_updates)._sync_odoo2google(calendar_service)
-            events.with_context(send_updates=send_updates)._sync_odoo2google(calendar_service)
-            return bool(events) or bool(recurrences)
-        return False
-
     def _sync_google_calendar(self, calendar_service: GoogleCalendarService):
         self.ensure_one()
         results = self._sync_request(calendar_service)
         if not results or not results.get('events'):
-            if results and results.get('default_reminders'):
-                self._insert_records_created_in_paused_period(results, calendar_service)
             return False
         events, default_reminders, full_sync = results.values()
         # Google -> Odoo
