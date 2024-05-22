@@ -136,18 +136,6 @@ publicWidget.registry.MailingPortalSubscriptionForm = publicWidget.Widget.extend
         const manageForm = document.getElementById('o_mailing_subscription_form_manage');
         /*manageForm.innerHTML = formContent.innerHTML;*/
         manageForm.replaceChildren(formContent);
-
-        /* update readonly display of customer's lists */
-        const formReadonlyContent = renderToFragment(
-            "mass_mailing.portal.list_form_content_readonly",
-            {
-                email: this.customerData.email,
-                listsOptin: this.listInfo.filter(item => item.opt_out === false),
-            }
-        );
-        const readonlyForm = document.getElementById('o_mailing_subscription_form_blocklisted');
-        /*readonlyForm.innerHTML = formReadonlyContent.innerHTML;*/
-        readonlyForm.replaceChildren(formReadonlyContent);
     },
 
     /*

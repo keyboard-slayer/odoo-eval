@@ -4,8 +4,8 @@
         <xpath expr="//div[hasclass('o_container_small')]" position="inside">
             <div class="mb-5 py-4 w-100 text-start oe_structure">
                 <div class="container">
-                    <h3>Not a fan of emails ?</h3>
-                    <p>Follow us on social Media</p>
+                    <h4>Not a fan of emails ?</h4>
+                    <p>Follow us on Social Media</p>
                     <div class="s_social_media o_not_editable text-start" data-snippet="s_social_media" data-name="Social Media">
                         <h4 class="s_social_media_title d-none o_default_snippet_text">Social Media</h4>
                         <a href="/website/social/facebook" class="s_social_media_facebook" target="_blank">

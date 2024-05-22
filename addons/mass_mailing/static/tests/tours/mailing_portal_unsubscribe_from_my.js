@@ -12,15 +12,19 @@ registry.category("web_tour.tours").add('mailing_portal_unsubscribe_from_my', {
        {
             content: "List1 is present, opt-in member",
             trigger: "ul#o_mailing_subscription_form_lists li.list-group-item:contains('List1') span:contains('On')",
+            isCheck: true,
         }, {
             content: "List3 is present, opt-outed (test starting data)",
             trigger: "ul#o_mailing_subscription_form_lists li.list-group-item:contains('List3') span:contains('Off')",
+            isCheck: true,
         }, {
             content: "List2 is proposed (not member -> proposal to join)",
             trigger: "ul#o_mailing_subscription_form_lists li.list-group-item:contains('List2')",
+            isCheck: true,
         }, {
             content: "List4 is not proposed (not member but not public)",
             trigger: "ul#o_mailing_subscription_form_lists:not(:has(li.list-group-item:contains('List4')))",
+            isCheck: true,
         }, {
             content: "Feedback area is not displayed (nothing done, no feedback required)",
             trigger: "div#o_mailing_portal_subscription:not(textarea)",
@@ -95,13 +99,8 @@ registry.category("web_tour.tours").add('mailing_portal_unsubscribe_from_my', {
             trigger: "body.feedback_enabled",
             isCheck: true,
         }, {
-            content: "Display warning about mailing lists",
-            trigger: "div#o_mailing_subscription_form_blocklisted p:contains('You will not receive any news from those mailing lists you are a member of')",
-        }, {
-            content: "Warning should contain reference to memberships",
-            trigger: "div#o_mailing_subscription_form_blocklisted li strong:contains('List2')",
-            extra_trigger: "div#o_mailing_subscription_form_blocklisted li strong:contains('List3')",
-            isCheck: true,
+            content: "Warning you will not receive anything anymore",
+            trigger: "div#o_mailing_subscription_form_blocklisted p:contains('You will not receive marketing emails.')",
         }, {
             content: "Give a reason for blocklist (first one)",
             trigger: "fieldset input.o_mailing_subscription_opt_out_reason:first",
@@ -110,7 +109,7 @@ registry.category("web_tour.tours").add('mailing_portal_unsubscribe_from_my', {
             trigger: "button#button_feedback",
         }, {
             content: "Confirmation feedback is sent",
-            trigger: "div#o_mailing_subscription_feedback_info span:contains('Sent. Thanks you for your feedback!')",
+            trigger: "div#o_mailing_subscription_feedback_info span:contains('Thank you for your feedback!')",
             isCheck: true,
         }
     ],
