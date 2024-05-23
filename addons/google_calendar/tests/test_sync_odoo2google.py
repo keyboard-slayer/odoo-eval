@@ -5,13 +5,13 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from unittest.mock import patch
 
-from odoo.addons.google_calendar.utils.google_calendar import GoogleEvent, GoogleCalendarService
+from odoo.addons.google_calendar.utils.google_calendar import GoogleCalendarService
 from odoo.addons.google_account.models.google_service import GoogleService
 from odoo.addons.google_calendar.models.res_users import User
 from odoo.addons.google_calendar.tests.test_sync_common import TestSyncGoogle, patch_api
 from odoo.tests.common import users, warmup
 from odoo.tests import tagged
-from odoo import tools, Command
+from odoo import tools
 
 @tagged('odoo2google')
 @patch.object(User, '_get_google_calendar_token', lambda user: 'dummy-token')
@@ -855,7 +855,7 @@ class TestSyncOdoo2Google(TestSyncGoogle):
             'name': "Event",
             'start': datetime(2023, 1, 15, 8, 0),
             'stop': datetime(2023, 1, 15, 18, 0),
-            'partner_ids': [(6, 0, self.attendee_user.partner_id.ids)]
+            'partner_ids': [(4, self.organizer_user.partner_id.id), (4, self.attendee_user.partner_id.id)]
         })
 
         # Define empty mock return values for the '_sync_request' method.
@@ -883,6 +883,9 @@ class TestSyncOdoo2Google(TestSyncGoogle):
             'transparency': 'opaque',
             'reminders': {'overrides': [], 'useDefault': False},
             'organizer': {'email': self.organizer_user.email, 'self': True},
-            'attendees': [{'email': self.attendee_user.email, 'responseStatus': 'needsAction'}],
+            'attendees': [
+                            {'email': self.attendee_user.email, 'responseStatus': 'needsAction'},
+                            {'email': self.organizer_user.email, 'responseStatus': 'accepted'}
+                        ],
             'extendedProperties': {'shared': {'%s_odoo_id' % self.env.cr.dbname: record.id}},
         })
