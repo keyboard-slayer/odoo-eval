@@ -63,6 +63,7 @@ class L10nInAccountInvoiceReport(models.Model):
     gst_format_refund_date = fields.Char(string="Formated Refund Date")
     gst_format_shipping_bill_date = fields.Char(string="Formated Shipping Bill Date")
     tax_id = fields.Many2one('account.tax', string="Tax")
+    debit_origin_id = fields.Many2one('account.move', 'Original Invoice Debited')
 
     def _select(self):
         select_str = """
@@ -108,7 +109,8 @@ class L10nInAccountInvoiceReport(models.Model):
             sum(sub.sgst_amount) * sub.amount_sign * sub.b2cs_refund_sign AS sgst_amount,
             avg(sub.cess_amount) * sub.amount_sign * sub.b2cs_refund_sign AS cess_amount,
             sum(sub.price_total) * sub.amount_sign * sub.b2cs_refund_sign AS price_total,
-            sub.tax_id
+            sub.tax_id,
+            sub.debit_origin_id
         """
         return select_str
 
@@ -132,6 +134,7 @@ class L10nInAccountInvoiceReport(models.Model):
                 am.move_type AS move_type,
                 am.reversed_entry_id AS reversed_entry_id,
                 am.l10n_in_gstin AS partner_vat,
+                am.debit_origin_id,
                 CASE WHEN rp.vat IS NULL THEN '' ELSE rp.vat END AS ecommerce_vat,
                 (CASE WHEN at.l10n_in_reverse_charge = True
                     THEN True
@@ -316,7 +319,8 @@ class L10nInAccountInvoiceReport(models.Model):
             sub.amount_sign,
             sub.tax_id,
             sub.tax_rate,
-            sub.b2cs_refund_sign
+            sub.b2cs_refund_sign,
+            sub.debit_origin_id
         """
         return group_by_str
 
