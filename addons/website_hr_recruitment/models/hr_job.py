@@ -20,6 +20,9 @@ class Job(models.Model):
     def _get_default_website_description(self):
         return self.env['ir.qweb']._render("website_hr_recruitment.default_website_description", raise_if_not_found=False)
 
+    def _editable_fields(self):
+        return ['description', 'website_description', 'job_details']
+
     description = fields.Html(
         'Job Description', translate=html_translate,
         prefetch=False,

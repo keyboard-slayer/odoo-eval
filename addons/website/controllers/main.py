@@ -14,6 +14,7 @@ from hashlib import md5
 from io import BytesIO
 from itertools import islice
 from lxml import etree, html
+from markupsafe import Markup
 from textwrap import shorten
 from werkzeug.exceptions import NotFound
 from xml.etree import ElementTree as ET
@@ -201,7 +202,7 @@ class Website(Home):
 
     @http.route('/website/get_languages', type='json', auth="user", website=True)
     def website_languages(self, **kwargs):
-        return [(lg.code, lg.url_code, lg.name) for lg in request.website.language_ids]
+        return [(lg.code.replace('_', '-'), lg.url_code, lg.name) for lg in request.website.language_ids]
 
     @http.route('/website/lang/<lang>', type='http', auth="public", website=True, multilang=False)
     def change_lang(self, lang, r='/', **kwargs):
@@ -748,9 +749,49 @@ class Website(Home):
         view.with_context(website_id=None).reset_arch(mode)
         return True
 
+    @http.route(['/website/update_alt_images'], type='json', auth="user", website=True)
+    def update_alt_images(self, res_id, res_model, imgs):
+        if not request.env.user.has_group('website.group_website_restricted_editor'):
+            raise werkzeug.exceptions.Forbidden()
+        record = request.env[res_model].browse(res_id)
+        editable_fields = record._editable_fields()
+        if not editable_fields:
+            return False
+        for editable_field in editable_fields:
+            tree = html.fromstring(str(record[editable_field]))
+            for element in tree.xpath('//img'):
+                src = element.get('src')
+                for img in imgs:
+                    if img['src'] == src:
+                        element.set('alt', Markup(img['alt']))
+            new_html_content = html.tostring(tree, encoding='unicode', method='html')
+            record.write({editable_field: new_html_content})
+
+    @http.route(['/website/update_broken_links'], type='json', auth="user", website=True)
+    def update_broken_links(self, res_id, res_model, links):
+        if not request.env.user.has_group('website.group_website_restricted_editor'):
+            raise werkzeug.exceptions.Forbidden()
+        record = request.env[res_model].browse(res_id)
+        editable_fields = record._editable_fields()
+        if not editable_fields:
+            return False
+        for editable_field in editable_fields:
+            tree = html.fromstring(str(record[editable_field]))
+            for element in tree.xpath('//a'):
+                href = element.get('href')
+                for link in links:
+                    if link['oldLink'] == href or link['oldLink'] == href + '/':
+                        if link['remove']:
+                            element.drop_tag()
+                        else:
+                            element.set('href', Markup(link['newLink']))
+                        break
+            new_html_content = html.tostring(tree, encoding='unicode', method='html')
+            record.write({editable_field: new_html_content})
+
     @http.route(['/website/seo_suggest'], type='json', auth="user", website=True)
     def seo_suggest(self, keywords=None, lang=None):
-        language = lang.split("_")
+        language = lang.replace("_", "-").split("-")
         url = "http://google.com/complete/search"
         try:
             req = requests.get(url, params={
