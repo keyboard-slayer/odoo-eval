@@ -185,7 +185,7 @@ class Website(models.Model):
     custom_code_head = fields.Html('Custom <head> code', sanitize=False)
     custom_code_footer = fields.Html('Custom end of <body> code', sanitize=False)
 
-    robots_txt = fields.Html('Robots.txt', translate=False, groups='website.group_website_designer', sanitize=False)
+    robots_txt = fields.Html('Robots.txt', translate=False, groups='website.group_website_designer,website_blog.group_website_blog_manager', sanitize=False)
 
     def _default_favicon(self):
         with tools.file_open('web/static/img/favicon.ico', 'rb') as f:
