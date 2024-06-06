@@ -385,7 +385,7 @@ class AccountEdiCommon(models.AbstractModel):
 
     def _import_partner_bank(self, invoice, bank_details):
         """ Retrieve the bank account, if no matching bank account is found, create it """
-        bank_details = map(sanitize_account_number, bank_details)
+        bank_details = list(map(sanitize_account_number, bank_details))
         partner = self.env.company.partner_id if invoice.is_inbound() else invoice.partner_id
         banks_to_create = []
         acc_number_partner_bank_dict = {
