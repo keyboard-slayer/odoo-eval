@@ -657,6 +657,7 @@ class HrExpenseSheet(models.Model):
         self.activity_update()
 
     def _do_refuse(self, reason):
+        self.write({'approval_state': 'cancel'})
         self.write({'state': 'cancel'})
         subtype_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_comment')
         for sheet in self:
