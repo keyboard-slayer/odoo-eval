@@ -291,7 +291,7 @@ export class StatusBarField extends Component {
         if (this.props.isDisabled) {
             return _t("Not active state");
         }
-        return _t("Not active state, click to change it");
+        return _t("Not active state, click to change it %s", item.label);
     }
 
     getSortedItems() {
