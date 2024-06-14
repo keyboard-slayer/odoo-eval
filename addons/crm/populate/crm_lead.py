@@ -14,9 +14,9 @@ class CrmLead(models.Model):
         'res.partner',  # customer
     ]
     _populate_sizes = {
-        'small': 5,
+        'small': 15,
         'medium': 150,
-        'large': 400
+        'large': 10000
     }
 
     def _populate_factories(self):
@@ -70,15 +70,23 @@ class CrmLead(models.Model):
         ]
 
         def _compute_address(iterator, *args):
-            r = populate.Random('res.partner+address_generator_selector')
+            # Exhaust all address generators first
+            # We should have at least one of each iterate value (=11 leads)
+            for adress_generator in address_generators:
+                for adress_values in adress_generator:
+                    if adress_values['__complete']:
+                        break
+                    values = next(iterator)  # Consume until address_generator is exhausted
+                    yield {**adress_values, **values}
 
+            r = populate.Random('res.partner+address_generator_selector')
             for values in iterator:
                 if values['partner_id']:
                     yield {**values}
                 else:
                     address_gen = r.choice(address_generators)
                     address_values = next(address_gen)
-                    yield {**values, **address_values}
+                    yield {**address_values, **values}
 
         def _compute_contact(iterator, *args):
             r = populate.Random('res.partner+contact_generator_selector')
@@ -108,26 +116,6 @@ class CrmLead(models.Model):
                            'phone': phone,
                           }
 
-        def _compute_contact_name(values=None, counter=0, **kwargs):
-            """ Generate lead names a bit better than lead_counter because this is Odoo. """
-            partner_id = values['partner_id']
-            complete = values['__complete']
-
-            fn = kwargs['random'].choice(tools._p_forename_groups)
-            mn = kwargs['random'].choices(
-                [False] + tools._p_middlename_groups,
-                weights=[1] + [1 / (len(tools._p_middlename_groups) or 1)] * len(tools._p_middlename_groups)
-            )[0]
-            sn = kwargs['random'].choice(tools._p_surname_groups)
-            return  '%s%s %s (%s_%s (partner %s))' % (
-                fn,
-                ' "%s"' % mn if mn else '',
-                sn,
-                int(complete),
-                counter,
-                partner_id
-            )
-
         def _compute_date_open(random=None, values=None, **kwargs):
             user_id = values['user_id']
             if user_id:
@@ -148,18 +136,26 @@ class CrmLead(models.Model):
                 counter
             )
 
+        def _compute_probability(random=None, values=None, **kwargs):
+            stage_id = values['stage_id']
+            active = values['active']
+            if stage_id < 4 and not active:
+                return 0.0
+            elif stage_id == 4:
+                return 100.0
+
         return [
-            ('partner_id', populate.iterate(
+            ('partner_id', populate.randomize(
                 [False] + partner_ids,
                 [2] + [1 / (len(partner_ids) or 1)] * len(partner_ids))
             ),
             ('_address', _compute_address),  # uses partner_id
             ('_contact', _compute_contact),  # uses partner_id, country_id
-            ('user_id', populate.iterate(
-                [False],
-                )
-            ),
+            ('user_id', populate.constant(False)),
             ('date_open', populate.compute(_compute_date_open)),  # uses user_id
             ('name', populate.compute(_compute_name)),
-            ('type', populate.iterate(['lead', 'opportunity'], [0.8, 0.2])),
+            ('type', populate.randomize(['lead', 'opportunity'], [0.8, 0.2])),
+            ('stage_id', populate.iterate([1, 2, 3, 4], [0.25, 0.2, 0.2, 0.35])),
+            ('active', populate.iterate([False, True], [0.3, 0.7])),
+            ('probability', populate.compute(_compute_probability)),  # uses stage_id
         ]

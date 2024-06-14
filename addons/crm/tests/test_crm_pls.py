@@ -651,3 +651,14 @@ class TestCRMPLS(TransactionCase):
             self.assertEqual(frequency.won_count, stat[2])
             self.assertEqual(frequency.lost_count, stat[3])
         self.assertEqual(len(existing_noteam), len(final_noteam))
+
+
+    # def test_won_status_performance(self):
+    #     # group_by
+    #     # searched
+
+
+    # def test_pls_performance(self):
+    #     # Change stage + proba set to 0 + restore leads
+    #     # Check query counters. + time (in practice)
+    #     # _create_leads_batch
