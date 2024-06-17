@@ -14,6 +14,7 @@ by sending an email to the target user. This email redirects them to:
     'data': [
         'security/ir.model.access.csv',
         'data/ir_action_data.xml',
+        'data/ir_config_parameter.xml',
         'data/mail_template_data.xml',
         'views/security_notifications_template.xml',
         'views/totp_form_templates.xml',

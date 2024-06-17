@@ -6,7 +6,7 @@ import logging
 
 from datetime import datetime, timedelta
 
-from odoo import _, models
+from odoo import _, models, fields
 from odoo.exceptions import AccessDenied, UserError
 from odoo.http import request
 from odoo.tools.misc import babel_locale_parse, hmac
@@ -102,7 +102,14 @@ class Users(models.Model):
         elif ICP.get_param('auth_totp.policy') == 'employee_required' and self._is_internal():
             otp_required = True
         if otp_required:
-            return 'totp_mail'
+
+            # Users with a login that's older than this many days will be required
+            # to perform mail-based 2FA. This gives a grace period for new joiners, and a
+            # way to progressively enable the option for the whole company.
+            employee_grace = int(ICP.get_param("auth_totp.mfa_required_after_days", 0)) * 24 * 3600
+            user_age = (fields.Datetime.now() - self.sudo().create_date).seconds
+            if user_age > employee_grace:
+                return 'totp_mail'
 
     def _mfa_url(self):
         r = super()._mfa_url()
