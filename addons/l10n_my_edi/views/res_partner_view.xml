@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_partner_form_inherit_l10n_my_myinvois" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.l10n_my_myinvois</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <label for="l10n_my_identification_type" string="Identification" invisible="'MY' not in fiscal_country_codes"/>
+                <div class="d-flex gap-2" invisible="'MY' not in fiscal_country_codes">
+                    <field name="l10n_my_identification_type"/>
+                    <span class="d-flex gap-2 w-100">
+                        <field name="l10n_my_identification_number" placeholder="202001234568"/>
+                    </span>
+                </div>
+                <field name="l10n_my_tin_validation_state" invisible="1"/>
+                <field name="l10n_my_edi_display_tin_warning" invisible="1"/>
+                <div class="d-flex gap-2 mb-1" colspan="2" col="4" invisible="not l10n_my_edi_display_tin_warning or l10n_my_tin_validation_state">
+                    <span class="text-warning">If possible, please <button class="oe_link p-0" type="object" name="action_validate_tin">validate</button> the TIN before invoicing this partner.</span>
+                </div>
+                <div class="d-flex gap-2 mb-1" colspan="2" col="4" invisible="not l10n_my_edi_display_tin_warning or l10n_my_tin_validation_state != 'valid'">
+                   <span class="text-success">The TIN validation succeeded.</span>
+                </div>
+                <div class="d-flex gap-2 mb-1" colspan="2" col="4" invisible="not l10n_my_edi_display_tin_warning or l10n_my_tin_validation_state != 'invalid'">
+                   <span class="text-danger">The TIN validation failed. You will still be able to invoice. <button class="oe_link p-0" type="object" name="action_validate_tin">Retry</button></span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
