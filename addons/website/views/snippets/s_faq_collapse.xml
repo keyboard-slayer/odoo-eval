@@ -2,33 +2,39 @@
 <odoo>
 
 <template id="s_faq_collapse" name="Accordion">
-    <section class="s_faq_collapse pt32 pb32">
+    <section class="s_faq_collapse pt32 pb32" data-vxml="001">
         <t t-set="uniq" t-value="datetime.datetime.now().microsecond"/>
         <div class="container">
-            <div id="myCollapse" class="accordion" role="tablist">
-                <div class="card bg-white" data-name="Item" role="presentation">
-                    <a href="#" t-attf-data-bs-target="#myCollapseTab{{uniq}}_1" role="tab" t-attf-aria-controls="myCollapseTab{{uniq}}_1" data-bs-toggle="collapse" aria-expanded="true" class="card-header">Terms of service</a>
-                    <div t-attf-id="myCollapseTab{{uniq}}_1" class="collapse show" data-bs-parent="#myCollapse" role="tabpanel">
-                        <div class="card-body">
-                            <p class="card-text">These terms of service ("Terms", "Agreement") are an agreement between the website ("Website operator", "us", "we" or "our") and you ("User", "you" or "your"). This Agreement sets forth the general terms and conditions of your use of this website and any of its products or services (collectively, "Website" or "Services").</p>
-                        </div>
+            <div class="accordion accordion-flush" id="myAccordion">
+                <div class="accordion-item card bg-white">
+                    <h2 class="accordion-header" t-attf-id="heading{{uniq}}_1">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" t-attf-data-bs-target="#myAccordionCollapse{{uniq}}_1" aria-expanded="true" t-attf-aria-controls="myAccordionCollapse{{uniq}}_1">
+                            Terms of service
+                        </button>
+                    </h2>
+                    <div t-attf-id="myAccordionCollapse{{uniq}}_1" class="accordion-collapse collapse show" t-attf-aria-labelledby="heading{{uniq}}_1" data-bs-parent="#myAccordion">
+                        <div class="accordion-body">These terms of service ("Terms", "Agreement") are an agreement between the website ("Website operator", "us", "we" or "our") and you ("User", "you" or "your"). This Agreement sets forth the general terms and conditions of your use of this website and any of its products or services (collectively, "Website" or "Services").</div>
                     </div>
                 </div>
-                <div class="card bg-white" data-name="Item" role="presentation">
-                    <a href="#" t-attf-data-bs-target="#myCollapseTab{{uniq}}_2" role="tab" t-attf-aria-controls="myCollapseTab{{uniq}}_2" data-bs-toggle="collapse" aria-expanded="false" class="collapsed card-header">Links to other Websites</a>
-                    <div t-attf-id="myCollapseTab{{uniq}}_2" class="collapse" data-bs-parent="#myCollapse" role="tabpanel">
-                        <div class="card-body">
-                            <p class="card-text">Although this Website may be linked to other websites, we are not, directly or indirectly, implying any approval, association, sponsorship, endorsement, or affiliation with any linked website, unless specifically stated herein.</p>
-                            <p class="card-text">You should carefully review the legal statements and other conditions of use of any website which you access through a link from this Website. Your linking to any other off-site pages or other websites is at your own risk.</p>
-                        </div>
+                <div class="accordion-item card bg-white">
+                    <h2 class="accordion-header" t-attf-id="heading{{uniq}}_2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" t-attf-data-bs-target="#myAccordionCollapse{{uniq}}_2" aria-expanded="false" t-attf-aria-controls="myAccordionCollapse{{uniq}}_2">
+                            Links to other Websites
+                        </button>
+                    </h2>
+                    <div t-attf-id="myAccordionCollapse{{uniq}}_2" class="accordion-collapse collapse" t-attf-aria-labelledby="heading{{uniq}}_2" data-bs-parent="#myAccordion">
+                        <div class="accordion-body">Although this Website may be linked to other websites, we are not, directly or indirectly, implying any approval, association, sponsorship, endorsement, or affiliation with any linked website, unless specifically stated herein.</div>
+                        <div class="accordion-body">You should carefully review the legal statements and other conditions of use of any website which you access through a link from this Website. Your linking to any other off-site pages or other websites is at your own risk.</div>
                     </div>
                 </div>
-                <div class="card bg-white" data-name="Item" role="presentation">
-                    <a href="#" t-attf-data-bs-target="#myCollapseTab{{uniq}}_3" role="tab" t-attf-aria-controls="myCollapseTab{{uniq}}_3" data-bs-toggle="collapse" aria-expanded="false" class="collapsed card-header">Use of Cookies</a>
-                    <div t-attf-id="myCollapseTab{{uniq}}_3" class="collapse" data-bs-parent="#myCollapse" role="tabpanel">
-                        <div class="card-body">
-                            <p class="card-text">Website may use cookies to personalize and facilitate maximum navigation of the User by this site. The User may configure his / her browser to notify and reject the installation of the cookies sent by us.</p>
-                        </div>
+                <div class="accordion-item card bg-white">
+                    <h2 class="accordion-header" t-attf-id="heading{{uniq}}_3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" t-attf-data-bs-target="#myAccordionCollapse{{uniq}}_3" aria-expanded="false" t-attf-aria-controls="myAccordionCollapse{{uniq}}_3">
+                            Use of Cookies
+                        </button>
+                    </h2>
+                    <div t-attf-id="myAccordionCollapse{{uniq}}_3" class="accordion-collapse collapse" t-attf-aria-labelledby="heading{{uniq}}_3" data-bs-parent="#myAccordion">
+                        <div class="accordion-body">Website may use cookies to personalize and facilitate maximum navigation of the User by this site. The User may configure his / her browser to notify and reject the installation of the cookies sent by us.</div>
                     </div>
                 </div>
             </div>
