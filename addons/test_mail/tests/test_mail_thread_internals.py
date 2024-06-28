@@ -485,7 +485,7 @@ class TestDiscuss(MailCommon, TestRecipients):
                     'reason': 'Customer Email',
                     'name': 'newpartner@example.com',
                     'email': 'newpartner@example.com',
-                    'create_values': {'mobile': '+33199001015', 'phone': False},
+                    'create_values': {'mobile': '+33199001015', 'phone': ''},
                 }
             ],
         )

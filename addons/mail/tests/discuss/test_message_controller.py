@@ -100,7 +100,7 @@ class TestMessageController(HttpCaseWithUserDemo):
             data1["ir.attachment"],
             [
                     {
-                    "checksum": False,
+                    "checksum": '',
                     "create_date": fields.Datetime.to_string(self.attachments[0].create_date),
                     "id": self.attachments[0].id,
                     "filename": "File 1",
@@ -156,7 +156,7 @@ class TestMessageController(HttpCaseWithUserDemo):
             data2["ir.attachment"],
             [
                 {
-                    "checksum": False,
+                    "checksum": '',
                     "create_date": fields.Datetime.to_string(self.attachments[0].create_date),
                     "id": self.attachments[0].id,
                     "filename": "File 1",
@@ -168,7 +168,7 @@ class TestMessageController(HttpCaseWithUserDemo):
                     "voice": False,
                 },
                 {
-                    "checksum": False,
+                    "checksum": '',
                     "create_date": fields.Datetime.to_string(self.attachments[1].create_date),
                     "id": self.attachments[1].id,
                     "filename": "File 2",
@@ -202,7 +202,7 @@ class TestMessageController(HttpCaseWithUserDemo):
             data3["ir.attachment"],
             [
                 {
-                    "checksum": False,
+                    "checksum": '',
                     "create_date": fields.Datetime.to_string(self.attachments[0].create_date),
                     "id": self.attachments[0].id,
                     "filename": "File 1",
@@ -214,7 +214,7 @@ class TestMessageController(HttpCaseWithUserDemo):
                     "voice": False,
                 },
                 {
-                    "checksum": False,
+                    "checksum": '',
                     "create_date": fields.Datetime.to_string(self.attachments[1].create_date),
                     "id": self.attachments[1].id,
                     "filename": "File 2",

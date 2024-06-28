@@ -1676,7 +1676,7 @@ class TestComposerResultsComment(TestMailComposer, CronMixinCase):
                 # open a composer and run it in comment mode
                 composer_form = Form(self.env['mail.compose.message'].with_context(ctx))
                 composer = composer_form.save()
-                self.assertEqual(composer.email_layout_xmlid, email_layout_xmlid)
+                self.assertEqual(composer.email_layout_xmlid, email_layout_xmlid or '')
 
                 # ensure some parameters used afterwards
                 if batch:
@@ -3343,7 +3343,7 @@ class TestComposerResultsMassStatus(TestMailComposer):
                     author=self.user_employee.partner_id,
                     fields_values={
                         'email_from': self.user_employee_2.email_formatted,
-                        'failure_reason': False,
+                        'failure_reason': '',
                         'failure_type': expected_ft,
                     },
                     email_values={
@@ -3374,7 +3374,7 @@ class TestComposerResultsMassStatus(TestMailComposer):
                     author=self.user_employee.partner_id,
                     fields_values={
                         'email_from': self.user_employee_2.email_formatted,
-                        'failure_reason': False,
+                        'failure_reason': '',
                         'failure_type': expected_ft,
                     },
                     email_values={

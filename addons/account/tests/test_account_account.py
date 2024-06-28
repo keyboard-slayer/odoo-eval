@@ -428,7 +428,7 @@ class TestAccountAccount(AccountTestInvoicingCommon):
         account_form.name = "A New Account 1"
 
         # code should not be set
-        self.assertEqual(account_form.code, False)
+        self.assertEqual(account_form.code, '')
         self.assertEqual(account_form.name, "A New Account 1")
 
         account_form.name = "314159 A New Account"
