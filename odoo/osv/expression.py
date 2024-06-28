@@ -778,6 +778,7 @@ class expression(object):
         self.root_alias = alias or model._table
 
         # normalize and prepare the expression for parsing
+        # TODO pre-process =?
         self.expression = domain_combine_anies(domain, model)
 
         # this object handles all the joins

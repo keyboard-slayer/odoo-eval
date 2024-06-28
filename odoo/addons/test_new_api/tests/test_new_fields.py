@@ -1414,7 +1414,7 @@ class TestFields(TransactionCaseWithUserDemo, TransactionExpressionCase):
         # modify 'name', and search on 'foo': this should flush 'name'
         bar.name = 'B'
         self.assertEqual(bar.foo, oof)
-        self.assertIn(bar, bar.search([('foo', 'in', oof.ids)]))
+        self.assertIn(bar, self._search(bar, [('foo', 'in', oof.ids)], test_complement=False))
 
     def test_25_one2many_inverse_related(self):
         left = self.env['test_new_api.trigger.left'].create({})
@@ -1663,8 +1663,6 @@ class TestFields(TransactionCaseWithUserDemo, TransactionExpressionCase):
         def test_cases(field_name, operations, default=None):
             field_type = Model._fields[field_name].type
             for operator, values in operations.items():
-                # TODO complement of dates is not working correctly, skip for now
-                test_complement = "date" not in field_type
                 for value in values:
                     domain = [(field_name, operator, value)]
                     with self.subTest(domain=domain, default=default):
@@ -1672,7 +1670,7 @@ class TestFields(TransactionCaseWithUserDemo, TransactionExpressionCase):
                             Model,
                             [('id', 'in', records.ids)] + domain,
                             [('id', 'in', records.ids)],
-                            test_complement=test_complement,
+                            test_complement=True,
                         )
 
         # boolean fields
@@ -3269,26 +3267,26 @@ class TestX2many(TransactionExpressionCase):
         })
 
         # a one2many field without context does not match its inactive children
-        self.assertIn(parent, Model.search([('children_ids.name', '=', 'A')]))
-        self.assertNotIn(parent, Model.search([('children_ids.name', '=', 'B')]))
-        # Same result when it used name_search
-        self.assertIn(parent, Model.search([('children_ids', '=', 'A')]))
-        self.assertNotIn(parent, Model.search([('children_ids', '=', 'B')]))
+        self.assertIn(parent, self._search(Model, [('children_ids.name', '=', 'A')]))
+        self.assertNotIn(parent, self._search(Model, [('children_ids.name', '=', 'B')]))
+        # Same result when it used _name_search
+        self.assertIn(parent, self._search(Model, [('children_ids', '=', 'A')]))
+        self.assertNotIn(parent, self._search(Model, [('children_ids', '=', 'B')]))
         # Same result with the child_of operator
-        self.assertIn(parent, Model.search([('children_ids', 'child_of', 'A')]))
-        self.assertNotIn(parent, Model.search([('children_ids', 'child_of', 'B')]))
+        self.assertIn(parent, self._search(Model, [('children_ids', 'child_of', 'A')]))
+        self.assertNotIn(parent, self._search(Model, [('children_ids', 'child_of', 'B')]))
 
         # a one2many field with active_test=False matches its inactive children
-        self.assertIn(parent, Model.search([('all_children_ids.name', '=', 'A')]))
-        self.assertIn(parent, Model.search([('all_children_ids.name', '=', 'B')]))
-        # Same result when it used name_search
-        self.assertIn(parent, Model.search([('all_children_ids', '=', 'A')]))
+        self.assertIn(parent, self._search(Model, [('all_children_ids.name', '=', 'A')]))
+        self.assertIn(parent, self._search(Model, [('all_children_ids.name', '=', 'B')]))
+        # Same result when it used _name_search
+        self.assertIn(parent, self._search(Model, [('all_children_ids', '=', 'A')]))
         # Same result with the child_of operator
-        self.assertIn(parent, Model.search([('all_children_ids', 'child_of', 'A')]))
-        self.assertIn(parent, Model.search([('all_children_ids', '=', 'B')]))
+        self.assertIn(parent, self._search(Model, [('all_children_ids', 'child_of', 'A')]))
+        self.assertIn(parent, self._search(Model, [('all_children_ids', '=', 'B')]))
         # Same result with the child_of operator
-        self.assertIn(parent, Model.search([('all_children_ids', 'child_of', 'A')]))
-        self.assertIn(parent, Model.search([('all_children_ids', 'child_of', 'B')]))
+        self.assertIn(parent, self._search(Model, [('all_children_ids', 'child_of', 'A')]))
+        self.assertIn(parent, self._search(Model, [('all_children_ids', 'child_of', 'B')]))
 
     def test_12_active_test_many2many_search(self):
         # TODO use _search, filtered domains behaves strangely for hierarchies
@@ -3302,28 +3300,28 @@ class TestX2many(TransactionExpressionCase):
         child_a, child_b = parent.with_context(active_test=False).relatives_ids
 
         # a many2many field without context does not match its inactive children
-        self.assertIn(parent, Model.search([('relatives_ids.name', '=', 'A')]))
-        self.assertNotIn(parent, Model.search([('relatives_ids.name', '=', 'B')]))
-        # Same result when it used name_search
-        self.assertIn(parent, Model.search([('relatives_ids', '=', 'A')]))
-        self.assertNotIn(parent, Model.search([('relatives_ids', '=', 'B')]))
+        self.assertIn(parent, self._search(Model, [('relatives_ids.name', '=', 'A')]))
+        self.assertNotIn(parent, self._search(Model, [('relatives_ids.name', '=', 'B')]))
+        # Same result when it used _name_search
+        self.assertIn(parent, self._search(Model, [('relatives_ids', '=', 'A')]))
+        self.assertNotIn(parent, self._search(Model, [('relatives_ids', '=', 'B')]))
         # Same result with the child_of operator
-        self.assertIn(parent, Model.search([('relatives_ids', 'child_of', child_a.id)]))
-        self.assertIn(parent, Model.search([('relatives_ids', 'child_of', 'A')]))
-        self.assertNotIn(parent, Model.search([('relatives_ids', 'child_of', child_b.id)]))
-        self.assertNotIn(parent, Model.search([('relatives_ids', 'child_of', 'B')]))
+        self.assertIn(parent, self._search(Model, [('relatives_ids', 'child_of', child_a.id)]))
+        self.assertIn(parent, self._search(Model, [('relatives_ids', 'child_of', 'A')]))
+        self.assertNotIn(parent, self._search(Model, [('relatives_ids', 'child_of', child_b.id)]))
+        self.assertNotIn(parent, self._search(Model, [('relatives_ids', 'child_of', 'B')]))
 
         # a many2many field with active_test=False matches its inactive children
-        self.assertIn(parent, Model.search([('all_relatives_ids.name', '=', 'A')]))
-        self.assertIn(parent, Model.search([('all_relatives_ids.name', '=', 'B')]))
-        # Same result when it used name_search
-        self.assertIn(parent, Model.search([('all_relatives_ids', '=', 'A')]))
-        self.assertIn(parent, Model.search([('all_relatives_ids', '=', 'B')]))
+        self.assertIn(parent, self._search(Model, [('all_relatives_ids.name', '=', 'A')]))
+        self.assertIn(parent, self._search(Model, [('all_relatives_ids.name', '=', 'B')]))
+        # Same result when it used _name_search
+        self.assertIn(parent, self._search(Model, [('all_relatives_ids', '=', 'A')]))
+        self.assertIn(parent, self._search(Model, [('all_relatives_ids', '=', 'B')]))
         # Same result with the child_of operator
-        self.assertIn(parent, Model.search([('all_relatives_ids', 'child_of', child_a.id)]))
-        self.assertIn(parent, Model.search([('all_relatives_ids', 'child_of', 'A')]))
-        self.assertIn(parent, Model.search([('all_relatives_ids', 'child_of', child_b.id)]))
-        self.assertIn(parent, Model.search([('all_relatives_ids', 'child_of', 'B')]))
+        self.assertIn(parent, self._search(Model, [('all_relatives_ids', 'child_of', child_a.id)]))
+        self.assertIn(parent, self._search(Model, [('all_relatives_ids', 'child_of', 'A')]))
+        self.assertIn(parent, self._search(Model, [('all_relatives_ids', 'child_of', child_b.id)]))
+        self.assertIn(parent, self._search(Model, [('all_relatives_ids', 'child_of', 'B')]))
 
     def test_search_many2many(self):
         """ Tests search on many2many fields. """
@@ -4054,7 +4052,7 @@ class TestMany2oneReference(TransactionExpressionCase):
         self.assertTrue(self.env.cache.has_dirty_fields(reference, [type(reference).res_model]))
 
         # searching on the one2many should flush the field 'res_model'
-        records = record.search([('model_ids.create_date', '!=', False)])
+        records = self._search(record, [('model_ids.create_date', '!=', False)])
         self.assertIn(record, records)
 
 
