@@ -813,6 +813,26 @@ class PosSession(models.Model):
 
         return data
 
+    def _update_line_amount(self, line_to_update, old_amounts, date):
+        _, to_update = line_to_update
+        return self._update_amounts(
+            old_amounts,
+            {'amount': to_update['price_subtotal']},
+            date,
+        )
+
+    def _get_order_tax_results(self, order):
+        base_lines = order._prepare_tax_base_line_values(sign=1)
+        tax_results = self.env['account.tax']._compute_taxes(base_lines, order.company_id)
+        return tax_results
+
+    def _get_base_lines_to_update(self, order):
+        tax_results = self._get_order_tax_results(order)
+        return tax_results['base_lines_to_update']
+
+    def _gat_tax_amounts(self, tax_line):
+        return tax_line['tax_amount_currency'], tax_line['base_amount_currency']
+
     def _accumulate_amounts(self, data):
         # Accumulate the amounts for each accounting lines group
         # Each dict maps `key` -> `amounts`, where `key` is the group key.
@@ -888,9 +908,8 @@ class PosSession(models.Model):
                         combine_receivables_pay_later[payment_method] = self._update_amounts(combine_receivables_pay_later[payment_method], {'amount': amount}, date)
 
             if not order_is_invoiced:
-                base_lines = order._prepare_tax_base_line_values(sign=1)
-                tax_results = self.env['account.tax']._compute_taxes(base_lines, order.company_id)
-                for base_line, to_update in tax_results['base_lines_to_update']:
+                for line_to_update in self._get_base_lines_to_update(order):
+                    base_line, to_update = line_to_update
                     # Combine sales/refund lines
                     sale_key = (
                         # account
@@ -902,24 +921,27 @@ class PosSession(models.Model):
                         tuple(to_update['tax_tag_ids'][0][2]),
                         base_line['product'].id if self.config_id.is_closing_entry_by_product else False,
                     )
-                    sales[sale_key] = self._update_amounts(
+                    sales[sale_key] = self._update_line_amount(
+                        line_to_update,
                         sales[sale_key],
-                        {'amount': to_update['price_subtotal']},
-                        order.date_order,
+                        order.date_order
                     )
                     if self.config_id.is_closing_entry_by_product:
                         sales[sale_key] = self._update_quantities(sales[sale_key], base_line['quantity'])
 
                 # Combine tax lines
+                tax_results = self._get_order_tax_results(order)
                 for tax_line in tax_results['tax_lines_to_add']:
                     tax_key = (
                         tax_line['account_id'],
                         tax_line['tax_repartition_line_id'],
                         tuple(tax_line['tax_tag_ids'][0][2]),
                     )
+
+                    tax_amount, base_amount = self._gat_tax_amounts(tax_line)
                     taxes[tax_key] = self._update_amounts(
                         taxes[tax_key],
-                        {'amount': -tax_line['tax_amount_currency'], 'base_amount': -tax_line['base_amount_currency']},
+                        {'amount': -tax_amount, 'base_amount': -base_amount},
                         order.date_order,
                     )
 
