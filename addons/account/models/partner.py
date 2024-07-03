@@ -221,7 +221,7 @@ class AccountFiscalPosition(models.Model):
             )),
             ('state_id', lambda fpos: (
                 not fpos.state_ids
-                or (partner.state_id in fpos.state_ids and 2)
+                or ((self.env.context.get('force_state') or partner.state_id) in fpos.state_ids and 2)
             )),
             ('country_id', lambda fpos: (
                 not fpos.country_id
