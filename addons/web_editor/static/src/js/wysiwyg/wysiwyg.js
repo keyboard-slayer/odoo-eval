@@ -38,7 +38,6 @@ const closestElement = OdooEditorLib.closestElement;
 const closestBlock = OdooEditorLib.closestBlock;
 const setSelection = OdooEditorLib.setSelection;
 const endPos = OdooEditorLib.endPos;
-const hasValidSelection = OdooEditorLib.hasValidSelection;
 const parseHTML = OdooEditorLib.parseHTML;
 
 var id = 0;
@@ -1620,7 +1619,14 @@ const Wysiwyg = Widget.extend({
                 $dropdown[0].classList.remove('dropup');
                 return !(ev.clickEvent && ev.clickEvent.__isColorpickerClick);
             });
+            $dropdown.on('hidden.bs.dropdown', ev => {
+                this.odooEditor.setKeepCellSelected(false);
+            });
             $dropdown.on('show.bs.dropdown', () => {
+                const selectedTds = [...this.$editable[0].querySelectorAll('.o_selected_td')];
+                if (selectedTds.length) {
+                    this.odooEditor.setKeepCellSelected(true);
+                }
                 if (manualOpening) {
                     return true;
                 }
@@ -1657,9 +1663,7 @@ const Wysiwyg = Widget.extend({
                         // Deselect tables so the applied color can be seen
                         // without using `!important` (otherwise the selection
                         // hides it).
-                        if (this.odooEditor.deselectTable() && hasValidSelection(this.odooEditor.editable)) {
-                            this.odooEditor.document.getSelection().collapseToStart();
-                        }
+                        this.odooEditor.deselectTable();
                         this._updateEditorUI(this.lastMediaClicked && { target: this.lastMediaClicked });
                         colorpicker.off('color_leave');
                     });
@@ -1729,7 +1733,10 @@ const Wysiwyg = Widget.extend({
         coloredElements = coloredElements.filter(element => this.odooEditor.document.contains(element));
 
         const coloredTds = coloredElements && coloredElements.length && coloredElements.filter(coloredElement => coloredElement.classList.contains('o_selected_td'));
-        if (coloredTds.length) {
+        if (selectedTds.length === 1 && !previewMode) {
+            const sel = this.odooEditor.document.getSelection();
+            sel.collapseToEnd();
+        } else if (coloredTds.length) {
             const propName = eventName === 'foreColor' ? 'color' : 'background-color';
             for (const td of coloredTds) {
                 // Make it important so it has priority over selection color.
