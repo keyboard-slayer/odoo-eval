@@ -1253,6 +1253,9 @@ const Wysiwyg = Widget.extend({
                 // Wait for the editor panel to be fully updated.
                 core.bus.trigger('deactivate_image_link_tool');
             });
+        } else if (this.lastElement.classList.contains("s_website_form_send")) {
+            // The 'Submit' button must remain linked to their respective Form.
+            return;
         } else {
             this.odooEditor.execCommand('unlink');
         }
