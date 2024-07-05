@@ -1,9 +1,23 @@
 /** @odoo-module **/
 
 import { _t } from "@web/core/l10n/translation";
+<<<<<<< saas-17.2
 import { ConfirmationDialog, AlertDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { ErrorDialog } from "@web/core/errors/error_dialogs";
 import { useEnv, onMounted, onPatched, useComponent, useRef } from "@odoo/owl";
+||||||| b0c17af253f5cae5966fa17652dae28b20812440
+import { OfflineErrorPopup } from "@point_of_sale/app/errors/popups/offline_error_popup";
+import { ConfirmPopup } from "@point_of_sale/app/utils/confirm_popup/confirm_popup";
+import { ErrorTracebackPopup } from "@point_of_sale/app/errors/popups/error_traceback_popup";
+import { ErrorPopup } from "@point_of_sale/app/errors/popups/error_popup";
+import { useEnv, onMounted, onPatched, useComponent, useRef } from "@odoo/owl";
+=======
+import { OfflineErrorPopup } from "@point_of_sale/app/errors/popups/offline_error_popup";
+import { ConfirmPopup } from "@point_of_sale/app/utils/confirm_popup/confirm_popup";
+import { ErrorTracebackPopup } from "@point_of_sale/app/errors/popups/error_traceback_popup";
+import { ErrorPopup } from "@point_of_sale/app/errors/popups/error_popup";
+import { useState, useEnv, onMounted, onPatched, useComponent, useRef } from "@odoo/owl";
+>>>>>>> 4a7182e2bd64fcb07357ba89601cd60dd4ffba5e
 
 /**
  * Introduce error handlers in the component.
@@ -83,5 +97,62 @@ export function useAsyncLockedMethod(method) {
         } finally {
             called = false;
         }
+    };
+}
+
+/**
+ * Wrapper for an async function that exposes the status of the function call.
+ *
+ * Sample use case:
+ * ```js
+ * {
+ *   // inside in a component
+ *   this.doPrint = useTrackedAsync(() => this.printReceipt())
+ *   this.doPrint.status === 'idle'
+ *   this.doPrint.call() // triggers the given async function
+ *   this.doPrint.status === 'loading'
+ *   ['success', 'error].includes(this.doPrint.status) && this.doPrint.result
+ * }
+ * ```
+ * @param {(...args: any[]) => Promise<any>} asyncFn
+ */
+export function useTrackedAsync(asyncFn) {
+    /**
+     * @type {{
+     *  status: 'idle' | 'loading' | 'error' | 'success',
+     * result: any,
+     * lastArgs: any[]
+     * }}
+     */
+    const state = useState({
+        status: "idle",
+        result: null,
+        lastArgs: null,
+    });
+
+    const lockedCall = useAsyncLockedMethod(async (...args) => {
+        state.status = "loading";
+        state.result = null;
+        state.lastArgs = args;
+        try {
+            const result = await asyncFn(...args);
+            state.status = "success";
+            state.result = result;
+        } catch (error) {
+            state.status = "error";
+            state.result = error;
+        }
+    });
+    return {
+        get status() {
+            return state.status;
+        },
+        get result() {
+            return state.result;
+        },
+        get lastArgs() {
+            return state.lastArgs;
+        },
+        call: lockedCall,
     };
 }
