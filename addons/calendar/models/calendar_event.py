@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+import itertools
 import logging
 import math
 from datetime import datetime, timedelta
@@ -758,13 +759,8 @@ class Meeting(models.Model):
         super(Meeting, self - hidden)._compute_display_name()
 
     @api.model
-    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        groupby = [groupby] if isinstance(groupby, str) else groupby
-        fields_aggregates = [
-            field_name for field_name in (fields or list(self._fields))
-            if ':' in field_name or (field_name in self and self._fields[field_name].aggregator)
-        ]
-        grouped_fields = {group_field.split(':')[0] for group_field in groupby + fields_aggregates}
+    def base_read_group(self, domain, groupby=(), aggregates=(), limit=None, offset=0, order=''):
+        grouped_fields = {group_field.split(':')[0] for group_field in itertools.chain(groupby, aggregates)}
         private_fields = grouped_fields - self._get_public_fields()
         if not self.env.su and private_fields:
             # display public, confidential events and events with default privacy when owner's default privacy is not private
@@ -772,8 +768,8 @@ class Meeting(models.Model):
                 '|', '|', '|', ('privacy', '=', 'public'), ('privacy', '=', 'confidential'), ('user_id', '=', self.env.user.id),
                 '&', ('privacy', '=', False), ('user_id.calendar_default_privacy', '!=', 'private')
             ]])
-            return super(Meeting, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
-        return super(Meeting, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
+            return super().base_read_group(domain, groupby, aggregates, offset=offset, limit=limit, order=order)
+        return super().base_read_group(domain, groupby, aggregates, offset=offset, limit=limit, order=order)
 
     def unlink(self):
         if not self:

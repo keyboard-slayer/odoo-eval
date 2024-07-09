@@ -925,7 +925,6 @@ class TestPrivateReadGroup(common.TransactionCase):
                 ],
             )
 
-
     def test_float_aggregate(self):
         records = self.env['test_read_group.aggregate'].create({'numeric_value': 42.42})
         [[result]] = records._read_group([('id', 'in', records.ids)], [], ['numeric_value:array_agg'])

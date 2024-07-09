@@ -1066,9 +1066,9 @@ class TestAccountMove(AccountTestInvoicingCommon):
                 }),
             ]
         })
-        balance = self.env["account.move.line"].read_group(
-            [("account_id", "=", account.id)], ["balance:sum"], ["account_root_id"]
-        )[0]["balance"]
+        balance = self.env["account.move.line"].base_read_group(
+            [("account_id", "=", account.id)], ["account_root_id"], ["balance:sum"],
+        )[0]["balance:sum"]
         self.assertEqual(balance, 500)
 
     def test_line_steal(self):
