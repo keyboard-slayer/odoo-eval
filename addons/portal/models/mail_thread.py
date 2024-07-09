@@ -1,10 +1,12 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import hashlib
 import hmac
 
-from odoo import fields, models, _
+from werkzeug.exceptions import Forbidden, NotFound
+
+from odoo import api, fields, models, _
+from odoo.tools import consteq, frozendict
 
 
 class MailThread(models.AbstractModel):
@@ -87,3 +89,41 @@ class MailThread(models.AbstractModel):
         :return: False or logical parent's _sign_token() result
         """
         return False
+
+    def _check_thread_portal_access(self, thread_id, token, _hash, pid):
+        has_access = False
+        if token or (_hash and pid):
+            record = self.browse(thread_id).sudo()
+            if _hash and pid:  # Signed Token Case: hash implies token is signed by partner pid
+                pid = int(pid)
+                has_access = consteq(_hash, record._sign_token(pid))
+                if not has_access:
+                    parent_sign_token = record._portal_get_parent_hash_token(pid)
+                    has_access = parent_sign_token and consteq(_hash, parent_sign_token)
+            elif token:  # Token Case: token is the global one of the document
+                token_field = self._mail_post_token_field
+                has_access = token and record and consteq(record[token_field], token)
+            if not has_access:
+                raise Forbidden()
+            partner_id = self.env.user.partner_id
+            if _hash and pid:
+                partner_id = self.env["res.partner"].sudo().browse(pid)
+            elif token:
+                if self.env.user._is_public() and hasattr(record, "partner_id") and record.partner_id:
+                    partner_id = record.partner_id
+                elif not partner_id:
+                    raise NotFound()
+            self.env.context = frozendict({**self.env.context, "portal_partner": partner_id})
+        return has_access
+
+    @api.model
+    def _get_thread_with_access(self, thread_id, **kwargs):
+        if self._check_thread_portal_access(
+            thread_id, kwargs.get("token"), kwargs.get("hash"), kwargs.get("pid")
+        ):
+            return (
+                super(MailThread, self.sudo())
+                ._get_thread_with_access(thread_id, **kwargs)
+                .with_context(mail_create_nosubscribe=True)
+            )
+        return super()._get_thread_with_access(thread_id, **kwargs)

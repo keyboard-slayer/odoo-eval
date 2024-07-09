@@ -6,7 +6,7 @@ from werkzeug.exceptions import NotFound, Forbidden
 from odoo import http
 from odoo.http import request
 from odoo.osv import expression
-from odoo.tools import consteq, plaintext2html
+from odoo.tools import consteq
 from odoo.addons.mail.controllers import mail
 from odoo.exceptions import AccessError
 
@@ -129,56 +129,6 @@ class PortalChatter(http.Controller):
             message, field_name='author_avatar', width=int(width), height=int(height),
         )
         return stream.get_response()
-
-    @http.route(['/mail/chatter_post'], type='json', methods=['POST'], auth='public', website=True)
-    def portal_chatter_post(self, thread_model, thread_id, post_data, **kwargs):
-        """Create a new `mail.message` with the given `message` and/or `attachment_ids` and return new message values.
-
-        The message will be associated to the record `res_id` of the model
-        `res_model`. The user must have access rights on this target document or
-        must provide valid identifiers through `kw`. See `_message_post_helper`.
-        """
-        message = post_data.get("body")
-        attachment_ids = post_data.get("attachment_ids", [])
-        if not self._portal_post_has_content(thread_model, thread_id, message, attachment_ids=attachment_ids, **kwargs):
-            return
-
-        thread_id = int(thread_id)
-
-        self._portal_post_check_attachments(attachment_ids, kwargs.get("attachment_tokens", []))
-
-        result = {'default_message': message}
-        # message is received in plaintext and saved in html
-        if message:
-            message = plaintext2html(message)
-        post_values = {
-            'res_model': thread_model,
-            'res_id': thread_id,
-            'message': message,
-            'send_after_commit': False,
-            'attachment_ids': False,  # will be added afterward
-        }
-        post_values.update(
-            (fname, kwargs.get(fname) or post_data.get(fname)) for fname in self._portal_post_filter_params())
-        post_values['_hash'] = kwargs.get('hash')
-        message = _message_post_helper(**post_values)
-        result.update({'default_message_id': message.id})
-
-        if attachment_ids:
-            # _message_post_helper already checks for pid/hash/token -> use message
-            # environment to keep the sudo mode when activated
-            record = message.env[thread_model].browse(thread_id)
-            attachments = record._process_attachments_for_post(
-                [], attachment_ids,
-                {'res_id': thread_id, 'model': thread_model}
-            )
-            # sudo write the attachment to bypass the read access verification in
-            # mail message
-            if attachments.get('attachment_ids'):
-                message.sudo().write(attachments)
-
-            result.update({'default_attachment_ids': message.attachment_ids.sudo().read(['id', 'name', 'mimetype', 'file_size', 'access_token'])})
-        return result
 
     @http.route('/mail/chatter_init', type='json', auth='public', website=True)
     def portal_chatter_init(self, res_model, res_id, domain=False, limit=False, **kwargs):

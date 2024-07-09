@@ -78,6 +78,26 @@ class ThreadController(http.Controller):
     def _get_allowed_message_post_params(self):
         return {"attachment_ids", "body", "message_type", "partner_ids", "subtype_xmlid", "parent_id"}
 
+    def _prepare_post_data(self, post_data, thread, special_mentions, **kwargs):
+        if "body" in post_data:
+            post_data["body"] = Markup(post_data["body"])  # contains HTML such as @mentions
+        new_partners = []
+        if "partner_emails" in kwargs:
+            new_partners = [
+                record.id
+                for record in request.env["res.partner"]._find_or_create_from_emails(
+                    kwargs["partner_emails"], kwargs.get("partner_additional_values", {})
+                )
+            ]
+        post_data["partner_ids"] = list(set((post_data.get("partner_ids", [])) + new_partners))
+        if "everyone" in special_mentions:
+            post_data["partner_ids"] = [
+                channel_member.partner_id.id
+                for channel_member in thread.channel_member_ids
+                if channel_member.partner_id
+            ]
+        return post_data
+
     @http.route("/mail/message/post", methods=["POST"], type="json", auth="public")
     @add_guest_to_context
     def mail_message_post(self, thread_model, thread_id, post_data, context=None, special_mentions=[], **kwargs):
@@ -101,20 +121,10 @@ class ThreadController(http.Controller):
                 'last_used': datetime.now(),
                 'ids': canned_response_ids,
             })
-        thread = request.env[thread_model].with_context(active_test=False).search([("id", "=", thread_id)])
-        thread = thread.with_context(active_test=True)
+        thread = request.env[thread_model]._get_thread_with_access(thread_id, **kwargs)
         if not thread:
             raise NotFound()
-        if "body" in post_data:
-            post_data["body"] = Markup(post_data["body"])  # contains HTML such as @mentions
-        new_partners = []
-        if "partner_emails" in kwargs:
-            new_partners = [record.id for record in request.env["res.partner"]._find_or_create_from_emails(
-                kwargs["partner_emails"], kwargs.get("partner_additional_values", {})
-            )]
-        post_data["partner_ids"] = list(set((post_data.get("partner_ids", [])) + new_partners))
-        if "everyone" in special_mentions:
-            post_data["partner_ids"] = [channel_member.partner_id.id for channel_member in thread.channel_member_ids if channel_member.partner_id]
+        post_data = self._prepare_post_data(post_data, thread, special_mentions, **kwargs)
         message = thread.message_post(
             **{
                 key: value

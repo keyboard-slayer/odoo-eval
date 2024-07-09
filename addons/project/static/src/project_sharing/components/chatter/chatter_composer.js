@@ -91,7 +91,7 @@ export class ChatterComposer extends Component {
         }
 
         await rpc(
-            "/mail/chatter_post",
+            "/mail/message/post",
             this.prepareMessageData(),
         );
         this.props.postProcessMessageSent();
