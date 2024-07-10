@@ -28,12 +28,18 @@
                 <i t-if="not options.get('no_marker')" class="fa fa-map-marker fa-fw" role="img" aria-label="Address" title="Address"/>
                 <span class="w-100 lh-sm text-truncate" itemprop="streetAddress" t-esc="address"/>
             </div>
-            <div t-if="city and 'city' in fields" t-attf-class="d-flex align-items-baseline gap-1">
+            <t t-set="has_city" t-value="city and 'city' in fields"/>
+            <t t-set="has_state" t-value="object.state_id and object.country_id.state_required"/>
+            <t t-set="has_country" t-value="country_id and 'country_id' in fields "/>
+            <t t-set="location" t-value="[]"/>
+            <t t-if="has_city" t-set="location" t-value="location + [city]"/>
+            <t t-if="has_state" t-set="location" t-value="location + [object.state_id.code]"/>
+            <t t-if="has_country" t-set="location" t-value="location + [country_id]"/>
+            <div t-if="(city and 'city' in fields) or (country_id and 'country_id' in fields)" t-attf-class="d-flex align-items-baseline gap-1">
                 <i t-if="not options.get('no_marker')" class="fa fa-map-marker fa-fw" role="img" aria-label="Address" title="Address"/>
                 <span>
                     <div>
-                        <span itemprop="addressLocality" t-esc="city"/>,
-                        <span itemprop="addressCountry" t-esc="country_id"/>
+                        <span itemprop="addressLocality" t-esc="', '.join(location)"/>
                     </div>
                 </span>
             </div>
