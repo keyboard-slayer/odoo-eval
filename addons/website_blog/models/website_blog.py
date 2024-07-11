@@ -367,3 +367,7 @@ class BlogPost(models.Model):
             'mapping': mapping,
             'icon': 'fa-rss',
         }
+
+    @api.model
+    def _get_thread_access_to_post(self):
+        return "read"

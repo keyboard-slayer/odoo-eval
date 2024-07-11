@@ -851,3 +851,7 @@ class ProductTemplate(models.Model):
         # TODO VFE pass website as param and avoid existence check
         website = self.env['website'].get_current_website()
         return self.sale_ok and (not website.prevent_zero_price_sale or self._get_contextual_price())
+
+    @api.model
+    def _get_thread_access_to_post(self):
+        return "read"

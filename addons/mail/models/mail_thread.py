@@ -4604,3 +4604,13 @@ class MailThread(models.AbstractModel):
         if "form" in res["views"] and isinstance(self.env[self._name], self.env.registry['mail.activity.mixin']):
             res["models"][self._name]["has_activities"] = True
         return res
+
+    @api.model
+    def _get_thread_with_access(self, thread_id, mode="read", **kwargs):
+        thread = self.with_context(active_test=False).search([("id", "=", thread_id)])
+        thread.check_access_rights(mode)
+        return thread.with_context(active_test=True)
+
+    @api.model
+    def _get_thread_access_to_post(self):
+        return "write"
