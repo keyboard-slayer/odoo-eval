@@ -5,6 +5,7 @@
             <field name="name">IAP Lead Generation Notification</field>
             <field name="email_from">iap@odoo.com</field>
             <field name="email_to">iap@odoo.com</field>
+            <field name="use_default_to" eval="False"/>
             <field name="subject">IAP Lead Generation Notification</field>
             <field name="model_id" ref="iap.model_iap_account"/>
             <field name="body_html" type="html">
