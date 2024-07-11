@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import binascii
@@ -10,7 +9,6 @@ from odoo.http import request
 
 from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment.controllers import portal as payment_portal
-from odoo.addons.portal.controllers.mail import _message_post_helper
 from odoo.addons.portal.controllers.portal import pager as portal_pager
 
 
@@ -145,14 +143,13 @@ class CustomerPortal(payment_portal.PaymentPortal):
                 context = {'lang': order_sudo.user_id.partner_id.lang or order_sudo.company_id.partner_id.lang}
                 msg = _('Quotation viewed by customer %s', order_sudo.partner_id.name if request.env.user._is_public() else request.env.user.partner_id.name)
                 del context
-                _message_post_helper(
-                    "sale.order",
-                    order_sudo.id,
-                    message=msg,
-                    token=order_sudo.access_token,
+                request.env["sale.order"]._check_thread_portal_access(order_sudo.id, token=access_token)
+                order_sudo.message_post(
+                    body=msg,
                     message_type="notification",
                     subtype_xmlid="mail.mt_note",
                     partner_ids=order_sudo.user_id.sudo().partner_id.ids,
+                    author_id=request.env["res.partner"]._get_portal_partner_from_context().id,
                 )
 
         backend_url = f'/web#model={order_sudo._name}'\
@@ -292,12 +289,13 @@ class CustomerPortal(payment_portal.PaymentPortal):
 
         pdf = request.env['ir.actions.report'].sudo()._render_qweb_pdf('sale.action_report_saleorder', [order_sudo.id])[0]
 
-        _message_post_helper(
-            'sale.order',
-            order_sudo.id,
-            _('Order signed by %s', name),
+        request.env["sale.order"]._check_thread_portal_access(order_sudo.id, token=access_token)
+        order_sudo.message_post(
+            body=_('Order signed by %s', name),
             attachments=[('%s.pdf' % order_sudo.name, pdf)],
-            token=access_token,
+            subtype_xmlid='mail.mt_comment',
+            message_type='comment',
+            author_id=request.env["res.partner"]._get_portal_partner_from_context().id,
         )
 
         query_string = '&message=sign_ok'
@@ -324,11 +322,12 @@ class CustomerPortal(payment_portal.PaymentPortal):
             # read directly during the flush due to access rights, necessitating manual caching.
             order_sudo.order_line.currency_id
 
-            _message_post_helper(
-                'sale.order',
-                order_sudo.id,
-                decline_message,
-                token=access_token,
+            request.env["sale.order"]._check_thread_portal_access(order_sudo.id, token=access_token)
+            order_sudo.message_post(
+                body=decline_message,
+                subtype_xmlid='mail.mt_comment',
+                message_type='comment',
+                author_id=request.env["res.partner"]._get_portal_partner_from_context().id,
             )
             redirect_url = order_sudo.get_portal_url()
         else:
