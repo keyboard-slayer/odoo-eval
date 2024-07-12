@@ -100,13 +100,13 @@ class AccountMove(models.Model):
         return self.env["account.account"].search(domain)
 
     def _get_accounts_and_lines_for_all_cells(self, args_list, extra_aggregates=[]):
-        company_ids = tuple(args['company_id'] or self.env.company.id for args in args_list)
-        account_codes = [
+        company_ids = {args['company_id'] or self.env.company.id for args in args_list}
+        account_codes = {
             code
             for args in args_list
             for code in args["codes"]
             if code
-        ]
+        }
 
         all_accounts = self._search_accounts_with_codes_or_types(
             codes=account_codes,
