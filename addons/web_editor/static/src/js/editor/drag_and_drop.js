@@ -249,7 +249,7 @@ export class dragAndDropHelper {
             this.draggedItemEl.style.gridArea = `${rowStart} / ${columnStart} / ${rowEnd} / ${columnEnd}`;
 
             gridUtils._gridCleanUp(rowEl, this.draggedItemEl);
-            this._removeGridAndDragHelper(rowEl);
+            this._removeDragHelper(rowEl);
         } else if (this.draggedItemEl.classList.contains("o_grid_item") && this.isDropped()) {
             // Case when dropping a grid item in a non-grid dropzone
             this.options.wysiwyg.odooEditor.observerActive(this.observerName);
@@ -325,9 +325,9 @@ export class dragAndDropHelper {
             dragHelperEl.style.gridArea = `1 / 1 / ${1 + columnRowCount} / ${1 + columnColCount}`;
             rowEl.append(dragHelperEl);
 
-            // Creating the background grid and updating the dropzone (in the
-            // case where the column over the dropzone is bigger than the grid).
-            const backgroundGridEl = gridUtils._addBackgroundGrid(rowEl, columnRowCount);
+            // Updating the dropzone (in the case where the column over the
+            // dropzone is bigger than the grid).
+            const backgroundGridEl = rowEl.querySelector(".o_we_background_grid");
             const rowCount = Math.max(rowEl.dataset.rowCount, columnRowCount);
             dropzoneEl.style.gridRowEnd = rowCount + 1;
 
@@ -385,13 +385,14 @@ export class dragAndDropHelper {
                 this.dragState.gridMode = false;
                 gridUtils._gridCleanUp(rowEl, this.draggedItemEl);
                 this.draggedItemEl.style.removeProperty("z-index");
-                this._removeGridAndDragHelper(rowEl);
-                const rowCount = parseInt(rowEl.dataset.rowCount);
-                dropzoneEl.style.gridRowEnd = Math.max(rowCount + 1, 1);
+                this._removeDragHelper(rowEl);
+                this._resizeBackgroundGridAndDropzone();
                 this._unwrapDraggedItemIfNeeded();
+            } else {
+                // Show the dropzone if it is not a grid
+                dropzoneEl.classList.remove("invisible");
             }
 
-            dropzoneEl.classList.remove("invisible");
             delete this.dragState.currentDropzoneEl;
         }
     }
@@ -575,26 +576,38 @@ export class dragAndDropHelper {
                 this._unwrapDraggedItemIfNeeded();
             }
 
-            // Removing the drag helper and the background grid and resizing the
-            // grid and the dropzone.
-            this._removeGridAndDragHelper(rowEl);
-            const rowCount = parseInt(rowEl.dataset.rowCount);
-            previousDropzoneEl.style.gridRowEnd = Math.max(rowCount + 1, 1);
+            // Removing the drag helper and resizing the grid and the dropzone
+            this._removeDragHelper(rowEl);
+            this._resizeBackgroundGridAndDropzone();
+        } else {
+            // Show the dropzone if it is not a grid
+            previousDropzoneEl.classList.remove("invisible");
         }
-        previousDropzoneEl.classList.remove("invisible");
     }
     /**
-     * Removes the background grid and the drag helper and resizes the grid.
+     * Removes the drag helper and resizes the grid.
      *
      * @private
      * @param {HTMLElement} rowEl - The row in grid mode.
      */
-    _removeGridAndDragHelper(rowEl) {
+    _removeDragHelper(rowEl) {
         this.dragState.dragHelperEl.remove();
-        this.dragState.backgroundGridEl.remove();
         this.options.wysiwyg.odooEditor.observerActive(this.observerName);
         gridUtils._resizeGrid(rowEl);
         this.options.wysiwyg.odooEditor.observerUnactive(this.observerName);
+    }
+    /**
+     * Resizes the current grid dropzone and its associated background grid.
+     *
+     * @private
+     */
+    _resizeBackgroundGridAndDropzone() {
+        const dropzoneEl = this.dragState.currentDropzoneEl;
+        const rowEl = dropzoneEl.parentNode;
+        const rowCount = parseInt(rowEl.dataset.rowCount);
+        const gridRowEnd = Math.max(rowCount + 1, 1);
+        dropzoneEl.style.gridRowEnd = gridRowEnd;
+        this.dragState.backgroundGridEl.style.gridRowEnd = gridRowEnd;
     }
     /**
      * Unwraps the dragged element from its column ('div') if it is a wrapped

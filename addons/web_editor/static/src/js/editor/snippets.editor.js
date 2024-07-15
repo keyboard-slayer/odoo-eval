@@ -1218,6 +1218,7 @@ var SnippetEditor = Widget.extend({
             this.options.wysiwyg.odooEditor.observerUnactive('dragAndDropMoveSnippet');
         }
 
+        this.$editable.find('.o_we_background_grid').remove();
         this.$editable.find('.oe_drop_zone').remove();
 
         const draggedItemEl = this.dragAndDropHelper.draggedItemEl;
@@ -3084,11 +3085,13 @@ class SnippetsMenu extends Component {
         const columnCount = 12;
         const rowCount = parseInt(rowEl.dataset.rowCount);
         let $dropzone = $('<div/>', {
-            'class': 'oe_drop_zone oe_insert oe_grid_zone',
+            'class': 'oe_drop_zone oe_insert oe_grid_zone invisible',
             'style': 'grid-area: ' + 1 + '/' + 1 + '/' + (rowCount + 1) + '/' + (columnCount + 1),
         });
         $dropzone[0].style.minHeight = window.getComputedStyle(rowEl).height;
         $dropzone[0].style.width = window.getComputedStyle(rowEl).width;
+        const backgroundGridEl = gridUtils._addBackgroundGrid(rowEl, 0);
+        gridUtils._setElementToMaxZindex(backgroundGridEl, rowEl);
         rowEl.append($dropzone[0]);
     }
     /**
@@ -3315,6 +3318,7 @@ class SnippetsMenu extends Component {
                     }
                 }
 
+                this.getEditableArea().find('.o_we_background_grid').remove();
                 this.getEditableArea().find('.oe_drop_zone').remove();
 
                 const draggedItemEl = this.dragAndDropHelper.draggedItemEl;
