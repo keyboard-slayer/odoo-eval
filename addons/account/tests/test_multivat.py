@@ -1,7 +1,7 @@
 
 from unittest.mock import patch
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import tagged
 
 from odoo.addons.account.models.chart_template import AccountChartTemplate

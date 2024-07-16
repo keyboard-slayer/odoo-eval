@@ -1,4 +1,4 @@
-from odoo import Command
+from odoo.api import Command
 from odoo.http import Request
 from odoo.tests.common import HttpCase, tagged
 

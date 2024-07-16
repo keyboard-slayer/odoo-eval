@@ -9,7 +9,8 @@ from datetime import datetime
 from collections import defaultdict
 from psycopg2 import OperationalError
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.addons.l10n_in_ewaybill_stock.tools.ewaybill_api import EWayBillApi, EWayBillError
 

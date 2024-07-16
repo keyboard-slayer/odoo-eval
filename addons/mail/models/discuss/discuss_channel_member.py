@@ -5,7 +5,8 @@ import requests
 import uuid
 
 import odoo
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.mail.tools.discuss import Store
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.osv import expression

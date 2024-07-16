@@ -3,7 +3,8 @@
 
 from markupsafe import Markup
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 from odoo.tools import html2plaintext
 
 

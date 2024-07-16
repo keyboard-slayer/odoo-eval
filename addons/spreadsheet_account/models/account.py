@@ -5,7 +5,8 @@ from datetime import date
 import calendar
 from dateutil.relativedelta import relativedelta
 
-from odoo import models, api, _
+from odoo import models, api
+from odoo.tools import _
 from odoo.osv import expression
 from odoo.tools import date_utils
 

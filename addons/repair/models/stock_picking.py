@@ -3,7 +3,8 @@
 
 import time
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.tools.misc import clean_context
 

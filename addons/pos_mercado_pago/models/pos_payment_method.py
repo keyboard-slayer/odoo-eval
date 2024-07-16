@@ -1,6 +1,7 @@
 import logging
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 from odoo.exceptions import AccessError, UserError
 
 from .mercado_pago_pos_request import MercadoPagoPosRequest

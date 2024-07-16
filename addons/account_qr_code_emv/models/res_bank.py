@@ -2,7 +2,8 @@
 
 import re
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.tools.misc import remove_accents
 from odoo.addons.account_qr_code_emv.const import CURRENCY_MAPPING
 

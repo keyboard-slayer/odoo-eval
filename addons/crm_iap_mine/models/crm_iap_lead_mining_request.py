@@ -3,7 +3,8 @@
 
 import logging
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.iap.tools import iap_tools
 from odoo.exceptions import UserError
 from odoo.tools import is_html_empty

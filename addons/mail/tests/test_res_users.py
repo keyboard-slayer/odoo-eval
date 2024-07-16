@@ -4,7 +4,7 @@
 from psycopg2 import IntegrityError
 from unittest.mock import patch
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.base.models.res_users import Users
 from odoo.addons.mail.tests.common import MailCommon, mail_new_test_user
 from odoo.addons.base.tests.common import HttpCaseWithUserDemo

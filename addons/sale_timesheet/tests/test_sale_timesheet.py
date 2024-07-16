@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from datetime import timedelta
 
-from odoo import Command
+from odoo.api import Command
 from odoo.fields import Date
 from odoo.tools import float_is_zero
 from odoo.exceptions import UserError

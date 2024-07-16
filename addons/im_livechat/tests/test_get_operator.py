@@ -1,5 +1,5 @@
 import odoo
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import HttpCase
 from odoo.tests.common import new_test_user
 

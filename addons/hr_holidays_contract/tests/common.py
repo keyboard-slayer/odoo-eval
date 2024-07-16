@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from odoo.tests.common import TransactionCase
-from odoo import Command
+from odoo.api import Command
 from odoo.fields import Datetime
 
 class TestHolidayContract(TransactionCase):

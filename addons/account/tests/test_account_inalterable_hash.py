@@ -1,7 +1,8 @@
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.models import Model
 from odoo.tests import Form, tagged
-from odoo import fields, Command
+from odoo import fields
+from odoo.api import Command
 from odoo.exceptions import UserError, RedirectWarning
 from unittest.mock import patch
 

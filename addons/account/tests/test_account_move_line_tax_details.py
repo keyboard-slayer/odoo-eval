@@ -2,7 +2,7 @@
 #pylint: disable=too-many-lines
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.tests import tagged
-from odoo import Command
+from odoo.api import Command
 
 
 @tagged('post_install', '-at_install')

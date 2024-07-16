@@ -9,7 +9,8 @@ import logging
 import odoo
 import werkzeug
 
-from odoo import _, http
+from odoo import http
+from odoo.tools import _
 from odoo.http import request
 from werkzeug.exceptions import NotFound
 

@@ -3,7 +3,9 @@
 import ast
 from collections import defaultdict
 
-from odoo import api, fields, models, SUPERUSER_ID, _
+from odoo import api, fields, models
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.tools import SQL
 
 class Job(models.Model):

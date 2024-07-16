@@ -7,7 +7,8 @@ from operator import itemgetter
 
 from markupsafe import Markup
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.tools.translate import html_translate
 

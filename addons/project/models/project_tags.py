@@ -3,7 +3,8 @@
 
 from random import randint
 
-from odoo import api, fields, models, SUPERUSER_ID
+from odoo import api, fields, models
+from odoo.api import SUPERUSER_ID
 from odoo.osv import expression
 
 

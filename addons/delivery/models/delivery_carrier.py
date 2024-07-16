@@ -3,7 +3,9 @@
 import psycopg2
 import re
 
-from odoo import _, api, fields, models, registry, Command, SUPERUSER_ID
+from odoo import api, fields, models
+from odoo.api import registry, Command, SUPERUSER_ID
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools.safe_eval import safe_eval
 

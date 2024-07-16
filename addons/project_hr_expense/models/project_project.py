@@ -2,7 +2,8 @@
 
 import json
 
-from odoo import models, _, _lt
+from odoo import models
+from odoo.tools import _, _lt
 from odoo.osv import expression
 
 class Project(models.Model):

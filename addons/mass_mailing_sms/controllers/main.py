@@ -3,7 +3,8 @@
 
 from werkzeug.exceptions import NotFound
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.addons.phone_validation.tools import phone_validation
 from odoo.http import request
 

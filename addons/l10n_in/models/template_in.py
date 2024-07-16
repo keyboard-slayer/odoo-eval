@@ -1,7 +1,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from odoo import models, fields, _
+from odoo import models, fields
+from odoo.tools import _
 from odoo.addons.account.models.chart_template import template
-from odoo import Command
+from odoo.api import Command
 
 
 class AccountChartTemplate(models.AbstractModel):

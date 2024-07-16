@@ -3,7 +3,8 @@
 
 import hashlib
 
-from odoo import api, models, _
+from odoo import api, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import format_list
 

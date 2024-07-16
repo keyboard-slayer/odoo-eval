@@ -4,7 +4,8 @@
 import re
 import logging
 
-from odoo import api, models, Command
+from odoo import api, models
+from odoo.api import Command
 from odoo.tools import email_normalize
 
 from odoo.addons.google_calendar.utils.google_calendar import GoogleCalendarService

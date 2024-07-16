@@ -5,7 +5,8 @@ from contextlib import contextmanager
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.tests import Form, tagged
 from odoo.exceptions import UserError
-from odoo import fields, Command
+from odoo import fields
+from odoo.api import Command
 
 
 @tagged('post_install', '-at_install')

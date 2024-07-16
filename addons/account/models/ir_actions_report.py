@@ -6,7 +6,8 @@ try:
 except ImportError:
     from PyPDF2.utils import PdfStreamError, PdfReadError
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import pdf
 

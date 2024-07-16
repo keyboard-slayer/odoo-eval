@@ -1,7 +1,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from random import randint
-from odoo import _, fields, models
+from odoo import fields, models
+from odoo.tools import _
 
 
 class SkillType(models.Model):

@@ -2,7 +2,9 @@
 
 import json
 
-from odoo import api, Command, fields, models, _
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.addons.mail.tools.discuss import Store
 from odoo.exceptions import UserError
 from odoo.http import request

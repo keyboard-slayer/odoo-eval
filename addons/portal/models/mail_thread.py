@@ -4,7 +4,8 @@
 import hashlib
 import hmac
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 
 
 class MailThread(models.AbstractModel):

@@ -2,7 +2,8 @@
 
 from markupsafe import Markup
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.exceptions import AccessError
 from odoo.tests.common import users, tagged, HttpCase
 from odoo.addons.mail.tools.discuss import Store

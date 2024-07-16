@@ -3,7 +3,8 @@ import requests
 import pytz
 from urllib.parse import urljoin
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 QRIS_TIMEOUT = 35  # They say that the time to get a response vary between 6 to 30s

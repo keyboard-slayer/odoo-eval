@@ -3,7 +3,8 @@
 
 from datetime import date, timedelta
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 

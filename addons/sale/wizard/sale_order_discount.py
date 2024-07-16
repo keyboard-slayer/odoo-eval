@@ -2,7 +2,9 @@
 
 from collections import defaultdict
 
-from odoo import Command, _, api, fields, models
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 

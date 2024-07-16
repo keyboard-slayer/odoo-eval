@@ -3,7 +3,7 @@
 from unittest.mock import patch
 
 import odoo
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import tagged
 from odoo.tests.common import HttpCase
 

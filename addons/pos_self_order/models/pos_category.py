@@ -2,7 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.exceptions import ValidationError
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from odoo.tools import _
 
 
 class PosCategory(models.Model):

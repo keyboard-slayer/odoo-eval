@@ -3,7 +3,8 @@
 
 import base64
 import re
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError, RedirectWarning
 from odoo.tools import float_round, float_repr
 

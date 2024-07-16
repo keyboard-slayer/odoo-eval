@@ -5,7 +5,8 @@ import pprint
 
 from werkzeug.urls import url_encode, url_join
 
-from odoo import _, fields, models
+from odoo import fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.payment import utils as payment_utils

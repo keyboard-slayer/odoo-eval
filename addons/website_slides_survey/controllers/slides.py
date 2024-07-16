@@ -5,7 +5,7 @@ import werkzeug
 import werkzeug.utils
 import werkzeug.exceptions
 
-from odoo import _
+from odoo.tools import _
 from odoo import http
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.exceptions import AccessError

@@ -9,7 +9,9 @@ from collections import defaultdict, Counter
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
-from odoo import api, exceptions, fields, models, _, Command
+from odoo import api, exceptions, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.osv import expression
 from odoo.tools import is_html_empty
 from odoo.tools.misc import clean_context, get_lang, groupby

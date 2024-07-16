@@ -4,7 +4,9 @@ from datetime import date
 import logging
 import re
 
-from odoo import api, fields, models, Command, _
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import ValidationError, UserError
 from odoo.osv import expression
 from odoo.tools import frozendict, format_date, float_compare, format_list, Query

@@ -5,7 +5,8 @@ import collections
 from datetime import timedelta
 from itertools import groupby
 import operator as py_operator
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 from odoo.tools import groupby
 from odoo.tools.float_utils import float_round, float_is_zero
 

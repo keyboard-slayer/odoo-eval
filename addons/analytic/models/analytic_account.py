@@ -3,7 +3,8 @@
 
 from collections import defaultdict
 import itertools
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import groupby
 

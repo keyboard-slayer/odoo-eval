@@ -7,7 +7,8 @@ from datetime import timedelta
 import requests
 from requests.exceptions import ConnectionError as RequestConnectionError, Timeout as RequestTimeout
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)

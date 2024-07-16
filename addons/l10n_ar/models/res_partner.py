@@ -1,5 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from odoo import fields, models, api, _
+from odoo import fields, models, api
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 import stdnum.ar
 import re

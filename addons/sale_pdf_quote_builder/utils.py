@@ -3,7 +3,7 @@
 import base64
 import io
 
-from odoo import _
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.tools import pdf
 

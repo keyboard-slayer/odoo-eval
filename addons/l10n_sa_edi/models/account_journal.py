@@ -5,7 +5,8 @@ from lxml import etree
 from datetime import datetime
 from base64 import b64encode, b64decode
 from importlib import metadata
-from odoo import models, fields, service, _, api
+from odoo import models, fields, service, api
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import parse_version
 from odoo.tools.misc import file_open

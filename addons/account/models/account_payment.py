@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api, _, Command
+from odoo import models, fields, api
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.misc import format_date, formatLang
 from odoo.tools import create_index

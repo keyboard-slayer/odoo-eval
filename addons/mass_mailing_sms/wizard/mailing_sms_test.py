@@ -4,7 +4,8 @@
 from markupsafe import Markup
 from werkzeug.urls import url_join
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 from odoo.addons.sms.tools.sms_api import SmsApi
 
 

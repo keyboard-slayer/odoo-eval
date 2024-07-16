@@ -5,7 +5,8 @@ import ldap
 import logging
 from ldap.filter import filter_format
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.exceptions import AccessDenied
 from odoo.tools.misc import str2bool
 from odoo.tools.pycompat import to_text

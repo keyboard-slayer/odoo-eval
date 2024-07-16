@@ -4,7 +4,8 @@
 from datetime import datetime, timedelta
 from freezegun import freeze_time
 
-from odoo import Command, exceptions
+from odoo import exceptions
+from odoo.api import Command
 from odoo.addons.test_event_full.tests.common import TestEventFullCommon
 from odoo.tests.common import users
 

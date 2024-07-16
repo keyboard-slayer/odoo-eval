@@ -12,7 +12,9 @@ import re
 
 from psycopg2.extras import Json
 
-from odoo import Command, _, models, api
+from odoo import models, api
+from odoo.api import Command
+from odoo.tools import _
 from odoo.addons.base.models.ir_model import MODULE_UNINSTALL_FLAG
 from odoo.exceptions import AccessError, UserError
 from odoo.modules import get_resource_from_path

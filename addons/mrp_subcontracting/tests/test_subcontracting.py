@@ -3,7 +3,7 @@
 
 from freezegun import freeze_time
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import Form
 from odoo.tests.common import TransactionCase

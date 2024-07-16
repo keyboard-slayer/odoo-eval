@@ -4,7 +4,8 @@
 from lxml import etree
 from lxml.html import builder as html
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import is_html_empty
 

@@ -2,7 +2,8 @@
 
 import threading
 
-from odoo import api, models, tools, _
+from odoo import api, models, tools
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 

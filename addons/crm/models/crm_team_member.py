@@ -6,7 +6,8 @@ import logging
 
 from ast import literal_eval
 
-from odoo import api, exceptions, fields, models, _
+from odoo import api, exceptions, fields, models
+from odoo.tools import _
 from odoo.tools import float_round
 
 _logger = logging.getLogger(__name__)

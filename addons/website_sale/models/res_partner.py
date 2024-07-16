@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 
 from odoo.addons.website.models import ir_http
 

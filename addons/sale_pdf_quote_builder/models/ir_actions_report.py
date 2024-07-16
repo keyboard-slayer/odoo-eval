@@ -7,7 +7,8 @@ import json
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from PyPDF2.generic import NameObject, createStringObject
 
-from odoo import _, api, models
+from odoo import api, models
+from odoo.tools import _
 from odoo.tools import format_amount, format_date, format_datetime, pdf
 
 from odoo.addons.sale_pdf_quote_builder.const import DEFAULT_FORM_FIELD_PATH_MAPPING

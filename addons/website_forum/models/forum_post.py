@@ -6,7 +6,8 @@ import math
 import re
 from datetime import datetime
 
-from odoo import api, fields, models, tools, _
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import slug, unslug
 from odoo.exceptions import UserError, ValidationError, AccessError
 from odoo.osv import expression

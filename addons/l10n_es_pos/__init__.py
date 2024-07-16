@@ -1,4 +1,4 @@
-from odoo import _
+from odoo.tools import _
 from . import models
 from . import tests
 

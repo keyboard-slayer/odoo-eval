@@ -4,7 +4,7 @@
 from datetime import datetime, timedelta
 from freezegun import freeze_time
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.event.tests.common import EventCase
 from odoo import exceptions
 from odoo.fields import Datetime as FieldsDatetime

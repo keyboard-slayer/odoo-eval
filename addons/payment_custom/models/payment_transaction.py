@@ -2,7 +2,8 @@
 
 import logging
 
-from odoo import _, api, models
+from odoo import api, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 from odoo.addons.payment_custom.controllers.main import CustomController

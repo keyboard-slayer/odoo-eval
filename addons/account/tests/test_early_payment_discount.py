@@ -2,7 +2,8 @@
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.exceptions import ValidationError
 from odoo.tests import tagged, Form
-from odoo import fields, Command
+from odoo import fields
+from odoo.api import Command
 
 
 @tagged('post_install', '-at_install')

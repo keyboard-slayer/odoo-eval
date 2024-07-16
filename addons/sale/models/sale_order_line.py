@@ -7,7 +7,8 @@ from datetime import timedelta
 
 from markupsafe import Markup
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.fields import Command
 from odoo.osv import expression

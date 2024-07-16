@@ -5,7 +5,8 @@ from collections import defaultdict
 from lxml.builder import E
 from markupsafe import Markup
 
-from odoo import api, models, tools, _
+from odoo import api, models, tools
+from odoo.tools import _
 from odoo.addons.mail.tools.alias_error import AliasError
 
 import logging

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import tagged
 
 from odoo.addons.project.tests.test_project_sharing import TestProjectSharingCommon

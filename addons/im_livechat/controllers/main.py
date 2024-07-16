@@ -5,7 +5,8 @@ import re
 from werkzeug.exceptions import NotFound
 from urllib.parse import urlsplit
 
-from odoo import http, tools, _, release
+from odoo import http, tools, release
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.http import request
 from odoo.tools import replace_exceptions

@@ -1,6 +1,6 @@
 
 import odoo.tests
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.base.tests.common import HttpCaseWithUserDemo
 
 

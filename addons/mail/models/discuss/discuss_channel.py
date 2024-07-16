@@ -7,7 +7,9 @@ from secrets import choice
 from markupsafe import Markup
 from datetime import timedelta
 
-from odoo import _, api, fields, models, tools, Command
+from odoo import api, fields, models, tools
+from odoo.api import Command
+from odoo.tools import _
 from odoo.addons.base.models.avatar_mixin import get_hsl_from_seed
 from odoo.addons.mail.tools.discuss import Store
 from odoo.exceptions import UserError, ValidationError

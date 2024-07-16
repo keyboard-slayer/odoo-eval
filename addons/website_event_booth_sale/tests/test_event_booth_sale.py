@@ -3,7 +3,8 @@
 
 from datetime import datetime, timedelta
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.addons.website_event_sale.tests.common import TestWebsiteEventSaleCommon
 from odoo.addons.base.tests.common import HttpCaseWithUserPortal
 from odoo.tests.common import tagged

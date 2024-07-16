@@ -15,7 +15,8 @@ from psycopg2 import sql
 from werkzeug import urls
 from werkzeug.exceptions import NotFound
 
-from odoo import api, fields, models, tools, release, registry
+from odoo import api, fields, models, tools, release
+from odoo.api import registry
 from odoo.addons.http_routing.models.ir_http import slugify, url_for, url_localized
 from odoo.addons.website.models.ir_http import sitemap_qs2dom
 from odoo.addons.website.tools import similarity_score, text_from_html, get_base_domain

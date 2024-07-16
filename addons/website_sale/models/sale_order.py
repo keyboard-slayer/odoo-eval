@@ -6,7 +6,9 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import SUPERUSER_ID, _, api, fields, models
+from odoo import api, fields, models
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.fields import Command
 from odoo.http import request

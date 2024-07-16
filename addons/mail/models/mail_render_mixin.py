@@ -11,7 +11,8 @@ from lxml import html
 from markupsafe import Markup
 from werkzeug import urls
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.addons.base.models.ir_qweb import QWebException
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.exceptions import UserError, AccessError

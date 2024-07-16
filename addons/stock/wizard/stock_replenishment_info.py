@@ -6,7 +6,9 @@ from json import dumps
 from datetime import datetime, time
 
 
-from odoo import api, fields, models, SUPERUSER_ID, _
+from odoo import api, fields, models
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.osv.expression import AND
 from odoo.tools.date_utils import get_month, subtract
 from odoo.tools.misc import get_lang, format_date

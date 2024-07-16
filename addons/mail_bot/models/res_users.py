@@ -2,7 +2,8 @@
 
 from markupsafe import Markup
 
-from odoo import models, fields, _
+from odoo import models, fields
+from odoo.tools import _
 
 class Users(models.Model):
     _inherit = 'res.users'

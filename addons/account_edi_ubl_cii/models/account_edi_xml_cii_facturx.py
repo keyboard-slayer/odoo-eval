@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import models, _
+from odoo import models
+from odoo.tools import _
 from odoo.tools import float_repr, is_html_empty, html2plaintext, cleanup_xml_node
 from lxml import etree
 

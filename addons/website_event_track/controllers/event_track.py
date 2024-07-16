@@ -14,7 +14,8 @@ import json
 import operator
 import pytz
 
-from odoo import exceptions, http, fields, tools, _
+from odoo import exceptions, http, fields, tools
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.http import request
 from odoo.osv import expression

@@ -2,7 +2,8 @@
 import contextlib
 import phonenumbers
 
-from odoo import _, api, fields, models, modules
+from odoo import api, fields, models, modules
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.account_edi_proxy_client.models.account_edi_proxy_user import AccountEdiProxyError

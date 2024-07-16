@@ -1,7 +1,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 
-from odoo import api, models, _
+from odoo import api, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.osv.expression import AND
 from odoo.tools import format_date

@@ -1,5 +1,7 @@
 
-from odoo import Command, http, _
+from odoo import http
+from odoo.api import Command
+from odoo.tools import _
 from odoo.http import request
 
 

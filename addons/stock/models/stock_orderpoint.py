@@ -8,7 +8,9 @@ from datetime import datetime, time
 from dateutil import relativedelta
 from psycopg2 import OperationalError
 
-from odoo import SUPERUSER_ID, _, api, fields, models, registry
+from odoo import api, fields, models
+from odoo.api import SUPERUSER_ID, registry
+from odoo.tools import _
 from odoo.addons.stock.models.stock_rule import ProcurementException
 from odoo.exceptions import RedirectWarning, UserError, ValidationError
 from odoo.osv import expression

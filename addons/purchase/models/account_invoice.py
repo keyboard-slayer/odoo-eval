@@ -5,7 +5,9 @@ import logging
 import time
 from markupsafe import Markup
 
-from odoo import api, fields, models, Command, _
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 
 _logger = logging.getLogger(__name__)
 

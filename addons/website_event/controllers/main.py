@@ -8,7 +8,8 @@ from ast import literal_eval
 from collections import Counter
 from werkzeug.exceptions import NotFound
 
-from odoo import fields, http, _
+from odoo import fields, http
+from odoo.tools import _
 from odoo.addons.website.controllers.main import QueryURL
 from odoo.http import request
 from odoo.osv import expression

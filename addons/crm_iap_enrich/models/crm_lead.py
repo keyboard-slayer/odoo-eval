@@ -6,7 +6,8 @@ import logging
 
 from psycopg2 import OperationalError
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.addons.iap.tools import iap_tools
 
 _logger = logging.getLogger(__name__)

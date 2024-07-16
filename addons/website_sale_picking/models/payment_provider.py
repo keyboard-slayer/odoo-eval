@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 
 from odoo.addons.payment import utils as payment_utils
 from odoo.addons.website_sale_picking import const

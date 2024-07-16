@@ -2,7 +2,8 @@
 
 import json
 
-from odoo import api, fields, models, _, _lt
+from odoo import api, fields, models
+from odoo.tools import _, _lt
 from odoo.osv import expression
 from odoo.tools import SQL
 from odoo.exceptions import ValidationError, UserError

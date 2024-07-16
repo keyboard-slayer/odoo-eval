@@ -3,7 +3,8 @@
 
 import json
 
-from odoo import _, api, models, modules
+from odoo import api, models, modules
+from odoo.tools import _
 
 
 class Users(models.Model):

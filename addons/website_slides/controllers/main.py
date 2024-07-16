@@ -10,7 +10,8 @@ import logging
 import math
 import werkzeug
 
-from odoo import fields, http, tools, _
+from odoo import fields, http, tools
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import slug, unslug
 from odoo.addons.website.controllers.main import QueryURL
 from odoo.addons.website.models.ir_http import sitemap_qs2dom

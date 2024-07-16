@@ -3,7 +3,8 @@
 
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
-from odoo import api, Command, fields, models
+from odoo import api, fields, models
+from odoo.api import Command
 from odoo.osv import expression
 from odoo.tools import float_compare, float_round, float_is_zero, OrderedSet
 

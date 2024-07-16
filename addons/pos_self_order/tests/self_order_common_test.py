@@ -3,7 +3,7 @@
 
 import odoo.tests
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.mail.tests.common import mail_new_test_user
 from odoo.addons.point_of_sale.tests.common import archive_products
 

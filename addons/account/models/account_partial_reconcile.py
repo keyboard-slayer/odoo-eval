@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _, Command
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import frozendict
 

@@ -2,7 +2,8 @@
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.exceptions import UserError
 from odoo.tests import tagged
-from odoo import fields, Command
+from odoo import fields
+from odoo.api import Command
 
 from dateutil.relativedelta import relativedelta
 

@@ -3,7 +3,8 @@
 import uuid
 from ast import literal_eval
 from werkzeug.urls import url_encode
-from odoo import api, exceptions, fields, models, _
+from odoo import api, exceptions, fields, models
+from odoo.tools import _
 
 
 class PortalMixin(models.AbstractModel):

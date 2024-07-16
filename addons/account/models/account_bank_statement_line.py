@@ -1,4 +1,6 @@
-from odoo import api, Command, fields, models, _
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 
 from xmlrpc.client import MAXINT

@@ -7,7 +7,8 @@ import logging
 from werkzeug.exceptions import Forbidden
 from werkzeug.urls import url_encode
 
-from odoo import _, http
+from odoo import http
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.http import request
 from odoo.tools import consteq

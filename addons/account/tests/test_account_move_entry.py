@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.tests import Form, tagged, new_test_user
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.exceptions import UserError, RedirectWarning
 
 from dateutil.relativedelta import relativedelta

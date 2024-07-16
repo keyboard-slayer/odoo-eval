@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, _
+from odoo import models
+from odoo.tools import _
 
 from stdnum.no import mva
 

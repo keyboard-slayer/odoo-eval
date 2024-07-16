@@ -3,7 +3,8 @@
 import requests
 from datetime import datetime, timedelta, timezone
 
-from odoo import models, fields, _
+from odoo import models, fields
+from odoo.tools import _
 from odoo.exceptions import ValidationError, UserError
 
 

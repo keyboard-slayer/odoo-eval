@@ -7,7 +7,8 @@ import pytz
 from dateutil import rrule
 from dateutil.relativedelta import relativedelta
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools.misc import clean_context
 

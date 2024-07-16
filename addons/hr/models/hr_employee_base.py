@@ -6,7 +6,8 @@ from ast import literal_eval
 from pytz import timezone, UTC, utc
 from datetime import timedelta, datetime
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import format_time
 

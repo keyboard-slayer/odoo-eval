@@ -1,7 +1,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from collections import Counter
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 
 
 class HrExpenseSheet(models.Model):

@@ -3,7 +3,9 @@
 import logging
 import os
 
-from odoo import _, api, fields, models, SUPERUSER_ID
+from odoo import api, fields, models
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.tools import email_normalize, email_normalize_all
 from odoo.exceptions import AccessError, ValidationError
 _logger = logging.getLogger(__name__)

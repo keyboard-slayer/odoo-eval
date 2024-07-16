@@ -1,4 +1,5 @@
-from odoo import _, models, tools
+from odoo import models, tools
+from odoo.tools import _
 from odoo.tools import html2plaintext
 
 DANISH_NATIONAL_IT_AND_TELECOM_AGENCY_ID = '320'

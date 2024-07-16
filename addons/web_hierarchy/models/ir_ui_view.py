@@ -2,7 +2,8 @@
 
 from lxml import etree
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 from odoo.tools import format_list
 
 HIERARCHY_VALID_ATTRIBUTES = {

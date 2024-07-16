@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 import pytz
 
-from odoo import Command
+from odoo.api import Command
 from odoo import tests
 from odoo.addons.mail.tests.common import MailCommon
 

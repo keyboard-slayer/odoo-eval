@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.stock.tests.test_packing import TestPackingCommon
 from odoo.exceptions import UserError
 from odoo.tests import Form

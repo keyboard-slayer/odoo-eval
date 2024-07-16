@@ -6,7 +6,9 @@ import random
 import re
 from operator import itemgetter
 
-from odoo import api, Command, fields, models, modules, _
+from odoo import api, fields, models, modules
+from odoo.api import Command
+from odoo.tools import _
 
 
 class ImLivechatChannel(models.Model):

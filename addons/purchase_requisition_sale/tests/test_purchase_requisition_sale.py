@@ -3,7 +3,7 @@
 
 from odoo.tests.common import TransactionCase
 from odoo.tests import Form
-from odoo import Command
+from odoo.api import Command
 
 
 class TestPurchaseRequisitionSale(TransactionCase):

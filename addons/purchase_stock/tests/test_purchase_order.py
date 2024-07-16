@@ -4,7 +4,7 @@ import re
 from datetime import datetime, timedelta
 from freezegun import freeze_time
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.addons.stock_account.tests.test_anglo_saxon_valuation_reconciliation_common import ValuationReconciliationTestCommon
 from odoo.exceptions import UserError

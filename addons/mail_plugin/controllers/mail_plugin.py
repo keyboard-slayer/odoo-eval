@@ -8,7 +8,8 @@ import requests
 from markupsafe import Markup
 from werkzeug.exceptions import Forbidden
 
-from odoo import http, tools, _
+from odoo import http, tools
+from odoo.tools import _
 from odoo.addons.iap.tools import iap_tools
 from odoo.exceptions import AccessError
 from odoo.http import request

@@ -2,7 +2,8 @@
 
 from odoo.exceptions import UserError
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.osv import expression
 
 TIMESHEET_INVOICE_TYPES = [

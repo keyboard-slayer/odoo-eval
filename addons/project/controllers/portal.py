@@ -6,7 +6,8 @@ from collections import OrderedDict
 from operator import itemgetter
 from markupsafe import Markup
 
-from odoo import conf, http, _
+from odoo import conf, http
+from odoo.tools import _
 from odoo.exceptions import AccessError, MissingError, UserError
 from odoo.http import request
 from odoo.osv.expression import AND, FALSE_DOMAIN

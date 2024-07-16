@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from freezegun import freeze_time
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.tests import tagged
 from odoo.exceptions import UserError

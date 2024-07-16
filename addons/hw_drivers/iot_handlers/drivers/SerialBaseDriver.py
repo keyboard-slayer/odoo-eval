@@ -9,7 +9,7 @@ from threading import Lock
 import time
 import traceback
 
-from odoo import _
+from odoo.tools import _
 from odoo.addons.hw_drivers.event_manager import event_manager
 from odoo.addons.hw_drivers.driver import Driver
 

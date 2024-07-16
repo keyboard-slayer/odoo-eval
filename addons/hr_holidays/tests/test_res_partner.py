@@ -4,7 +4,8 @@
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.tests.common import tagged, TransactionCase
 from odoo.addons.mail.tools.discuss import Store
 

@@ -3,7 +3,8 @@
 from werkzeug.exceptions import NotFound, Forbidden
 from odoo.exceptions import ValidationError
 
-from odoo import _, http
+from odoo import http
+from odoo.tools import _
 from odoo.http import request
 from odoo.addons.portal.controllers.mail import _check_special_access, PortalChatter
 from odoo.tools import plaintext2html, html2plaintext

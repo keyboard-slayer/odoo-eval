@@ -3,7 +3,8 @@
 
 import ast
 
-from odoo import _, tools
+from odoo import tools
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 

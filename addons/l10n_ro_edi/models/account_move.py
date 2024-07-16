@@ -1,6 +1,7 @@
 import requests
 
-from odoo import models, fields, _, api, modules, tools
+from odoo import models, fields, api, modules, tools
+from odoo.tools import _
 
 
 class AccountMove(models.Model):

@@ -3,7 +3,8 @@
 
 from collections import defaultdict
 
-from odoo import _, models
+from odoo import models
+from odoo.tools import _
 from odoo.exceptions import UserError
 
 import markupsafe

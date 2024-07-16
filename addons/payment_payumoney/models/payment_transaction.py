@@ -2,7 +2,8 @@
 
 from werkzeug import urls
 
-from odoo import _, api, models
+from odoo import api, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 from odoo.addons.payment import utils as payment_utils

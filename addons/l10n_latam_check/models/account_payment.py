@@ -1,4 +1,6 @@
-from odoo import fields, models, api, Command, _
+from odoo import fields, models, api
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.misc import format_date
 

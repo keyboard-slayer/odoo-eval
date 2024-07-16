@@ -5,7 +5,8 @@ import logging
 
 from werkzeug import urls
 
-from odoo import _, api, models
+from odoo import api, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.tools.float_utils import float_repr
 

@@ -4,7 +4,7 @@
 from werkzeug.exceptions import Forbidden, NotFound
 from werkzeug.urls import url_encode
 
-from odoo import _
+from odoo.tools import _
 from odoo.http import Controller, request, Response, route
 from odoo.tools import consteq
 

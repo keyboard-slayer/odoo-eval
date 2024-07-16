@@ -4,7 +4,8 @@
 from ast import literal_eval
 from uuid import uuid4
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import html2plaintext, plaintext2html
 

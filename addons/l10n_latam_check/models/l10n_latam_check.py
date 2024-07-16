@@ -3,7 +3,9 @@
 import logging
 import stdnum
 
-from odoo import models, fields, api, Command, _
+from odoo import models, fields, api
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import index_exists
 

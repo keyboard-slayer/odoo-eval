@@ -2,7 +2,8 @@
 
 from collections import defaultdict
 
-from odoo import _, models
+from odoo import models
+from odoo.tools import _
 
 class EmployeeResumeReport(models.AbstractModel):
     _name = 'report.hr_skills.report_employee_cv'

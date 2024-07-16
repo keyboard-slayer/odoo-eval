@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, models, _, _lt, Command
+from odoo import api, models
+from odoo.api import Command
+from odoo.tools import _, _lt
 from odoo.tools import html2plaintext
 
 class Task(models.Model):

@@ -6,7 +6,9 @@ import base64
 import json
 import random
 
-from odoo import models, api, _, fields, Command, tools
+from odoo import models, api, fields, tools
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.osv import expression
 from odoo.release import version

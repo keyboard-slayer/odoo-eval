@@ -6,7 +6,8 @@ import zipfile
 
 from werkzeug.exceptions import NotFound
 
-from odoo import _, http
+from odoo import http
+from odoo.tools import _
 from odoo.exceptions import AccessError
 from odoo.http import request, content_disposition
 

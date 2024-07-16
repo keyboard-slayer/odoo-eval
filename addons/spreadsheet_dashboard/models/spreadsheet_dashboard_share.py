@@ -2,7 +2,8 @@ import base64
 import uuid
 from werkzeug.exceptions import Forbidden
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from odoo.tools import _
 from odoo.tools import consteq
 
 class SpreadsheetDashboardShare(models.Model):

@@ -19,7 +19,8 @@ from xml.etree import ElementTree as ET
 
 import odoo
 
-from odoo import http, models, fields, _
+from odoo import http, models, fields
+from odoo.tools import _
 from odoo.exceptions import AccessError
 from odoo.http import request, SessionExpiredException
 from odoo.osv import expression

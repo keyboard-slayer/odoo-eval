@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from contextlib import nullcontext
 
-from odoo import api, fields, models, _, tools, Command
+from odoo import api, fields, models, tools
+from odoo.api import Command
+from odoo.tools import _
 from odoo.osv import expression
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import SQL, Query

@@ -2,7 +2,7 @@
 
 from werkzeug.exceptions import NotFound
 
-from odoo import _
+from odoo.tools import _
 from odoo.http import route, request
 from odoo.addons.mail.controllers.attachment import AttachmentController
 from odoo.exceptions import AccessError

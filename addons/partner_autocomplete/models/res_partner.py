@@ -9,7 +9,8 @@ import requests
 
 from stdnum.eu.vat import check_vies
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.tools.image import base64_to_image
 
 _logger = logging.getLogger(__name__)

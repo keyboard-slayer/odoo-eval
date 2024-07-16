@@ -3,7 +3,7 @@
 
 import re
 
-from odoo import _
+from odoo.tools import _
 
 from odoo.http import request, route, Controller, content_disposition
 

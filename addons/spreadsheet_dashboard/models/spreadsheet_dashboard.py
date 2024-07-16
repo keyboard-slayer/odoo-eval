@@ -1,6 +1,7 @@
 import json
 
-from odoo import _, fields, models
+from odoo import fields, models
+from odoo.tools import _
 
 
 class SpreadsheetDashboard(models.Model):

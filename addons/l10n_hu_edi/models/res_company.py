@@ -6,7 +6,8 @@ from itertools import islice
 
 from lxml import etree
 
-from odoo import models, fields, _
+from odoo import models, fields
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.addons.l10n_hu_edi.models.l10n_hu_edi_connection import L10nHuEdiConnection, L10nHuEdiConnectionError, XML_NAMESPACES
 

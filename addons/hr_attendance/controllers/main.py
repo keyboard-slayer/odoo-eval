@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.http import request
 from odoo.tools import float_round, SQL
 from odoo.tools.image import image_data_uri

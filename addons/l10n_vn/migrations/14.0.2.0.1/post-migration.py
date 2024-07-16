@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import api, SUPERUSER_ID
+from odoo import api
+from odoo.api import SUPERUSER_ID
 
 FIXED_ACCOUNTS_MAP = {
     '5221': '5211',

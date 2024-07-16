@@ -4,7 +4,8 @@
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
-from odoo import api, exceptions, fields, models, _
+from odoo import api, exceptions, fields, models
+from odoo.tools import _
 from odoo.tools import format_list
 
 

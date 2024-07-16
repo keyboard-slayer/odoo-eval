@@ -3,7 +3,8 @@
 
 from werkzeug.exceptions import NotFound
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.exceptions import AccessError, MissingError
 from odoo.http import request
 from odoo.osv import expression

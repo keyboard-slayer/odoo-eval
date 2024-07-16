@@ -2,7 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import markupsafe
-from odoo import _, api, fields, models, release
+from odoo import api, fields, models, release
+from odoo.tools import _
 
 
 # === TBAI license values ===

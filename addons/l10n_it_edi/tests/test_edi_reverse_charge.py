@@ -3,7 +3,8 @@
 
 from collections import namedtuple
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.tests import tagged
 from odoo.addons.l10n_it_edi.tests.common import TestItEdi
 

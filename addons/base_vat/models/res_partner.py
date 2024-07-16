@@ -9,7 +9,8 @@ from stdnum import luhn
 
 import logging
 
-from odoo import api, models, fields, tools, _
+from odoo import api, models, fields, tools
+from odoo.tools import _
 from odoo.tools import zeep
 from odoo.tools.misc import ustr
 from odoo.exceptions import ValidationError

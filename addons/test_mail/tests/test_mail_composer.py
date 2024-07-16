@@ -8,7 +8,7 @@ from datetime import timedelta
 from itertools import chain, product
 from unittest.mock import DEFAULT, patch
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.base.tests.test_ir_cron import CronMixinCase
 from odoo.addons.mail.tests.common import mail_new_test_user, MailCommon
 from odoo.addons.mail.wizard.mail_compose_message import MailComposer

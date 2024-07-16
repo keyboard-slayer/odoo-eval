@@ -6,7 +6,8 @@ import werkzeug.urls
 
 from werkzeug.urls import url_parse
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import unslug_url
 from odoo.exceptions import UserError
 from odoo.fields import Command

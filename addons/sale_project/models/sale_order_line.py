@@ -3,7 +3,9 @@
 
 from collections import defaultdict
 
-from odoo import api, Command, fields, models, _
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import AccessError
 from odoo.tools import format_amount
 from odoo.tools.sql import column_exists, create_column

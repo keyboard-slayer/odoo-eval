@@ -5,7 +5,8 @@ import logging
 
 from datetime import datetime, timedelta
 
-from odoo import _, models
+from odoo import models
+from odoo.tools import _
 from odoo.exceptions import AccessDenied, UserError
 from odoo.http import request
 from odoo.tools.misc import babel_locale_parse, hmac

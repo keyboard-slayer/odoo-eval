@@ -3,7 +3,8 @@
 import logging
 import json
 
-from odoo import api, models, fields, _
+from odoo import api, models, fields
+from odoo.tools import _
 from odoo.exceptions import ValidationError, UserError
 from odoo.tools import float_is_zero
 from odoo.tools.sql import column_exists, create_column

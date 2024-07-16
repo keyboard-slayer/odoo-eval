@@ -3,7 +3,8 @@
 
 from collections import OrderedDict
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.osv import expression
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 from odoo.addons.account.controllers.download_docs import _get_zip_headers

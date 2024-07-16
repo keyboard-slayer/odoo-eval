@@ -7,7 +7,8 @@ from re import sub as regex_sub
 from collections import defaultdict
 
 from lxml import etree
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.l10n_es_edi_tbai.models.l10n_es_edi_tbai_agencies import get_key
 from odoo.exceptions import UserError
 

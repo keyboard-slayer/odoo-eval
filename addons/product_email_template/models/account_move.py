@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models, SUPERUSER_ID
+from odoo import api, models
+from odoo.api import SUPERUSER_ID
 
 
 class AccountMove(models.Model):

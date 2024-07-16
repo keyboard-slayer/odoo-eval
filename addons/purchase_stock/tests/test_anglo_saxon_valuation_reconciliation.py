@@ -5,7 +5,8 @@ from freezegun import freeze_time
 
 from odoo.addons.stock_account.tests.test_anglo_saxon_valuation_reconciliation_common import ValuationReconciliationTestCommon
 from odoo.tests import Form, tagged
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 
 
 

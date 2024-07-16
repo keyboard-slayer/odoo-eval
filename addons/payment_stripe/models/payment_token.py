@@ -3,7 +3,8 @@
 import logging
 import pprint
 
-from odoo import _, fields, models
+from odoo import fields, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)

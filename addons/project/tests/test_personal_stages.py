@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import UserError
 from odoo.tests import HttpCase, tagged
 

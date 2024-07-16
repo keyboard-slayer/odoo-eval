@@ -4,7 +4,8 @@
 from datetime import timedelta
 from collections import defaultdict
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.osv import expression
 from odoo.tools import float_compare
 from odoo.exceptions import UserError

@@ -2,7 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from markupsafe import Markup
-from odoo import fields, models, _, tools
+from odoo import fields, models, tools
+from odoo.tools import _
 
 
 class MassMailing(models.Model):

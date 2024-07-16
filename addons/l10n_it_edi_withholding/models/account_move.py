@@ -4,7 +4,8 @@
 import logging
 from collections import namedtuple
 from markupsafe import Markup
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 
 _logger = logging.getLogger(__name__)
 

@@ -3,7 +3,7 @@
 import psycopg2
 from lxml import etree
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.project.tests.test_project_base import TestProjectCommon
 from odoo.tests import Form, tagged
 from odoo.tools import mute_logger

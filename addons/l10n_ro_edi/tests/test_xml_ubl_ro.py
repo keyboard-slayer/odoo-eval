@@ -1,4 +1,4 @@
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.l10n_account_edi_ubl_cii_tests.tests.common import TestUBLCommon
 from odoo.exceptions import UserError
 from odoo.tests import tagged

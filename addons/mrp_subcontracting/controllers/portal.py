@@ -4,7 +4,8 @@
 import werkzeug
 from collections import OrderedDict
 
-from odoo import conf, http, _
+from odoo import conf, http
+from odoo.tools import _
 from odoo.http import request
 from odoo.exceptions import AccessError, MissingError
 from odoo.addons.portal.controllers import portal

@@ -8,7 +8,8 @@ from unittest.mock import patch
 import lxml
 from freezegun import freeze_time
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.exceptions import UserError
 from odoo.tests import tagged

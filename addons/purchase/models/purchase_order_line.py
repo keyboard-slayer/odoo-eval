@@ -4,7 +4,8 @@ from dateutil.relativedelta import relativedelta
 from pytz import UTC
 import re
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, get_lang, float_is_zero
 from odoo.tools.float_utils import float_compare, float_round
 from odoo.exceptions import UserError

@@ -3,7 +3,7 @@
 
 from datetime import datetime, timedelta
 
-from odoo import Command
+from odoo.api import Command
 
 from odoo.exceptions import UserError
 from odoo.tests import Form, tagged

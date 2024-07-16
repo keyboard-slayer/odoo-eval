@@ -4,7 +4,8 @@
 import re
 import werkzeug
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 import logging

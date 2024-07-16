@@ -3,7 +3,9 @@
 
 from collections import defaultdict
 
-from odoo import api, fields, models, _, Command
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, get_lang
 
 

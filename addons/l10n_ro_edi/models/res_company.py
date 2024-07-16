@@ -5,7 +5,8 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from werkzeug.urls import url_join
 
-from odoo import fields, models, api, _
+from odoo import fields, models, api
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.http import request
 from odoo.tools import json

@@ -9,7 +9,8 @@ import markupsafe
 from collections import defaultdict
 from markupsafe import Markup
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from odoo.tools import _
 from odoo.tools import html_escape, float_is_zero, float_compare
 from odoo.exceptions import AccessError, ValidationError
 from odoo.addons.iap import jsonrpc

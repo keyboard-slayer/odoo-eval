@@ -7,7 +7,8 @@ from freezegun import freeze_time
 from unittest.mock import patch
 
 import odoo
-from odoo import fields, exceptions, Command
+from odoo import fields, exceptions
+from odoo.api import Command
 from odoo.tests import Form
 from odoo.tests.common import TransactionCase, tagged
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon

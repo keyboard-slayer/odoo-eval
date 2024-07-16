@@ -3,7 +3,8 @@
 
 from collections import defaultdict
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import float_is_zero, float_round, float_compare, OrderedSet
 

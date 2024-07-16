@@ -3,7 +3,9 @@ from collections import defaultdict
 from markupsafe import Markup
 from werkzeug.urls import url_encode
 
-from odoo import _, api, fields, models, modules, tools, Command
+from odoo import api, fields, models, modules, tools
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools.misc import get_lang
 

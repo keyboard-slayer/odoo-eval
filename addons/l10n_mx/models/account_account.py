@@ -1,4 +1,5 @@
-from odoo import api, Command, models
+from odoo import api, models
+from odoo.api import Command
 
 
 class AccountAccount(models.Model):

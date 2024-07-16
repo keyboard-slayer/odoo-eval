@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _, models
+from odoo import models
+from odoo.tools import _
 from odoo.tools import float_round
 
 from odoo.addons.payment_razorpay import const

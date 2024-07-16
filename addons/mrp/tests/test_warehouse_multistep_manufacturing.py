@@ -3,7 +3,7 @@
 
 from odoo.tests import Form, tagged
 from odoo.addons.mrp.tests.common import TestMrpCommon
-from odoo import Command
+from odoo.api import Command
 
 
 @tagged('post_install', '-at_install')

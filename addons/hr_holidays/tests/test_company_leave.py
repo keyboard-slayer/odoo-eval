@@ -3,7 +3,7 @@
 
 from datetime import date, datetime
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase, warmup
 

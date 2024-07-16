@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models, fields, _
+from odoo import api, models, fields
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 class ResCompany(models.Model):

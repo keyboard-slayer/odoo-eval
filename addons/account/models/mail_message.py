@@ -2,7 +2,8 @@
 
 from markupsafe import Markup
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.osv.expression import OR
 

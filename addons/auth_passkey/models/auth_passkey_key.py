@@ -3,7 +3,9 @@ import json
 import logging
 from werkzeug.urls import url_parse
 
-from odoo import api, Command, fields, models, _
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import AccessDenied
 from odoo.http import request
 from odoo.tools import sql, SQL

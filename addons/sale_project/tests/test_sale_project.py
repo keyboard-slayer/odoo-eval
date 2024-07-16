@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests.common import new_test_user
 from .common import TestSaleProjectCommon
 from odoo.tests import Form, HttpCase

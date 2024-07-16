@@ -4,7 +4,8 @@
 import json
 from werkzeug.exceptions import NotFound
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.http import Controller, request, route, content_disposition
 from odoo.tools import consteq
 

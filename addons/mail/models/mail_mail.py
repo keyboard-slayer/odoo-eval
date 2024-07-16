@@ -14,7 +14,9 @@ import pytz
 from collections import defaultdict
 from dateutil.parser import parse
 
-from odoo import _, api, fields, models, registry, SUPERUSER_ID
+from odoo import api, fields, models
+from odoo.api import registry, SUPERUSER_ID
+from odoo.tools import _
 from odoo import tools
 from odoo.addons.base.models.ir_mail_server import MailDeliveryException
 

@@ -11,7 +11,8 @@ import math
 from dateutil.relativedelta import relativedelta
 from operator import itemgetter
 
-from odoo import _, fields, http, tools
+from odoo import fields, http, tools
+from odoo.tools import _
 from odoo.http import request
 from odoo.osv import expression
 

@@ -8,7 +8,8 @@ import re
 from lxml import etree
 from psycopg2.errors import LockNotAvailable
 
-from odoo import fields, models, api, _
+from odoo import fields, models, api
+from odoo.tools import _
 from odoo.http import request
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import formatLang, float_round, float_repr, cleanup_xml_node, groupby

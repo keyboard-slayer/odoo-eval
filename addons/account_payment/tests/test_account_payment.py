@@ -2,7 +2,7 @@
 
 from unittest.mock import patch
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import UserError, ValidationError
 from odoo.addons.account_payment.tests.common import AccountPaymentCommon
 from odoo.tests import tagged

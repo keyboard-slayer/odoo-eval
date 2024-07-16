@@ -5,7 +5,8 @@ from hashlib import sha1
 from cryptography.hazmat.primitives import hashes, serialization
 from lxml import etree
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.account.tools.certificate import load_key_and_certificates
 from odoo.addons.l10n_es_edi_facturae import xml_utils
 from odoo.exceptions import UserError

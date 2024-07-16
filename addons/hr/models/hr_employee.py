@@ -10,7 +10,8 @@ from werkzeug.urls import url_encode
 from dateutil.relativedelta import relativedelta
 from markupsafe import Markup
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError, AccessError
 from odoo.osv import expression
 from odoo.tools import convert, format_date

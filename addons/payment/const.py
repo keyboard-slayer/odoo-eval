@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _
+from odoo.tools import _
 
 
 # According to https://en.wikipedia.org/wiki/ISO_4217#Minor_unit_fractions

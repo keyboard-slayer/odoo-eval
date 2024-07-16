@@ -3,7 +3,7 @@
 import odoo
 
 def migrate(cr, version):
-    registry = odoo.registry(cr.dbname)
+    registry = odoo.api.registry(cr.dbname)
     from odoo.addons.account.models.chart_template import migrate_set_tags_and_taxes_updatable
     migrate_set_tags_and_taxes_updatable(cr, registry, 'l10n_ch')
 

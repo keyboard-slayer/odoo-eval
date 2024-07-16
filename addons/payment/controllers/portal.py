@@ -4,7 +4,8 @@ import urllib.parse
 
 import werkzeug
 
-from odoo import _, http
+from odoo import http
+from odoo.tools import _
 from odoo.exceptions import AccessError, ValidationError
 from odoo.http import request
 

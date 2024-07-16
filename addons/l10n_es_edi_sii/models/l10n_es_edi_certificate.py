@@ -7,7 +7,8 @@ from datetime import datetime
 from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat
 
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.addons.account.tools.certificate import load_key_and_certificates
 

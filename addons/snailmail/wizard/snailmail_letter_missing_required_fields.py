@@ -1,5 +1,6 @@
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 
 class SnailmailLetterMissingRequiredFields(models.TransientModel):
     _name = 'snailmail.letter.missing.required.fields'

@@ -4,7 +4,8 @@ from datetime import timedelta
 
 import requests
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.addons.google_account.models.google_service import GOOGLE_TOKEN_ENDPOINT
 

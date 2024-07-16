@@ -2,7 +2,8 @@
 
 from collections import defaultdict
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.sql import column_exists, create_column, drop_index, index_exists
 

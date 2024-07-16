@@ -3,7 +3,8 @@
 
 from datetime import datetime
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.osv import expression
 

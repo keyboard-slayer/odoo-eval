@@ -1,6 +1,6 @@
 from freezegun import freeze_time
 
-from odoo import _
+from odoo.tools import _
 from odoo.fields import Command
 from odoo.tests import tagged
 

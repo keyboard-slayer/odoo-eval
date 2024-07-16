@@ -4,7 +4,8 @@
 from collections import defaultdict
 from datetime import timedelta
 
-from odoo import api, fields, tools, models, _
+from odoo import api, fields, tools, models
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 
 

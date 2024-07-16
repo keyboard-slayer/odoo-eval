@@ -7,7 +7,8 @@ import uuid
 from lxml import etree, objectify
 from werkzeug import urls
 
-from odoo import _, api, models
+from odoo import api, models
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.payment import utils as payment_utils

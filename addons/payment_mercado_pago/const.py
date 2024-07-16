@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _
+from odoo.tools import _
 
 
 # Currency codes of the currencies supported by Mercado Pago in ISO 4217 format.

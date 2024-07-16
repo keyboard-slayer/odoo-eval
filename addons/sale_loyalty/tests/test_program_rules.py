@@ -3,7 +3,7 @@
 from datetime import date, timedelta
 from freezegun import freeze_time
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import ValidationError
 
 from odoo.addons.sale_loyalty.tests.common import TestSaleCouponCommon

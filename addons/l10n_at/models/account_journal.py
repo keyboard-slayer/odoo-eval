@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, models, Command
+from odoo import api, models
+from odoo.api import Command
 
 
 class AccountJournal(models.Model):

@@ -4,7 +4,8 @@
 from dateutil.relativedelta import relativedelta
 from operator import itemgetter
 
-from odoo import fields, http, _
+from odoo import fields, http
+from odoo.tools import _
 from odoo.http import request
 from odoo.tools import date_utils, groupby as groupbyelem
 from odoo.osv.expression import AND, FALSE_DOMAIN

@@ -3,7 +3,8 @@
 
 from odoo.exceptions import AccessDenied
 
-from odoo import api, models, registry, SUPERUSER_ID
+from odoo import api, models
+from odoo.api import registry, SUPERUSER_ID
 
 
 class Users(models.Model):

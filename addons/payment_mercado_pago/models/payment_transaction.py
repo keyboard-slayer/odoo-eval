@@ -6,7 +6,8 @@ from urllib.parse import quote as url_quote
 
 from werkzeug import urls
 
-from odoo import _, api, models
+from odoo import api, models
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 
 from odoo.addons.payment_mercado_pago import const

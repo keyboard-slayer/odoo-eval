@@ -6,7 +6,7 @@ from collections import OrderedDict
 from lxml import etree
 from re import search
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tools import mute_logger
 from odoo.exceptions import AccessError
 from odoo.tests import HttpCase, tagged

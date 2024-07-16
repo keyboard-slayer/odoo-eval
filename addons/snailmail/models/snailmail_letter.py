@@ -11,7 +11,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.pdfgen.canvas import Canvas
 
-from odoo import fields, models, api, _
+from odoo import fields, models, api
+from odoo.tools import _
 from odoo.addons.iap.tools import iap_tools
 from odoo.exceptions import AccessError, UserError
 from odoo.tools.safe_eval import safe_eval

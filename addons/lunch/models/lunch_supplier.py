@@ -7,7 +7,8 @@ from collections import defaultdict
 from datetime import datetime, time, timedelta
 from textwrap import dedent
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.osv import expression
 from odoo.tools import float_round

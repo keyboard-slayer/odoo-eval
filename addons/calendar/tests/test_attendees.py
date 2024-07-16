@@ -6,7 +6,8 @@ from dateutil.relativedelta import relativedelta
 
 from odoo.tests.common import TransactionCase, new_test_user
 from odoo.tests import Form
-from odoo import fields, Command
+from odoo import fields
+from odoo.api import Command
 
 
 class TestEventNotifications(TransactionCase):

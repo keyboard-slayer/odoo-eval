@@ -1,6 +1,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import Command, _, api, fields, models
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.tools import float_is_zero
 
 

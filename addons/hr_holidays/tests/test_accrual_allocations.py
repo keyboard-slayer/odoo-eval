@@ -2,7 +2,7 @@ import datetime
 from freezegun import freeze_time
 from dateutil.relativedelta import relativedelta
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import UserError
 from odoo.tests import tagged, Form
 

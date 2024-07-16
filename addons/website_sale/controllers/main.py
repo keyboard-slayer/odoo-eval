@@ -8,7 +8,8 @@ from datetime import datetime
 from werkzeug.exceptions import Forbidden, NotFound
 from werkzeug.urls import url_decode, url_encode, url_parse
 
-from odoo import _, _lt, fields
+from odoo import fields
+from odoo.tools import _, _lt
 from odoo.exceptions import ValidationError
 from odoo.fields import Command
 from odoo.http import request, route

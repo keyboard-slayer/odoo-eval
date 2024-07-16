@@ -2,7 +2,8 @@
 
 from datetime import timedelta
 
-from odoo import fields, Command
+from odoo import fields
+from odoo.api import Command
 from odoo.tests import Form
 from odoo.addons.purchase_stock.tests.common import PurchaseTestCommon
 

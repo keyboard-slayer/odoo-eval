@@ -2,7 +2,7 @@
 
 from freezegun import freeze_time
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.l10n_it_edi_doi.tests.common import TestItEdiDoi
 from odoo.tests import tagged, Form
 

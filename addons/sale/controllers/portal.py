@@ -3,7 +3,8 @@
 
 import binascii
 
-from odoo import fields, http, _
+from odoo import fields, http
+from odoo.tools import _
 from odoo.exceptions import AccessError, MissingError, ValidationError
 from odoo.fields import Command
 from odoo.http import request

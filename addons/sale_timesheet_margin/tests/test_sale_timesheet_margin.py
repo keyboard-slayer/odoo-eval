@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.addons.sale_timesheet.tests.common import TestCommonSaleTimesheet
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import tagged
 
 

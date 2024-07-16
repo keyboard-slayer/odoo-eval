@@ -3,7 +3,7 @@
 from collections import defaultdict
 
 from odoo import api, fields, models
-from odoo import Command
+from odoo.api import Command
 
 
 class Event(models.Model):

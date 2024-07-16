@@ -3,7 +3,8 @@
 import uuid
 from unittest.mock import patch
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.tools import mute_logger
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.addons.mail.tests.common import mail_new_test_user

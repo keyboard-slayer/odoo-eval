@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.http import request
 from odoo.osv.expression import AND
 from odoo.tools import format_amount

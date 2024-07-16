@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 
 
 class StockLot(models.Model):

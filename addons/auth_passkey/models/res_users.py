@@ -1,6 +1,8 @@
 import json
 
-from odoo import fields, models, registry, _
+from odoo import fields, models
+from odoo.api import registry
+from odoo.tools import _
 from odoo.tools import SQL
 from odoo.exceptions import AccessDenied
 

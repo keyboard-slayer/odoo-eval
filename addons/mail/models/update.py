@@ -8,7 +8,8 @@ import requests
 
 from ast import literal_eval
 
-from odoo import api, fields, release, SUPERUSER_ID
+from odoo import api, fields, release
+from odoo.api import SUPERUSER_ID
 from odoo.exceptions import UserError
 from odoo.models import AbstractModel
 from odoo.tools.translate import _

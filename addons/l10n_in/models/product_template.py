@@ -2,7 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import re
-from odoo import api, models, fields, _
+from odoo import api, models, fields
+from odoo.tools import _
 
 
 class ProductTemplate(models.Model):

@@ -5,7 +5,9 @@ import ast
 import re
 from collections import defaultdict
 
-from odoo import models, fields, api, _, osv, Command
+from odoo import models, fields, api, osv
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import ValidationError, UserError
 
 FIGURE_TYPE_SELECTION_VALUES = [

@@ -21,7 +21,8 @@ import contextlib
 import requests
 import secrets
 
-from odoo import _, http, release, service
+from odoo import http, release, service
+from odoo.tools import _
 from odoo.tools.func import lazy_property
 from odoo.tools.misc import file_path
 

@@ -3,7 +3,8 @@ import requests
 import zipfile
 
 from lxml import etree
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from odoo.tools import _
 
 NS_UPLOAD = {"ns": "mfp:anaf:dgti:spv:respUploadFisier:v1"}
 NS_STATUS = {"ns": "mfp:anaf:dgti:efactura:stareMesajFactura:v1"}

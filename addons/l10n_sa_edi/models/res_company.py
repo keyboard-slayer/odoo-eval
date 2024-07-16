@@ -1,5 +1,6 @@
 import re
-from odoo import models, fields, _
+from odoo import models, fields
+from odoo.tools import _
 from odoo.exceptions import UserError
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization

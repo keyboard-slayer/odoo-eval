@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, registry
+from odoo import models
+from odoo.api import registry
 from odoo.api import Environment
 from odoo.fields import Datetime
 from odoo.http import request

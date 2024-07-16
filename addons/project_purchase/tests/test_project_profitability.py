@@ -3,7 +3,7 @@
 
 from datetime import datetime, timedelta
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import tagged
 
 from odoo.addons.project.tests.test_project_profitability import TestProjectProfitabilityCommon

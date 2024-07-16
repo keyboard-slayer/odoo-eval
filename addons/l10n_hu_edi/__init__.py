@@ -3,7 +3,7 @@
 import logging
 import psycopg2.errors
 
-from odoo import _
+from odoo.tools import _
 
 from . import models
 from . import wizard

@@ -1,6 +1,6 @@
 import csv
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import ValidationError
 from odoo.tests import tagged
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon

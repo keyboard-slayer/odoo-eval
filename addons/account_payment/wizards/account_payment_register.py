@@ -1,4 +1,5 @@
-from odoo import api, Command, fields, models
+from odoo import api, fields, models
+from odoo.api import Command
 
 
 class AccountPaymentRegister(models.TransientModel):

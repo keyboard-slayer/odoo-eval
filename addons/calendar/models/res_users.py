@@ -3,7 +3,8 @@
 
 import datetime
 
-from odoo import api, fields, models, modules, _
+from odoo import api, fields, models, modules
+from odoo.tools import _
 from pytz import timezone, UTC
 
 

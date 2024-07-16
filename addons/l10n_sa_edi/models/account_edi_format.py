@@ -3,7 +3,8 @@ from hashlib import sha256
 from base64 import b64decode, b64encode
 from lxml import etree
 from datetime import datetime
-from odoo import models, fields, _, api
+from odoo import models, fields, api
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import format_list
 from cryptography.hazmat.primitives.serialization import load_pem_private_key

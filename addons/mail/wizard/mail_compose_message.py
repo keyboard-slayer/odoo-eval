@@ -5,7 +5,9 @@ import ast
 import base64
 import datetime
 
-from odoo import _, api, fields, models, Command
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.osv import expression
 from odoo.tools.mail import is_html_empty, email_normalize, email_split_and_format

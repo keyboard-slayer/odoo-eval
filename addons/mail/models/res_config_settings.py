@@ -3,7 +3,8 @@
 
 import datetime
 
-from odoo import _, fields, models
+from odoo import fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 
 

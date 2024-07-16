@@ -1,5 +1,7 @@
 #  Part of Odoo. See LICENSE file for full copyright and licensing details.
-from odoo import models, fields, api, _, Command
+from odoo import models, fields, api
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import frozendict, float_compare
 

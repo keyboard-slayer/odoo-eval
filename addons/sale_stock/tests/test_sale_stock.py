@@ -6,7 +6,7 @@ from odoo.addons.stock_account.tests.test_anglo_saxon_valuation_reconciliation_c
 from odoo.addons.sale_stock.tests.common import TestSaleStockCommon
 from odoo.exceptions import UserError
 from odoo.tests import Form, tagged
-from odoo import Command
+from odoo.api import Command
 
 
 @tagged('post_install', '-at_install')

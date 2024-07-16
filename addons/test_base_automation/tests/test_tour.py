@@ -2,7 +2,7 @@
 from urllib.parse import urlencode
 import ast
 
-from odoo import Command
+from odoo.api import Command
 
 from odoo.tests import HttpCase, tagged
 

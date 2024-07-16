@@ -6,7 +6,8 @@ import odoo
 from odoo.tools import mute_logger, date_utils
 from odoo.addons.base.tests.common import HttpCaseWithUserDemo
 from odoo.http import STATIC_CACHE_LONG
-from odoo import Command, fields, http
+from odoo import fields, http
+from odoo.api import Command
 
 
 @odoo.tests.tagged("-at_install", "post_install")

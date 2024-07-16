@@ -3,7 +3,8 @@
 import logging
 import pprint
 
-from odoo import _, fields, models
+from odoo import fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 
 from .authorize_request import AuthorizeAPI

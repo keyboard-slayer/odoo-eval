@@ -28,7 +28,8 @@ try:
 except ImportError:
     usb = None
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.addons.hw_drivers.controllers import proxy
 
 _logger = logging.getLogger(__name__)

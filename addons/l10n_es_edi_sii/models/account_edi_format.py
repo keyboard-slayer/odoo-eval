@@ -5,7 +5,8 @@ from urllib3.util.ssl_ import create_urllib3_context
 from urllib3.contrib.pyopenssl import inject_into_urllib3
 from OpenSSL.crypto import load_certificate, load_privatekey, FILETYPE_PEM
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import html_escape, zeep
 

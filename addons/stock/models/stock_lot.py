@@ -5,7 +5,8 @@ import operator as py_operator
 from operator import attrgetter
 from re import findall as regex_findall, split as regex_split
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.osv import expression
 

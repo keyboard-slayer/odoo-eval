@@ -1,7 +1,8 @@
 from lxml import etree
 from typing import NamedTuple
 
-from odoo import models, _
+from odoo import models
+from odoo.tools import _
 from odoo.tools import html2plaintext, cleanup_xml_node
 
 

@@ -3,7 +3,9 @@
 import json
 import re
 
-from odoo import Command, _, api, fields, models
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 from odoo.addons.sale_pdf_quote_builder import utils

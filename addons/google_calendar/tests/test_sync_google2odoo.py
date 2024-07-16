@@ -10,7 +10,8 @@ from odoo.exceptions import ValidationError
 from odoo.addons.google_calendar.models.res_users import User
 from odoo.addons.google_calendar.tests.test_sync_common import TestSyncGoogle, patch_api
 from odoo.addons.google_calendar.utils.google_calendar import GoogleEvent, GoogleCalendarService
-from odoo import Command, tools
+from odoo import tools
+from odoo.api import Command
 from unittest.mock import patch
 
 

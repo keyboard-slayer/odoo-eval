@@ -5,7 +5,8 @@ import contextlib
 import io
 import zipfile
 
-from odoo import api, models, fields, _
+from odoo import api, models, fields
+from odoo.tools import _
 from odoo.exceptions import UserError
 
 

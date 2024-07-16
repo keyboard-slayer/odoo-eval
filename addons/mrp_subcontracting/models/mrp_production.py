@@ -2,7 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
-from odoo import fields, models, _, api
+from odoo import fields, models, api
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError, AccessError
 from odoo.tools.float_utils import float_compare, float_is_zero
 

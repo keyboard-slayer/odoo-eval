@@ -1,7 +1,7 @@
 import base64
 from lxml import etree
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.l10n_account_edi_ubl_cii_tests.tests.common import TestUBLCommon
 from odoo.addons.account.tests.test_account_move_send import TestAccountMoveSendCommon
 from odoo.tests import tagged

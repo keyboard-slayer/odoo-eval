@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 from odoo.addons.resource.models.utils import HOURS_PER_DAY
 
 

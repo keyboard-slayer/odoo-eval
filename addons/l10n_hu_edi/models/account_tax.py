@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _lt, fields, models, api
+from odoo import fields, models, api
+from odoo.tools import _lt
 
 _SELECTION_TAX_TYPE = [
     ('VAT', 'Normal VAT (percent based)'),

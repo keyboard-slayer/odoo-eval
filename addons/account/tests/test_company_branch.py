@@ -4,7 +4,7 @@ from contextlib import nullcontext
 from freezegun import freeze_time
 from functools import partial
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.exceptions import UserError
 from odoo.tests import tagged, Form

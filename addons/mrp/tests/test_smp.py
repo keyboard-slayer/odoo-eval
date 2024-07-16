@@ -3,7 +3,7 @@
 
 from odoo.addons.mrp.tests.common import TestMrpCommon
 from odoo.tests import Form
-from odoo import Command
+from odoo.api import Command
 
 
 class TestMrpSerialMassProduce(TestMrpCommon):

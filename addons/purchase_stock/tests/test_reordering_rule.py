@@ -5,7 +5,7 @@ from datetime import datetime as dt, time
 from datetime import timedelta as td
 from freezegun import freeze_time
 
-from odoo import SUPERUSER_ID, Command
+from odoo.api import SUPERUSER_ID, Command
 from odoo.tests import Form, tagged
 from odoo.tests.common import TransactionCase
 from odoo.exceptions import UserError

@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import Command
+from odoo.api import Command
 
 from odoo.tests.common import HttpCase
 from odoo.tests import tagged

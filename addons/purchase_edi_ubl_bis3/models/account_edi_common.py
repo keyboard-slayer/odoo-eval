@@ -1,4 +1,5 @@
-from odoo import models, _
+from odoo import models
+from odoo.tools import _
 
 
 class AccountEdiCommon(models.AbstractModel):

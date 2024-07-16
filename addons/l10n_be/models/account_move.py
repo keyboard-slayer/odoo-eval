@@ -6,7 +6,8 @@
 import random
 import re
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 
 """

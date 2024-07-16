@@ -5,7 +5,8 @@ from datetime import date
 
 from freezegun import freeze_time
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.addons.hr_expense.tests.common import TestExpenseCommon
 from odoo.exceptions import RedirectWarning, UserError, ValidationError
 from odoo.tests import tagged, Form

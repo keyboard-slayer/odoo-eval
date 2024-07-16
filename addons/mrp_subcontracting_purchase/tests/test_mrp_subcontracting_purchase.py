@@ -5,7 +5,7 @@ import logging
 
 from freezegun import freeze_time
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import UserError
 from odoo.fields import Date
 from odoo.tests import Form, tagged, loaded_demo_data

@@ -3,7 +3,8 @@
 import json
 from collections import defaultdict
 
-from odoo import api, fields, models, _, _lt
+from odoo import api, fields, models
+from odoo.tools import _, _lt
 from odoo.osv import expression
 from odoo.tools import Query, SQL
 

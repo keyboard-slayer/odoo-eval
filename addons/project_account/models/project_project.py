@@ -4,7 +4,8 @@
 import json
 from collections import defaultdict
 
-from odoo import models, _lt
+from odoo import models
+from odoo.tools import _lt
 
 
 class Project(models.Model):

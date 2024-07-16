@@ -4,7 +4,8 @@
 from lxml import etree
 from markupsafe import Markup
 
-from odoo import api, models, _
+from odoo import api, models
+from odoo.tools import _
 from odoo.addons.website.tools import add_form_signature
 
 

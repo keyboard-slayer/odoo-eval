@@ -2,7 +2,7 @@
 
 from werkzeug.exceptions import BadRequest
 
-from odoo import _
+from odoo.tools import _
 from odoo.http import Controller, request, route
 from odoo.tools.mail import email_re
 

@@ -8,7 +8,8 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import is_html_empty, email_normalize
 from odoo.osv import expression

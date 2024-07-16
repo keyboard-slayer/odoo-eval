@@ -11,7 +11,8 @@ from poplib import POP3, POP3_SSL
 from socket import gaierror, timeout
 from ssl import SSLError
 
-from odoo import api, fields, models, tools, _
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 
 

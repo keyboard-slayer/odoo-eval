@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import json
-from odoo import _
+from odoo.tools import _
 from odoo import http
 from odoo.http import request
 

@@ -4,7 +4,8 @@ from collections import defaultdict, OrderedDict
 from datetime import date, timedelta
 import json
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.tools import float_compare, float_round, format_date, float_is_zero
 
 class ReportBomStructure(models.AbstractModel):

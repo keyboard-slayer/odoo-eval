@@ -1,4 +1,5 @@
-from odoo import api, models, Command
+from odoo import api, models
+from odoo.api import Command
 
 
 class AccountChartTemplate(models.AbstractModel):

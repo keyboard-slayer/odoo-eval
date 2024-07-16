@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.tests import Form, TransactionCase, users
 
 from datetime import datetime, time

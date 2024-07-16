@@ -13,7 +13,8 @@ import dateutil.parser
 from lxml import etree
 import requests
 
-from odoo import _, release
+from odoo import release
+from odoo.tools import _
 from odoo.tools import cleanup_xml_node
 
 

@@ -6,7 +6,8 @@ import re
 
 from werkzeug.urls import url_join
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import url_for
 from odoo.addons.website.tools import text_from_html
 from odoo.http import request

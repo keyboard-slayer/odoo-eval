@@ -1,6 +1,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import SUPERUSER_ID, _, _lt, api, fields, models, tools
+from odoo import api, fields, models, tools
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _, _lt
 from odoo.exceptions import UserError
 from odoo.http import request
 from odoo.osv import expression

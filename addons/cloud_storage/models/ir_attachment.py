@@ -2,7 +2,8 @@
 
 import uuid
 
-from odoo import models, fields, _
+from odoo import models, fields
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.http import Stream
 

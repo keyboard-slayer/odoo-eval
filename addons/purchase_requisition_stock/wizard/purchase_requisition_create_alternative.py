@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, Command, models
+from odoo import api, models
+from odoo.api import Command
 
 
 class PurchaseRequisitionCreateAlternative(models.TransientModel):

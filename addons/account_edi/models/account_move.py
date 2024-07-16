@@ -5,7 +5,8 @@ import io
 import zipfile
 from werkzeug.urls import url_encode
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 
 

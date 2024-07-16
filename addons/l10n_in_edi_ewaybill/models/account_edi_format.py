@@ -6,7 +6,8 @@ import json
 from datetime import timedelta
 from markupsafe import Markup
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api
+from odoo.tools import _
 from odoo.tools import html_escape
 from odoo.exceptions import AccessError
 from odoo.addons.iap import jsonrpc

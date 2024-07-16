@@ -6,7 +6,8 @@ from typing import Optional, List, Dict
 from werkzeug.urls import url_quote
 from odoo.exceptions import UserError, ValidationError, AccessError
 
-from odoo import api, fields, models, _, service
+from odoo import api, fields, models, service
+from odoo.tools import _
 from odoo.tools import file_open, split_every
 
 

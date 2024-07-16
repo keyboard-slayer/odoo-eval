@@ -2,7 +2,8 @@
 
 from requests.exceptions import HTTPError
 
-from odoo import Command, http
+from odoo import http
+from odoo.api import Command
 from odoo.tests.common import tagged, HttpCase
 from odoo.tools import file_open, mute_logger
 

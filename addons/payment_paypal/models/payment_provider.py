@@ -2,7 +2,8 @@
 
 import logging
 
-from odoo import _, fields, models
+from odoo import fields, models
+from odoo.tools import _
 
 from odoo.addons.payment_paypal import const
 

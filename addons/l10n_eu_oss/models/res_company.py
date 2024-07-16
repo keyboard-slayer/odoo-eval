@@ -3,7 +3,8 @@
 
 from itertools import product
 
-from odoo import Command, api, models
+from odoo import api, models
+from odoo.api import Command
 from .eu_account_map import EU_ACCOUNT_MAP
 from .eu_tag_map import EU_TAG_MAP
 from .eu_tax_map import EU_TAX_MAP

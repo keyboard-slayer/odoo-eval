@@ -4,7 +4,9 @@
 import ast
 from collections import defaultdict
 
-from odoo import api, fields, models, _, Command
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools.safe_eval import safe_eval
 from odoo.osv.expression import AND

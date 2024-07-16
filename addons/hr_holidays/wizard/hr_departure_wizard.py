@@ -3,7 +3,8 @@
 
 from datetime import datetime, timedelta
 
-from odoo import _, models
+from odoo import models
+from odoo.tools import _
 
 
 class HrDepartureWizard(models.TransientModel):

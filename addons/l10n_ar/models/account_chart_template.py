@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, api, _
+from odoo import models, api
+from odoo.tools import _
 from odoo.addons.account.models.chart_template import template
 
 

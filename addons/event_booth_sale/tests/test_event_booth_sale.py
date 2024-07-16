@@ -3,7 +3,8 @@
 
 from datetime import datetime, timedelta
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.addons.event_booth_sale.tests.common import TestEventBoothSaleCommon
 from odoo.addons.sales_team.tests.common import TestSalesCommon
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon

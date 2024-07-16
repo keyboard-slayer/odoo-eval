@@ -3,7 +3,9 @@ import re
 from collections import defaultdict
 from markupsafe import Markup
 
-from odoo import fields, models, api, _, Command
+from odoo import fields, models, api
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools import float_repr, date_utils
 from odoo.tools.xml_utils import cleanup_xml_node, find_xml_value

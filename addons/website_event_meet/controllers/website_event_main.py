@@ -3,7 +3,7 @@
 
 from babel.dates import format_datetime
 
-from odoo import _
+from odoo.tools import _
 from odoo.http import request
 from odoo.addons.website_event.controllers import main
 

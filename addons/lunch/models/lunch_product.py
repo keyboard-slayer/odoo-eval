@@ -5,7 +5,8 @@ import base64
 
 from collections import defaultdict
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.osv import expression
 

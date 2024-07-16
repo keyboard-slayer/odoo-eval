@@ -3,7 +3,7 @@ import io
 import xlrd
 import base64
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import tagged
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 

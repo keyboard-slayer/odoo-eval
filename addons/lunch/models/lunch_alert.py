@@ -2,7 +2,8 @@
 import pytz
 import logging
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.osv import expression
 
 from .lunch_supplier import float_to_time

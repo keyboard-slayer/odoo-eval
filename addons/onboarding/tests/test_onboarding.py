@@ -5,7 +5,7 @@ import unittest
 
 from psycopg2 import IntegrityError
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.mail.tests.common import mail_new_test_user
 from odoo.addons.onboarding.tests.common import TestOnboardingCommon
 from odoo.exceptions import ValidationError

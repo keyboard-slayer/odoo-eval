@@ -5,7 +5,7 @@ import json
 from datetime import date
 from unittest.mock import patch
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.addons.mail.tests.common import MailCommon
 from odoo.exceptions import UserError

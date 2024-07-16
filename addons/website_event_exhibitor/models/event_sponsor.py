@@ -4,7 +4,8 @@
 from datetime import datetime, timedelta
 from pytz import timezone, utc
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.resource.models.utils import float_to_time
 from odoo.tools import is_html_empty

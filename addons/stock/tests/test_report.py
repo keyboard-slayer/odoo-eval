@@ -4,7 +4,7 @@
 from datetime import date, datetime, timedelta
 
 from odoo.tests import Form, TransactionCase
-from odoo import Command
+from odoo.api import Command
 
 
 class TestReportsCommon(TransactionCase):

@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 from unittest.mock import patch
 from ast import literal_eval
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.addons.mail.tests.common import mail_new_test_user
 from odoo.exceptions import ValidationError
 from odoo.tests import Form, TransactionCase

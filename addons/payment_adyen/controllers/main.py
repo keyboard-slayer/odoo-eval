@@ -10,7 +10,8 @@ import pprint
 from werkzeug import urls
 from werkzeug.exceptions import Forbidden
 
-from odoo import _, http
+from odoo import http
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.http import request
 

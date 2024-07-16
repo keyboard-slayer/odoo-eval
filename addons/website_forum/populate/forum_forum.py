@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import Command, models
+from odoo import models
+from odoo.api import Command
 from odoo.tools import populate
 
 class Forum(models.Model):

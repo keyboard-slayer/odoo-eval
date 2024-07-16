@@ -4,7 +4,8 @@ import logging
 import time
 from datetime import datetime, timedelta
 
-from odoo import api, models, Command
+from odoo import api, models
+from odoo.api import Command
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.misc import file_open
 

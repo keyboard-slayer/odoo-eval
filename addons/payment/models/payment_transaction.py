@@ -10,7 +10,8 @@ import psycopg2
 from dateutil import relativedelta
 from markupsafe import Markup
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import consteq, format_amount, ustr
 from odoo.tools.misc import hmac as hmac_tool

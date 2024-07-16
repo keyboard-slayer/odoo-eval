@@ -11,7 +11,8 @@ from dateutil import relativedelta
 from markupsafe import Markup
 from werkzeug import urls
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.mail.tools.alias_error import AliasError
 from odoo.exceptions import ValidationError, UserError

@@ -2,7 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.tools.misc import format_duration
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 
 
 class HRLeaveType(models.Model):

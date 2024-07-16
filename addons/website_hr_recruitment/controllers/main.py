@@ -6,7 +6,8 @@ from dateutil.relativedelta import relativedelta
 from operator import itemgetter
 from werkzeug.urls import url_encode
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.website.controllers.form import WebsiteForm
 from odoo.osv.expression import AND

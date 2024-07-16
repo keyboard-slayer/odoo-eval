@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import common, Form, tagged
 
 @tagged('post_install', '-at_install')

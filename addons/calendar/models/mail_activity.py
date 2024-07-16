@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, fields, tools, _
+from odoo import models, fields, tools
+from odoo.tools import _
 from odoo.tools import is_html_empty
 
 

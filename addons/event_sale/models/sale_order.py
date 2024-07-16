@@ -2,7 +2,8 @@
 
 from werkzeug.urls import url_encode, url_join
 
-from odoo import fields, models, _
+from odoo import fields, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.osv import expression
 

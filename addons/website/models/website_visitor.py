@@ -8,7 +8,8 @@ import hashlib
 import pytz
 import threading
 
-from odoo import fields, models, api, _
+from odoo import fields, models, api
+from odoo.tools import _
 from odoo.addons.base.models.res_partner import _tz_get
 from odoo.exceptions import UserError
 from odoo.tools import split_every

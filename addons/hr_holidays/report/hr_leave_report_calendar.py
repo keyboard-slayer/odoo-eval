@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models, tools, SUPERUSER_ID
+from odoo import api, fields, models, tools
+from odoo.api import SUPERUSER_ID
 
 from odoo.addons.base.models.res_partner import _tz_get
 

@@ -3,7 +3,8 @@
 import re
 from stdnum import get_cc_module, ean
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.addons.account.models.company import PEPPOL_LIST
 

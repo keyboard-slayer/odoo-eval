@@ -3,7 +3,7 @@
 
 from odoo.addons.purchase_requisition.tests.common import TestPurchaseRequisitionCommon
 from odoo.tests import Form
-from odoo import Command
+from odoo.api import Command
 
 
 class TestPurchaseRequisitionStock(TestPurchaseRequisitionCommon):

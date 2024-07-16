@@ -4,7 +4,8 @@ import itertools
 import random
 
 from markupsafe import Markup
-from odoo import models, _
+from odoo import models
+from odoo.tools import _
 from odoo.tools import html_escape
 
 

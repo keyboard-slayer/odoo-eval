@@ -6,7 +6,8 @@ from odoo.tools.translate import _
 from odoo.tools import email_normalize
 from odoo.exceptions import UserError
 
-from odoo import api, fields, models, Command
+from odoo import api, fields, models
+from odoo.api import Command
 
 
 _logger = logging.getLogger(__name__)

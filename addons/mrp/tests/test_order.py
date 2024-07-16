@@ -4,7 +4,8 @@
 from datetime import datetime, timedelta
 from freezegun import freeze_time
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.exceptions import UserError
 from odoo.tests import Form, users
 from odoo.tools.misc import format_date

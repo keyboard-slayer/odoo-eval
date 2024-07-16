@@ -3,7 +3,9 @@
 
 from datetime import timedelta
 
-from odoo import SUPERUSER_ID, api, fields, models, _
+from odoo import api, fields, models
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.tools import is_html_empty
 

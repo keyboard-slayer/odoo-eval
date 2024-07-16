@@ -8,7 +8,8 @@ from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta, MO
 from markupsafe import Markup
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
+from odoo.tools import _
 from odoo.http import SESSION_LIFETIME
 from odoo.tools import ustr
 

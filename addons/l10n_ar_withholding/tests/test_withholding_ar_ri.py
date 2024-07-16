@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo.addons.l10n_ar.tests.common import TestAr
 from odoo.tests import tagged
-from odoo import Command
+from odoo.api import Command
 
 
 @tagged('post_install_l10n', 'post_install', '-at_install')

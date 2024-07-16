@@ -3,7 +3,7 @@ import io
 from markupsafe import Markup
 from unittest.mock import patch
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import UserError
 from odoo.tests import tagged
 from odoo.addons.account.models.chart_template import code_translations, AccountChartTemplate, TEMPLATE_MODELS

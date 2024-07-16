@@ -7,7 +7,8 @@ from freezegun import freeze_time
 from itertools import chain, repeat
 from unittest.mock import patch
 
-from odoo import exceptions, fields, _
+from odoo import exceptions, fields
+from odoo.tools import _
 from odoo.addons.mail.tests.common import mail_new_test_user
 from odoo.tests import common
 

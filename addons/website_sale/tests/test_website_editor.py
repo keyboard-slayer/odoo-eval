@@ -3,7 +3,7 @@
 
 import logging
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.addons.website.tools import MockRequest
 from odoo.exceptions import ValidationError

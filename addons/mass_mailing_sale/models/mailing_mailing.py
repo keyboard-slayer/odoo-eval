@@ -2,7 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from markupsafe import Markup
-from odoo import api, fields, models, _, tools
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.osv import expression
 
 

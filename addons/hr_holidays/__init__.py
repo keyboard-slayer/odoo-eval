@@ -7,7 +7,8 @@ from . import populate
 from . import report
 from . import wizard
 
-from odoo import api, SUPERUSER_ID
+from odoo import api
+from odoo.api import SUPERUSER_ID
 
 def _hr_holiday_post_init(env):
     french_companies = env['res.company'].search_count([('partner_id.country_id.code', '=', 'FR')])

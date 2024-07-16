@@ -3,7 +3,8 @@
 from odoo.addons.l10n_latam_check.tests.common import L10nLatamCheckTest
 from odoo.exceptions import ValidationError, UserError
 from odoo.tests.common import tagged
-from odoo import fields, Command
+from odoo import fields
+from odoo.api import Command
 
 
 @tagged('post_install_l10n', 'post_install', '-at_install')

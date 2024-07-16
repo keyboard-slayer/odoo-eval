@@ -6,7 +6,7 @@ import pytz
 from unittest.mock import patch, ANY
 from freezegun import freeze_time
 
-from odoo import Command
+from odoo.api import Command
 
 from odoo.addons.microsoft_calendar.models.microsoft_sync import MicrosoftSync
 from odoo.addons.microsoft_calendar.utils.microsoft_calendar import MicrosoftCalendarService

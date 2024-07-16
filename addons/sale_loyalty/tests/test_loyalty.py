@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import Command
+from odoo.api import Command
 from odoo.exceptions import ValidationError
 from odoo.tests import tagged, new_test_user
 from odoo.tools.float_utils import float_compare

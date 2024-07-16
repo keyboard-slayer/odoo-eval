@@ -3,7 +3,8 @@
 import datetime
 import markupsafe
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
+from odoo.tools import _
 
 
 class MailThread(models.AbstractModel):

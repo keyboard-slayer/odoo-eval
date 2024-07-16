@@ -3,7 +3,8 @@
 import logging
 import requests
 
-from odoo import fields, models, api, tools, _
+from odoo import fields, models, api, tools
+from odoo.tools import _
 from odoo.exceptions import UserError, AccessError
 
 _logger = logging.getLogger(__name__)

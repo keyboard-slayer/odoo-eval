@@ -6,7 +6,7 @@ from datetime import timedelta
 from odoo.addons.stock.tests.common import TestStockCommon
 from odoo.exceptions import UserError
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import Form
 from odoo.tools import float_is_zero, float_compare
 

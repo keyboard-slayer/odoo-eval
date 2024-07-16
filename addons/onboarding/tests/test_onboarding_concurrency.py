@@ -17,11 +17,11 @@ class TestOnboardingConcurrency(BaseCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.registry = odoo.registry(get_db_name())
+        cls.registry = odoo.api.registry(get_db_name())
         cls.addClassCleanup(cls.cleanUpClass)
 
         with cls.registry.cursor() as cr:
-            env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+            env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
             cls.onboarding_id = env['onboarding.onboarding'].create([
                 {
                     'name': 'Test Onboarding Concurrent',
@@ -33,7 +33,7 @@ class TestOnboardingConcurrency(BaseCase):
     @classmethod
     def cleanUpClass(cls):
         with cls.registry.cursor() as cr:
-            env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+            env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
             env['onboarding.onboarding'].browse(cls.onboarding_id).unlink()
             env['onboarding.progress'].search([
                 ('onboarding_id', '=', cls.onboarding_id)
@@ -47,7 +47,7 @@ class TestOnboardingConcurrency(BaseCase):
             raised_unique_violation = False
 
             with self.registry.cursor() as cr:
-                env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+                env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
                 onboarding = env['onboarding.onboarding'].search([
                     ('id', '=', self.onboarding_id)
                 ])
@@ -71,7 +71,7 @@ class TestOnboardingConcurrency(BaseCase):
             raised_2 = future_2.result(timeout=3)
 
         with self.registry.cursor() as cr:
-            env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+            env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
             self.assertEqual(
                 len(env['onboarding.progress'].search([('onboarding_id', '=', self.onboarding_id)])),
                 1,

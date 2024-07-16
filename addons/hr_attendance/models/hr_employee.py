@@ -4,7 +4,8 @@
 import pytz
 from dateutil.relativedelta import relativedelta
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, exceptions
+from odoo.tools import _
 from odoo.tools import float_round
 
 

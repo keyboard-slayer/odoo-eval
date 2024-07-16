@@ -2,7 +2,7 @@
 
 import odoo.tests
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.account.tests.common import AccountTestInvoicingHttpCommon
 
 

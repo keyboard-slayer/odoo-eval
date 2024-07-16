@@ -5,7 +5,8 @@ import pprint
 
 from werkzeug import urls
 
-from odoo import _, models
+from odoo import models
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 
 from odoo.addons.payment_xendit import const

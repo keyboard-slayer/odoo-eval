@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, _
+from odoo import models
+from odoo.tools import _
 
 
 class AccountEdiXmlUBLPINTMY(models.AbstractModel):

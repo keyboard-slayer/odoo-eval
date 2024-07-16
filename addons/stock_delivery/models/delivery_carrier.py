@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import _, fields, models
+from odoo import fields, models
+from odoo.tools import _
 
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_round

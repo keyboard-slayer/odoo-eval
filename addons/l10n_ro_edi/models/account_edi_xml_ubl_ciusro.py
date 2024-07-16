@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, _
+from odoo import models
+from odoo.tools import _
 
 
 SECTOR_RO_CODES = ('SECTOR1', 'SECTOR2', 'SECTOR3', 'SECTOR4', 'SECTOR5', 'SECTOR6')

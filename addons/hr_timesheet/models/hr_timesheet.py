@@ -4,7 +4,8 @@
 from collections import defaultdict
 import re
 
-from odoo import api, fields, models, _, _lt
+from odoo import api, fields, models
+from odoo.tools import _, _lt
 from odoo.exceptions import UserError, AccessError, ValidationError
 from odoo.osv import expression
 

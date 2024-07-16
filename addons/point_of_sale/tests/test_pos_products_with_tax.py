@@ -620,17 +620,17 @@ class TestPoSProductsWithTax(TestPoSCommon):
         product_all_taxes = self.env['product.product'].create({
             'name': 'Product all taxes',
             'available_in_pos': True,
-            'taxes_id': [odoo.Command.set((tax_a + tax_b + tax_x + tax_xx).ids)],
+            'taxes_id': [odoo.api.Command.set((tax_a + tax_b + tax_x + tax_xx).ids)],
         })
         product_no_xx_tax = self.env['product.product'].create({
             'name': 'Product no tax from XX',
             'available_in_pos': True,
-            'taxes_id': [odoo.Command.set((tax_a + tax_b + tax_x).ids)],
+            'taxes_id': [odoo.api.Command.set((tax_a + tax_b + tax_x).ids)],
         })
         product_no_branch_tax = self.env['product.product'].create({
             'name': 'Product no tax from branch',
             'available_in_pos': True,
-            'taxes_id': [odoo.Command.set((tax_a + tax_b).ids)],
+            'taxes_id': [odoo.api.Command.set((tax_a + tax_b).ids)],
         })
         product_no_tax = self.env['product.product'].create({
             'name': 'Product no tax',
@@ -653,7 +653,7 @@ class TestPoSProductsWithTax(TestPoSCommon):
             'company_id': branch_xx.id,
         })
         xx_config.write({'payment_method_ids': [
-            odoo.Command.set(xx_cash_payment_method.ids),
+            odoo.api.Command.set(xx_cash_payment_method.ids),
         ]})
         self.config = xx_config
         pos_session = self.open_new_session()

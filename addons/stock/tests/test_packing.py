@@ -4,7 +4,7 @@ import odoo.tests
 from odoo.tests import Form
 from odoo.tests.common import TransactionCase
 from odoo.exceptions import UserError
-from odoo import Command
+from odoo.api import Command
 
 
 class TestPackingCommon(TransactionCase):

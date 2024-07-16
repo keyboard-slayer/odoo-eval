@@ -2,7 +2,9 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from dateutil.relativedelta import relativedelta
 import json
-from odoo import models, fields, api, _, Command
+from odoo import models, fields, api
+from odoo.api import Command
+from odoo.tools import _
 from odoo.tools import format_date
 from odoo.exceptions import UserError
 from odoo.tools import date_utils

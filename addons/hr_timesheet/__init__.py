@@ -7,7 +7,8 @@ from . import report
 from . import wizard
 from . import populate
 
-from odoo import fields, _
+from odoo import fields
+from odoo.tools import _
 
 from odoo.addons.project import _check_exists_collaborators_for_project_sharing
 

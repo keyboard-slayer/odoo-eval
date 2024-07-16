@@ -2,7 +2,7 @@
 
 from werkzeug.urls import url_encode, url_parse
 
-from odoo import _
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.http import request, route
 

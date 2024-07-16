@@ -2,7 +2,7 @@
 import datetime
 import uuid
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.purchase.tests.test_purchase_invoice import TestPurchaseToInvoiceCommon
 from odoo.tests import tagged, Form
 

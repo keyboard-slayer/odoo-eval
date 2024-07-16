@@ -3,7 +3,7 @@
 
 import logging
 from unittest.mock import patch
-from odoo import Command
+from odoo.api import Command
 
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 from odoo.tests import loaded_demo_data, tagged

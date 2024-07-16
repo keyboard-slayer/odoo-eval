@@ -3,7 +3,9 @@
 
 from collections import Counter, defaultdict
 
-from odoo import _, api, fields, tools, models, Command
+from odoo import api, fields, tools, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import OrderedSet, format_list, groupby
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round

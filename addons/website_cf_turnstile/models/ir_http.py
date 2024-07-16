@@ -3,7 +3,8 @@
 import logging
 import requests
 
-from odoo import api, models, _
+from odoo import api, models
+from odoo.tools import _
 from odoo.http import request
 from odoo.exceptions import UserError, ValidationError
 

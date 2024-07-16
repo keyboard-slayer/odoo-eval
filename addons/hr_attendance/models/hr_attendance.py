@@ -10,7 +10,8 @@ from operator import itemgetter
 from pytz import timezone
 from random import randint
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, exceptions
+from odoo.tools import _
 from odoo.addons.resource.models.utils import Intervals
 from odoo.tools import format_datetime
 from odoo.osv.expression import AND, OR

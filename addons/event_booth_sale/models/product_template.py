@@ -1,4 +1,5 @@
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 
 
 class ProductTemplate(models.Model):
