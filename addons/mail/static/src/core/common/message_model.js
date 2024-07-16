@@ -6,6 +6,7 @@ import {
     prettifyMessageContent,
 } from "@mail/utils/common/format";
 import { rpc } from "@web/core/network/rpc";
+import { markdown } from "@mail/utils/common/markdown";
 
 import { browser } from "@web/core/browser/browser";
 import { deserializeDateTime } from "@web/core/l10n/dates";
@@ -14,9 +15,12 @@ import { user } from "@web/core/user";
 import { omit } from "@web/core/utils/objects";
 import { url } from "@web/core/utils/urls";
 import { stateToUrl } from "@web/core/browser/router";
-import { toRaw } from "@odoo/owl";
+import { toRaw, markup } from "@odoo/owl";
 
 const { DateTime } = luxon;
+
+const parser = new DOMParser();
+
 export class Message extends Record {
     static id = "id";
     /** @type {Object.<number, import("models").Message>} */
@@ -34,7 +38,6 @@ export class Message extends Record {
     update(data) {
         super.update(data);
         if (this.isNotification && !this.notificationType) {
-            const parser = new DOMParser();
             const htmlBody = parser.parseFromString(this.body, "text/html");
             this.notificationType = htmlBody.querySelector(".o_mail_notification")?.dataset.oeType;
         }
@@ -43,6 +46,18 @@ export class Message extends Record {
     attachment_ids = Record.many("Attachment", { inverse: "message" });
     author = Record.one("Persona");
     body = Record.attr("", { html: true });
+    bodyHtml = Record.attr("", {
+        compute() {
+            if (!this.isBodyEmpty) {
+                const htmlDoc = parser.parseFromString(this.body, "text/html");
+                const markdownElements = htmlDoc.querySelectorAll("odoo-markdown");
+                for (const markdownElement of markdownElements) {
+                    markdownElement.innerHTML = markdown(markdownElement.innerHTML);
+                }
+                return markup(htmlDoc.body.innerHTML);
+            }
+        },
+    });
     composer = Record.one("Composer", { inverse: "message", onDelete: (r) => r.delete() });
     /** @type {DateTime} */
     date = Record.attr(undefined, { type: "datetime" });
@@ -97,7 +112,7 @@ export class Message extends Record {
                 return false;
             }
             const div = document.createElement("div");
-            div.innerHTML = this.body;
+            div.innerHTML = this.bodyHtml;
             return Boolean(div.querySelector("a:not([data-oe-model])"));
         },
     });
@@ -329,10 +344,10 @@ export class Message extends Record {
     }
 
     get inlineBody() {
-        if (!this.body) {
+        if (!this.bodyHtml) {
             return "";
         }
-        return htmlToTextContentInline(this.body);
+        return htmlToTextContentInline(this.bodyHtml);
     }
 
     get notificationIcon() {
@@ -401,17 +416,19 @@ export class Message extends Record {
             mentionedChannels,
             mentionedPartners,
         });
-        const data = await rpc("/mail/message/update_content", {
-            attachment_ids: attachments
-                .concat(this.attachment_ids)
-                .map((attachment) => attachment.id),
+        const postData = {
+            attachment_ids: attachments.concat(this.attachment_ids).map((attachment) => attachment.id),
             attachment_tokens: attachments
                 .concat(this.attachment_ids)
                 .map((attachment) => attachment.access_token),
-            body: await prettifyMessageContent(body, validMentions),
             message_id: this.id,
             partner_ids: validMentions?.partners?.map((partner) => partner.id),
-        });
+        };
+        postData.body = await prettifyMessageContent(body, validMentions);
+        if (this.thread && this.thread.model === "discuss.channel") {
+            postData.body = `<odoo-markdown>${postData.body}</odoo-markdown>`;
+        }
+        const data = await rpc("/mail/message/update_content", postData);
         this.store.insert(data, { html: true });
         if (this.hasLink && this.store.hasLinkPreviewFeature) {
             rpc("/mail/link_preview", { message_id: this.id }, { silent: true });
