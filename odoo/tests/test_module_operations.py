@@ -26,16 +26,16 @@ INSTALL_BLACKLIST = {
 }  # deprecated modules (cannot be installed manually through button_install anymore)
 
 def install(db_name, module_id, module_name):
-    with odoo.registry(db_name).cursor() as cr:
-        env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+    with odoo.api.registry(db_name).cursor() as cr:
+        env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
         module = env['ir.module.module'].browse(module_id)
         module.button_immediate_install()
     _logger.info('%s installed', module_name)
 
 
 def uninstall(db_name, module_id, module_name):
-    with odoo.registry(db_name).cursor() as cr:
-        env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+    with odoo.api.registry(db_name).cursor() as cr:
+        env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
         module = env['ir.module.module'].browse(module_id)
         module.button_immediate_uninstall()
     _logger.info('%s uninstalled', module_name)
@@ -123,8 +123,8 @@ class StandaloneAction(argparse.Action):
 
 def test_cycle(args):
     """ Test full install/uninstall/reinstall cycle for all modules """
-    with odoo.registry(args.database).cursor() as cr:
-        env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+    with odoo.api.registry(args.database).cursor() as cr:
+        env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
 
         def valid(module):
             return not (
@@ -158,8 +158,8 @@ def test_cycle(args):
 def test_uninstall(args):
     """ Tries to uninstall/reinstall one ore more modules"""
     for module_name in args.uninstall.split(','):
-        with odoo.registry(args.database).cursor() as cr:
-            env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+        with odoo.api.registry(args.database).cursor() as cr:
+            env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
             module = env['ir.module.module'].search([('name', '=', module_name)])
             module_id, module_state = module.id, module.state
 
@@ -176,7 +176,7 @@ def test_uninstall(args):
 def test_standalone(args):
     """ Tries to launch standalone scripts tagged with @post_testing """
     # load the registry once for script discovery
-    registry = odoo.registry(args.database)
+    registry = odoo.api.registry(args.database)
     for module_name in registry._init_modules:
         # import tests for loaded modules
         odoo.tests.loader.get_test_modules(module_name)
@@ -190,8 +190,8 @@ def test_standalone(args):
 
     start_time = time.time()
     for index, func in enumerate(funcs, start=1):
-        with odoo.registry(args.database).cursor() as cr:
-            env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+        with odoo.api.registry(args.database).cursor() as cr:
+            env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
             _logger.info("Executing standalone script: %s (%d / %d)",
                          func.__name__, index, len(funcs))
             try:

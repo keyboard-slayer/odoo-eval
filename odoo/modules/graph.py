@@ -7,8 +7,8 @@ import functools
 import itertools
 import logging
 
-import odoo
 import odoo.tools as tools
+from . import module as odoo_module
 
 _logger = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ class Graph(dict):
         packages = []
         len_graph = len(self)
         for module in module_list:
-            info = odoo.modules.module.get_manifest(module)
+            info = odoo_module.get_manifest(module)
             if info and info['installable']:
                 packages.append((module, info)) # TODO directly a dict, like in get_modules_with_version
             elif module not in _ignored_modules(cr):

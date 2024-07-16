@@ -3,7 +3,7 @@
 
 from contextlib import suppress
 
-import odoo
+from odoo.tools import file_open
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ def get_neutralization_queries(modules):
     for module in modules:
         filename = f'{module}/data/neutralize.sql'
         with suppress(FileNotFoundError):
-            with odoo.tools.misc.file_open(filename) as file:
+            with file_open(filename) as file:
                 yield file.read().strip()
 
 def neutralize_database(cursor):

@@ -152,7 +152,7 @@ class Obfuscate(Command):
                 _logger.error("--allfields can only be used in unobfuscate mode")
                 sys.exit("ERROR: --allfields can only be used in unobfuscate mode")
             self.dbname = odoo.tools.config['db_name']
-            self.registry = odoo.registry(self.dbname)
+            self.registry = odoo.api.registry(self.dbname)
             with self.registry.cursor() as cr:
                 self.cr = cr
                 self.begin()

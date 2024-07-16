@@ -38,9 +38,9 @@ class Populate(Command):
         opt = odoo.tools.config.parse_config(cmdargs)
         populate_models = opt.populate_models and set(opt.populate_models.split(','))
         dbname = odoo.tools.config['db_name']
-        registry = odoo.registry(dbname)
+        registry = odoo.api.registry(dbname)
         with registry.cursor() as cr:
-            env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+            env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
             self.populate(
                 env, opt.population_size, populate_models,
                 profiling_enabled=opt.profiling_enabled,

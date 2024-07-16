@@ -27,7 +27,7 @@ from psycopg2 import OperationalError
 
 from .misc import ustr
 
-import odoo
+import odoo.exceptions
 
 unsafe_eval = eval
 

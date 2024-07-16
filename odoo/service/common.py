@@ -2,6 +2,7 @@
 
 import logging
 
+import odoo.api
 import odoo.release
 import odoo.tools
 from odoo.exceptions import AccessDenied
@@ -22,7 +23,7 @@ def exp_login(db, login, password):
 def exp_authenticate(db, login, password, user_agent_env):
     if not user_agent_env:
         user_agent_env = {}
-    res_users = odoo.registry(db)['res.users']
+    res_users = odoo.api.registry(db)['res.users']
     try:
         credential = {'login': login, 'password': password, 'type': 'password'}
         return res_users.authenticate(db, credential, {**user_agent_env, 'interactive': False})['uid']

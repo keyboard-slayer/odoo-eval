@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-import odoo
-import odoo.exceptions
+import odoo.api
+import odoo.tools
 
 def check(db, uid, passwd):
-    res_users = odoo.registry(db)['res.users']
+    res_users = odoo.api.registry(db)['res.users']
     return res_users.check(db, uid, passwd)
 
 def compute_session_token(session, env):

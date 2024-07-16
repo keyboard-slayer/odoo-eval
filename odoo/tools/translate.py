@@ -32,7 +32,12 @@ from lxml import etree, html
 from markupsafe import escape, Markup
 from psycopg2.extras import Json
 
-import odoo
+import odoo  # TODO do not import sub-modules (circular import)
+# import odoo.addons
+# import odoo.api
+# import odoo.http
+# import odoo.modules
+# import odoo.sql_db
 from odoo.exceptions import UserError
 from . import pycompat
 from .config import config
@@ -1050,7 +1055,7 @@ class TranslationReader:
     def __init__(self, cr, lang=None):
         self._cr = cr
         self._lang = lang or 'en_US'
-        self.env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+        self.env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
         self._to_translate = []
 
     def __iter__(self):
@@ -1369,7 +1374,7 @@ class TranslationImporter:
     def __init__(self, cr, verbose=True):
         self.cr = cr
         self.verbose = verbose
-        self.env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+        self.env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
 
         # {model_name: {field_name: {xmlid: {lang: value}}}}
         self.model_translations = DeepDefaultDict()
@@ -1617,7 +1622,7 @@ def load_language(cr, lang):
     :param str lang: language ISO code with optional underscore (``_``) and
         l10n flavor (ex: 'fr', 'fr_BE', but not 'fr-BE')
     """
-    env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
+    env = odoo.api.Environment(cr, odoo.api.SUPERUSER_ID, {})
     lang_ids = env['res.lang'].with_context(active_test=False).search([('code', '=', lang)]).ids
     installer = env['base.language.install'].create({'lang_ids': [(6, 0, lang_ids)]})
     installer.lang_install()
@@ -1714,7 +1719,7 @@ def _get_translation_upgrade_queries(cr, field):
     field's column, while the queries in ``cleanup_queries`` remove the corresponding data from
     table ``_ir_translation``.
     """
-    Model = odoo.registry(cr.dbname)[field.model_name]
+    Model = odoo.api.registry(cr.dbname)[field.model_name]
     translation_name = f"{field.model_name},{field.name}"
     migrate_queries = []
     cleanup_queries = []

@@ -120,6 +120,7 @@ import traceback
 from datetime import date, datetime, time
 import warnings
 
+import odoo.api
 import odoo.modules
 from odoo.models import check_property_field_value_name, READ_GROUP_NUMBER_GRANULARITY
 from odoo.tools import pycompat, Query, SQL, get_lang
@@ -741,7 +742,7 @@ def get_unaccent_wrapper(cr):
         "Since 18.0, deprecated method, use env.registry.unaccent instead",
         DeprecationWarning, 2,
     )
-    return odoo.registry(cr.dbname).unaccent
+    return odoo.api.registry(cr.dbname).unaccent
 
 
 class expression(object):

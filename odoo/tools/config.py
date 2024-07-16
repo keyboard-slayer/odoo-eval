@@ -9,7 +9,7 @@ import os
 import sys
 import tempfile
 import warnings
-import odoo
+import odoo  # TODO do not import modules directly (circular imports)
 from os.path import expandvars, expanduser, abspath, realpath, normcase
 from .. import release, conf, loglevels
 from . import appdirs

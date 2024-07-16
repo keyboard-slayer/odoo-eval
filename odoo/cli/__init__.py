@@ -1,8 +1,4 @@
-import logging
-import sys
-import os
-
-import odoo
+import odoo._base
 
 from .command import Command, main
 

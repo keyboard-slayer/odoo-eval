@@ -26,7 +26,7 @@ from psycopg2.extras import Json as PsycopgJson
 from difflib import get_close_matches, unified_diff
 from hashlib import sha256
 
-from .models import check_property_field_value_name
+import odoo.models
 from .netsvc import ColoredFormatter, GREEN, RED, DEFAULT, COLOR_PATTERN
 from .tools import (
     float_repr, float_round, float_compare, float_is_zero, human_size,
@@ -4070,7 +4070,7 @@ class PropertiesDefinition(Field):
                     ', '.join(invalid_keys),
                 )
 
-            check_property_field_value_name(property_definition['name'])
+            odoo.models.check_property_field_value_name(property_definition['name'])
 
             required_keys = set(cls.REQUIRED_KEYS) - property_definition_keys
             if required_keys:

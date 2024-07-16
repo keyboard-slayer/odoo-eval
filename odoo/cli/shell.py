@@ -106,9 +106,9 @@ class Shell(Command):
             'odoo': odoo,
         }
         if dbname:
-            registry = odoo.registry(dbname)
+            registry = odoo.api.registry(dbname)
             with registry.cursor() as cr:
-                uid = odoo.SUPERUSER_ID
+                uid = odoo.api.SUPERUSER_ID
                 ctx = odoo.api.Environment(cr, uid, {})['res.users'].context_get()
                 env = odoo.api.Environment(cr, uid, ctx)
                 local_vars['env'] = env

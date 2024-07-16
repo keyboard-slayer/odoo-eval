@@ -37,8 +37,7 @@ import markupsafe
 import pytz
 from lxml import etree, objectify
 
-import odoo
-import odoo.addons
+import odoo  # TODO do not import sub-modules (circular import)
 # get_encodings, ustr and exception_to_unicode were originally from tools.misc.
 # There are moved to loglevels until we refactor tools.
 from odoo.loglevels import exception_to_unicode, get_encodings, ustr  # noqa: F401
@@ -185,7 +184,7 @@ def file_path(file_path, filter_ext=('',), env=None):
     :raise ValueError: if the file doesn't have one of the supported extensions (`filter_ext`)
     """
     root_path = os.path.abspath(config['root_path'])
-    addons_paths = odoo.addons.__path__ + [root_path]
+    addons_paths = [*odoo.addons.__path__, root_path]
     if env and hasattr(env.transaction, '__file_open_tmp_paths'):
         addons_paths += env.transaction.__file_open_tmp_paths
     is_abs = os.path.isabs(file_path)

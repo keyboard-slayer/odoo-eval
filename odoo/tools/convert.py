@@ -25,12 +25,15 @@ try:
 except ImportError:
     jingtrang = None
 
-import odoo
+import odoo  # TODO no not import sub-modules (circular import)
+# import odoo.api  # TODO double import
+# import odoo.fields
+# import odoo.release
 from . import pycompat
 from .config import config
 from .misc import file_open, file_path, SKIPPED_ELEMENT_TYPES
 from .translate import _
-from odoo import SUPERUSER_ID, api
+from odoo import api
 from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
@@ -202,7 +205,7 @@ def _eval_xml(self, node, env):
         # merge current context with context in kwargs
         kwargs['context'] = {**env.context, **kwargs.get('context', {})}
         # invoke method
-        return odoo.api.call_kw(model, method_name, args, kwargs)
+        return api.call_kw(model, method_name, args, kwargs)
     elif node.tag == "test":
         return node.text
 
@@ -323,10 +326,10 @@ form: module.record_id""" % (xml_id,)
         for group in rec.get('groups', '').split(','):
             if group.startswith('-'):
                 group_id = self.id_get(group[1:])
-                groups.append(odoo.Command.unlink(group_id))
+                groups.append(odoo.api.Command.unlink(group_id))
             elif group:
                 group_id = self.id_get(group)
-                groups.append(odoo.Command.link(group_id))
+                groups.append(odoo.api.Command.link(group_id))
         if groups:
             values['groups_id'] = groups
 
@@ -409,7 +412,7 @@ form: module.record_id""" % (xml_id,)
                 _fields = env[rec_model]._fields
                 # if the current field is many2many
                 if (f_name in _fields) and _fields[f_name].type == 'many2many':
-                    f_val = [odoo.Command.set([x[f_use] for x in s])]
+                    f_val = [odoo.api.Command.set([x[f_use] for x in s])]
                 elif len(s):
                     # otherwise (we are probably in a many2one field),
                     # take the first element of the search

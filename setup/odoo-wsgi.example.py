@@ -12,7 +12,9 @@
 # Then the following command should run:
 #   $ gunicorn odoo:service.wsgi_server.application -c openerp-wsgi.py
 
-import odoo
+import odoo.conf
+import odoo.service.server
+import odoo.tools
 
 #----------------------------------------------------------
 # Common

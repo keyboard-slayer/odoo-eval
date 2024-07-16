@@ -105,7 +105,7 @@ def __getattr__(name):
 ADDONS_PATH = odoo.tools.config['addons_path']
 HOST = '127.0.0.1'
 # Useless constant, tests are aware of the content of demo data
-ADMIN_USER_ID = odoo.SUPERUSER_ID
+ADMIN_USER_ID = odoo.api.SUPERUSER_ID
 
 CHECK_BROWSER_SLEEP = 0.1 # seconds
 CHECK_BROWSER_ITERATIONS = 100
@@ -792,8 +792,8 @@ class TransactionCase(BaseCase):
         # they can addup during test and take some disc space.
         # since cron are not running during tests, we need to gc manually
         # We need to check the status of the file system outside of the test cursor
-        with odoo.registry(get_db_name()).cursor() as cr:
-            gc_env = api.Environment(cr, odoo.SUPERUSER_ID, {})
+        with odoo.api.registry(get_db_name()).cursor() as cr:
+            gc_env = api.Environment(cr, api.SUPERUSER_ID, {})
             gc_env['ir.attachment']._gc_file_store_unsafe()
 
     @classmethod
@@ -801,7 +801,7 @@ class TransactionCase(BaseCase):
         super().setUpClass()
 
         cls.addClassCleanup(cls._gc_filestore)
-        cls.registry = odoo.registry(get_db_name())
+        cls.registry = odoo.api.registry(get_db_name())
         cls.registry_start_invalidated = cls.registry.registry_invalidated
         cls.registry_start_sequence = cls.registry.registry_sequence
 
@@ -834,7 +834,7 @@ class TransactionCase(BaseCase):
         cls.cr = cls.registry.cursor()
         cls.addClassCleanup(cls.cr.close)
 
-        cls.env = api.Environment(cls.cr, odoo.SUPERUSER_ID, {})
+        cls.env = api.Environment(cls.cr, api.SUPERUSER_ID, {})
 
         # speedup CryptContext. Many user an password are done during tests, avoid spending time hasing password with many rounds
         def _crypt_context(self):  # noqa: ARG001
@@ -892,14 +892,14 @@ class SingleTransactionCase(BaseCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.registry = odoo.registry(get_db_name())
+        cls.registry = api.registry(get_db_name())
         cls.addClassCleanup(cls.registry.reset_changes)
         cls.addClassCleanup(cls.registry.clear_all_caches)
 
         cls.cr = cls.registry.cursor()
         cls.addClassCleanup(cls.cr.close)
 
-        cls.env = api.Environment(cls.cr, odoo.SUPERUSER_ID, {})
+        cls.env = api.Environment(cls.cr, api.SUPERUSER_ID, {})
 
     def setUp(self):
         super(SingleTransactionCase, self).setUp()

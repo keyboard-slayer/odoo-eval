@@ -6,7 +6,7 @@ import os
 import re
 import shutil
 
-import odoo
+import odoo  # TODO do not import api explicitly (circular import)
 from odoo.tools.config import config
 
 VERSION = 1
@@ -287,9 +287,9 @@ class Cloc(object):
         self.count_customization(env)
 
     def count_database(self, database):
-        registry = odoo.registry(config['db_name'])
+        registry = odoo.api.registry(config['db_name'])
         with registry.cursor() as cr:
-            uid = odoo.SUPERUSER_ID
+            uid = odoo.api.SUPERUSER_ID
             env = odoo.api.Environment(cr, uid, {})
             self.count_env(env)
 

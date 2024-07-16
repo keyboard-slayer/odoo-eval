@@ -50,8 +50,8 @@ import psycopg2.extensions
 from psycopg2.extras import Json
 
 import odoo
-from . import SUPERUSER_ID
-from . import api
+# from . import api
+from odoo import api  # absolute import to avoid circular deps
 from . import tools
 from .exceptions import AccessError, MissingError, ValidationError, UserError
 from .tools import (
@@ -61,6 +61,7 @@ from .tools import (
     ormcache, partition, populate, Query, split_every, unique,
     SQL, pycompat, sql,
 )
+from .tools.constants import SUPERUSER_ID
 from .tools.lru import LRU
 from .tools.misc import CountingStream, LastOrderedSet, ReversedIterable
 from .tools.translate import _, _lt

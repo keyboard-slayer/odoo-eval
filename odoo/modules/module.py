@@ -14,7 +14,8 @@ import sys
 import warnings
 from os.path import join as opj, normpath
 
-import odoo
+import odoo.addons
+import odoo.upgrade
 import odoo.tools as tools
 import odoo.release as release
 from odoo.tools import pycompat
@@ -113,19 +114,18 @@ def initialize_sys_path():
         odoo.addons.__path__.append(base_path)
 
     # hook odoo.upgrade on upgrade-path
-    from odoo import upgrade
     legacy_upgrade_path = os.path.join(base_path, 'base', 'maintenance', 'migrations')
     for up in (tools.config['upgrade_path'] or legacy_upgrade_path).split(','):
         up = os.path.normcase(os.path.abspath(tools.ustr(up.strip())))
-        if os.path.isdir(up) and up not in upgrade.__path__:
-            upgrade.__path__.append(up)
+        if os.path.isdir(up) and up not in odoo.upgrade.__path__:
+            odoo.upgrade.__path__.append(up)
 
     # create decrecated module alias from odoo.addons.base.maintenance.migrations to odoo.upgrade
     spec = importlib.machinery.ModuleSpec("odoo.addons.base.maintenance", None, is_package=True)
     maintenance_pkg = importlib.util.module_from_spec(spec)
-    maintenance_pkg.migrations = upgrade
+    maintenance_pkg.migrations = odoo.upgrade
     sys.modules["odoo.addons.base.maintenance"] = maintenance_pkg
-    sys.modules["odoo.addons.base.maintenance.migrations"] = upgrade
+    sys.modules["odoo.addons.base.maintenance.migrations"] = odoo.upgrade
 
     # hook deprecated module alias from openerp to odoo and "crm"-like to odoo.addons
     if not getattr(initialize_sys_path, 'called', False): # only initialize once

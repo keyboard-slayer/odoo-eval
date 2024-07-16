@@ -191,7 +191,8 @@ try:
 except ImportError:
     from .tools._vendor.send_file import send_file as _send_file
 
-import odoo
+import odoo.api
+import odoo.service
 from .exceptions import UserError, AccessError, AccessDenied
 from .modules.module import get_manifest
 from .modules.registry import Registry

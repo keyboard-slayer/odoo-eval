@@ -1,7 +1,6 @@
 import ast
 import os
 import logging
-from odoo import MIN_PY_VERSION
 from shutil import copyfileobj
 from types import CodeType
 
@@ -74,8 +73,7 @@ def literal_eval(expr):
 
 ast.literal_eval = literal_eval
 
-if MIN_PY_VERSION >= (3, 12):
-    raise RuntimeError("The num2words monkey patch is obsolete. Bump the version of the library to the latest available in the official package repository, if it hasn't already been done, and remove the patch.")
-
 if num2words:
+    # TODO MIN_PY_VERSION is python 3.12: patch is obsolete
+    # The num2words monkey patch is obsolete. Bump the version of the library to the latest available in the official package repository, if it hasn't already been done, and remove the patch.
     num2words.CONVERTER_CLASSES["ar"] = Num2Word_AR_Fixed()

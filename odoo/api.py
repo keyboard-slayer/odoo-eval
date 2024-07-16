@@ -13,9 +13,11 @@ __all__ = [
     'model',
     'constrains', 'depends', 'onchange', 'returns',
     'call_kw',
+    'registry', 'SUPERUSER_ID', 'Command',
 ]
 
 import logging
+import threading
 from collections import defaultdict
 from collections.abc import Mapping
 from contextlib import contextmanager
@@ -29,10 +31,12 @@ try:
 except ImportError:
     from decorator import decorator
 
+from . import _base
 from .exceptions import AccessError, UserError, CacheMiss
 from .tools import clean_context, frozendict, lazy_property, OrderedSet, Query, SQL
+from .tools.constants import SUPERUSER_ID  # expose here
 from .tools.translate import _
-from odoo.tools.misc import StackMap
+from .tools.misc import StackMap
 
 if TYPE_CHECKING:
     from odoo.sql_db import Cursor, TestCursor
@@ -1396,7 +1400,18 @@ class Starred:
         return f"{self.value!r}*"
 
 
+def registry(database_name=None):
+    """
+    Return the model registry for the given database, or the database mentioned
+    on the current thread. If the registry does not exist yet, it is created on
+    the fly.
+    """
+    if database_name is None:
+        database_name = threading.current_thread().dbname
+    return Registry(database_name)
+
+
 # keep those imports here in order to handle cyclic dependencies correctly
-from odoo import SUPERUSER_ID
 from odoo.modules.registry import Registry
 from .sql_db import BaseCursor
+from .fields import Command  # expose it here for easier imports
