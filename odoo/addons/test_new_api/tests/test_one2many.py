@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo.tests.common import TransactionCase
 from odoo.exceptions import MissingError, UserError
-from odoo import Command
+from odoo.api import Command
 from odoo.tools import mute_logger
 
 

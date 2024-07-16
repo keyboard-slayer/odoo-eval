@@ -99,7 +99,7 @@ class TestHttpRegistry(BaseCase):
         self.assertEqual(res.status_code, 200)
 
         # invalidate the registry of the current db
-        with odoo.registry(get_db_name()).cursor() as cr:
+        with odoo.api.registry(get_db_name()).cursor() as cr:
             cr.execute("select nextval('base_registry_signaling')")
 
         # the registry should rebuild itself just fine

@@ -8,7 +8,9 @@ from odoo.tools import SQL
 from odoo.tools.float_utils import float_round
 _logger = logging.getLogger('precompute_setter')
 
-from odoo import models, fields, api, _, Command
+from odoo import models, fields, api
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import AccessError, ValidationError
 from odoo.tools.translate import html_translate
 

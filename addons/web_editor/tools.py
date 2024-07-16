@@ -11,7 +11,7 @@ from markupsafe import Markup
 from urllib.parse import parse_qs
 from werkzeug.urls import url_encode
 
-from odoo import _
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools import image_process

@@ -5,7 +5,7 @@ import re
 
 from werkzeug.urls import url_encode
 
-from odoo import _
+from odoo.tools import _
 
 logger = logging.getLogger(__name__)
 

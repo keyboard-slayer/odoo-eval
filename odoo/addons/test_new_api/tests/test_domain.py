@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from itertools import combinations
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import common
 from odoo.tools import SQL
 

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
 
-from odoo import http, _
+from odoo import http
+from odoo.tools import _
 from odoo.exceptions import AccessDenied
 from odoo.http import request
 from odoo.addons.web.controllers import home as web_home

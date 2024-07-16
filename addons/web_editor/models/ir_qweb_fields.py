@@ -25,7 +25,8 @@ from werkzeug import urls
 
 import odoo.modules
 
-from odoo import _, api, models, fields
+from odoo import api, models, fields
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import ustr, posix_to_ldml, pycompat
 from odoo.tools import html_escape as escape

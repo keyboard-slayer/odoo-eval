@@ -16,7 +16,9 @@ except ImportError:
 
 import odoo
 import odoo.modules.registry
-from odoo import SUPERUSER_ID, _, http, api
+from odoo import http, api
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.addons.base.models.assetsbundle import ANY_UNIQUE
 from odoo.exceptions import AccessError, UserError
 from odoo.http import request, Response
@@ -257,7 +259,7 @@ class Binary(http.Controller):
         imgname = 'logo'
         imgext = '.png'
         dbname = request.db
-        uid = (request.session.uid if dbname else None) or odoo.SUPERUSER_ID
+        uid = (request.session.uid if dbname else None) or odoo.api.SUPERUSER_ID
 
         if not dbname:
             response = http.Stream.from_path(file_path('web/static/img/logo.png')).get_response()

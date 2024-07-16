@@ -1,6 +1,7 @@
 from lxml.builder import E
 
-from odoo import fields, models, api, Command
+from odoo import fields, models, api
+from odoo.api import Command
 
 class Product(models.Model):
     _name = _description = 'ttu.product'

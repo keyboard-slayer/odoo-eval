@@ -7,7 +7,8 @@ from os.path import join as opj
 import operator
 import re
 
-from odoo import api, fields, models, tools, _
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.osv import expression

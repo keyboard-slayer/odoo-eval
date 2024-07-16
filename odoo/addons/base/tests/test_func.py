@@ -5,7 +5,7 @@ import functools
 
 from odoo.tests.common import BaseCase
 from odoo.tools import frozendict, lazy
-from odoo import Command
+from odoo.api import Command
 
 
 class TestFrozendict(BaseCase):

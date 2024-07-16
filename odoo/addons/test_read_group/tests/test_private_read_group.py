@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import fields
 from odoo.tests import common, new_test_user
-from odoo import Command
+from odoo.api import Command
 
 class TestPrivateReadGroup(common.TransactionCase):
 

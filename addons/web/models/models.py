@@ -7,7 +7,8 @@ import itertools
 import json
 import pytz
 
-from odoo import _, _lt, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _, _lt
 from odoo.fields import Command
 from odoo.models import BaseModel, NewId
 from odoo.osv.expression import AND, TRUE_DOMAIN, normalize_domain

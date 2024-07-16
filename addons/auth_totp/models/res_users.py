@@ -7,7 +7,8 @@ import logging
 import os
 import re
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.tools import _
 from odoo.addons.base.models.res_users import check_identity
 from odoo.exceptions import AccessDenied, UserError
 from odoo.http import request

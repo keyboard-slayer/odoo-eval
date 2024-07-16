@@ -1,7 +1,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import ipaddress
 
-from odoo import _, SUPERUSER_ID
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.http import request
 from odoo.addons.web.controllers.home import Home as WebHome
 

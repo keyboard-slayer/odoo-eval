@@ -6,7 +6,8 @@ import logging
 import uuid
 from lxml import etree, html
 
-from odoo import api, models, _
+from odoo import api, models
+from odoo.tools import _
 from odoo.osv import expression
 from odoo.exceptions import ValidationError
 from odoo.addons.base.models.ir_ui_view import MOVABLE_BRANDING

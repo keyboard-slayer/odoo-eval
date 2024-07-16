@@ -14,7 +14,8 @@ from math import floor
 from os.path import join as opj
 
 from odoo.http import request, Response
-from odoo import http, tools, _
+from odoo import http, tools
+from odoo.tools import _
 from odoo.tools.misc import file_open
 from odoo.tools.image import image_data_uri, binary_to_image
 

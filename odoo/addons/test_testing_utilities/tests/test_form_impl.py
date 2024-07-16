@@ -10,7 +10,7 @@ from lxml import etree
 from operator import itemgetter
 
 from odoo.tests import TransactionCase, Form
-from odoo import Command
+from odoo.api import Command
 
 
 class TestBasic(TransactionCase):

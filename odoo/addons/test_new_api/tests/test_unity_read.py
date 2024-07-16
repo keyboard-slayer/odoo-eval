@@ -2,7 +2,8 @@
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import Command, fields
+from odoo import fields
+from odoo.api import Command
 from odoo.exceptions import AccessError
 from odoo.tests.common import TransactionCase, new_test_user
 

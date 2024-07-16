@@ -5,7 +5,8 @@ import itertools
 import pstats
 from cProfile import Profile
 
-from odoo import fields, Command
+from odoo import fields
+from odoo.api import Command
 from odoo.tests import common
 
 

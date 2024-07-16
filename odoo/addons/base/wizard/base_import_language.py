@@ -7,7 +7,8 @@ import operator
 from tempfile import TemporaryFile
 from os.path import splitext
 
-from odoo import api, fields, models, tools, sql_db, _
+from odoo import api, fields, models, tools, sql_db
+from odoo.tools import _
 from odoo.exceptions import UserError
 from odoo.tools.translate import TranslationImporter
 

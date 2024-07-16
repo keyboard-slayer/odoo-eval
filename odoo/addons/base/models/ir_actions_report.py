@@ -3,7 +3,9 @@
 from markupsafe import Markup
 from urllib.parse import urlparse
 
-from odoo import api, fields, models, tools, SUPERUSER_ID, _
+from odoo import api, fields, models, tools
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.exceptions import UserError, AccessError
 from odoo.tools.safe_eval import safe_eval, time
 from odoo.tools.misc import find_in_path, ustr

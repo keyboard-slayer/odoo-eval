@@ -8,7 +8,7 @@ import psycopg2
 from odoo.exceptions import AccessError, MissingError
 from odoo.tests.common import TransactionCase
 from odoo.tools import mute_logger
-from odoo import Command
+from odoo.api import Command
 
 
 class TestORM(TransactionCase):

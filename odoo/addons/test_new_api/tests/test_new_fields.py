@@ -12,7 +12,8 @@ from PIL import Image
 from unittest.mock import patch
 import psycopg2
 
-from odoo import models, fields, Command
+from odoo import models, fields
+from odoo.api import Command
 from odoo.addons.base.tests.common import TransactionCaseWithUserDemo
 from odoo.exceptions import AccessError, MissingError, UserError, ValidationError
 from odoo.tests import TransactionCase, tagged, Form, users

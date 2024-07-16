@@ -1,7 +1,8 @@
 import collections
 import logging
 
-from odoo import models, Command
+from odoo import models
+from odoo.api import Command
 from odoo.tools import populate
 
 _logger = logging.getLogger(__name__)

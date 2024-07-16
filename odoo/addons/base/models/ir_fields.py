@@ -8,7 +8,9 @@ import itertools
 import psycopg2
 import pytz
 
-from odoo import api, Command, fields, models, _
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.tools import _
 from odoo.tools import ustr, OrderedSet
 from odoo.tools.translate import code_translations, _lt
 

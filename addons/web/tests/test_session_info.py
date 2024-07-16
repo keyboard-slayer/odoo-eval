@@ -3,7 +3,7 @@
 import json
 from uuid import uuid4
 
-from odoo import Command
+from odoo.api import Command
 from odoo.tests import common
 
 

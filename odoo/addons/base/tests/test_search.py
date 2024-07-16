@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.tests.common import TransactionCase
-from odoo import Command
+from odoo.api import Command
 
 
 class test_search(TransactionCase):

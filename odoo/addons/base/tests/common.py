@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from unittest.mock import patch, Mock
 
 from odoo.tests.common import new_test_user, TransactionCase, HttpCase
-from odoo import Command
+from odoo.api import Command
 
 DISABLED_MAIL_CONTEXT = {
     'tracking_disable': True,

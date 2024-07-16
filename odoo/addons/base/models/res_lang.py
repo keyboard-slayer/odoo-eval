@@ -8,7 +8,8 @@ import logging
 import re
 from typing import Any, Literal
 
-from odoo import api, fields, models, tools, _
+from odoo import api, fields, models, tools
+from odoo.tools import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import OrderedSet, frozendict
 

@@ -24,7 +24,8 @@ except ImportError:
     from werkzeug.routing.converters import NumberConverter  # moved in werkzeug 2.2.2
 
 import odoo
-from odoo import api, http, models, tools, SUPERUSER_ID
+from odoo import api, http, models, tools
+from odoo.api import SUPERUSER_ID
 from odoo.exceptions import AccessDenied, AccessError, MissingError
 from odoo.http import request, Response, ROUTING_KEYS, Stream
 from odoo.modules.registry import Registry

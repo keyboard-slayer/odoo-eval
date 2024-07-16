@@ -8,7 +8,8 @@ import requests
 import threading
 import uuid
 
-from odoo import exceptions, _
+from odoo import exceptions
+from odoo.tools import _
 from odoo.tools import email_normalize, pycompat
 
 _logger = logging.getLogger(__name__)

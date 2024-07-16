@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, _, _lt
+from odoo import fields, models
+from odoo.tools import _, _lt
 from odoo.tools.translate import xml_translate
 
 class TestTranslationImportModel1(models.Model):

@@ -14,7 +14,9 @@ import werkzeug
 
 from collections import defaultdict
 
-from odoo import api, fields, models, SUPERUSER_ID, tools, _
+from odoo import api, fields, models, tools
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.exceptions import AccessError, ValidationError, UserError
 from odoo.http import Stream, root, request
 from odoo.tools import config, human_size, image, str2bool, consteq

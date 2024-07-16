@@ -8,7 +8,8 @@ import re
 from ast import literal_eval
 from lxml import etree
 
-from odoo import api, models, _
+from odoo import api, models
+from odoo.tools import _
 from odoo.exceptions import AccessError, RedirectWarning, UserError
 from odoo.tools import ustr
 

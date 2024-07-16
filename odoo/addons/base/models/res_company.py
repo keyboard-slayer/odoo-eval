@@ -6,7 +6,9 @@ import logging
 import threading
 import warnings
 
-from odoo import api, fields, models, tools, _, Command, SUPERUSER_ID
+from odoo import api, fields, models, tools
+from odoo.api import Command, SUPERUSER_ID
+from odoo.tools import _
 from odoo.exceptions import ValidationError, UserError
 from odoo.tools import html2plaintext, file_open, ormcache
 

@@ -5,7 +5,8 @@ from collections import defaultdict
 from lxml import etree
 import logging
 
-from odoo import exceptions, Command
+from odoo import exceptions
+from odoo.api import Command
 from odoo.tests import Form, TransactionCase, tagged
 
 _logger = logging.getLogger(__name__)

@@ -9,8 +9,10 @@ import logging
 import psycopg2
 import datetime
 
-from odoo import api, fields, models, Command
-from odoo import SUPERUSER_ID, _
+from odoo import api, fields, models
+from odoo.api import Command
+from odoo.api import SUPERUSER_ID
+from odoo.tools import _
 from odoo.exceptions import ValidationError, UserError
 from odoo.tools import mute_logger
 

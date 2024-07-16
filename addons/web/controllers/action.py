@@ -1,7 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
-from odoo import _
+from odoo.tools import _
 from odoo.exceptions import UserError, MissingError, AccessError
 from odoo.http import Controller, request, route
 from .utils import clean_action

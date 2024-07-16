@@ -4,7 +4,7 @@
 from contextlib import contextmanager
 from unittest.mock import patch
 
-from odoo import Command
+from odoo.api import Command
 from odoo.addons.base.models.res_partner import Partner
 from odoo.addons.base.tests.common import TransactionCaseWithUserDemo
 from odoo.exceptions import AccessError, RedirectWarning, UserError, ValidationError

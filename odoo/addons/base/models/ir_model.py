@@ -14,7 +14,9 @@ from psycopg2 import sql
 from psycopg2.extras import Json
 from psycopg2.sql import Identifier, SQL, Placeholder
 
-from odoo import api, fields, models, tools, _, _lt, Command
+from odoo import api, fields, models, tools
+from odoo.api import Command
+from odoo.tools import _, _lt
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.osv import expression
 from odoo.tools import format_list, pycompat, unique, OrderedSet, sql as sqltools

@@ -8,7 +8,7 @@ import unittest
 
 from unittest.mock import patch
 
-from odoo import Command
+from odoo.api import Command
 
 from odoo.exceptions import AccessError, UserError
 from odoo.osv import expression

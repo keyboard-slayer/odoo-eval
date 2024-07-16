@@ -13,7 +13,9 @@ from collections import defaultdict
 from random import randint
 from werkzeug import urls
 
-from odoo import api, fields, models, tools, SUPERUSER_ID, _, Command
+from odoo import api, fields, models, tools
+from odoo.api import SUPERUSER_ID, Command
+from odoo.tools import _
 from odoo.exceptions import RedirectWarning, UserError, ValidationError
 
 # Global variables used for the warning fields declared on the res.partner

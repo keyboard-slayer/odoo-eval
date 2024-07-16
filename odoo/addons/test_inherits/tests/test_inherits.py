@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo.tests import common
 from odoo.exceptions import ValidationError
-from odoo import Command
+from odoo.api import Command
 
 
 class test_inherits(common.TransactionCase):

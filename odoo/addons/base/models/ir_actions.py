@@ -2,7 +2,9 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import odoo
-from odoo import api, fields, models, tools, _, Command
+from odoo import api, fields, models, tools
+from odoo.api import Command
+from odoo.tools import _
 from odoo.exceptions import MissingError, ValidationError, AccessError, UserError
 from odoo.tools import frozendict
 from odoo.tools.safe_eval import safe_eval, test_python_expr

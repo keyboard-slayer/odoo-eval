@@ -3,7 +3,7 @@
 
 from odoo.tests.common import TransactionCase
 from odoo.exceptions import ValidationError
-from odoo import Command
+from odoo.api import Command
 
 
 class TestHasGroup(TransactionCase):
