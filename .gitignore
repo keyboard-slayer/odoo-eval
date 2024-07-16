@@ -3,6 +3,7 @@ _build/
 
 # dotfiles
 .*
+!.gitkeep
 !.gitignore
 !.github
 !.mailmap
@@ -20,7 +21,7 @@ status
 odoo/filestore
 # maintenance migration scripts
 odoo/addons/base/maintenance
-# window installation config file
+# windows installation config file
 /odoo.conf
 
 # generated for windows installer?
@@ -49,3 +50,5 @@ package.json
 /man/
 /share/
 /src/
+/community/build
+/community/dist

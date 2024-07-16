@@ -1,0 +1,157 @@
+[project]
+name = "odoo-community"
+#dynamic = ["version"]
+version = "18.0.alpha"
+description = "Odoo Community"
+authors = [
+    {name = "Odoo", email = "info@odoo.com"}
+]
+readme = "README.md"
+keywords = ["odoo", "framework"]
+license = {file = "LICENSE"}
+classifiers = [
+    # https://pypi.org/pypi?%3Aaction=list_classifiers
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: GNU Lesser General Public License v3",
+    "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.10"
+dependencies = [
+    'odoo',  # the framework
+    'babel >= 1.0',
+    'chardet',
+    'cryptography',
+    'decorator',
+    'docutils',
+    'geoip2',
+    'gevent',
+    'greenlet',
+    'idna',
+    'Jinja2',
+    'lxml',  # windows binary http://www.lfd.uci.edu/~gohlke/pythonlibs/
+    'libsass',
+    'MarkupSafe',
+    'num2words',
+    'ofxparse',
+    'passlib',
+    'pillow',  # windows binary http://www.lfd.uci.edu/~gohlke/pythonlibs/
+    'polib',
+    'psutil',  # windows binary code.google.com/p/psutil/downloads/list
+    'psycopg2 >= 2.2',
+    'pyopenssl',
+    'PyPDF2',
+    'pyserial',
+    'python-dateutil',
+    'python-stdnum',
+    'pytz',
+    'pyusb >= 1.0.0b1',
+    'qrcode',
+    'reportlab',  # windows binary pypi.python.org/pypi/reportlab
+    'rjsmin',
+    'requests',
+    'urllib3',
+    'vobject',
+    'werkzeug',
+    'xlrd',
+    'xlsxwriter',
+    'xlwt',
+    'zeep',
+]
+
+[project.optional-dependencies]
+ldap = ["python-ldap"]
+test = ["odoo[test]"]
+dev = ["odoo[dev]"]
+
+[project.urls]
+"Homepage" = "https://www.odoo.com"
+"Repository" = "https://github.com/odoo/odoo"
+"Download" = "https://www.odoo.com/page/download"
+"Documentation" = "https://www.odoo.com/documentation"
+"Bug Tracker" = "https://www.odoo.com/help"
+
+[build-system]
+requires = ["setuptools >= 70.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+#version = {attr = "odoo.release.version"}
+
+[tool.setuptools.packages.find]
+namespaces = true
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.ruff]
+fix = false
+show-fixes = true
+output-format = "full"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    # full rule-sets
+    "A",   # flake8-builtins
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "COM", # flake8-commas
+    #"D",   # pydocstyle
+    #"E",   # pycodestyle
+    "ERA", # eradicate
+    "F",   # Pyflakes
+    "G",   # flake8-logging-format
+    "I",   # isort
+    "ISC", # flake8-implicit-str-concat
+    "N",   # naming
+    "PERF",# perflint
+    "PIE", # flake8-pie
+    "PL",  # pylint
+    "RET", # flake8-return
+    "RUF", # ruff specific rules
+    "SIM", # flake8-simplify
+    "TRY", # tryceratops
+    "T20", # flake8-print
+    "UP",  # pyupdate
+    "W",   # pycodestyle
+
+    # flake8-boolean-trap
+    "FBT003",  # pass boolean in function call as kwarg
+]
+ignore = [
+    "D1",      # undocumented-*
+    "E501",    # line-too-long (future)
+    "E731",    # lambda-assignment
+    "PERF203", # try-except-in-loop
+    "PLR09",   # too-many-*; unwanted code complexity checks
+    "RUF012",  # mutable-class-default; we know about the risk
+
+    "PLR2004", # magic-value-comparison; not all comparisons to int or str are magic
+    "TRY003",  # raise-vanilla-args; we can live without it
+    "UP038",   # isinstance can use tuple (performance)
+    "ISC001",  # avoid incompatibility with the ruff formatter
+]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["format", "id", "type"]
+
+[tool.ruff.lint.isort]
+section-order = ["future", "standard-library", "third-party", "first-party", "odoo-addons", "local-folder"]
+known-first-party = ["odoo"]
+known-local-folder = ["odoo.addons", "odoo.upgrade"]
+
+[tool.ruff.lint.isort.sections]
+odoo-addons = ["odoo.addons", "openerp.addons"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.per-file-ignores]
+"*/__init__.py" = [
+    "F401",
+    "F403",
+]
+# ignore docstring lint for tests files
+"*/tests/*.py" = ["D"]
+# and for upgrade scripts
+"*/*/{pre,post,end}-*.py" = ["D"]

@@ -510,6 +510,7 @@ class configmanager(object):
         die(ismultidb and (opt.init or opt.update), "Cannot use -i/--init or -u/--update with multiple databases in the -d/--database/db_name")
         self.options['root_path'] = self._normalize(os.path.join(os.path.dirname(__file__), '..'))
         if not self.options['addons_path'] or self.options['addons_path']=='None':
+            # TODO avoid initializing it, should just work with PYTHONPATH
             default_addons = []
             base_addons = os.path.join(self.options['root_path'], 'addons')
             if os.path.exists(base_addons):

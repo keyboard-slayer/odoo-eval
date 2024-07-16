@@ -1,0 +1,189 @@
+[project]
+name = "odoo"
+dynamic = ["version"]
+description = "Odoo Server Core"
+authors = [
+    {name = "Odoo", email = "info@odoo.com"}
+]
+readme = "README.md"
+keywords = ["odoo", "framework"]
+license = {file = "LICENSE"}
+classifiers = [
+    # https://pypi.org/pypi?%3Aaction=list_classifiers
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: GNU Lesser General Public License v3",
+    "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.10"
+dependencies = [
+    'babel >= 1.0',
+    'cbor2',
+    'chardet',
+    'cryptography',
+    'decorator',
+    'docutils',
+    'geoip2',
+    'gevent',
+    'greenlet',
+    'idna',
+    'Jinja2',
+    'lxml',  # windows binary http://www.lfd.uci.edu/~gohlke/pythonlibs/
+    'libsass',
+    'MarkupSafe',
+    'num2words',
+    'ofxparse',
+    'passlib',
+    'pillow',  # windows binary http://www.lfd.uci.edu/~gohlke/pythonlibs/
+    'polib',
+    'psutil',  # windows binary code.google.com/p/psutil/downloads/list
+    'psycopg2 >= 2.2',
+    'pyopenssl',
+    'PyPDF2',
+    'pyserial',
+    'python-dateutil',
+    'python-stdnum',
+    'pytz',
+    'pyusb >= 1.0.0b1',
+    'qrcode',
+    'reportlab',  # windows binary pypi.python.org/pypi/reportlab
+    'rjsmin',
+    'requests',
+    'urllib3',
+    'vobject',
+    'werkzeug',
+    'xlrd',
+    'xlsxwriter',
+    'xlwt',
+    'zeep',
+]
+
+[project.optional-dependencies]
+ldap = ["python-ldap"]
+dev = [
+    "freezegun",
+    "ruff==0.5.2",
+    # TODO freeze all dependencies for testing
+]
+
+[project.scripts]
+odoo-bin = "odoo.cli:main"
+
+[project.urls]
+"Homepage" = "https://www.odoo.com"
+"Repository" = "https://github.com/odoo/odoo"
+"Download" = "https://www.odoo.com/page/download"
+"Documentation" = "https://www.odoo.com/documentation"
+"Bug Tracker" = "https://www.odoo.com/help"
+
+[build-system]
+requires = ["setuptools >= 70.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "odoo.release.version"}
+
+[tool.setuptools.packages.find]
+include = ["odoo"]
+exclude = ["community"]
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.ruff]
+fix = false
+preview = true
+show-fixes = true
+output-format = "full"
+line-length = 120
+
+# TODO align with runbot team
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN",
+    "B",
+    "C901",
+    "COM812",
+    "D",
+    "E501",
+    "E741",
+    "EM101",
+    "ERA001",
+    "FBT",
+    "I001",
+    "N",
+    "PD",
+    "PERF",
+    "PIE790",
+    "PLR",
+    "PT",
+    "Q",
+    "RET502",
+    "RET503",
+    "RSE102",
+    "RUF001",
+    "RUF012",
+    "S",
+    "SIM102",
+    "SIM108",
+    "SLF001",
+    "TID252",
+    "UP031",
+    "TRY002",
+    "TRY003",
+    "TRY300",
+    "UP038",
+    "E713",
+    "SIM117",
+    "PGH003",
+    "RUF005",
+    "RET",
+    "DTZ",
+    "FIX",
+    "TD",
+    "ARG",
+    "TRY400",
+    "B904",
+    "C408",
+    "PLW2901",
+    "PTH",
+    "FURB103",
+    "EM102",
+    "INP001",
+    "CPY001",
+    "UP006",
+    "UP007",
+    "E266",
+    "PIE808",
+    "PLC2701",
+    "FURB101",
+    "RUF021",
+    "FURB118",
+    "RUF100",
+    "FA100",
+    "FA102",
+]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["format", "id", "type"]
+
+[tool.ruff.lint.isort]
+section-order = ["future", "standard-library", "third-party", "first-party", "odoo-addons", "local-folder"]
+known-first-party = ["odoo"]
+known-local-folder = ["odoo.addons", "odoo.upgrade"]
+
+[tool.ruff.lint.isort.sections]
+odoo-addons = ["odoo.addons", "openerp.addons"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.per-file-ignores]
+"*/__init__.py" = [
+    "F401",
+    "F403",
+]
+# ignore docstring lint for tests files
+"*/tests/*.py" = ["D"]
+# and for upgrade scripts
+"*/*/{pre,post,end}-*.py" = ["D"]
