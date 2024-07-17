@@ -1,4 +1,4 @@
-const SAFE_URL_PATTERN = /^(?!javascript:)(?:[a-z0-9+.-]+:|[^&:/?#]*(?:[/?#]|$))/i;
+const SAFE_URL_PATTERN = /^(?!(javascript:|vbscript:|data:))(?:[a-z0-9+.-]+:|[^&:/?#]*(?:[/?#]|$))/i;
 
 // Extracted from the marked library
 function cleanUrl(href) {
