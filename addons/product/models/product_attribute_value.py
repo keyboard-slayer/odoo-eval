@@ -51,6 +51,7 @@ class ProductAttributeValue(models.Model):
         max_height=70,
     )
     active = fields.Boolean(default=True)
+    default_extra_price_changed = fields.Boolean(compute='_compute_default_extra_price_changed')
 
     @api.depends('pav_attribute_line_ids')
     def _compute_is_used_on_products(self):
@@ -72,6 +73,13 @@ class ProductAttributeValue(models.Model):
             return super()._compute_display_name()
         for value in self:
             value.display_name = f"{value.attribute_id.name}: {value.name}"
+
+    @api.depends('default_extra_price')
+    def _compute_default_extra_price_changed(self):
+        for pav in self:
+            pav.default_extra_price_changed = (
+                pav.default_extra_price != pav._origin.default_extra_price
+            )
 
     def write(self, values):
         if 'attribute_id' in values:
@@ -126,11 +134,22 @@ class ProductAttributeValue(models.Model):
     def _without_no_variant_attributes(self):
         return self.filtered(lambda pav: pav.attribute_id.create_variant != 'no_variant')
 
-    def action_open_product_template_attribute_value(self):
+    def action_open_attribute_value_wizard(self):
+        self.ensure_one()
+        is_new_attribute_value = not bool(self.pav_attribute_line_ids)
+        if is_new_attribute_value:
+            name = _("Add to all products")
+        else:
+            name = _("Update product extra prices")
         return {
+            'name': name,
             'type': 'ir.actions.act_window',
-            "name": _("Product Variant Values"),
-            'res_model': 'product.template.attribute.value',
-            'view_mode': 'list',
-            'domain': [('product_attribute_value_id.id', '=', self.id)],
+            'res_model': 'update.product.attribute.value',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_attribute_value_id': self.id,
+                'default_is_new_attribute_value': is_new_attribute_value,
+                'dialog_size': 'medium',
+            },
         }
