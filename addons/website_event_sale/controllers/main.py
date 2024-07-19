@@ -5,6 +5,7 @@ from collections import defaultdict
 from odoo.http import request, route
 
 from odoo.addons.website_event.controllers.main import WebsiteEventController
+from odoo.addons.website_sale.controllers.main import PaymentPortal
 
 
 class WebsiteEventSaleController(WebsiteEventController):
@@ -70,3 +71,15 @@ class WebsiteEventSaleController(WebsiteEventController):
                 request.website.sale_reset()
 
         return res
+
+
+class PaymentPortalOnsite(PaymentPortal):
+
+    def _validate_transaction_for_order(self, transaction, sale_order_id):
+        """
+        Throws a ValidationError if the user tries to pay for a ticket which isn't available
+        """
+        super()._validate_transaction_for_order(transaction, sale_order_id)
+        sale_order = request.env['sale.order'].browse(sale_order_id).exists().sudo()
+        tickets = sale_order.order_line.filtered(lambda line: line.product_type == 'event').mapped('event_ticket_id')
+        tickets._check_seats_availability(minimal_availability=sale_order.attendee_count)
