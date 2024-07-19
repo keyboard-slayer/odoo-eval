@@ -1,5 +1,6 @@
 import { Component } from "@odoo/owl";
 import { useDropdownCloser } from "@web/core/dropdown/dropdown_hooks";
+import { useMiddleClick } from "@web/core/utils/middle_click_hook";
 import { pick } from "@web/core/utils/objects";
 import { debounce as debounceFn } from "@web/core/utils/timing";
 
@@ -88,6 +89,14 @@ export class ViewButton extends Component {
             model: this.props.record && this.props.record.resModel,
         });
         this.dropdownControl = useDropdownCloser();
+        if (this.props.clickParams.type === "object") {
+            useMiddleClick({
+                clickParams: {
+                    isRouterHandled: true,
+                },
+                refName: "root",
+            });
+        }
     }
 
     get clickParams() {
@@ -107,14 +116,7 @@ export class ViewButton extends Component {
         return (!name && !type && !special) || this.props.disabled;
     }
 
-    /**
-     * @param {MouseEvent} ev
-     */
-    onClick(ev) {
-        if (this.props.tag === "a") {
-            ev.preventDefault();
-        }
-
+    onClick() {
         if (this.props.onClick) {
             return this.props.onClick();
         }

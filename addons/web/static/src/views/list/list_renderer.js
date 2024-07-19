@@ -7,6 +7,7 @@ import { Pager } from "@web/core/pager/pager";
 import { evaluateBooleanExpr } from "@web/core/py_js/py";
 import { registry } from "@web/core/registry";
 import { useBus, useService } from "@web/core/utils/hooks";
+import { useMiddleClick } from "@web/core/utils/middle_click_hook";
 import { useSortable } from "@web/core/utils/sortable_owl";
 import { getTabableElements } from "@web/core/utils/ui";
 import { Field, getPropertyFieldInfo } from "@web/views/fields/field";
@@ -61,14 +62,57 @@ function getElementToFocus(cell, index) {
     return getTabableElements(cell).at(index) || cell;
 }
 
+class ListRecordRow extends Component {
+    static props = ["*"];
+    static template = "web.ListRecordRowContainer";
+    setup() {
+        const contextMenuOptions = [
+            {
+                icon: "fa-check-square",
+                description: _t("Toggle row selection"),
+                callback: () => this.props.toggleRecordSelection(this.props.record),
+            },
+        ];
+        if (this.props.actions) {
+            const actions = Object.values(this.props.actions).map((a) => {
+                return {
+                    ...a,
+                    callback: () => {
+                        if (!this.props.list.selection.length) {
+                            this.props.toggleRecordSelection(this.props.record);
+                        }
+                        a.callback();
+                    },
+                };
+            });
+            contextMenuOptions.push({ separator: true }, ...actions);
+        }
+        useMiddleClick({
+            clickParams: {
+                record: this.props.record,
+            },
+            refName: "recordRef",
+            contextMenuOptions,
+        });
+    }
+}
+
 export class ListRenderer extends Component {
     static template = "web.ListRenderer";
     static rowsTemplate = "web.ListRenderer.Rows";
     static recordRowTemplate = "web.ListRenderer.RecordRow";
     static groupRowTemplate = "web.ListRenderer.GroupRow";
     static useMagicColumnWidths = true;
-    static LONG_TOUCH_THRESHOLD = 400;
-    static components = { DropdownItem, Field, ViewButton, CheckBox, Dropdown, Pager, Widget };
+    static components = {
+        DropdownItem,
+        Field,
+        ViewButton,
+        CheckBox,
+        Dropdown,
+        ListRecordRow,
+        Pager,
+        Widget,
+    };
     static defaultProps = { hasSelectors: false, cycleOnTab: true };
     static props = [
         "activeActions?",
@@ -84,6 +128,7 @@ export class ListRenderer extends Component {
         "noContentHelp?",
         "nestedKeyOptionalFieldsData?",
         "optionalActiveFields?",
+        "getStaticActionMenuItems?",
     ];
 
     setup() {
@@ -1797,31 +1842,6 @@ export class ListRenderer extends Component {
             browser.clearTimeout(this.longTouchTimer);
             this.longTouchTimer = null;
         }
-    }
-
-    onRowTouchStart(record, ev) {
-        if (!this.props.allowSelectors) {
-            return;
-        }
-        if (this.props.list.selection.length) {
-            ev.stopPropagation(); // This is done in order to prevent the tooltip from showing up
-        }
-        this.touchStartMs = Date.now();
-        if (this.longTouchTimer === null) {
-            this.longTouchTimer = browser.setTimeout(() => {
-                this.toggleRecordSelection(record);
-                this.resetLongTouchTimer();
-            }, this.constructor.LONG_TOUCH_THRESHOLD);
-        }
-    }
-    onRowTouchEnd(record) {
-        const elapsedTime = Date.now() - this.touchStartMs;
-        if (elapsedTime < this.constructor.LONG_TOUCH_THRESHOLD) {
-            this.resetLongTouchTimer();
-        }
-    }
-    onRowTouchMove(record) {
-        this.resetLongTouchTimer();
     }
 
     /**
