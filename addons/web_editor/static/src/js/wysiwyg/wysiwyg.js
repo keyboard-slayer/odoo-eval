@@ -1682,7 +1682,9 @@ const Wysiwyg = Widget.extend({
                         // hides it).
                         this.odooEditor.deselectTable();
                         this._updateEditorUI(this.lastMediaClicked && { target: this.lastMediaClicked });
-                        colorpicker.off('color_leave');
+                        if (ev.data.target.matches('.o_we_color_btn:not(.o_custom_gradient_btn)')) {
+                            colorpicker.off('color_leave');
+                        }
                     });
                     colorpicker.on('color_hover', null, ev => {
                         if (hadNonCollapsedSelection) {
