@@ -1,3 +1,5 @@
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+
 import base64
 import json
 import logging
@@ -17,6 +19,7 @@ _logger = logging.getLogger(__name__)
 
 
 class Ewaybill(models.Model):
+
     _name = "l10n.in.ewaybill"
     _description = "e-Waybill"
     _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
@@ -36,7 +39,6 @@ class Ewaybill(models.Model):
 
     # Account Move details
     account_move_id = fields.Many2one('account.move', copy=False, readonly=True)
-    is_process_thru_irn = fields.Boolean(compute='_compute_is_process_thru_irn')
 
     # Document details
     document_date = fields.Datetime("Document Date", compute="_compute_ewaybill_document_details")
@@ -168,11 +170,7 @@ class Ewaybill(models.Model):
         self.ensure_one()
         return self.account_move_id.is_purchase_document(include_receipts=True)
 
-    # --------------Compute Methods----------------
-
-    def _compute_is_process_thru_irn(self):
-        for ewaybill in self:
-            ewaybill.is_process_thru_irn = False
+    # -------------- Compute Methods ----------------
 
     @api.depends(lambda self: self._get_ewaybill_dependencies())
     def _compute_is_incoming(self):
@@ -215,11 +213,8 @@ class Ewaybill(models.Model):
 
     def _compute_content(self):
         for ewaybill in self:
-            if not ewaybill.is_process_thru_irn:
-                ewaybill_json = ewaybill._ewaybill_generate_direct_json()
-                ewaybill.content = base64.b64encode(json.dumps(ewaybill_json).encode())
-            else:
-                ewaybill.content = False
+            ewaybill_json = ewaybill._ewaybill_generate_direct_json()
+            ewaybill.content = base64.b64encode(json.dumps(ewaybill_json).encode())
 
     @api.depends('name', 'state')
     def _compute_display_name(self):
@@ -243,7 +238,7 @@ class Ewaybill(models.Model):
         for ewaybill in self:
             if errors := ewaybill._check_configuration():
                 raise UserError('\n'.join(errors))
-            ewaybill._generate_ewaybill_direct()
+            ewaybill._generate_ewaybill()
 
     def cancel_ewaybill(self):
         self.ensure_one()
@@ -336,16 +331,16 @@ class Ewaybill(models.Model):
             error_message.append(_('You need at least one product having "Product Type" as stockable or consumable.'))
             return error_message
         for line in invoice_lines:
-            if line.display_type == 'product' and not line.product_id.type == "service":
+            if line.display_type == 'product' and line.product_id.type != "service":
                 hsn_code = self.env['account.move']._l10n_in_extract_digits(line.l10n_in_hsn_code)
                 if not hsn_code:
-                    error_message.append(_("HSN code is not set in product line %s", line.name))
+                    error_message.append(_("HSN code is not set in product line %(name)s", name=line.name))
                 elif not re.match(r'^\d{4}$|^\d{6}$|^\d{8}$', hsn_code):
                     error_message.append(_(
-                        "Invalid HSN Code (%(hsn_code)s) in product line %(product_line)s") % {
-                        'hsn_code': hsn_code,
-                        'product_line': line.product_id.name or line.name
-                    })
+                        "Invalid HSN Code (%(hsn_code)s) in product line %(product_line)s",
+                        hsn_code=hsn_code,
+                        product_line=line.product_id.name or line.name
+                    ))
         return error_message
 
     def _check_gst_treatment(self):
@@ -427,14 +422,12 @@ class Ewaybill(models.Model):
         self._write_successfully_response({'state': 'cancel'})
         self._cr.commit()
 
-    def _generate_ewaybill_direct(self):
-        ewb_api = EWayBillApi(self.company_id)
+    def _generate_ewaybill(self):
+        self.ensure_one()
         self._lock_ewaybill()
         try:
-            if self.is_process_thru_irn:
-                response = ewb_api._ewaybill_generate_by_irn(self._ewaybill_generate_irn_json())
-            else:
-                response = ewb_api._ewaybill_generate(self._ewaybill_generate_direct_json())
+            ewb_api = EWayBillApi(self.company_id)
+            response = ewb_api._ewaybill_generate(self._ewaybill_generate_direct_json())
         except EWayBillError as error:
             self._handle_error(error)
             return False
@@ -599,13 +592,6 @@ class Ewaybill(models.Model):
             **self._prepare_ewaybill_base_json_payload(),
             **self._prepare_ewaybill_transportation_json_payload(),
             **self._prepare_ewaybill_tax_details_json_payload(),
-        }
-
-    def _ewaybill_generate_irn_json(self):
-        return {
-            "Irn": self.account_move_id._get_l10n_in_edi_response_json().get("Irn"),
-            'Distance': str(self.distance),
-            **self._prepare_ewaybill_transportation_json_payload(),
         }
 
     @api.ondelete(at_uninstall=False)

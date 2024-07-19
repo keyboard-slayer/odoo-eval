@@ -29,8 +29,8 @@
                             <field name="name" readonly="1"/>
                         </h1>
                     </div>
-                    <field name="is_process_thru_irn" invisible="1"/>
-                    <group name="document_details" invisible="is_process_thru_irn" string="Document Details">
+                    <!-- <field name="is_process_thru_irn" invisible="1"/> -->
+                    <group name="document_details" string="Document Details">
                         <group>
                             <field name="account_move_id" invisible="1"/>
                             <field name="is_incoming" invisible="1"/>
@@ -46,7 +46,7 @@
                             <field name="document_date" readonly="1"/>
                         </group>
                     </group>
-                    <group name="partners" string="Address Details" invisible="is_process_thru_irn">
+                    <group name="partners" string="Address Details">
                         <field name="company_id" invisible="1"/>
                         <field name="is_bill_to_editable" invisible="1"/>
                         <field name="is_bill_from_editable" invisible="1"/>

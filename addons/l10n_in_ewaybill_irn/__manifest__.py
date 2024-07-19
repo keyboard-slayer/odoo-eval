@@ -1,21 +1,21 @@
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+
 {
     "name": """Indian - E-waybill thru IRN""",
-    "countries": ["in"],
-    "version": "1.03.00",
+    "version": "1.0",
     "category": "Accounting/Localizations",
     "depends": [
         "l10n_in_ewaybill",
         "l10n_in_edi"
-        "iap",
     ],
     "description": """
 Indian - E-waybill thru IRN
 ====================================
-This module provides facility to generate E-waybill through IRN.
+This module enables to generate E-waybill through IRN.
     """,
     "data": [
+        'views/l10n_in_ewaybill_views.xml'
     ],
-    "installable": True,
-    # not auto_install because the company can be related to the service industry
+    'auto_install': True,
     "license": "LGPL-3",
 }

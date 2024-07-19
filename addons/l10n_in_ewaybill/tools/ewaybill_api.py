@@ -162,15 +162,6 @@ class EWayBillApi:
     def _ewaybill_cancel(self, json_payload):
         return self._ewaybill_make_transaction("cancel", json_payload)
 
-    def _ewaybill_get_by_irn(self, irn):
-        if not (token := self.company._l10n_in_edi_get_token()):
-            return self._l10n_in_edi_no_config_response()
-        params = {
-            "auth_token": token,
-            "irn": irn,
-        }
-        return self._ewaybill_jsonrpc_to_server(url_path="/iap/l10n_in_edi/1/get_ewaybill_by_irn", params=params)
-
     def _ewaybill_get_by_consigner(self, document_type, document_number):
         if not self._ewaybill_check_authentication():
             self._raise_ewaybill_no_config_error()
@@ -205,18 +196,6 @@ class EWayBillApi:
                 "message": _(
                     "Unable to send E-waybill."
                     "Create an API user in NIC portal, and set it using the top menu: Configuration > Settings."
-                )
-            }]
-        })
-
-    @staticmethod
-    def _raise_edi_no_config_error():
-        raise EWayBillError({
-            "error": [{
-                "code": "0",
-                "message": _(
-                    "Unable to send E-waybill by IRN."
-                    "Ensure GST Number set on company setting and EDI and Ewaybilll credentials are Verified."
                 )
             }]
         })

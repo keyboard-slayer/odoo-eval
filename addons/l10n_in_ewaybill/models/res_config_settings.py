@@ -1,3 +1,5 @@
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+
 from odoo import models, fields, _
 from odoo.exceptions import UserError
 from odoo.tools import html_escape

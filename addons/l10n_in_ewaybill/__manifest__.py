@@ -1,7 +1,9 @@
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+
 {
     "name": """Indian - E-waybill""",
     "countries": ["in"],
-    "version": "1.03.00",
+    "version": "2.0",
     "category": "Accounting/Localizations",
     "depends": [
         "l10n_in",
