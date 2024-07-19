@@ -271,7 +271,3 @@ class AccountMove(models.Model):
             l10n_in_tax_details["%s_amount" % (tax_detail["line_code"])] += tax_detail["tax_amount"]
             l10n_in_tax_details["%s_amount_currency" % (tax_detail["line_code"])] += tax_detail["tax_amount_currency"]
         return l10n_in_tax_details
-
-    def _l10n_in_is_process_thru_irn(self):
-        self.ensure_one()
-        return False

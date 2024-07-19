@@ -172,10 +172,7 @@ class Ewaybill(models.Model):
 
     def _compute_is_process_thru_irn(self):
         for ewaybill in self:
-            ewaybill.is_process_thru_irn = (
-                ewaybill.account_move_id
-                and ewaybill.account_move_id._l10n_in_is_process_thru_irn()
-            )
+            ewaybill.is_process_thru_irn = False
 
     @api.depends(lambda self: self._get_ewaybill_dependencies())
     def _compute_is_incoming(self):
@@ -218,12 +215,11 @@ class Ewaybill(models.Model):
 
     def _compute_content(self):
         for ewaybill in self:
-            ewaybill_json = (
-                ewaybill.is_process_thru_irn
-                and ewaybill._ewaybill_generate_irn_json()
-                or ewaybill._ewaybill_generate_direct_json()
-            )
-            ewaybill.content = base64.b64encode(json.dumps(ewaybill_json).encode())
+            if not ewaybill.is_process_thru_irn:
+                ewaybill_json = ewaybill._ewaybill_generate_direct_json()
+                ewaybill.content = base64.b64encode(json.dumps(ewaybill_json).encode())
+            else:
+                ewaybill.content = False
 
     @api.depends('name', 'state')
     def _compute_display_name(self):

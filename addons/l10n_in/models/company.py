@@ -78,14 +78,3 @@ class ResCompany(models.Model):
         for record in self:
             if record.l10n_in_pan and not pan.is_valid(record.l10n_in_pan):
                 raise ValidationError(_('The entered PAN seems invalid. Please enter a valid PAN.'))
-    """
-        TODO check if it's better to raise NotImplemented or not?
-    """
-    def _l10n_in_edi_get_token(self):
-        return False
-
-    def _l10n_in_edi_authenticate(self):
-        return {}
-
-    def _get_l10n_in_edi_response_json(self):
-        return {}

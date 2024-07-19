@@ -156,49 +156,6 @@ class EWayBillApi:
                 return response
             raise
 
-    def _ewaybill_generate_by_irn(self, json_payload):
-        if not json_payload.get("Irn"):
-            raise EWayBillError({"error": [{
-                "code": "waiting",
-                "message": _("waiting For IRN generation To create E-waybill")}
-            ]})
-        if not (token := self.company._l10n_in_edi_get_token()):
-            return self._raise_edi_no_config_error()
-        params = {
-            "auth_token": token,
-            "json_payload": json_payload,
-        }
-        try:
-            response = self._ewaybill_jsonrpc_to_server(
-                url_path="/iap/l10n_in_edi/1/generate_ewaybill_by_irn",
-                params=params
-            )
-        except EWayBillError as e:
-            if "no-credit" in e.error_codes:
-                e.error_json['odoo_warning'].append({
-                    'message': self._ewaybill_get_iap_buy_credits_message()
-                })
-                raise
-            if "1005" in e.error_codes:
-                # Invalid token eror then create new token and send generate request again.
-                # This happen when authenticate called from another odoo instance with same credentials (like. Demo/Test)
-                self.company_id._l10n_in_edi_authenticate()
-                response = self.self._ewaybill_jsonrpc_to_server(
-                    url_path="/iap/l10n_in_edi/1/generate_ewaybill_by_irn",
-                    params=params
-                )
-
-            if "4002" in e.error_codes or "4026" in e.error_codes:
-                # Get E-waybill by details in case of IRN is already generated
-                # this happens when timeout from the Government portal but E-waybill is generated
-                self._ewaybill_get_by_irn(json_payload.get("Irn"))
-                response.update({
-                    'odoo_warning': [{
-                        'message': self.DEFAULT_HELP_MESSAGE % 'generated',
-                        'message_post': True
-                    }]
-                })
-
     def _ewaybill_generate(self, json_payload):
         return self._ewaybill_make_transaction("generate", json_payload)
 
