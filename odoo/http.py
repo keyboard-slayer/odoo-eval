@@ -689,6 +689,10 @@ class Controller:
             module = path[2] if path[:2] == ['odoo', 'addons'] else ''
             Controller.children_classes[module].append(cls)
 
+    @property
+    def env(self):
+        return request.env if request else None
+
 
 def route(route=None, **routing):
     """
