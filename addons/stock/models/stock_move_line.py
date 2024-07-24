@@ -925,6 +925,12 @@ class StockMoveLine(models.Model):
             raise UserError(_("You cannot directly pack quantities from different transfers into the same package through this view. Try adding them to a batch picking and pack it there."))
         return self.picking_id.with_context(move_lines_to_pack_ids=self.ids).action_put_in_pack()
 
+    def _filter_to_pack(self):
+        return self.filtered(lambda ml:
+            ml.picked or not ml.move_id.picked
+            and float_compare(ml.quantity, 0.0, precision_rounding=ml.product_uom_id.rounding) > 0
+            and not ml.result_package_id)
+
     def _get_revert_inventory_move_values(self):
         self.ensure_one()
         return {
