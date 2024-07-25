@@ -8,7 +8,7 @@ class ActionMungerTest(BaseCase):
         action = {
             "views": [[False, "list"], [False, "form"],
                       [False, "calendar"]],
-            "view_type": "tree",
+            "view_type": "list",
             "view_id": False,
             "view_mode": "list,form,calendar"
         }
@@ -39,7 +39,7 @@ class ActionMungerTest(BaseCase):
 
         action = {
             "views": [[False, "list"], [False, "form"],
-                      [False, "calendar"], [42, "tree"]],
+                      [False, "calendar"], [42, "list"]],
             "view_type": "form",
             "view_id": False,
             "view_mode": "list,form,calendar"
