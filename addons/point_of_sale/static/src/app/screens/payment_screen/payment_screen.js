@@ -91,18 +91,46 @@ export class PaymentScreen extends Component {
     get currentOrder() {
         return this.pos.get_order();
     }
+    get isRefundOrder() {
+        return this.currentOrder._isRefundOrder();
+    }
     get paymentLines() {
         return this.currentOrder.payment_ids;
     }
     get selectedPaymentLine() {
         return this.currentOrder.get_selected_paymentline();
     }
+    addNewRefundPaymentLine() {
+        const newPaymentLine = this.paymentLines.at(-1);
+        const transactions_ids = this.currentOrder.payment_ids.map((pi) => pi.transaction_id);
+        const paymentLine =
+            this.currentOrder.lines[0]?.refunded_orderline_id.order_id.payment_ids.find(
+                (pi) =>
+                    pi.payment_method_id.use_payment_terminal &&
+                    !transactions_ids.find((x) => x === pi.transaction_id)
+            );
+        if (
+            !paymentLine ||
+            (newPaymentLine.payment_method_id.use_payment_terminal && newPaymentLine.amount === 0)
+        ) {
+            // In case the terminal-based payment line amount is 0 or
+            // the remaining payment line with transaction_id from the refunded order is not found.
+            // Removing new terminal based refund payment line
+            this.deletePaymentLine(newPaymentLine.uuid);
+            return false;
+        }
+        const amountToSet = Math.min(Math.abs(newPaymentLine.amount), paymentLine?.amount);
+        newPaymentLine.set_amount(-amountToSet);
+        newPaymentLine.updateRefundPaymentLine(paymentLine);
+    }
     async addNewPaymentLine(paymentMethod) {
         // original function: click_paymentmethods
         const result = this.currentOrder.add_paymentline(paymentMethod);
         if (result) {
             this.numberBuffer.reset();
-            if (paymentMethod.use_payment_terminal) {
+            if (paymentMethod.use_payment_terminal && this.isRefundOrder) {
+                this.addNewRefundPaymentLine();
+            } else if (paymentMethod.use_payment_terminal) {
                 const newPaymentLine = this.paymentLines.at(-1);
                 this.sendPaymentRequest(newPaymentLine);
             }
@@ -496,6 +524,10 @@ export class PaymentScreen extends Component {
             return false;
         }
 
+        if (this.currentOrder.isRefundInProcess()) {
+            return false;
+        }
+
         return true;
     }
     async _postPushOrderResolve(order, order_server_ids) {
@@ -525,7 +557,8 @@ export class PaymentScreen extends Component {
             isPaymentSuccessful &&
             currentOrder.is_paid() &&
             floatIsZero(currentOrder.get_due(), currency.decimal_places) &&
-            config.auto_validate_terminal_payment
+            config.auto_validate_terminal_payment &&
+            !currentOrder.isRefundInProcess()
         ) {
             this.validateOrder(false);
         }
