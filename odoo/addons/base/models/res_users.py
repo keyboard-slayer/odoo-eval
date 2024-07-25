@@ -1201,7 +1201,7 @@ class Users(models.Model):
         return self.groups_id._ids
 
     def _action_show(self):
-        """If self is a singleton, directly access the form view. If it is a recordset, open a tree view"""
+        """If self is a singleton, directly access the form view. If it is a recordset, open a list view"""
         view_id = self.env.ref('base.view_users_form').id
         action = {
             'type': 'ir.actions.act_window',
@@ -1227,7 +1227,7 @@ class Users(models.Model):
         self.ensure_one()
         return {
             'name': _('Groups'),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'res.groups',
             'type': 'ir.actions.act_window',
             'context': {'create': False, 'delete': False},
@@ -1239,7 +1239,7 @@ class Users(models.Model):
         self.ensure_one()
         return {
             'name': _('Access Rights'),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'ir.model.access',
             'type': 'ir.actions.act_window',
             'context': {'create': False, 'delete': False},
@@ -1251,7 +1251,7 @@ class Users(models.Model):
         self.ensure_one()
         return {
             'name': _('Record Rules'),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'ir.rule',
             'type': 'ir.actions.act_window',
             'context': {'create': False, 'delete': False},
