@@ -30,7 +30,13 @@ class StockReplenishmentInfo(models.TransientModel):
     def _compute_wh_replenishment_options(self):
         for replenishment_info in self:
             replenishment_info.wh_replenishment_option_ids = self.env['stock.replenishment.option'].create([
-                {'product_id': replenishment_info.product_id.id, 'route_id': route_id.id, 'replenishment_info_id': '%s,%s' % (replenishment_info._name, replenishment_info.id)}
+                {
+                    'product_id': replenishment_info.product_id.id,
+                    'route_id': route_id.id,
+                    'warehouse_id': route_id.supplier_wh_id.id,
+                    'location_id': route_id.supplier_wh_id.lot_stock_id.id,
+                    'replenishment_info_id': '%s,%s' % (replenishment_info._name, replenishment_info.id)
+                }
                 for route_id in replenishment_info.warehouseinfo_ids
             ]).sorted(lambda o: o.free_qty, reverse=True)
 
@@ -107,12 +113,12 @@ class StockReplenishmentOption(models.TransientModel):
 
     route_id = fields.Many2one('stock.route')
     product_id = fields.Many2one('product.product')
+    warehouse_id = fields.Many2one('stock.warehouse')
+    location_id = fields.Many2one('stock.location')
     replenishment_info_id = fields.Reference(selection=[
         ('stock.replenishment.info', 'stock.replenishment.info'),
     ])
 
-    location_id = fields.Many2one('stock.location', related='warehouse_id.lot_stock_id')
-    warehouse_id = fields.Many2one('stock.warehouse', related='route_id.supplier_wh_id')
     uom = fields.Char(related='product_id.uom_name')
     qty_to_order = fields.Float(compute='_compute_qty_to_order')
 

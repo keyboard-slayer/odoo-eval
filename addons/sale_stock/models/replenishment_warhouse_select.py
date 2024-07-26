@@ -34,6 +34,8 @@ class SaleStockReplenishmentWarehouseSelect(models.TransientModel):
             warehouse_select.wh_replenishment_option_ids = self.env['stock.replenishment.option'].create([{
                 'product_id': warehouse_select.product_id.id,
                 'route_id': route_id.id,
+                'warehouse_id': route_id.warehouse_ids[0].id,
+                'location_id': route_id.warehouse_ids[0].lot_stock_id.id,
                 'replenishment_info_id': '%s,%s' % (warehouse_select._name, warehouse_select.id),
             } for route_id in warehouse_select.route_ids]).sorted(lambda o: o.free_qty, reverse=True)
 
