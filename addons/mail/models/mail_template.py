@@ -4,10 +4,11 @@
 import base64
 import itertools
 import logging
+import re
 from ast import literal_eval
 
 from odoo import _, api, fields, models, tools, Command
-from odoo.exceptions import ValidationError, UserError
+from odoo.exceptions import ValidationError, UserError, AccessError
 from odoo.tools import is_html_empty
 from odoo.tools.safe_eval import safe_eval, time
 
@@ -144,6 +145,85 @@ class MailTemplate(models.Model):
 
         raise NotImplementedError(_('Operation not supported'))
 
+    def _validate_reference(self, variable, expression):
+        # Ignore context (ctx) while checking
+        if variable == "ctx":
+            return True
+
+        allowed_variables = {
+            'object': self.env[self.model_id.sudo().model or self.render_model],
+            'env': self.env,
+        }
+        allowed_variables.update(self.env['mail.render.mixin']._render_eval_context())
+        if variable not in allowed_variables:
+            raise ValidationError(_("Unknown variable %(variable)s used", variable=variable))
+
+        curr = allowed_variables[variable]
+        if not expression:
+            return True
+        refs = expression.split('.')
+        i = 0
+        while i < len(refs):
+            if refs[i] in dir(curr):
+                if isinstance(curr, models.BaseModel) and refs[i] in curr._fields:
+                    curr = curr._fields[refs[i]]
+                    if curr.relational:
+                        curr = self.env[curr.comodel_name]
+                elif hasattr(curr, refs[i]):
+                    curr = getattr(curr, refs[i])
+                else:
+                    # stop at function as we don't know the return value of the function
+                    break
+            else:
+                raise ValidationError(_("Invalid Attribute: %(attribute)s not found", attribute=refs[i]))
+            i += 1
+        return True
+
+    def _parse_expression(self, expression):
+        if not expression:
+            return
+
+        try:
+            expressions = re.findall(r"\{\{.*?\}\}", expression)
+            for e in expressions:
+                parsed_expr = self.env['ir.qweb']._compile_expr(e, raise_on_missing=True)
+                lst = re.findall(r"values\['(.+?)'\]\.?([\w\._]+)?", parsed_expr)
+                for var, expr in lst:
+                    self._validate_reference(var, expr)
+        except SyntaxError as e:
+            raise ValidationError(_("Invalid Syntax Used"))
+
+        return True
+
+    def _validate_template(self, fields):
+        self.ensure_one()
+
+        dynamic_fields = [
+            'subject',
+            'email_from',
+            'email_to',
+            'partner_to',
+            'email_cc',
+            'reply_to',
+            'scheduled_date',
+            'lang',
+        ]
+
+        check_fields = dynamic_fields
+        if fields:
+            check_fields = list(set(dynamic_fields) & set(fields.keys()))
+        for field in check_fields:
+            try:
+                self._parse_expression(fields.get(field, None) or self[field])
+            except AccessError:
+                raise
+            except (UserError, AttributeError, ValueError) as e:
+                raise ValidationError(_("Error in %(field)s:\n%(error)s!", field=self._fields[field].string, error=str(e)))
+
+    def _validate_template_fields(self, fields={}):
+        for template in self:
+            template._validate_template(fields)
+
     # ------------------------------------------------------------
     # CRUD
     # ------------------------------------------------------------
@@ -164,12 +244,15 @@ class MailTemplate(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         self._check_abstract_models(vals_list)
-        return super().create(vals_list)\
-            ._fix_attachment_ownership()
+        record = super().create(vals_list)
+        self._validate_template_fields()
+        record._fix_attachment_ownership()
+        return record
 
     def write(self, vals):
         self._check_abstract_models([vals])
         super().write(vals)
+        self._validate_template_fields(fields=vals)
         self._fix_attachment_ownership()
         return True
 
