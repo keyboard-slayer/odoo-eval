@@ -92,12 +92,16 @@ regex_object_name = re.compile(r'^[a-z0-9_.]+$')
 regex_pg_name = re.compile(r'^[a-z_][a-z0-9_$]*$', re.I)
 regex_field_agg = re.compile(r'(\w+)(?::(\w+)(?:\((\w+)\))?)?')  # For read_group
 regex_read_group_spec = re.compile(r'(\w+)(\.(\w+))?(?::(\w+))?$')  # For _read_group
+regex_camel_case = re.compile(r'(?<=.)([A-Z][a-z])|(?<=[a-z])([A-Z]+(?![a-z]))')
 
 AUTOINIT_RECALCULATE_STORED_FIELDS = 1000
 
 INSERT_BATCH_SIZE = 100
 UPDATE_BATCH_SIZE = 100
 SQL_DEFAULT = psycopg2.extensions.AsIs("DEFAULT")
+
+def class_name_to_model_name(classname: str) -> str:
+    return regex_camel_case.sub(r'.\1\2', classname).lower()
 
 def parse_read_group_spec(spec: str) -> tuple:
     """ Return a triplet corresponding to the given groupby/path/aggregate specification. """
@@ -239,12 +243,13 @@ class MetaModel(api.Meta):
                     f"Invalid import of {module}.{name}, it should start with 'odoo.addons'."
                 attrs['_module'] = module.split('.')[2]
 
-            # determine model '_name' and normalize '_inherits'
-            inherit = attrs.get('_inherit', ())
-            if isinstance(inherit, str):
-                inherit = attrs['_inherit'] = [inherit]
-            if '_name' not in attrs:
-                attrs['_name'] = inherit[0] if len(inherit) == 1 else name
+            # determine model '_name' and normalize '_inherit'
+            if '_inherit' in attrs:
+                if isinstance(attrs['_inherit'], str):
+                    attrs['_inherit'] = [attrs['_inherit']]
+
+            if not attrs.get('_name'):
+                attrs['_name'] = class_name_to_model_name(name)
 
         return super().__new__(meta, name, bases, attrs)
 
@@ -735,7 +740,7 @@ class BaseModel(metaclass=MetaModel):
             ModelClass._build_model_check_base(cls)
             check_parent = ModelClass._build_model_check_parent
         else:
-            ModelClass = type(name, (cls,), {
+            ModelClass = type(cls.__name__, (cls,), {
                 '_name': name,
                 '_register': False,
                 '_original_module': cls._module,
@@ -7259,7 +7264,7 @@ class Model(AbstractModel):
 
     Odoo models are created by inheriting from this class::
 
-        class user(Model):
+        class ResUsers(Model):
             ...
 
     The system will later instantiate the class once per database (on

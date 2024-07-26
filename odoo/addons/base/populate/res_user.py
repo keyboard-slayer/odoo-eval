@@ -8,8 +8,8 @@ from odoo.tools import populate
 _logger = logging.getLogger(__name__)
 
 
-class Users(models.Model):
-    _inherit = "res.users"
+class ResUsers(models.Model):
+    _inherit = ["res.users"]
 
     _populate_sizes = {
         'small': 10,
@@ -49,4 +49,4 @@ class Users(models.Model):
 
     def _populate(self, size):
         self = self.with_context(no_reset_password=True)  # avoid sending reset password email
-        return super(Users, self)._populate(size)
+        return super()._populate(size)

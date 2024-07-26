@@ -8,8 +8,8 @@ from odoo.tools import populate
 _logger = logging.getLogger(__name__)
 
 
-class Partner(models.Model):
-    _inherit = "res.partner"
+class ResPartner(models.Model):
+    _inherit = ["res.partner"]
     _populate_dependencies = ["res.company", "res.partner.industry"]
 
     _populate_sizes = {
@@ -147,7 +147,7 @@ class Partner(models.Model):
             partners._onchange_company_id()
 
 class ResPartnerIndustry(models.Model):
-    _inherit = "res.partner.industry"
+    _inherit = ["res.partner.industry"]
 
     _populate_sizes = {
         'small': 15,
