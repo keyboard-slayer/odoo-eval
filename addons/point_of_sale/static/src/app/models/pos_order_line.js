@@ -18,7 +18,6 @@ export class PosOrderline extends Base {
         this.uuid = vals.uuid ? vals.uuid : uuidv4();
         this.skip_change = vals.skip_change || false;
         this.set_full_product_name();
-
         // Data that are not saved in the backend
         this.uiState = {
             hasChange: true,
@@ -56,7 +55,7 @@ export class PosOrderline extends Base {
     }
 
     get preparationKey() {
-        const note = this.getNote();
+        const note = this.note_ids.map((note) => note.name).join(" ");
         return `${this.uuid} - ${note}`;
     }
 
@@ -311,7 +310,8 @@ export class PosOrderline extends Base {
         // only orderlines of the same product can be merged
         return (
             !this.skip_change &&
-            orderline.getNote() === this.getNote() &&
+            this.note_ids.map((note) => note.name).join(" ") ==
+                orderline.note_ids.map((note) => note.name).join(" ") &&
             this.get_product().id === orderline.get_product().id &&
             this.is_pos_groupable() &&
             // don't merge discounted orderlines
@@ -620,7 +620,7 @@ export class PosOrderline extends Base {
                 : "",
             discount: this.get_discount_str(),
             customerNote: this.get_customer_note() || "",
-            internalNote: this.getNote(),
+            internalNote: this.note_ids,
             comboParent: this.combo_parent_id?.get_full_product_name?.() || "",
             packLotLines: this.pack_lot_ids.map(
                 (l) =>
@@ -662,13 +662,6 @@ export class PosOrderline extends Base {
     set_price_extra(price_extra) {
         this.price_extra = parseFloat(price_extra) || 0.0;
     }
-    getNote() {
-        return this.note || "";
-    }
-    setNote(note) {
-        this.setDirty();
-        this.note = note;
-    }
     setHasChange(isChange) {
         this.uiState.hasChange = isChange;
     }
@@ -693,6 +686,13 @@ export class PosOrderline extends Base {
     }
     isSelected() {
         return this.order_id?.uiState?.selected_orderline_uuid === this.uuid;
+    }
+    serialize(options = {}) {
+        const result = super.serialize(options);
+        if (options.orm) {
+            result.note_ids = [[6, 0, this.note_ids.map((note) => note.id)]];
+        }
+        return result;
     }
 }
 

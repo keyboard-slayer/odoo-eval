@@ -241,7 +241,6 @@ export class PosOrder extends Base {
                         uuid: line.uuid,
                         product_id: line.get_product().id,
                         name: line.get_full_product_name(),
-                        note: line.getNote(),
                         quantity: line.get_quantity(),
                     };
                 }
@@ -1048,7 +1047,8 @@ export class PosOrder extends Base {
     getCustomerDisplayData() {
         return {
             lines: this.getSortedOrderlines().map((l) => ({
-                ...l.getDisplayData(),
+                // TODO SJAI: Check what should replace this.
+                ...omit(l.getDisplayData(), "internalNote"),
                 isSelected: l.isSelected(),
                 imageSrc: `/web/image/product.product/${l.product_id.id}/image_128`,
             })),

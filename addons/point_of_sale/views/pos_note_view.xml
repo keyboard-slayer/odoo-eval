@@ -7,6 +7,8 @@
             <list string="Note Models" editable="bottom">
                 <field name="sequence" widget="handle" />
                 <field name="name" />
+                <field name="color" widget="color_picker"/>
+                <field name="is_displayed" string="Generic"/>
             </list>
         </field>
     </record>

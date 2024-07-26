@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="point_of_sale.InternalNote" t-inherit="web.TagsList">
+        <xpath expr="//span[hasclass('o_tag')]" position="attributes">
+            <attribute name="class" add="me-1 mt-2" separator=" "/>
+        </xpath>
+    </t>
+</templates>

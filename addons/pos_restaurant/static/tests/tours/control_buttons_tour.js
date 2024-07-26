@@ -49,11 +49,12 @@ registry.category("web_tour.tours").add("ControlButtonsTour", {
             ProductScreen.clickInternalNoteButton(),
             TextInputPopup.inputText("test note"),
             Dialog.confirm(),
+            // internal notes are capitalized before creation saved
             Order.hasLine({
                 productName: "Water",
                 quantity: "5",
                 price: "10.0",
-                internalNote: "test note",
+                internalNote: "Test note",
                 withClass: ".selected",
             }),
             // Check that note is imported if come back to the table
@@ -63,7 +64,7 @@ registry.category("web_tour.tours").add("ControlButtonsTour", {
                 productName: "Water",
                 quantity: "5",
                 price: "10.0",
-                internalNote: "test note",
+                internalNote: "Test note",
                 withClass: ".selected",
             }),
 

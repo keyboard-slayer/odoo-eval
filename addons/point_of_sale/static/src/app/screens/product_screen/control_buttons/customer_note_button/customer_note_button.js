@@ -27,24 +27,30 @@ export class OrderlineNoteButton extends Component {
     }
     async onClick() {
         const selectedOrderline = this.pos.get_order().get_selected_orderline();
-        const selectedNote = this.props.getter(selectedOrderline);
-        const notes = this.pos.models["pos.note"].getAll();
+        const orderlineNotes = this.props.getter(selectedOrderline);
+        const selectedNote = orderlineNotes
+            ? orderlineNotes.map((note) => note.name).join("\n")
+            : "";
+        const notes = this.pos.models["pos.note"].filter((note) => typeof note.id !== "string");
         let buttons;
         if (this._isInternalNote()) {
             buttons = notes.map((note) => ({
                 label: note.name,
-                isSelected: selectedNote.split("\n").includes(note.name), // Check if the note is already selected
+                class: note.color ? `o_colorlist_item_color_${note.color}` : "",
+                isSelected: selectedNote?.includes(note.name), // Check if the note is already selected
+                isActive: note.is_displayed,
             }));
         } else {
             buttons = [];
         }
 
-        const oldNote = selectedOrderline.getNote();
+        buttons = buttons.filter((button) => button.isActive || button.isSelected);
+        const oldNote = selectedOrderline.note_ids.map((note) => note.name).join("\n");
         const payload = await makeAwaitable(this.dialog, TextInputPopup, {
             title: _t("Add %s", this.props.label),
             buttons,
             rows: 4,
-            startingValue: this.props.getter(selectedOrderline),
+            startingValue: selectedNote,
         });
 
         var quantity_with_note = 0;

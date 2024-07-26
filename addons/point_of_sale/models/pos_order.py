@@ -104,7 +104,6 @@ class PosOrder(models.Model):
 
         pos_order = False
         combo_child_uuids_by_parent_uuid = self._prepare_combo_line_uuids(order)
-
         if not existing_order:
             pos_order = self.create(order)
             pos_order = pos_order.with_company(pos_order.company_id)
@@ -118,7 +117,6 @@ class PosOrder(models.Model):
                 order['lines'] = []
 
             pos_order.write(order)
-
         pos_order._link_combo_items(combo_child_uuids_by_parent_uuid)
         self = self.with_company(pos_order.company_id)
         self._process_payment_lines(order, pos_order, pos_session, draft)
@@ -1311,7 +1309,7 @@ class PosOrderLine(models.Model):
     refunded_orderline_id = fields.Many2one('pos.order.line', 'Refunded Order Line', help='If this orderline is a refund, then the refunded orderline is specified in this field.')
     refunded_qty = fields.Float('Refunded Quantity', compute='_compute_refund_qty', help='Number of items refunded in this orderline.')
     uuid = fields.Char(string='Uuid', readonly=True, copy=False)
-    note = fields.Char('Internal Note')
+    note_ids = fields.Many2many('pos.note', string='Internal Notes')
 
     combo_parent_id = fields.Many2one('pos.order.line', string='Combo Parent') # FIXME rename to parent_line_id
     combo_line_ids = fields.One2many('pos.order.line', 'combo_parent_id', string='Combo Lines') # FIXME rename to child_line_ids
@@ -1326,7 +1324,7 @@ class PosOrderLine(models.Model):
     @api.model
     def _load_pos_data_fields(self, config_id):
         return [
-            'qty', 'attribute_value_ids', 'custom_attribute_value_ids', 'price_unit', 'skip_change', 'uuid', 'price_subtotal', 'price_subtotal_incl', 'order_id', 'note', 'price_type',
+            'qty', 'attribute_value_ids', 'custom_attribute_value_ids', 'price_unit', 'skip_change', 'uuid', 'price_subtotal', 'price_subtotal_incl', 'order_id', 'note_ids', 'price_type',
             'product_id', 'discount', 'tax_ids', 'pack_lot_ids', 'customer_note', 'refunded_qty', 'price_extra', 'full_product_name', 'refunded_orderline_id', 'combo_parent_id', 'combo_line_ids', 'combo_item_id', 'refund_orderline_ids'
         ]
 

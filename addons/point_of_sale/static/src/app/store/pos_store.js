@@ -32,6 +32,7 @@ import { getTaxesAfterFiscalPosition, getTaxesValues } from "../models/utils/tax
 import { QRPopup } from "@point_of_sale/app/utils/qr_code_popup/qr_code_popup";
 import { ActionScreen } from "@point_of_sale/app/screens/action_screen";
 import { FormViewDialog } from "@web/views/view_dialogs/form_view_dialog";
+import { capitalize } from "@web/core/utils/strings";
 
 const { DateTime } = luxon;
 
@@ -1813,6 +1814,41 @@ export class PosStore extends Reactive {
 
     getDisplayDeviceIP() {
         return this.config.proxy_ip;
+    }
+    async setLineNotes(line, noteString) {
+        if (!noteString) {
+            return line.update({ note_ids: [["clear"]] });
+        }
+        const noteNames = noteString
+            .split("\n")
+            .map((n) => n.trim())
+            .filter((n) => n !== "");
+        const newNotes = [];
+        for (const name of noteNames) {
+            const existingNote = this.models["pos.note"].find(
+                (n) => n.name.toLowerCase() === name.toLowerCase()
+            );
+            if (existingNote) {
+                newNotes.push(existingNote);
+            } else {
+                try {
+                    const [newNote] = await this.data.create("pos.note", [
+                        {
+                            name: capitalize(name.toLowerCase()),
+                            color: Math.floor(Math.random() * 11),
+                        },
+                    ]);
+                    newNotes.push(newNote);
+                } catch (error) {
+                    console.warn("Offline mode active, pos-note will be synced later");
+                    return error;
+                }
+            }
+        }
+        line.update({
+            note_ids: [["clear"], ["link", ...newNotes]],
+        });
+        return;
     }
 }
 
