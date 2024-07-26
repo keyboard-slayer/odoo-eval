@@ -6,7 +6,7 @@ from odoo.tools import populate
 
 
 class ResCurrencyRate(models.Model):
-    _inherit = "res.currency.rate"
+    _inherit = ["res.currency.rate"]
 
     _populate_sizes = {
         'small': 100,
