@@ -509,6 +509,7 @@ class SaleOrder(models.Model):
         # Gift cards and eWallets are considered gift cards and should not have any taxes
         if reward.program_id.is_payment_program:
             reward_product = reward.discount_line_product_id
+
             reward_line_values = {
                 'name': reward.description,
                 'product_id': reward_product.id,
@@ -522,6 +523,7 @@ class SaleOrder(models.Model):
                 'sequence': sequence,
                 'tax_id': [Command.clear()],
             }
+
             if reward.program_id.program_type == 'gift_card':
                 # For gift cards, the SOL should consider the discount product taxes
                 taxes_to_apply = reward_product.taxes_id._filter_taxes_by_company(self.company_id)
@@ -547,6 +549,52 @@ class SaleOrder(models.Model):
                         'tax_id': [Command.set(mapped_taxes.ids)],
                     })
             return [reward_line_values]
+
+        if reward_applies_on == 'order' and reward.discount_mode in ['per_point', 'per_order']:
+            reward_product = reward.discount_line_product_id
+
+            reward_line_values = {
+                'name': reward.description,
+                'product_id': reward_product.id,
+                'price_unit': -min(max_discount, discountable),
+                'product_uom_qty': 1.0,
+                'product_uom': reward_product.uom_id.id,
+                'reward_id': reward.id,
+                'coupon_id': coupon.id,
+                'points_cost': point_cost,
+                'reward_identifier_code': reward_code,
+                'sequence': sequence,
+                'tax_id': [Command.clear()],
+            }
+
+            reward_taxes = reward.tax_ids._filter_taxes_by_company(self.company_id)
+            if reward_taxes:
+                mapped_taxes = self.fiscal_position_id.map_tax(reward_taxes)
+
+                # Check for any order line where its taxes exactly match reward_taxes
+                matching_lines = [
+                    line for line in self.order_line
+                    if not line.is_delivery and set(line.tax_id) == set(mapped_taxes)
+                ]
+
+                if not matching_lines:
+                    raise ValidationError(_("No product is compatible with this promotion."))
+
+                untaxed_amount = sum(line.price_subtotal for line in matching_lines)
+                # Discount amount should not exceed total untaxed amount of the matching lines
+                reward_line_values['price_unit'] = max(
+                    -untaxed_amount,
+                    reward_line_values['price_unit']
+                )
+
+                reward_line_values['tax_id'] = [Command.set(mapped_taxes.ids)]
+
+            # Discount amount should not exceed the untaxed amount on the order
+            if abs(reward_line_values['price_unit']) > self.amount_untaxed:
+                reward_line_values['price_unit'] = -self.amount_untaxed
+
+            return [reward_line_values]
+
         discount_factor = min(1, (max_discount / discountable)) if discountable else 1
         reward_dict = {}
         for tax, price in discountable_per_tax.items():
