@@ -9,7 +9,7 @@ import {
     useState,
 } from "@odoo/owl";
 
-import { useBus, useService } from "@web/core/utils/hooks";
+import { useService } from "@web/core/utils/hooks";
 import { hidePDFJSButtons } from "@web/libs/pdfjs";
 
 /**
@@ -41,10 +41,9 @@ export class AttachmentView extends Component {
         this.updateFromProps(this.props);
         onWillUpdateProps((props) => this.updateFromProps(props));
 
-        useBus(this.uiService.bus, "resize", this.updatePopup);
-        onMounted(this.updatePopup);
-        onPatched(this.updatePopup);
-        onWillUnmount(this.mailPopoutService.reset);
+        onMounted(this.updatePopout);
+        onPatched(this.updatePopout);
+        onWillUnmount(this.resetPopout);
     }
 
     onClickNext() {
@@ -73,16 +72,70 @@ export class AttachmentView extends Component {
     }
 
     popoutAttachment() {
-        this.mailPopoutService.popout(this.__owl__.bdom.parentEl).focus();
+        this.mailPopoutService.popout(
+            PopoutAttachmentView,
+            this.props,
+            () => {
+                // before popout hook
+                this.hide();
+                this.uiService.bus.trigger("resize");
+            },
+            () => {
+                // after popout hook
+                this.show();
+                this.uiService.bus.trigger("resize");
+            }
+        );
     }
 
-    updatePopup() {
-        if (this.mailPopoutService.externalWindow) {
-            this.mailPopoutService.popout(this.__owl__.bdom.parentEl, false);
+    get attachmentViewParentElementClassList() {
+        const attachmentViewEl = document.querySelector(".o-mail-Attachment");
+        let parentElementClassList;
+        if ((parentElementClassList = attachmentViewEl?.parentElement?.classList)) {
+            return parentElementClassList;
         }
+        return null;
+    }
+
+    show() {
+        const parentElementClassList = this.attachmentViewParentElementClassList;
+        const hiddenClass = "d-none";
+        if (parentElementClassList?.contains(hiddenClass)) {
+            parentElementClassList.remove(hiddenClass);
+        }
+    }
+
+    hide() {
+        const parentElementClassList = this.attachmentViewParentElementClassList;
+        const hiddenClass = "d-none";
+        if (!parentElementClassList?.contains(hiddenClass)) {
+            parentElementClassList.add(hiddenClass);
+        }
+    }
+
+    updatePopout() {
+        if (this.mailPopoutService.externalWindow) {
+            this.mailPopoutService.update(PopoutAttachmentView, this.props);
+            this.hide();
+        }
+    }
+
+    resetPopout() {
+        this.mailPopoutService.reset();
     }
 
     get displayName() {
         return this.state.thread.mainAttachment.filename;
     }
+}
+
+/*
+ * This Component is identical to the AttachmentView Component except in the lifecycle hooks function.
+ * We don't want the lifecycle of this component to affect the popout window since it's the component that is mounted on the popout window.
+ * Moreover, it has a different template, as it does not have the button opening the popout window.
+ */
+class PopoutAttachmentView extends AttachmentView {
+    static template = "mail.PopoutAttachmentView";
+    updatePopout() {}
+    resetPopout() {}
 }
