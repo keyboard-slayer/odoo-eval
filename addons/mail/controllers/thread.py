@@ -118,7 +118,7 @@ class ThreadController(http.Controller):
                 'ids': canned_response_ids,
             })
         thread = request.env[thread_model]._get_thread_with_access(
-            thread_id, mode=request.env[thread_model]._get_thread_access_to_post(), **kwargs
+            thread_id, mode=request.env[thread_model]._mail_post_access, **kwargs
         )
         if not thread:
             raise NotFound()

@@ -4609,8 +4609,5 @@ class MailThread(models.AbstractModel):
     def _get_thread_with_access(self, thread_id, mode="read", **kwargs):
         thread = self.with_context(active_test=False).search([("id", "=", thread_id)])
         thread.check_access_rights(mode)
+        thread.check_access_rule(mode)
         return thread.with_context(active_test=True)
-
-    @api.model
-    def _get_thread_access_to_post(self):
-        return "write"

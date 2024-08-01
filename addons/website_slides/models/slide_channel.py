@@ -812,18 +812,13 @@ class Channel(models.Model):
                 subtype_id = self.env.ref('mail.mt_note').id
         message = super().message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
         if message.subtype_id == self.env.ref("mail.mt_comment"):
-            if (
-                self.env["mail.message"].search_count(
-                    [
-                        ("res_id", "=", self.id),
-                        ("author_id", "=", message.author_id.id),
-                        ("model", "=", "slide.channel"),
-                        ("subtype_id", "=", self.env.ref("mail.mt_comment").id),
-                    ],
-                    limit=2,
-                )
-                > 1
-            ):
+            domain = [
+                ("res_id", "=", self.id),
+                ("author_id", "=", message.author_id.id),
+                ("model", "=", "slide.channel"),
+                ("subtype_id", "=", self.env.ref("mail.mt_comment").id),
+            ]
+            if self.env["mail.message"].search_count(domain, limit=2) > 1:
                 raise ValidationError(_("Only a single review can be posted per course."))
         if message.rating_value and message.is_current_user_or_guest_author:
             self.env.user._add_karma(self.karma_gen_channel_rank, self, _("Course Ranked"))

@@ -1287,7 +1287,3 @@ class Channel(models.Model):
             msg = _("Users in this channel: %(members)s %(dots)s and you.", members=", ".join(members), dots=dots)
 
         self._send_transient_message(self.env.user.partner_id, msg)
-
-    @api.model
-    def _get_thread_access_to_post(self):
-        return "read"

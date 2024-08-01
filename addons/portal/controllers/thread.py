@@ -13,9 +13,9 @@ class ThreadController(thread.ThreadController):
             if validate_thread_with_hash_pid(thread, kwargs.get("hash"), kwargs.get("pid")):
                 post_data["author_id"] = int(kwargs["pid"])
             elif (
-                hasattr(thread, "partner_id")
-                and thread.partner_id
+                (partner_fields := thread._mail_get_partner_fields())
+                and thread._fields[partner_fields[0]].type == "many2one"
                 and validate_thread_with_token(thread, kwargs.get("token"))
             ):
-                post_data["author_id"] = thread.partner_id.id
+                post_data["author_id"] = thread[partner_fields[0]].id
         return post_data

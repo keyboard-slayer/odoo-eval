@@ -33,7 +33,7 @@ class SlidesPortalChatter(PortalChatter):
         pid = int(post['pid']) if post.get('pid') else False
         channel = request.env["slide.channel"]._get_thread_with_access(
             thread_id,
-            request.env["slide.channel"]._get_thread_access_to_post(),
+            request.env["slide.channel"]._mail_post_access,
             token=post.get("token"),
             hash=post.get("hash"),
             pid=pid,

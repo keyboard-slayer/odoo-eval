@@ -24,16 +24,10 @@ class PortalChatter(http.Controller):
     def portal_avatar(self, res_id=None, height=50, width=50, access_token=None, _hash=None, pid=None):
         """Get the avatar image in the chatter of the portal"""
         if access_token or (_hash and pid):
-            message = (
-                request.env["mail.message"]
-                .browse(int(res_id))
-                .exists()
-                .filtered(
-                    lambda msg: request.env[msg.model]._get_thread_with_access(
-                        msg.res_id, token=access_token, hash=_hash, pid=pid and int(pid)
-                    )
+            message = request.env["mail.message"].browse(int(res_id)).exists().filtered(
+                lambda msg: request.env[msg.model]._get_thread_with_access(
+                    msg.res_id, token=access_token, hash=_hash, pid=pid and int(pid)
                 )
-                .sudo()
             )
         else:
             message = request.env.ref('web.image_placeholder').sudo()
