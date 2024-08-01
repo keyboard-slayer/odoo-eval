@@ -119,6 +119,21 @@ export class SpreadsheetDashboardAction extends Component {
     }
 
     getDashboardGroups() {
+        const favoriteDashboards = Object.values(this.loader.dashboards).filter(
+            (dashboard) => dashboard.isFavorite
+        );
+
+        if (favoriteDashboards.length) {
+            return [
+                {
+                    id: "favorites",
+                    name: "FAVORITES",
+                    dashboards: favoriteDashboards,
+                },
+                ...this.loader.getDashboardGroups(),
+            ];
+        }
+
         return this.loader.getDashboardGroups();
     }
 
@@ -153,13 +168,25 @@ export class SpreadsheetDashboardAction extends Component {
         return url;
     }
 
+    async toggleFavorite() {
+        if (!this.state.activeDashboard) {
+            return;
+        }
+
+        const { id, isFavorite } = this.state.activeDashboard;
+        await this.orm.call("spreadsheet.dashboard", "action_toggle_favorite", [id]);
+        this.state.activeDashboard.isFavorite = !isFavorite;
+    }
+
     toggleSidebar() {
         this.state.sidebarExpanded = !this.state.sidebarExpanded;
     }
 
     get activeDashboardGroupName() {
-        return this.getDashboardGroups().find((group) =>
-            group.dashboards.some((d) => d.id === this.activeDashboardId)
+        return this.getDashboardGroups().find(
+            (group) =>
+                group.name !== "FAVORITES" && // Skip the FAVORITES group
+                group.dashboards.some((d) => d.id === this.activeDashboardId)
         )?.name;
     }
 }

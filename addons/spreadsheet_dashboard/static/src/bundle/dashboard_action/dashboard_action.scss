@@ -99,4 +99,20 @@
             flex-basis: 200px;
         }
     }
+
+    .o_dashboard_star {
+        display: inline-block;
+        cursor: pointer;
+        font-size: 20px;
+        color: #ffd700;
+        transition: color 0.3s ease;
+    }
+
+    .o_dashboard_star:hover {
+        color: #ffa500;
+    }
+
+    .o_dashboard_star i {
+        vertical-align: middle;
+    }
 }

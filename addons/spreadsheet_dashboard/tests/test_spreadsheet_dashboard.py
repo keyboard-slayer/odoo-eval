@@ -92,3 +92,19 @@ class TestSpreadsheetDashboard(DashboardTestCommon):
         self.assertFalse(group.published_dashboard_ids)
         dashboard.is_published = True
         self.assertEqual(group.published_dashboard_ids, dashboard)
+
+    def test_toggle_favorite(self):
+        dashboard = self.create_dashboard().with_user(self.user)
+
+        self.assertFalse(dashboard.is_favorite)
+        self.assertNotIn(self.user, dashboard.favorite_user_ids)
+
+        dashboard.with_user(self.user).action_toggle_favorite()
+
+        self.assertTrue(dashboard.is_favorite)
+        self.assertIn(self.user, dashboard.favorite_user_ids)
+
+        dashboard.with_user(self.user).action_toggle_favorite()
+
+        self.assertFalse(dashboard.is_favorite)
+        self.assertNotIn(self.user, dashboard.favorite_user_ids)

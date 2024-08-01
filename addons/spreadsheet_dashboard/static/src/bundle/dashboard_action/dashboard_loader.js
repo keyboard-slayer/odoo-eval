@@ -92,6 +92,7 @@ export class DashboardLoader {
                 id: dashboard.id,
                 displayName: dashboard.name,
                 status: Status.NotLoaded,
+                isFavorite: dashboard.is_favorite,
             };
         }
     }
@@ -134,7 +135,7 @@ export class DashboardLoader {
             {
                 specification: {
                     name: {},
-                    published_dashboard_ids: { fields: { name: {} } },
+                    published_dashboard_ids: { fields: { name: {}, is_favorite: {} } },
                 },
             }
         );
