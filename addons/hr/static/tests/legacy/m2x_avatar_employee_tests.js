@@ -4,6 +4,7 @@ import { startServer } from "@bus/../tests/helpers/mock_python_environment";
 import { openFormView, start } from "@mail/../tests/helpers/test_utils";
 import { contains } from "@web/../tests/utils";
 import { patchUserWithCleanup } from "@web/../tests/helpers/mock_services";
+import { getOrigin } from "@web/core/utils/urls";
 import { patchWithCleanup, click, selectDropdownItem } from "@web/../tests/helpers/utils";
 import { makeView, setupViewRegistries } from "@web/../tests/views/helpers";
 import { patchAvatarCardPopover } from "@hr/components/avatar_card/avatar_card_popover_patch";

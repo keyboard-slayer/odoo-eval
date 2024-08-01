@@ -11,7 +11,7 @@ import { popoverService } from "@web/core/popover/popover_service";
 import { registry } from "@web/core/registry";
 import { tooltipService } from "@web/core/tooltip/tooltip_service";
 import { triggerHotkey } from "@web/../tests/helpers/utils";
-import { assertSteps, click, contains, step } from "@web/../tests/utils";
+import { assertSteps, click, contains } from "@web/../tests/utils";
 import { getOrigin } from "@web/core/utils/urls";
 
 const fakeMultiTab = {

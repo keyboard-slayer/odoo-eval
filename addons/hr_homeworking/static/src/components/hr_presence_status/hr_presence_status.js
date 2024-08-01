@@ -4,7 +4,6 @@ import { patch } from "@web/core/utils/patch";
 
 import { HrPresenceStatus, hrPresenceStatus } from "@hr/components/hr_presence_status/hr_presence_status";
 import { HrPresenceStatusPrivate, hrPresenceStatusPrivate } from "@hr/components/hr_presence_status_private/hr_presence_status_private";
-import { _t } from "@web/core/l10n/translation";
 
 const patchHrPresenceStatus = () => ({
     get color() {
