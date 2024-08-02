@@ -176,6 +176,11 @@ div.col:not([align]) {
     border-collapse:separate;
 }
 
+// Prevent the website snippets sidebar from overlapping the template
+body.has_snippets_sidebar .o_layout {
+    padding-right: 288px !important; // snippets sidebar width
+}
+
 // Compatibility: mb/mt classes on <td/> elements were interpreted as paddings
 // instead of margins before the introduction of pb/pt classes. As thoses mb/mt
 // classes may remain on clients' templates, <td/> are forced to 0 margin to
