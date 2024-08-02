@@ -107,21 +107,16 @@
                     </div>
                 </div>
             </div>
-            <div class="o_container_small px-4 pb-3 pt96 d-flex flex-column o_survey_session_manage_container">
-                <div class="o_survey_session_description_done d-none">
+            <div class="px-4 pb-3 pt96 d-flex flex-row align-items-center w-100 o_survey_session_manage_container">
+                <div class="o_survey_session_description_done d-none o_container_small">
                     <h1 class="fs-2">Thank you!</h1>
                     <div t-field="survey.description_done"/>
                 </div>
                 <a role="button"
-                    class="o_survey_session_navigation o_survey_session_navigation_next p-2">
-                    <span class="o_survey_session_navigation_next_label me-2 fw-bold"/>
-                    <i class="fw-bold oi oi-chevron-right"/>
-                </a>
-                <a role="button"
                     class="fw-bold oi oi-chevron-left o_survey_session_navigation o_survey_session_navigation_previous p-3" />
                 <div class="o_survey_session_results flex-column flex-grow-1 mx-5">
                     <div class="row">
-                        <div class="col-lg-12"><h1 t-esc="question.title"></h1></div>
+                        <div class="col-lg-12 d-flex justify-content-center"><h1 t-esc="question.title"></h1></div>
                     </div>
                     <div t-attf-class="d-flex flex-column flex-grow-1 #{'justify-content-center' if not show_text_answers else ''} #{'align-items-center' if show_bar_chart else ''}">
                         <!-- Has to stay in 'style' attribute for Chartjs -->
@@ -153,6 +148,11 @@
                         </div>
                     </div>
                 </div>
+                 <a role="button"
+                    class="p-2 o_survey_session_navigation o_survey_session_navigation_next">
+                    <span class="o_survey_session_navigation_next_label me-2 fw-bold"/>
+                    <i class="fw-bold oi oi-chevron-right"/>
+                </a>
                 <div class="o_survey_session_leaderboard w-100 flex-column flex-grow-1" style="display: none;">
                     <!--Set question to false to avoid background miss match when no question are displayed.-->
                     <t t-set="question" t-value="False"/>
