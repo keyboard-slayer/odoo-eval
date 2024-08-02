@@ -1,7 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
 
 
 class ChooseDeliveryCarrier(models.TransientModel):
@@ -32,13 +31,9 @@ class ChooseDeliveryCarrier(models.TransientModel):
     @api.onchange('carrier_id', 'total_weight')
     def _onchange_carrier_id(self):
         self.delivery_message = False
-        if self.delivery_type in ('fixed', 'base_on_rule'):
-            vals = self._get_delivery_rate()
-            if vals.get('error_message'):
-                return {'error': vals['error_message']}
-        else:
-            self.display_price = 0
-            self.delivery_price = 0
+        vals = self._get_delivery_rate()
+        if vals.get('error_message'):
+            return {'error': vals['error_message']}
 
     @api.onchange('order_id')
     def _onchange_order_id(self):
@@ -72,19 +67,6 @@ class ChooseDeliveryCarrier(models.TransientModel):
             self.display_price = vals['carrier_price']
             return {}
         return {'error_message': vals['error_message']}
-
-    def update_price(self):
-        vals = self._get_delivery_rate()
-        if vals.get('error_message'):
-            raise UserError(vals.get('error_message'))
-        return {
-            'name': _('Add a shipping method'),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'choose.delivery.carrier',
-            'res_id': self.id,
-            'target': 'new',
-        }
 
     def button_confirm(self):
         self.order_id.set_delivery_line(self.carrier_id, self.delivery_price)
