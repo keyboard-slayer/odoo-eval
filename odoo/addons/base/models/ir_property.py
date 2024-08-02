@@ -27,6 +27,9 @@ class Property(models.Model):
     _name = 'ir.property'
     _description = 'Company Property'
     _allow_sudo_commands = False
+    _sql_constraints = [
+        ("unique_index", "UNIQUE INDEX (fields_id, COALESCE(company_id, 0), COALESCE(res_id, ''))"),
+    ]
 
     name = fields.Char(index=True)
     res_id = fields.Char(string='Resource', index=True, help="If not set, acts as a default value for new resources",)
@@ -53,14 +56,6 @@ class Property(models.Model):
                             required=True,
                             default='many2one',
                             index=True)
-
-    def init(self):
-        # Ensure there is at most one active variant for each combination.
-        query = """
-            CREATE UNIQUE INDEX IF NOT EXISTS ir_property_unique_index
-            ON %s (fields_id, COALESCE(company_id, 0), COALESCE(res_id, ''))
-        """
-        self.env.cr.execute(query % self._table)
 
     def _update_values(self, values):
         if 'value' not in values:
