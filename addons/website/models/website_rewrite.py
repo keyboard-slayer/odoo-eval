@@ -105,6 +105,10 @@ class WebsiteRewrite(models.Model):
                 except ValueError as e:
                     raise ValidationError(_('"URL to" is invalid: %s') % e)
 
+    def _modify_url_to_if_needed(self, vals):
+        if 'url_to' in vals and vals['url_to'].startswith(('?', '#')):
+            vals['url_to'] = '/' + vals['url_to']
+
     def name_get(self):
         result = []
         for rewrite in self:
@@ -114,11 +118,13 @@ class WebsiteRewrite(models.Model):
 
     @api.model
     def create(self, vals):
+        self._modify_url_to_if_needed(vals)
         res = super(WebsiteRewrite, self).create(vals)
         self._invalidate_routing()
         return res
 
     def write(self, vals):
+        self._modify_url_to_if_needed(vals)
         res = super(WebsiteRewrite, self).write(vals)
         self._invalidate_routing()
         return res
