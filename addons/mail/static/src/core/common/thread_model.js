@@ -314,6 +314,7 @@ export class Thread extends Record {
             msg.thread = this;
         },
     });
+    read_only = false;
 
     get accessRestrictedToGroupText() {
         if (!this.authorizedGroupFullName) {

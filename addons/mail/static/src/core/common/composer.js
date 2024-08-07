@@ -206,6 +206,9 @@ export class Composer extends Component {
         if (this.props.placeholder) {
             return this.props.placeholder;
         }
+        if (this.thread?.read_only) {
+            return _t("You don't have the permission to post messages in this channel");
+        }
         if (this.thread) {
             if (this.thread.channel_type === "channel") {
                 return _t("Message #%(thread name)s…", { "thread name": this.thread.displayName });

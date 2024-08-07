@@ -23,6 +23,8 @@ class TestChannelInternals(MailCommon, HttpCase):
         super().setUpClass()
         cls.maxDiff = None
         cls.test_channel = cls.env['discuss.channel'].with_context(cls._test_context).channel_create(name='Channel', group_id=None)
+        cls.test_channel_readonly = cls.env['discuss.channel'].with_context(cls._test_context).channel_create(name='Channel', group_id=None)
+        cls.test_channel_readonly.read_only = True
         cls.test_partner = cls.env['res.partner'].with_context(cls._test_context).create({
             'name': 'Test Partner',
             'email': 'test_customer@example.com',
@@ -838,3 +840,24 @@ class TestChannelInternals(MailCommon, HttpCase):
             ],
         ):
             test_group.execute_command_help()
+
+    def test_channel_read_only_create_multi(self):
+        messages = self.env["mail.message"].create([
+            {
+                "body": "test",
+                "model": "discuss.channel",
+                "pinned_at": fields.Datetime.now(),
+                "res_id": self.test_channel.id,
+                "author_id": self.test_partner.id,
+                "message_type": "comment",
+            },
+            {
+                "body": "test",
+                "model": "discuss.channel",
+                "pinned_at": fields.Datetime.now(),
+                "res_id": self.test_channel_readonly.id,
+                "author_id": self.test_partner.id,
+                "message_type": "comment",
+            }
+        ])
+        self.assertEqual(len(messages), 1)

@@ -1,11 +1,26 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models
+from odoo import models, api
 from odoo.addons.mail.tools.discuss import Store
 
 
 class MailMessage(models.Model):
     _inherit = "mail.message"
+
+    @api.model_create_multi
+    def create(self, values_list):
+        new_values_list = []
+        channel_ids = [values.get("res_id") for values in values_list if values.get("model") == "discuss.channel"]
+        read_only_by_channel_id = {
+            channel.id: channel.read_only for channel in self.env["discuss.channel"].search([("id", "in", channel_ids)])
+        }
+        for values in values_list:
+            if values.get("model") != "discuss.channel":
+                new_values_list.append(values)
+            else:
+                if not read_only_by_channel_id.get(values.get("res_id")):
+                    new_values_list.append(values)
+        return super().create(new_values_list)
 
     def _validate_access_for_current_persona(self, operation):
         if not self:

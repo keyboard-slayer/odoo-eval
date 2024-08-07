@@ -76,6 +76,7 @@ class Channel(models.Model):
     group_public_id = fields.Many2one('res.groups', string='Authorized Group', compute='_compute_group_public_id', readonly=False, store=True)
     invitation_url = fields.Char('Invitation URL', compute='_compute_invitation_url')
     allow_public_upload = fields.Boolean(default=False)
+    read_only = fields.Boolean(default=False)
     _sql_constraints = [
         ('channel_type_not_null', 'CHECK(channel_type IS NOT NULL)', 'The channel type cannot be empty'),
         ('uuid_unique', 'UNIQUE(uuid)', 'The channel UUID must be unique'),
@@ -625,6 +626,8 @@ class Channel(models.Model):
 
     @api.returns('mail.message', lambda value: value.id)
     def message_post(self, *, message_type='notification', **kwargs):
+        if self.read_only:
+            raise UserError(_("You cannot post inside a read only channel"))
         if (not self.env.user or self.env.user._is_public()) and self.is_member:
             # sudo: discuss.channel - guests don't have access for creating mail.message
             self = self.sudo()
@@ -851,6 +854,7 @@ class Channel(models.Model):
             member = member_of_current_user_by_channel.get(channel, self.env['discuss.channel.member']).with_prefetch([m.id for m in member_of_current_user_by_channel.values()])
             info = channel._channel_basic_info()
             info["is_editable"] = channel.is_editable
+            info["read_only"] = channel.read_only
             info["fetchChannelInfoState"] = "fetched"
             # find the channel member state
             if current_partner or current_guest:
