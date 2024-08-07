@@ -1,6 +1,7 @@
 import json
 
 from odoo import _, fields, models
+from odoo.tools import file_open
 
 
 class SpreadsheetDashboard(models.Model):
@@ -21,6 +22,13 @@ class SpreadsheetDashboard(models.Model):
     def get_readonly_dashboard(self):
         self.ensure_one()
         snapshot = json.loads(self.spreadsheet_data)
+        if self.dashboard_is_empty() and self.sample_dashboard_file_path:
+            with file_open(self.sample_dashboard_file_path) as f:
+                sample_data = json.load(f)
+            return {
+                "snapshot": sample_data,
+                "isSample": True,
+            }
         user_locale = self.env['res.lang']._get_user_spreadsheet_locale()
         snapshot.setdefault('settings', {})['locale'] = user_locale
         default_currency = self.env['res.currency'].get_company_currency_for_spreadsheet()
@@ -29,6 +37,14 @@ class SpreadsheetDashboard(models.Model):
             'revisions': [],
             'default_currency': default_currency,
         }
+
+    def dashboard_is_empty(self, revisions=[]):
+        if len(revisions) > 0:
+            return False
+        return (
+            any(self.env[model.model].search_count([], limit=1) == 0 for model in self.main_data_model_ids)
+            and self.env["spreadsheet.revision"].with_context(active_test=False).search_count([("res_id", "=", self.id), ("res_model", "=", self._name)], limit=1) == 0
+        )
 
     def copy_data(self, default=None):
         default = dict(default or {})
