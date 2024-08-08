@@ -295,6 +295,8 @@ import wUtils from '@website/js/utils';
                         );
                     this.update_status("error", errorMessage);
                     delete this.fileInputError;
+                } else if (this.errorMessage) {
+                    this.update_status("error", this.errorMessage);
                 } else {
                     this.update_status("error", _t("Please fill in the form correctly."));
                 }
@@ -492,12 +494,15 @@ import wUtils from '@website/js/utils';
             var form_valid = true;
             // Loop on all fields
             this.$el.find('.form-field, .s_website_form_field').each(function (k, field) { // !compatibility
+                if(self._requirementFunction(field) === false && form_valid) {
+                    self.errorMessage = field.dataset.errorMessage;
+                    form_valid = false;
+                }
                 var $field = $(field);
                 // FIXME that seems broken, "for" does not contain the field
                 // but this is used to retrieve errors sent from the server...
                 // need more investigation.
                 var field_name = $field.find('.col-form-label').attr('for');
-
                 // Validate inputs for this field
                 var inputs = $field.find('.s_website_form_input, .o_website_form_input').not('#editable_select'); // !compatibility
                 var invalid_inputs = inputs.toArray().filter(function (input, k, inputs) {
@@ -687,9 +692,14 @@ import wUtils from '@website/js/utils';
                     return value.name === '';
             }
 
-            const format = value.includes(':')
-                ? localization.dateTimeFormat
-                : localization.dateFormat;
+            let format = "";
+            let currentDate = new Date();
+            if (value.includes(':')) {
+                format = localization.dateTimeFormat;
+            } else {
+                format = localization.dateFormat;
+                currentDate.setHours(0, 0, 0, 0);
+            }
             // Date & Date Time comparison requires formatting the value
             const dateTime = DateTime.fromFormat(value, format);
             // If invalid, any value other than "NaN" would cause certain
@@ -715,6 +725,10 @@ import wUtils from '@website/js/utils';
                     return !(value >= comparable && value <= between);
                 case 'equal or after':
                     return value >= comparable;
+                case 'lessyears':
+                    currentDate.setFullYear(currentDate.getFullYear() - comparable);
+                    value = new Date(value * 1000);
+                    return value > currentDate;
             }
         },
         /**
@@ -743,6 +757,13 @@ import wUtils from '@website/js/utils';
                     : formData.get(dependencyName);
                 return this._compareTo(comparator, currentValueOfDependency, visibilityCondition, between);
             };
+        },
+
+        _requirementFunction(fieldEl) {
+            const requirementCondition = fieldEl.dataset.requirementCondition;
+            const comparator = fieldEl.dataset.requirementComparator;
+            const between = fieldEl.dataset.requirementBetween;
+            return this._compareTo(comparator, fieldEl.querySelector(".s_website_form_input").value, requirementCondition, between);
         },
         /**
          * Calculates the visibility for each field with conditional visibility
