@@ -10,11 +10,10 @@ from pytz import timezone
 
 from odoo import models, fields, api, exceptions, _
 from odoo.addons.resource.models.utils import Intervals
-from odoo.tools import format_datetime
 from odoo.osv.expression import AND, OR
 from odoo.tools.float_utils import float_is_zero
 from odoo.exceptions import AccessError
-from odoo.tools import format_duration
+from odoo.tools import format_duration, format_time, format_datetime
 
 def get_google_maps_url(latitude, longitude):
     return "https://maps.google.com?q=%s,%s" % (latitude, longitude)
@@ -132,14 +131,14 @@ class HrAttendance(models.Model):
             if not attendance.check_out:
                 attendance.display_name = _(
                     "From %s",
-                    format_datetime(self.env, attendance.check_in, dt_format="HH:mm"),
+                    format_time(self.env, attendance.check_in, time_format=None, lang_code=self.env.lang),
                 )
             else:
                 attendance.display_name = _(
                     "%s : (%s-%s)",
                     format_duration(attendance.worked_hours),
-                    format_datetime(self.env, attendance.check_in, dt_format="HH:mm"),
-                    format_datetime(self.env, attendance.check_out, dt_format="HH:mm"),
+                    format_time(self.env, attendance.check_in, time_format=None, lang_code=self.env.lang),
+                    format_time(self.env, attendance.check_out, time_format=None, lang_code=self.env.lang),
                 )
 
     def _get_employee_calendar(self):
