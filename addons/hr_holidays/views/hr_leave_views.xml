@@ -449,6 +449,7 @@
                 <field name="employee_id" filters="1"/>
                 <field name="is_hatched" invisible="1" />
                 <field name="is_striked" invisible="1"/>
+                <field name="state" invisible="1"/>
             </calendar>
         </field>
     </record>
