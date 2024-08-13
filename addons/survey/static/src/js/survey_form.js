@@ -6,6 +6,7 @@ import { rpc } from "@web/core/network/rpc";
 import { cookie } from "@web/core/browser/cookie";
 import { utils as uiUtils } from "@web/core/ui/ui_service";
 
+import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import SurveyPreloadImageMixin from "@survey/js/survey_preload_image_mixin";
 import { SurveyImageZoomer } from "@survey/js/survey_image_zoomer";
 import {
@@ -252,7 +253,7 @@ publicWidget.registry.SurveyFormWidget = publicWidget.Widget.extend(SurveyPreloa
         }
     },
 
-    _onSubmit: function (event) {
+    async _onSubmit(event) {
         event.preventDefault();
         const options = {};
         const target = event.currentTarget;
@@ -260,7 +261,22 @@ publicWidget.registry.SurveyFormWidget = publicWidget.Widget.extend(SurveyPreloa
             options.previousPageId = parseInt(target.dataset['previousPageId']);
         } else if (target.value === 'next_skipped') {
             options.nextSkipped = true;
+        } else if (target.value === 'finish' && target.classList.value == 'btn btn-secondary') {
+            options.isFinish = true;
         } else if (target.value === 'finish') {
+            // Adding pop-up only when the test is submitted using next button
+            const confirmed = await new Promise((resolve) => {
+                this.call("dialog", "add", ConfirmationDialog, {
+                    title: "Submit confirmation",
+                    body: "Are you sure you want to submit the survey?",
+                    confirmLabel: "Submit",
+                    confirm: () => resolve(true),
+                    cancel: () => resolve(false),
+                });
+            });
+            if (!confirmed) {
+                return;
+            }
             options.isFinish = true;
         }
         this._submitForm(options);
