@@ -100,6 +100,7 @@ INSERT_BATCH_SIZE = 100
 UPDATE_BATCH_SIZE = 100
 SQL_DEFAULT = psycopg2.extensions.AsIs("DEFAULT")
 
+
 def class_name_to_model_name(classname: str) -> str:
     return regex_camel_case.sub(r'.\1\2', classname).lower()
 

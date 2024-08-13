@@ -6,6 +6,7 @@ from odoo.tests import common
 from ..models.mother_inherit_4 import TestINHERITMother
 from odoo import models
 
+
 class test_inherits(common.TransactionCase):
 
     def test_00_inherits(self):

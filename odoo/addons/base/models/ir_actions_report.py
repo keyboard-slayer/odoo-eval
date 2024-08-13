@@ -128,6 +128,7 @@ else:
     else:
         _logger.info('Wkhtmltoimage seems to be broken.')
 
+
 class IrActionsReport(models.Model):
     _description = 'Report Action'
     _inherit = ['ir.actions.actions']

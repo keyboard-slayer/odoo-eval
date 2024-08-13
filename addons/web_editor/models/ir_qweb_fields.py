@@ -21,7 +21,7 @@ import pytz
 import requests
 from lxml import etree, html
 from markupsafe import Markup, escape_silent
-from PIL import IrQwebFieldImage as I
+from PIL import Image as I
 from werkzeug import urls
 
 from odoo import _, api, models, fields

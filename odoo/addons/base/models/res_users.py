@@ -177,6 +177,7 @@ def check_identity(fn):
 # Basic res.groups and res.users
 #----------------------------------------------------------
 
+
 class ResGroups(models.Model):
     _description = "Access Groups"
     _rec_name = 'full_name'
@@ -1424,6 +1425,9 @@ class ResUsers(models.Model):
         """
         return False
 
+
+ResUsersPatchedInTest = ResUsers
+
 #
 # Implied groups
 #
@@ -1431,6 +1435,7 @@ class ResUsers(models.Model):
 # "inherited" groups.  Once a user belongs to a group, it automatically belongs
 # to the implied groups (transitively).
 #
+
 
 class ResGroups(models.Model):
     _inherit = ['res.groups']
@@ -1548,7 +1553,8 @@ class ResGroups(models.Model):
         return SetDefinitions(data)
 
 
-class ResUsers(models.Model):
+class UsersImplied(models.Model):
+    _name = 'res.users'
     _inherit = ['res.users']
 
     @api.model_create_multi
@@ -1571,7 +1577,7 @@ class ResUsers(models.Model):
         if demoted_users:
             # demoted users are restricted to the assigned groups only
             vals = {'groups_id': [Command.clear()] + values['groups_id']}
-            super(ResUsers, demoted_users).write(vals)
+            super(UsersImplied, demoted_users).write(vals)
         # add implied groups for all users (in batches)
         users_batch = defaultdict(self.browse)
         for user in self:
@@ -1579,7 +1585,7 @@ class ResUsers(models.Model):
         for groups, users in users_batch.items():
             gs = set(concat(g.trans_implied_ids for g in groups))
             vals = {'groups_id': [Command.link(g.id) for g in gs]}
-            super(ResUsers, users).write(vals)
+            super(UsersImplied, users).write(vals)
         return res
 
 #
@@ -1603,6 +1609,7 @@ class ResUsers(models.Model):
 # - selection field 'sel_groups_ID1_..._IDk' is ID iff
 #       ID is in 'groups_id' and ID is maximal in the set {ID1, ..., IDk}
 #
+
 
 class ResGroups(models.Model):
     _inherit = ['res.groups']
@@ -2105,6 +2112,7 @@ class ResUsers(models.Model):
             })
         return res
 
+
 class ResUsersIdentitycheck(models.TransientModel):
     """ Wizard used to re-check the user's credentials (password) and eventually
     revoke access to his account to every device he has an active session on.
@@ -2149,6 +2157,7 @@ class ResUsersIdentitycheck(models.TransientModel):
 # change password wizard
 #----------------------------------------------------------
 
+
 class ChangePasswordWizard(models.TransientModel):
     """ A wizard to manage the change of users' passwords. """
     _description = "Change Password Wizard"
@@ -2187,6 +2196,7 @@ class ChangePasswordUser(models.TransientModel):
         # don't keep temporary passwords in the database longer than necessary
         self.write({'new_passwd': False})
 
+
 class ChangePasswordOwn(models.TransientModel):
     _description = "User, change own password wizard"
     _transient_max_hours = 0.1
@@ -2216,6 +2226,8 @@ KEY_CRYPT_CONTEXT = CryptContext(
     # attacks on API keys isn't much of a concern
     ['pbkdf2_sha512'], pbkdf2_sha512__rounds=6000,
 )
+
+
 class ResUsers(models.Model):
     _inherit = ['res.users']
 
@@ -2269,6 +2281,7 @@ class ResUsers(models.Model):
             'target': 'new',
             'views': [(False, 'form')],
         }
+
 
 class ResUsersApikeys(models.Model):
     _description = 'Users API Keys'
@@ -2356,6 +2369,7 @@ class ResUsersApikeys(models.Model):
 
         return k
 
+
 class ResUsersApikeysDescription(models.TransientModel):
     _description = 'API Key Description'
 
@@ -2384,6 +2398,7 @@ class ResUsersApikeysDescription(models.TransientModel):
     def check_access_make_key(self):
         if not self.env.user._is_internal():
             raise AccessError(_("Only internal users can create API keys"))
+
 
 class ResUsersApikeysShow(models.AbstractModel):
     _description = 'Show API Key'
