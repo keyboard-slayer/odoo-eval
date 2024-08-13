@@ -7,6 +7,7 @@ import {
     isProtected,
     isProtecting,
     isVisible,
+    isZWS,
 } from "@html_editor/utils/dom_info";
 import {
     closestElement,
@@ -624,7 +625,7 @@ export class ListPlugin extends Plugin {
         if (!closestLI) {
             return;
         }
-        if (!closestLI.textContent) {
+        if (!closestLI.textContent || isZWS(closestLI)) {
             this.outdentLI(closestLI);
             return true;
         }
