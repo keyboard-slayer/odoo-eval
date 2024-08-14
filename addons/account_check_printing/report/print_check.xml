@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<template id="print_check">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <div t-att-data-oe-model="o._name" t-att-data-oe-id="o.id" t-foreach="o._check_get_pages()" t-as="page" class="page article ckin_page" t-attf-style="top: {{ o.company_id.account_check_printing_margin_top }}in; left: {{ o.company_id.account_check_printing_margin_left }}in;">
+                <div class="ckin_check">
+                    <!-- <t t-if="page['state'] == 'cancelled'">
+                        <div class="o-watermark">VOID</div>
+                    </t> -->
+                    <div t-attf-style="top: #{o.company_id.account_check_layout_format_id.account_check_date_dist_from_top}mm; left: #{o.company_id.account_check_layout_format_id.account_check_date_dist_from_left}mm; letter-spacing: #{o.company_id.account_check_layout_format_id.account_check_date_dist_bet_char}mm;" t-out="page['date'].replace('/', '')"/>
+                    <div t-attf-style="top: #{o.company_id.account_check_layout_format_id.account_payee_dist_from_top}mm; left: #{o.company_id.account_check_layout_format_id.account_payee_dist_from_left}mm;" t-out="page['partner_name']"/>
+                    <div t-attf-style="top: #{o.company_id.account_check_layout_format_id.account_aif_dist_from_top}mm; left: #{o.company_id.account_check_layout_format_id.account_aif_dist_from_left}mm;">
+                        <t t-out="page['amount'].replace(o.currency_id.symbol, '')"/>
+                    </div>
+                    <div t-attf-style="top: #{o.company_id.account_check_layout_format_id.account_aiw_line1_dist_from_top}mm; left: #{o.company_id.account_check_layout_format_id.account_aiw_line1_dist_from_left}mm;" t-out="page['amount_in_word'][0]"/>
+                    <div t-attf-style="top: #{o.company_id.account_check_layout_format_id.account_aiw_line2_dist_from_top}mm; left: #{o.company_id.account_check_layout_format_id.account_aiw_line2_dist_from_left}mm;" t-out="page['amount_in_word'][1]"/>
+                </div>
+            </div>
+        </t>
+    </t>
+</template>
+
+</data>
+</odoo>

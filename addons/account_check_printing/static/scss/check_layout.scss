@@ -1,0 +1,29 @@
+.o-watermark {
+    width: 300px;
+    top: 0.3in;
+    font-size: 80pt;
+    left: 250px;
+    position: absolute;
+    color: lightgray;
+    z-index: -1;
+    transform: rotate(-27deg);
+}
+
+.ckin_page {
+    position: relative;
+    font-size: 10pt;
+    width: 8in!important;
+    zoom: 1.5;
+    margin-left: -15px;
+    margin-right: -15px;
+
+    .ckin_check {
+        position: absolute;
+        height: 3.25in;
+    }
+
+    .ckin_check > * {
+        position: absolute;
+        white-space: nowrap;
+    }
+}

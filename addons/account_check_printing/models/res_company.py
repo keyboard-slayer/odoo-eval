@@ -12,6 +12,7 @@ class res_company(models.Model):
         string="Check Layout",
         selection=[
             ('disabled', 'None'),
+            ('account_check_printing.action_print_check', 'Custom'),
         ],
         default='disabled',
         help="Select the format corresponding to the check paper you will be printing your checks on.\n"
@@ -42,3 +43,17 @@ class res_company(models.Model):
         default=0.25,
         help="Adjust the margins of generated checks to make it fit your printer's settings.",
     )
+    account_check_layout_format_id = fields.Many2one('account.check.layout.format', readonly=False)
+
+    def write(self, vals):
+        result = super().write(vals)
+        self._paper_format()
+        return result
+
+    def _paper_format(self):
+        paper_format = self.env['report.paperformat'].search([('name', '=', 'Check Paper Format')], limit=1)
+        if paper_format:
+            paper_format.write({
+                'page_height': self.account_check_layout_format_id.account_check_height,
+                'page_width': self.account_check_layout_format_id.account_check_width,
+            })

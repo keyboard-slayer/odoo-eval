@@ -23,6 +23,10 @@
                         <label for="account_check_printing_margin_left" class="col-lg-4 o_light_label"/>
                         <field name="account_check_printing_margin_left"/>
                     </div>
+                    <div class="row" invisible="account_check_printing_layout != 'account_check_printing.action_print_check'">
+                        <label for="account_check_layout_format_id" class="col-lg-4 o_light_label"/>
+                        <field name="account_check_layout_format_id" options="{'no_create_edit': True}"/>
+                    </div>
                     <div class="row" invisible="country_code != 'CA'">
                         <label for="account_check_printing_margin_right" class="col-lg-4 o_light_label"/>
                         <field name="account_check_printing_margin_right"/>

@@ -208,7 +208,25 @@ class AccountPayment(models.Model):
     #CHECK PRINTING METHODS
     #######################
     def _check_fill_line(self, amount_str):
-        return amount_str and (amount_str + ' ').ljust(200, '*') or ''
+        # Original implementation
+        # return amount_str and (amount_str + ' ').ljust(200, '*') or ''
+        line1_width = int(self.company_id.account_check_layout_format_id.account_aiw_line1_width_area)
+        line2_width = int(self.company_id.account_check_layout_format_id.account_aiw_line2_width_area)
+        line1, line2 = '', ''
+        words = amount_str.split()
+
+        def get_line_length(line):
+            return len(line) + line.count(' ')
+
+        for word in words:
+            if get_line_length(line1 + word) <= line1_width:
+                line1 += word + ' '
+            else:
+                break
+
+        line2 = ' '.join(words[len(line1.split()):])
+        line2 = line2.ljust(line2_width, '*')
+        return [line1, line2]
 
     def _check_build_page_info(self, i, p):
         multi_stub = self.company_id.account_check_printing_multi_stub

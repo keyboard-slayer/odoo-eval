@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_check_layout_format" model="ir.ui.view">
+            <field name="name">account.check.layout.format.form</field>
+            <field name="model">account.check.layout.format</field>
+            <field name="arch" type="xml">
+                <form>
+                    <p><b>All the measurement must be provided in millimeters (mm)</b></p>
+                    <group>
+                        <group name="Basic Details" string="string">
+                            <field name="name" placeholder="HDFC Bank Default"/>
+                            <field name="description" />
+                        </group>
+                        <group string="Layout">
+                            <field name="account_check_width" string="Width"/>
+                            <field name="account_check_height" string="Height"/>
+                        </group>
+                        <group string="Check Date">
+                            <field name="account_check_date_dist_from_top" string="Distance from top edge"/>
+                            <field name="account_check_date_dist_from_left" string="Distance from left edge"/>
+                            <field name="account_check_date_format" string="Date Format"/>
+                            <field name="account_check_date_dist_bet_char" string="Distance between each character"/>
+                        </group>
+                        <group string="Payee/Party Name">
+                            <field name="account_payee_dist_from_top" string="Distance from top edge"/>
+                            <field name="account_payee_dist_from_left" string="Distance from left edge"/>
+                            <field name="account_payee_width_area" string="Width Area"/>
+                        </group>
+                        <group string="Amount in Words">
+                            <field name="account_aiw_line1_dist_from_top" string="Distance of Line 1 from top edge"/>
+                            <field name="account_aiw_line2_dist_from_top" string="Distance of Line 2 from top edge"/>
+                            <field name="account_aiw_line1_dist_from_left" string="Distance of Line 1 from left edge"/>
+                            <field name="account_aiw_line2_dist_from_left" string="Distance of Line 2 from left edge"/>
+                            <field name="account_aiw_line1_width_area" string="Width Area of Line 1"/>
+                            <field name="account_aiw_line2_width_area" string="Width Area of Line 2"/>
+                            <field name="account_aiw_currency_name" string="Currency Name"/>
+                        </group>
+                        <group string="Amount in Figures">
+                            <field name="account_aif_dist_from_top" string="Distance from top edge"/>
+                            <field name="account_aif_dist_from_left" string="Distance from left edge"/>
+                            <field name="account_aif_width_area" string="Width Area"/>
+                            <field name="account_aif_currency_name" string="Currency Name"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_account_check_layout_form" model="ir.actions.act_window">
+            <field name="name">Check Format</field>
+            <field name="res_model">account.check.layout.format</field>
+            <field name="view_mode">form</field>
+        </record>
+
+    </data>
+</odoo>
