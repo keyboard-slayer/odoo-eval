@@ -123,6 +123,7 @@ class TestSubcontractingFlows(TestMrpSubcontractingCommon):
         picking_receipt.move_ids.picked = True
         picking_receipt.button_validate()
         self.assertEqual(mo.state, 'done')
+        self.assertEqual(mo.origin, picking_receipt.name)
 
         # Available quantities should be negative at the subcontracting location for each components
         avail_qty_comp1 = self.env['stock.quant']._get_available_quantity(self.comp1, self.subcontractor_partner1.property_stock_subcontractor, allow_negative=True)
@@ -202,6 +203,7 @@ class TestSubcontractingFlows(TestMrpSubcontractingCommon):
         picking_receipt.move_ids.picked = True
         picking_receipt.button_validate()
         self.assertEqual(mo.state, 'done')
+        self.assertEqual(mo.origin, picking_receipt.name)
 
         # Available quantities should be negative at the subcontracting location for each components
         avail_qty_comp1 = self.env['stock.quant']._get_available_quantity(self.comp1, self.subcontractor_partner1.property_stock_subcontractor, allow_negative=True)
@@ -272,6 +274,7 @@ class TestSubcontractingFlows(TestMrpSubcontractingCommon):
         picking_receipt.move_ids.picked = True
         picking_receipt.button_validate()
         self.assertEqual(mo.state, 'done')
+        self.assertEqual(mo.origin, picking_receipt.name)
 
         # Available quantities should be negative at the subcontracting location for each components
         avail_qty_comp1 = self.env['stock.quant']._get_available_quantity(self.comp1, self.subcontractor_partner1.property_stock_subcontractor, allow_negative=True)
