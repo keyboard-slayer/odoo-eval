@@ -1,7 +1,7 @@
 {
     'name': 'Marketing Card',
     'version': '1.0',
-    'category': 'Marketing/Social Marketing',
+    'category': 'Marketing/Marketing Card',
     'summary': 'Generate dynamic shareable cards',
     'depends': ['link_tracker', 'website'],
     'data': [
