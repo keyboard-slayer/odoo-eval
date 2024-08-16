@@ -347,7 +347,7 @@ publicWidget.registry.SurveyFormWidget = publicWidget.Widget.extend(SurveyPreloa
         this.preventEnterSubmit = false;
         this.readonly = false;
         this._nextScreen(
-            rpc(`/survey/next_question/${this.options.surveyToken}/${this.options.answerToken}`),
+            rpc(`/survey/next_question/${this.options.surveyId}/${this.options.surveyToken}/${this.options.answerToken}`),
             {
                 initTimer: true,
                 isFinish,
@@ -382,7 +382,6 @@ publicWidget.registry.SurveyFormWidget = publicWidget.Widget.extend(SurveyPreloa
             params.next_skipped_page_or_question = true;
         }
         var route = "/survey/submit";
-
         if (this.options.isStartScreen) {
             route = "/survey/begin";
             // Hide survey title in 'page_per_question' layout: it takes too much space
@@ -414,7 +413,7 @@ publicWidget.registry.SurveyFormWidget = publicWidget.Widget.extend(SurveyPreloa
         }
 
         const submitPromise = rpc(
-            `${route}/${this.options.surveyToken}/${this.options.answerToken}`,
+            `${route}/${this.options.surveyId}/${this.options.surveyToken}/${this.options.answerToken}`,
             params
         );
 
