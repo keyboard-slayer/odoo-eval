@@ -62,3 +62,12 @@ export function clickBtn(name) {
         run: "click",
     };
 }
+export function createFloatingOrder() {
+    return { trigger: ".pos-leftheader .new-fo", run: "click" };
+}
+export function clicknthfloating(number) {
+    return {
+        trigger: `.pos-leftheader .floating-order:nth-child(${number})`,
+        run: "click",
+    };
+}

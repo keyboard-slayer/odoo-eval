@@ -102,7 +102,8 @@ registry.category("web_tour.tours").add("pos_restaurant_sync", {
 
             // Create 2nd order (paid)
             Chrome.clickMenuOption("Orders"),
-            TicketScreen.clickNewTicket(),
+            Chrome.clickPlanButton(),
+            Chrome.createFloatingOrder(),
             ProductScreen.clickDisplayedProduct("Coca-Cola", true),
             ProductScreen.clickDisplayedProduct("Minute Maid", true),
             ProductScreen.totalAmountIs("4.40"),
@@ -154,13 +155,12 @@ registry.category("web_tour.tours").add("pos_restaurant_sync", {
 
             // Create another draft order and go back to floor
             Chrome.clickMenuOption("Orders"),
-            TicketScreen.clickNewTicket(),
+            Chrome.clickPlanButton(),
+            Chrome.createFloatingOrder(),
             ProductScreen.clickDisplayedProduct("Coca-Cola", true),
             ProductScreen.clickDisplayedProduct("Minute Maid", true),
             Chrome.clickPlanButton(),
-
-            // At floor screen, there should be 2 synced draft orders
-            FloorScreen.orderCountSyncedInTableIs("5", "2"),
+            FloorScreen.orderCountSyncedInTableIs("5", "1"),
 
             // Delete the first order then go back to floor
             FloorScreen.clickTable("5"),
@@ -176,13 +176,16 @@ registry.category("web_tour.tours").add("pos_restaurant_sync", {
                     "acknowledge printing error ( because we don't have printer in the test. )",
             },
             Chrome.isSyncStatusConnected(),
+            Chrome.clickPlanButton(),
+            Chrome.clickMenuOption("Orders"),
             TicketScreen.selectOrder("-0005"),
             TicketScreen.loadSelectedOrder(),
             ProductScreen.isShown(),
             Chrome.clickPlanButton(),
 
-            // There should be 1 synced draft order.
-            FloorScreen.orderCountSyncedInTableIs("5", "2"),
+            // There should be 0 synced draft order as we already deleted -0002.
+            FloorScreen.clickTable("5"),
+            ProductScreen.orderIsEmpty(),
         ].flat(),
 });
 
