@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 """ Models registries.
@@ -19,10 +18,10 @@ from contextlib import closing, contextmanager, nullcontext
 from functools import partial
 from operator import attrgetter
 
-import psycopg2
+import psycopg2.sql
 
 import odoo
-from odoo.modules.db import FunctionStatus
+from .db import FunctionStatus
 from .. import SUPERUSER_ID
 from odoo.sql_db import TestCursor
 from odoo.tools import (
@@ -35,7 +34,11 @@ from odoo.tools.lru import LRU
 from odoo.tools.misc import Collector, format_frame
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Iterator
+    from odoo.fields import Field
     from odoo.models import BaseModel
+    from odoo.sql_db import BaseCursor, Connection, Cursor
+    from . import graph
 
 
 _logger = logging.getLogger(__name__)
@@ -62,12 +65,14 @@ _CACHES_BY_KEY = {
     'groups': ('groups', 'templates', 'templates.cached_values'),  # The processing of groups is saved in the view
 }
 
-def _unaccent(x):
+
+def _unaccent(x: SQL | str | psycopg2.sql.Composable) -> SQL | str | psycopg2.sql.Composed:
     if isinstance(x, SQL):
         return SQL("unaccent(%s)", x)
     if isinstance(x, psycopg2.sql.Composable):
         return psycopg2.sql.SQL('unaccent({})').format(x)
     return f'unaccent({x})'
+
 
 class Registry(Mapping):
     """ Model registry for a particular database.
@@ -76,11 +81,11 @@ class Registry(Mapping):
     There is one registry instance per database.
 
     """
-    _lock = threading.RLock()
-    _saved_lock = None
+    _lock: threading.RLock | DummyRLock = threading.RLock()
+    _saved_lock: threading.RLock | DummyRLock | None = None
 
     @lazy_classproperty
-    def registries(cls):
+    def registries(cls) -> Mapping[str, Registry]:
         """ A mapping from database names to registries. """
         size = config.get('registry_lru_size', None)
         if not size:
@@ -95,7 +100,7 @@ class Registry(Mapping):
                 size = int(config['limit_memory_soft'] / avgsz)
         return LRU(size)
 
-    def __new__(cls, db_name):
+    def __new__(cls, db_name: str):
         """ Return the registry for the given database name."""
         with cls._lock:
             try:
@@ -107,14 +112,19 @@ class Registry(Mapping):
                 # odoo.http.root
                 threading.current_thread().dbname = db_name
 
+    _init: bool  # whether init needs to be done
+    ready: bool  # whether everything is set up
+    loaded: bool  # whether all modules are loaded
+    models: dict[str, type[BaseModel]]
+
     @classmethod
     @locked
-    def new(cls, db_name, force_demo=False, status=None, update_module=False):
+    def new(cls, db_name: str, force_demo: bool = False, status: FunctionStatus | None = None, update_module: bool = False) -> Registry:
         """ Create and return a new registry for the given database name. """
         t0 = time.time()
-        registry = object.__new__(cls)
+        registry: Registry = object.__new__(cls)
         registry.init(db_name)
-        registry.new = registry.init = registry.registries = None
+        registry.new = registry.init = registry.registries = None  # type: ignore
 
         # Initializing a registry will call general code which will in
         # turn call Registry() to obtain the registry being initialized.
@@ -148,52 +158,51 @@ class Registry(Mapping):
         _logger.info("Registry loaded in %.3fs", time.time() - t0)
         return registry
 
-    def init(self, db_name):
-        self.models: dict[str, type[BaseModel]] = {}    # model name/model instance mapping
-        self._sql_constraints = set()
+    def init(self, db_name: str) -> None:
         self._init = True
-        self._database_translated_fields = ()  # names of translated fields in database
+        self.loaded = False
+        self.ready = False
+
+        self.models = {}    # model name/model instance mapping
+        self._sql_constraints = set()
+        self._database_translated_fields: set[str] = set()  # names of translated fields in database "{model}.{field_name}"
         self._assertion_report = odoo.tests.result.OdooTestResult()
-        self._fields_by_model = None
-        self._ordinary_tables = None
-        self._constraint_queue = deque()
+        self._fields_by_model = None  # XXX unused?
+        self._ordinary_tables: set[str] | None = None  # cached names of regular tables
+        self._constraint_queue: deque[tuple] = deque()  # queue of functions to call on finalization of constraints
         self.__caches = {cache_name: LRU(cache_size) for cache_name, cache_size in _REGISTRY_CACHES.items()}
 
         # modules fully loaded (maintained during init phase by `loading` module)
-        self._init_modules = set()
-        self.updated_modules = []       # installed/updated modules
-        self.loaded_xmlids = set()
+        self._init_modules: set[str] = set()
+        self.updated_modules: list[str] = []       # installed/updated modules
+        self.loaded_xmlids: set[str] = set()
 
         self.db_name = db_name
-        self._db = odoo.sql_db.db_connect(db_name, readonly=False)
-        self._db_readonly = None
+        self._db: Connection = odoo.sql_db.db_connect(db_name, readonly=False)
+        self._db_readonly: Connection | None = None
         if config['db_replica_host'] is not False or config['test_enable']:  # by default, only use readonly pool if we have a db_replica_host defined. Allows to have an empty replica host for testing
             self._db_readonly = odoo.sql_db.db_connect(db_name, readonly=True)
 
         # cursor for test mode; None means "normal" mode
-        self.test_cr = None
-        self.test_lock = None
-
-        # Indicates that the registry is
-        self.loaded = False             # whether all modules are loaded
-        self.ready = False              # whether everything is set up
+        self.test_cr: Cursor | None = None
+        self.test_lock: threading.RLock | None = None
 
         # field dependencies
-        self.field_depends = Collector()
-        self.field_depends_context = Collector()
-        self.field_inverses = Collector()
+        self.field_depends: Collector[Field, tuple[Field]] = Collector()
+        self.field_depends_context: Collector[Field, tuple[str]] = Collector()
+        self.field_inverses: Collector[Field, tuple[Field]] = Collector()
 
         # cache of methods get_field_trigger_tree() and is_modifying_relations()
-        self._field_trigger_trees = {}
-        self._is_modifying_relations = {}
+        self._field_trigger_trees: dict[Field, TriggerTree] = {}
+        self._is_modifying_relations: dict[Field, bool] = {}
 
         # Inter-process signaling:
         # The `base_registry_signaling` sequence indicates the whole registry
         # must be reloaded.
         # The `base_cache_signaling sequence` indicates all caches must be
         # invalidated (i.e. cleared).
-        self.registry_sequence = None
-        self.cache_sequences = {}
+        self.registry_sequence: int = -1
+        self.cache_sequences: dict[str, int] = {}
 
         # Flags indicating invalidation of the registry or the cache.
         self._invalidation_flags = threading.local()
@@ -207,7 +216,7 @@ class Registry(Mapping):
 
     @classmethod
     @locked
-    def delete(cls, db_name):
+    def delete(cls, db_name: str):
         """ Delete the registry linked to a given database. """
         if db_name in cls.registries:  # pylint: disable=unsupported-membership-test
             del cls.registries[db_name]  # pylint: disable=unsupported-delete-operation
@@ -234,22 +243,22 @@ class Registry(Mapping):
         """ Return the model with the given name or raise KeyError if it doesn't exist."""
         return self.models[model_name]
 
-    def __call__(self, model_name):
+    def __call__(self, model_name: str) -> type[BaseModel]:
         """ Same as ``self[model_name]``. """
         return self.models[model_name]
 
-    def __setitem__(self, model_name, model):
+    def __setitem__(self, model_name: str, model: type[BaseModel]):
         """ Add or replace a model in the registry."""
         self.models[model_name] = model
 
-    def __delitem__(self, model_name):
+    def __delitem__(self, model_name: str):
         """ Remove a (custom) model from the registry. """
         del self.models[model_name]
         # the custom model can inherit from mixins ('mail.thread', ...)
         for Model in self.models.values():
             Model._inherit_children.discard(model_name)
 
-    def descendants(self, model_names, *kinds):
+    def descendants(self, model_names: Iterable[str], *kinds: typing.Literal['_inherit', '_inherits']) -> OrderedSet[type[BaseModel]]:
         """ Return the models corresponding to ``model_names`` and all those
         that inherit/inherits from them.
         """
@@ -265,7 +274,7 @@ class Registry(Mapping):
                 queue.extend(func(model))
         return models
 
-    def load(self, cr, module):
+    def load(self, cr: Cursor, module: graph.Node) -> OrderedSet[str]:
         """ Load a given module in the registry, and return the names of the
         modified models.
 
@@ -296,7 +305,7 @@ class Registry(Mapping):
         return self.descendants(model_names, '_inherit', '_inherits')
 
     @locked
-    def setup_models(self, cr):
+    def setup_models(self, cr: Cursor) -> None:
         """ Complete the setup of models.
             This must be called after loading modules and before using the ORM.
         """
@@ -366,11 +375,11 @@ class Registry(Mapping):
             env.flush_all()
 
     @lazy_property
-    def field_computed(self):
+    def field_computed(self) -> dict[Field, list[Field]]:
         """ Return a dict mapping each field to the fields computed by the same method. """
         computed = {}
         for model_name, Model in self.models.items():
-            groups = defaultdict(list)
+            groups: defaultdict[Field, list[Field]] = defaultdict(list)
             for field in Model._fields.values():
                 if field.compute:
                     computed[field] = group = groups[field.compute]
@@ -402,7 +411,7 @@ class Registry(Mapping):
                     )
         return computed
 
-    def get_trigger_tree(self, fields: list, select=bool) -> "TriggerTree":
+    def get_trigger_tree(self, fields: list[Field], select: Callable[[Field], bool] = bool) -> TriggerTree:
         """ Return the trigger tree to traverse when ``fields`` have been modified.
         The function ``select`` is called on every field to determine which fields
         should be kept in the tree nodes.  This enables to discard some unnecessary
@@ -415,7 +424,7 @@ class Registry(Mapping):
         ]
         return TriggerTree.merge(trees, select)
 
-    def get_dependent_fields(self, field):
+    def get_dependent_fields(self, field: Field) -> tuple[TriggerTree, ...]:
         """ Return an iterable on the fields that depend on ``field``. """
         if field not in self._field_triggers:
             return ()
@@ -426,7 +435,7 @@ class Registry(Mapping):
             for dependent in tree.root
         )
 
-    def _discard_fields(self, fields: list):
+    def _discard_fields(self, fields: list[Field]) -> None:
         """ Discard the given fields from the registry's internal data structures. """
         for f in fields:
             # tests usually don't reload the registry, so when they create
@@ -442,7 +451,7 @@ class Registry(Mapping):
         # discard fields from field inverses
         self.field_inverses.discard_keys_and_values(fields)
 
-    def get_field_trigger_tree(self, field) -> "TriggerTree":
+    def get_field_trigger_tree(self, field: Field) -> TriggerTree:
         """ Return the trigger tree of a field by computing it from the transitive
         closure of field triggers.
         """
@@ -492,7 +501,7 @@ class Registry(Mapping):
         return tree
 
     @lazy_property
-    def _field_triggers(self):
+    def _field_triggers(self) -> defaultdict[Field, OrderedSet[Field]]:
         """ Return the field triggers, i.e., the inverse of field dependencies,
         as a dictionary like ``{field: {path: fields}}``, where ``field`` is a
         dependency, ``path`` is a sequence of fields to inverse and ``fields``
@@ -517,7 +526,7 @@ class Registry(Mapping):
 
         return triggers
 
-    def is_modifying_relations(self, field):
+    def is_modifying_relations(self, field: Field) -> bool:
         """ Return whether ``field`` has dependent fields on some records, and
         that modifying ``field`` might change the dependent records.
         """
@@ -555,7 +564,7 @@ class Registry(Mapping):
                 _schema.info(*e.args)
                 self._constraint_queue.append((func, args, kwargs))
 
-    def finalize_constraints(self):
+    def finalize_constraints(self) -> None:
         """ Call the delayed functions from above. """
         while self._constraint_queue:
             func, args, kwargs = self._constraint_queue.popleft()
@@ -566,7 +575,7 @@ class Registry(Mapping):
                 # can sometimes be a transient error
                 _schema.warning(*e.args)
 
-    def init_models(self, cr, model_names, context, install=True):
+    def init_models(self, cr: Cursor, model_names: Iterable[str], context: dict[str, typing.Any], install: bool = True):
         """ Initialize a list of models (given by their name). Call methods
             ``_auto_init`` and ``init`` on each model to create or update the
             database tables supporting the models.
@@ -620,7 +629,7 @@ class Registry(Mapping):
             del self._foreign_keys
             del self._is_install
 
-    def check_indexes(self, cr, model_names):
+    def check_indexes(self, cr: Cursor, model_names: Iterable[str]) -> None:
         """ Create or drop column indexes for the given models. """
 
         expected = [
@@ -674,8 +683,11 @@ class Registry(Mapping):
             elif not index and tablename == existing.get(indexname):
                 _schema.info("Keep unexpected index %s on table %s", indexname, tablename)
 
-    def add_foreign_key(self, table1, column1, table2, column2, ondelete,
-                        model, module, force=True):
+    def add_foreign_key(
+        self, table1: str, column1: str, table2: str, column2: str,
+        ondelete: str, model: str, module: str,
+        force: bool = True,
+    ) -> None:
         """ Specify an expected foreign key. """
         key = (table1, column1)
         val = (table2, column2, ondelete, model, module)
@@ -684,7 +696,7 @@ class Registry(Mapping):
         else:
             self._foreign_keys.setdefault(key, val)
 
-    def check_foreign_keys(self, cr):
+    def check_foreign_keys(self, cr: Cursor) -> None:
         """ Create or update the expected foreign keys. """
         if not self._foreign_keys:
             return
@@ -721,7 +733,7 @@ class Registry(Mapping):
                 conname = sql.get_foreign_keys(cr, table1, column1, table2, column2, ondelete)[0]
                 model.env['ir.model.constraint']._reflect_constraint(model, conname, 'f', None, module)
 
-    def check_tables_exist(self, cr):
+    def check_tables_exist(self, cr: Cursor) -> None:
         """
         Verify that all tables are present and try to initialize those that are missing.
         """
@@ -746,7 +758,7 @@ class Registry(Mapping):
             for table in missing_tables:
                 _logger.error("Model %s has no table.", table2model[table])
 
-    def clear_cache(self, *cache_names):
+    def clear_cache(self, *cache_names: str) -> None:
         """ Clear the caches associated to methods decorated with
         ``tools.ormcache``if cache is in `cache_name` subset. """
         cache_names = cache_names or ('default',)
@@ -763,7 +775,7 @@ class Registry(Mapping):
             caller_info = format_frame(inspect.currentframe().f_back)
             _logger.debug('Invalidating %s model caches from %s', ','.join(cache_names), caller_info)
 
-    def clear_all_caches(self):
+    def clear_all_caches(self) -> None:
         """ Clear the caches associated to methods decorated with
         ``tools.ormcache``.
         """
@@ -776,7 +788,7 @@ class Registry(Mapping):
         log = _logger.info if self.loaded else _logger.debug
         log('Invalidating all model caches from %s', caller_info)
 
-    def is_an_ordinary_table(self, model):
+    def is_an_ordinary_table(self, model: BaseModel) -> bool:
         """ Return whether the given model has an ordinary table. """
         if self._ordinary_tables is None:
             cr = model.env.cr
@@ -795,16 +807,16 @@ class Registry(Mapping):
         return model._table in self._ordinary_tables
 
     @property
-    def registry_invalidated(self):
+    def registry_invalidated(self) -> bool:
         """ Determine whether the current thread has modified the registry. """
         return getattr(self._invalidation_flags, 'registry', False)
 
     @registry_invalidated.setter
-    def registry_invalidated(self, value):
+    def registry_invalidated(self, value: bool):
         self._invalidation_flags.registry = value
 
     @property
-    def cache_invalidated(self):
+    def cache_invalidated(self) -> set[str]:
         """ Determine whether the current thread has modified the cache. """
         try:
             return self._invalidation_flags.cache
@@ -812,7 +824,7 @@ class Registry(Mapping):
             names = self._invalidation_flags.cache = set()
             return names
 
-    def setup_signaling(self):
+    def setup_signaling(self) -> None:
         """ Setup the inter-process signaling on this registry. """
         if self.in_test_mode():
             return
@@ -841,7 +853,7 @@ class Registry(Mapping):
             _logger.debug("Multiprocess load registry signaling: [Registry: %s] %s",
                           self.registry_sequence, ' '.join('[Cache %s: %s]' % cs for cs in self.cache_sequences.items()))
 
-    def get_sequences(self, cr):
+    def get_sequences(self, cr: Cursor) -> tuple[int, dict[str, int]]:
         cache_sequences_query = ', '.join([f'base_cache_signaling_{cache_name}' for cache_name in _CACHES_BY_KEY])
         cache_sequences_values_query = ',\n'.join([f'base_cache_signaling_{cache_name}.last_value' for cache_name in _CACHES_BY_KEY])
         cr.execute(f"""
@@ -852,7 +864,7 @@ class Registry(Mapping):
         cache_sequences = dict(zip(_CACHES_BY_KEY, cache_sequences_values))
         return registry_sequence, cache_sequences
 
-    def check_signaling(self, cr=None):
+    def check_signaling(self, cr: Cursor | None = None) -> Registry:
         """ Check whether the registry has changed, and performs all necessary
         operations to update the registry. Return an up-to-date registry.
         """
@@ -888,7 +900,7 @@ class Registry(Mapping):
                 _logger.debug("Multiprocess signaling check: %s", changes)
         return self
 
-    def signal_changes(self):
+    def signal_changes(self) -> None:
         """ Notifies other processes if registry or cache has been invalidated. """
         if not self.ready:
             _logger.warning('Calling signal_changes when registry is not ready is not suported')
@@ -920,7 +932,7 @@ class Registry(Mapping):
         self.registry_invalidated = False
         self.cache_invalidated.clear()
 
-    def reset_changes(self):
+    def reset_changes(self) -> None:
         """ Reset the registry and cancel all invalidations. """
         if self.registry_invalidated:
             with closing(self.cursor()) as cr:
@@ -942,11 +954,11 @@ class Registry(Mapping):
             self.reset_changes()
             raise
 
-    def in_test_mode(self):
+    def in_test_mode(self) -> bool:
         """ Test whether the registry is in 'test' mode. """
         return self.test_cr is not None
 
-    def enter_test_mode(self, cr, test_readonly_enabled=True):
+    def enter_test_mode(self, cr: Cursor, test_readonly_enabled: bool = True) -> None:
         """ Enter the 'test' mode, where one cursor serves several requests. """
         assert self.test_cr is None
         self.test_cr = cr
@@ -956,7 +968,7 @@ class Registry(Mapping):
         Registry._saved_lock = Registry._lock
         Registry._lock = DummyRLock()
 
-    def leave_test_mode(self):
+    def leave_test_mode(self) -> None:
         """ Leave the test mode. """
         assert self.test_cr is not None
         self.test_cr = None
@@ -966,7 +978,7 @@ class Registry(Mapping):
         Registry._lock = Registry._saved_lock
         Registry._saved_lock = None
 
-    def cursor(self, /, readonly=False):
+    def cursor(self, /, readonly: bool = False) -> BaseCursor:
         """ Return a new cursor for the database. The cursor itself may be used
             as a context manager to commit/rollback and close automatically.
         """
@@ -1016,32 +1028,33 @@ class TriggerTree(dict):
      - mark J to recompute on inverse(Y, records).
     """
     __slots__ = ['root']
+    root: tuple[Field]
 
     # pylint: disable=keyword-arg-before-vararg
-    def __init__(self, root=(), *args, **kwargs):
+    def __init__(self, root: tuple[Field] = (), *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.root = root
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self.root or len(self))
 
     def __repr__(self) -> str:
         return f"TriggerTree(root={self.root!r}, {super().__repr__()})"
 
-    def increase(self, key):
+    def increase(self, key: Field) -> TriggerTree:
         try:
             return self[key]
         except KeyError:
             subtree = self[key] = TriggerTree()
             return subtree
 
-    def depth_first(self):
+    def depth_first(self) -> Iterator[TriggerTree]:
         yield self
         for subtree in self.values():
             yield from subtree.depth_first()
 
     @classmethod
-    def merge(cls, trees: list, select=bool) -> "TriggerTree":
+    def merge(cls, trees: list[TriggerTree], select: Callable[[Field], bool] = bool) -> TriggerTree:
         """ Merge trigger trees into a single tree. The function ``select`` is
         called on every field to determine which fields should be kept in the
         tree nodes. This enables to discard some fields from the tree nodes.
