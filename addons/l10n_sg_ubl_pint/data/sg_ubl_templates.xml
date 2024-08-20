@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="ubl_21_InvoiceType_sg" inherit_id="account_edi_ubl_cii.ubl_21_InvoiceType" primary="True">
+        <xpath expr="//*[local-name()='ID']" position="after">
+            <!--
+            [BR-108-GST-SG]-An Invoice that contains an GST Category code of value SR, SRCA-S, SRCA-C, ZR, SRRC, SROVR-RS, SROVR-LVG, SRLVG or NA shall contain an Universally unique Invoice identifier (UUID) (BT-SG-003)
+            -->
+            <t xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                <cbc:UUID t-out="vals.get('l10n_sg_ubl_pint_uuid')"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="ubl_21_CreditNoteType_sg" inherit_id="account_edi_ubl_cii.ubl_21_CreditNoteType" primary="True">
+        <xpath expr="//*[local-name()='ID']" position="after">
+            <!--
+            [BR-108-GST-SG]-An Invoice that contains an GST Category code of value SR, SRCA-S, SRCA-C, ZR, SRRC, SROVR-RS, SROVR-LVG, SRLVG or NA shall contain an Universally unique Invoice identifier (UUID) (BT-SG-003)
+            -->
+            <xpath expr="//*[local-name()='ID']" position="after">
+                <t xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:UUID t-out="vals.get('l10n_sg_ubl_pint_uuid')"/>
+                </t>
+            </xpath>
+        </xpath>
+    </template>
+
+    <template id="ubl_21_CreditNoteType_sg" inherit_id="account_edi_ubl_cii.ubl_21_DebitNoteType" primary="True">
+        <xpath expr="//*[local-name()='ID']" position="after">
+            <!--
+            [BR-108-GST-SG]-An Invoice that contains an GST Category code of value SR, SRCA-S, SRCA-C, ZR, SRRC, SROVR-RS, SROVR-LVG, SRLVG or NA shall contain an Universally unique Invoice identifier (UUID) (BT-SG-003)
+            -->
+            <xpath expr="//*[local-name()='ID']" position="after">
+                <t xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                    <cbc:UUID t-out="vals.get('l10n_sg_ubl_pint_uuid')"/>
+                </t>
+            </xpath>
+        </xpath>
+    </template>
+</odoo>
