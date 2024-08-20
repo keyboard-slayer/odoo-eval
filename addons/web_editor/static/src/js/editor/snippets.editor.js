@@ -3187,6 +3187,14 @@ var SnippetsMenu = Widget.extend({
         // TODO: Remove in master and add it back in the template.
         const $vAlignOption = $html.find("#row_valign_snippet_option");
         $vAlignOption[0].dataset.js = "vAlignment";
+
+        // TODO: Remove in master and remove the background filter from the snippet
+        const cover_snippet = $html.find("[data-oe-type='snippet'] [data-snippet='s_cover']");
+        if (cover_snippet.length && $html.get(0).ownerDocument.body.querySelector(".o_mass_mailing_mailing_form")) {
+            cover_snippet[0].querySelector('.o_we_bg_filter.bg-black-50').remove();
+            cover_snippet[0].querySelector('h1').classList.remove("text-white");
+            cover_snippet[0].querySelector('p').classList.remove("text-white");
+        }
     },
     /**
      * Creates a snippet editor to associated to the given snippet. If the given
