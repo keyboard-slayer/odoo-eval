@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from .ir_module import IrModuleCategory
 
 import binascii
 import contextlib
@@ -1419,6 +1420,8 @@ class ResUsers(models.Model):
         """
         return False
 
+ResUsersPatchedInTest = ResUsers
+
 #
 # Implied groups
 #
@@ -1427,8 +1430,7 @@ class ResUsers(models.Model):
 # to the implied groups (transitively).
 #
 
-class ResGroups(models.Model):
-    _inherit = ['res.groups']
+class ResGroups(ResGroups):
 
     implied_ids = fields.Many2many('res.groups', 'res_groups_implied_rel', 'gid', 'hid',
         string='Inherits', help='Users of this group automatically inherit those groups')
@@ -1543,9 +1545,8 @@ class ResGroups(models.Model):
         return SetDefinitions(data)
 
 
-class UsersImplied(models.Model):
+class UsersImplied(ResUsers):
     _name = 'res.users'
-    _inherit = ['res.users']
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -1600,8 +1601,7 @@ class UsersImplied(models.Model):
 #       ID is in 'groups_id' and ID is maximal in the set {ID1, ..., IDk}
 #
 
-class ResGroups(models.Model):
-    _inherit = ['res.groups']
+class ResGroups(ResGroups):
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -1820,8 +1820,7 @@ class ResGroups(models.Model):
         return res
 
 
-class IrModuleCategory(models.Model):
-    _inherit = ["ir.module.category"]
+class IrModuleCategory(IrModuleCategory):
 
     def write(self, values):
         res = super().write(values)
@@ -1835,8 +1834,7 @@ class IrModuleCategory(models.Model):
         return res
 
 
-class ResUsers(models.Model):
-    _inherit = ['res.users']
+class ResUsers(ResUsers):
 
     user_group_warning = fields.Text(string="User Group Warning", compute="_compute_user_group_warning")
 
@@ -2212,8 +2210,7 @@ KEY_CRYPT_CONTEXT = CryptContext(
     # attacks on API keys isn't much of a concern
     ['pbkdf2_sha512'], pbkdf2_sha512__rounds=6000,
 )
-class ResUsers(models.Model):
-    _inherit = ['res.users']
+class ResUsers(ResUsers):
 
     api_key_ids = fields.One2many('res.users.apikeys', 'user_id', string="API Keys")
 

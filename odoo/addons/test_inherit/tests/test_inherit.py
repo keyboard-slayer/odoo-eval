@@ -84,7 +84,7 @@ class test_inherits(common.TransactionCase):
         self.assertEqual(field._description_selection(self.env), [('baz', 'Baz')])
 
     def test_51_define_model_inherit(self):
-        model = self.env['test.mother.dot']
+        model = self.env['test_mother_underscore']
         self.assertEqual(bool(model._fields['foo']), True)
 
     def test_50_define_model_with_mixin(self):
@@ -102,23 +102,34 @@ class test_inherits(common.TransactionCase):
         class NewTestInheritModel2(models.AbstractModel, MixinBar):
             pass
 
-        with self.assertRaisesRegex(TypeError, r"must contains the Odoo model type \(AbstractModel, Model, TransientModel\)"):
+        with self.assertRaisesRegex(TypeError, r"The new Model 'InheritOdooModelClass' must contains the Odoo model type \(AbstractModel, Model, TransientModel\)"):
             class InheritOdooModelClass(NewTestInheritModel, NewTestInheritModel2):
                 pass
 
         class InheritOdooModelClass2(models.Model, NewTestInheritModel, NewTestInheritModel2):
             pass
 
-        with self.assertRaisesRegex(TypeError, r"Model 'Inherit2OdooModelClass' can only extend BaseModel classes."):
+        with self.assertRaisesRegex(TypeError, r"Only the new models should contain the Odoo model type"):
+            class NewTestInheritModel(models.Model, NewTestInheritModel):
+                pass
+
+        class NewTestInheritModel(NewTestInheritModel):
+            pass
+
+        with self.assertRaisesRegex(TypeError, r"The new Model 'Inherit2OdooModelClass' must contains the Odoo model type \(AbstractModel, Model, TransientModel\)"):
             class Inherit2OdooModelClass(MixinFoo, NewTestInheritModel):
                 pass
 
+        with self.assertRaisesRegex(TypeError, r"Model 'Inherit2OdooModelClass' can only extend BaseModel classes."):
+            class Inherit2OdooModelClass(models.Model, MixinFoo, NewTestInheritModel):
+                pass
+
         with self.assertRaisesRegex(TypeError, r"Model 'Inherit3OdooModelClass' can only extend BaseModel classes."):
-            class Inherit3OdooModelClass(NewTestInheritModel, MixinBar):
+            class Inherit3OdooModelClass(models.Model, NewTestInheritModel, MixinBar):
                 pass
 
         with self.assertRaisesRegex(TypeError, r"Model 'Inherit4OdooModelClass' can only extend BaseModel classes."):
-            class Inherit4OdooModelClass(MixinFoo, TestINHERITMother, MixinBar):
+            class Inherit4OdooModelClass(models.Model, MixinFoo, TestINHERITMother, MixinBar):
                 pass
 
     def test_60_inherit_with_python(self):
