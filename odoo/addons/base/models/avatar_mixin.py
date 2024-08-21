@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from .image_mixin import ImageMixin
 
@@ -20,7 +19,7 @@ def get_hsl_from_seed(seed):
     return f'hsl({hue:.0f}, {sat:.0f}%, {lig:.0f}%)'
 
 
-class AvatarMixin(models.AbstractModel, base.ImageMixin):
+class AvatarMixin(models.AbstractModel, ImageMixin):
     _description = "Avatar Mixin"
     _avatar_name_field = "name"
 

@@ -252,7 +252,7 @@ class IrActionsActions(models.Model):
         }
 
 
-class IrActionsActWindow(models.Model, base.IrActionsActions):
+class IrActionsActWindow(models.Model, IrActionsActions):
     _name = 'ir.actions.act_window'
     _description = 'Action Window'
     _table = 'ir_act_window'
@@ -425,7 +425,7 @@ class IrActionsActWindowView(models.Model):
         return res
 
 
-class IrActionsActWindowClose(models.Model, base.IrActionsActions):
+class IrActionsActWindowClose(models.Model, IrActionsActions):
     _name = 'ir.actions.act_window_close'
     _description = 'Action Window Close'
     _table = 'ir_actions'
@@ -441,7 +441,7 @@ class IrActionsActWindowClose(models.Model, base.IrActionsActions):
         }
 
 
-class IrActionsActUrl(models.Model, base.IrActionsActions):
+class IrActionsActUrl(models.Model, IrActionsActions):
     _name = 'ir.actions.act_url'
     _description = 'Action URL'
     _table = 'ir_act_url'
@@ -478,7 +478,7 @@ WEBHOOK_SAMPLE_VALUES = {
 }
 
 
-class IrActionsServer(models.Model, base.IrActionsActions):
+class IrActionsServer(models.Model, IrActionsActions):
     """ Server actions model. Server action work on a base model and offer various
     type of actions that can be executed automatically, for example using base
     action rules, of manually, by adding the action in the 'More' contextual
@@ -1145,7 +1145,7 @@ class IrActionsTodo(models.Model):
         return self.write({'state': 'open'})
 
 
-class IrActionsClient(models.Model, base.IrActionsActions):
+class IrActionsClient(models.Model, IrActionsActions):
     _description = 'Client Action'
     _table = 'ir_act_client'
     _order = 'name'

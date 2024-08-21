@@ -144,7 +144,7 @@ class IrQwebField(models.AbstractModel):
         return self.env['res.lang'].browse(get_lang(self.env).id)
 
 
-class IrQwebFieldInteger(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldInteger(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field Integer'
 
     @api.model
@@ -163,7 +163,7 @@ class IrQwebFieldInteger(models.AbstractModel, base.IrQwebField):
         return self.user_lang().format('%d', value, grouping=True).replace(r'-', '-\N{ZERO WIDTH NO-BREAK SPACE}')
 
 
-class IrQwebFieldFloat(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldFloat(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field Float'
 
     @api.model
@@ -206,7 +206,7 @@ class IrQwebFieldFloat(models.AbstractModel, base.IrQwebField):
         return super().record_to_html(record, field_name, options)
 
 
-class IrQwebFieldDate(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldDate(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field Date'
 
     @api.model
@@ -222,7 +222,7 @@ class IrQwebFieldDate(models.AbstractModel, base.IrQwebField):
         return format_date(self.env, value, date_format=options.get('format'))
 
 
-class IrQwebFieldDatetime(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldDatetime(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field Datetime'
 
     @api.model
@@ -278,7 +278,7 @@ class IrQwebFieldDatetime(models.AbstractModel, base.IrQwebField):
             return babel.dates.format_datetime(value, format=pattern, tzinfo=tzinfo, locale=locale)
 
 
-class IrQwebFieldText(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldText(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field Text'
 
     @api.model
@@ -289,7 +289,7 @@ class IrQwebFieldText(models.AbstractModel, base.IrQwebField):
         return nl2br(value) if value else ''
 
 
-class IrQwebFieldSelection(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldSelection(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field Selection'
 
     @api.model
@@ -316,7 +316,7 @@ class IrQwebFieldSelection(models.AbstractModel, base.IrQwebField):
         return super().record_to_html(record, field_name, options)
 
 
-class IrQwebFieldMany2one(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldMany2one(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field Many to One'
 
     @api.model
@@ -329,7 +329,7 @@ class IrQwebFieldMany2one(models.AbstractModel, base.IrQwebField):
         return nl2br(value)
 
 
-class IrQwebFieldMany2many(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldMany2many(models.AbstractModel, IrQwebField):
     _description = 'Qweb field many2many'
 
     @api.model
@@ -340,7 +340,7 @@ class IrQwebFieldMany2many(models.AbstractModel, base.IrQwebField):
         return nl2br(text)
 
 
-class IrQwebFieldHtml(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldHtml(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field HTML'
 
     @api.model
@@ -358,7 +358,7 @@ class IrQwebFieldHtml(models.AbstractModel, base.IrQwebField):
         return Markup(etree.tostring(body, encoding='unicode', method='html')[6:-7])
 
 
-class IrQwebFieldImage(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldImage(models.AbstractModel, IrQwebField):
     """ ``image`` widget rendering, inserts a data:uri-using image tag in the
     document. May be overridden by e.g. the website module to generate links
     instead.
@@ -393,7 +393,7 @@ class IrQwebFieldImage(models.AbstractModel, base.IrQwebField):
     def value_to_html(self, value, options):
         return Markup('<img src="%s">') % self._get_src_data_b64(value, options)
 
-class IrQwebFieldImageUrl(models.AbstractModel, base.IrQwebFieldImage):
+class IrQwebFieldImageUrl(models.AbstractModel, IrQwebFieldImage):
     """ ``image_url`` widget rendering, inserts an image tag in the
     document.
     """
@@ -404,7 +404,7 @@ class IrQwebFieldImageUrl(models.AbstractModel, base.IrQwebFieldImage):
     def value_to_html(self, value, options):
         return Markup('<img src="%s">' % (value))
 
-class IrQwebFieldMonetary(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldMonetary(models.AbstractModel, IrQwebField):
     """ ``monetary`` converter, has a mandatory option
     ``display_currency`` only if field is not of type Monetary.
     Otherwise, if we are in presence of a monetary field, the field definition must
@@ -505,7 +505,7 @@ TIMEDELTA_UNITS = (
 )
 
 
-class IrQwebFieldFloatTime(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldFloatTime(models.AbstractModel, IrQwebField):
     """ ``float_time`` converter, to display integral or fractional values as
     human-readable time spans (e.g. 1.5 as "01:30").
 
@@ -519,7 +519,7 @@ class IrQwebFieldFloatTime(models.AbstractModel, base.IrQwebField):
         return format_duration(value)
 
 
-class IrQwebFieldTime(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldTime(models.AbstractModel, IrQwebField):
     """ ``time`` converter, to display integer or fractional value as
     human-readable time (e.g. 1.5 as "1:30 AM"). The unit of this value
     is in hours.
@@ -543,7 +543,7 @@ class IrQwebFieldTime(models.AbstractModel, base.IrQwebField):
         return babel.dates.format_time(t, format=pattern, tzinfo=None, locale=locale)
 
 
-class IrQwebFieldDuration(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldDuration(models.AbstractModel, IrQwebField):
     """ ``duration`` converter, to display integral or fractional values as
     human-readable time spans (e.g. 1.5 as "1 hour 30 minutes").
 
@@ -648,7 +648,7 @@ class IrQwebFieldDuration(models.AbstractModel, base.IrQwebField):
         return u' '.join(sections)
 
 
-class IrQwebFieldRelative(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldRelative(models.AbstractModel, IrQwebField):
     _description = 'Qweb Field Relative'
 
     @api.model
@@ -678,7 +678,7 @@ class IrQwebFieldRelative(models.AbstractModel, base.IrQwebField):
         return super().record_to_html(record, field_name, options)
 
 
-class IrQwebFieldBarcode(models.AbstractModel, base.IrQwebField):
+class IrQwebFieldBarcode(models.AbstractModel, IrQwebField):
     """ ``barcode`` widget rendering, inserts a data:uri-using image tag in the
     document. May be overridden by e.g. the website module to generate links
     instead.
@@ -718,7 +718,7 @@ class IrQwebFieldBarcode(models.AbstractModel, base.IrQwebField):
         return Markup(html.tostring(img_element, encoding='unicode'))
 
 
-class IrQwebFieldContact(models.AbstractModel, base.IrQwebFieldMany2one):
+class IrQwebFieldContact(models.AbstractModel, IrQwebFieldMany2one):
     _description = 'Qweb Field Contact'
 
     @api.model
@@ -795,7 +795,7 @@ class IrQwebFieldContact(models.AbstractModel, base.IrQwebFieldMany2one):
         return self.env['ir.qweb']._render('base.contact', val, minimal_qcontext=True)
 
 
-class IrQwebFieldQweb(models.AbstractModel, base.IrQwebFieldMany2one):
+class IrQwebFieldQweb(models.AbstractModel, IrQwebFieldMany2one):
     _description = 'Qweb Field qweb'
 
     @api.model
