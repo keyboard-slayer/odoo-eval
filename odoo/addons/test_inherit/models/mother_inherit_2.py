@@ -1,10 +1,10 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import test_inherit
 
 from odoo import models, api, fields
 
 
-class TestINHERITMother(models.Model):
-    _inherit = ['test.inherit.mother']
+class TestINHERITMother(models.Model, test_inherit.TestINHERITMother):
 
     # extend the selection of the state field, and discard its default value
     state = fields.Selection(selection_add=[('c', 'C')], default=None)

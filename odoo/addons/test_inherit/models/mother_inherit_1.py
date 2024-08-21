@@ -1,12 +1,12 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import test_inherit
 
 from odoo import models, fields
 
 
 # We add a new field in the parent model. Because of a recent refactoring, this
 # feature was broken. These models rely on that feature.
-class TestINHERITMother(models.Model):
-    _inherit = ['test.inherit.mother']
+class TestINHERITMother(models.Model, test_inherit.TestINHERITMother):
 
     field_in_mother = fields.Char()
     partner_id = fields.Many2one('res.partner')
@@ -27,6 +27,5 @@ class TestMotherDot(models.Model, TestINHERITMother):
 class TestMotherUnderscore(models.Model, TestINHERITMother):
     _name = 'test_mother_underscore'
     _description = 'Test Inherit Underscore'
-    _inherit = ['test.inherit.mother']
 
     foo = fields.Char()

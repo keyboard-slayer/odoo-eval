@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import odoo
@@ -251,11 +252,10 @@ class IrActionsActions(models.Model):
         }
 
 
-class IrActionsActWindow(models.Model):
+class IrActionsActWindow(models.Model, IrActionsActions):
     _name = 'ir.actions.act_window'
     _description = 'Action Window'
     _table = 'ir_act_window'
-    _inherit = ['ir.actions.actions']
     _order = 'name'
     _allow_sudo_commands = False
 
@@ -425,10 +425,9 @@ class IrActionsActWindowView(models.Model):
         return res
 
 
-class IrActionsActWindowClose(models.Model):
+class IrActionsActWindowClose(models.Model, IrActionsActions):
     _name = 'ir.actions.act_window_close'
     _description = 'Action Window Close'
-    _inherit = ['ir.actions.actions']
     _table = 'ir_actions'
     _allow_sudo_commands = False
 
@@ -442,11 +441,10 @@ class IrActionsActWindowClose(models.Model):
         }
 
 
-class IrActionsActUrl(models.Model):
+class IrActionsActUrl(models.Model, IrActionsActions):
     _name = 'ir.actions.act_url'
     _description = 'Action URL'
     _table = 'ir_act_url'
-    _inherit = ['ir.actions.actions']
     _order = 'name'
     _allow_sudo_commands = False
 
@@ -480,7 +478,7 @@ WEBHOOK_SAMPLE_VALUES = {
 }
 
 
-class IrActionsServer(models.Model):
+class IrActionsServer(models.Model, IrActionsActions):
     """ Server actions model. Server action work on a base model and offer various
     type of actions that can be executed automatically, for example using base
     action rules, of manually, by adding the action in the 'More' contextual
@@ -501,7 +499,6 @@ class IrActionsServer(models.Model):
     """
     _description = 'Server Actions'
     _table = 'ir_act_server'
-    _inherit = ['ir.actions.actions']
     _order = 'sequence,name'
     _allow_sudo_commands = False
 
@@ -1148,9 +1145,8 @@ class IrActionsTodo(models.Model):
         return self.write({'state': 'open'})
 
 
-class IrActionsClient(models.Model):
+class IrActionsClient(models.Model, IrActionsActions):
     _description = 'Client Action'
-    _inherit = ['ir.actions.actions']
     _table = 'ir_act_client'
     _order = 'name'
     _allow_sudo_commands = False

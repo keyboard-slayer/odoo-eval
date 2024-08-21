@@ -236,6 +236,22 @@ class MetaModel(api.Meta):
         # this collects the fields defined on the class (via Field.__set_name__())
         attrs.setdefault('_field_definitions', [])
 
+        odoo_bases = [base for base in bases if isinstance(base, MetaModel)]
+        inherit_models = list({base._name for base in odoo_bases if getattr(base, '_name', None)})
+        other_clases = [base for base in bases if base not in odoo_bases]
+
+        if not bases:
+            # BaseModel
+            return super().__new__(meta, name, bases, attrs)
+        if name in ('AbstractModel', 'Model', 'TransientModel') and not inherit_models and '_inherit' not in attrs and '_name' not in attrs:
+            # AbstractModel or Model or TransientModel
+            return super().__new__(meta, name, bases, attrs)
+
+        base_class = odoo_bases[0]
+        if base_class not in (AbstractModel, Model, TransientModel):
+            if (len(inherit_models) > 1 or '_inherit' in attrs) and name != base_class.__name__ and attrs.get('_name') != base_class._name:
+                raise TypeError(f'New Model {name!r} must contains the Odoo model type (AbstractModel, Model, TransientModel) before others Odoo models.')
+
         if attrs.get('_register', True):
             # determine '_module'
             if '_module' not in attrs:
@@ -248,13 +264,21 @@ class MetaModel(api.Meta):
             if '_inherit' in attrs:
                 if isinstance(attrs['_inherit'], str):
                     attrs['_inherit'] = [attrs['_inherit']]
+                inherit_models.extend(attrs['_inherit'])
+            else:
+                attrs['_inherit'] = inherit_models
 
             if not attrs.get('_name'):
                 attrs['_name'] = class_name_to_model_name(name)
             if base_class not in (AbstractModel, Model, TransientModel):
                 base_class = base_class.__base__
 
-        return super().__new__(meta, name, bases, attrs)
+        if inherit_models and other_clases:
+            raise TypeError(f'Model {name!r} can only extend BaseModel classes.\n'
+                            f'It is possible to declare AbstractModels instead of foreign classes {tuple(c.__name__ for c in other_clases)}.')
+
+        new_bases = tuple(other_clases + [base_class] if base_class else other_clases)
+        return super().__new__(meta, name, new_bases, attrs)
 
     def __init__(self, name, bases, attrs):
         super().__init__(name, bases, attrs)

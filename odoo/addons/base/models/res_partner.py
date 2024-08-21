@@ -2,6 +2,8 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from __future__ import annotations
 
+from .avatar_mixin import AvatarMixin
+
 import base64
 import collections
 import datetime
@@ -180,9 +182,8 @@ class ResPartnerTitle(models.Model):
     shortcut = fields.Char(string='Abbreviation', translate=True)
 
 
-class ResPartner(models.Model):
+class ResPartner(models.Model, FormatAddressMixin, FormatVATLabelMixin, AvatarMixin):
     _description = 'Contact'
-    _inherit = ['format.address.mixin', 'format.vat.label.mixin', 'avatar.mixin']
     _order = "complete_name ASC, id DESC"
     _rec_names_search = ['complete_name', 'email', 'ref', 'vat', 'company_registry']  # TODO vat must be sanitized the same way for storing/searching
     _allow_sudo_commands = False
