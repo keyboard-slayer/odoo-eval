@@ -250,14 +250,31 @@ class AccountFiscalPosition(models.Model):
             return self.env['account.fiscal.position']
 
         company = self.env.company
-        intra_eu = vat_exclusion = False
+        intra_eu = vat_exclusion = check_partner_vat = check_company_vat = False
+        eu_country_codes = set(self.env.ref('base.europe').country_ids.mapped('code'))
+        is_partner_vat_eu = partner.vat and partner.vat[:2] in eu_country_codes
+        is_company_vat_eu = company.vat and company.vat[:2] in eu_country_codes
+        is_delivery_eu = delivery and delivery.country_code in eu_country_codes
         if company.vat and partner.vat:
-            eu_country_codes = set(self.env.ref('base.europe').country_ids.mapped('code'))
-            intra_eu = company.vat[:2] in eu_country_codes and partner.vat[:2] in eu_country_codes
+            intra_eu = is_company_vat_eu and is_partner_vat_eu
             vat_exclusion = company.vat[:2] == partner.vat[:2]
 
-        # If company and partner have the same vat prefix (and are both within the EU), use invoicing
-        if not delivery or (intra_eu and vat_exclusion):
+        if delivery:
+            if delivery.country_id == company.country_id:
+                check_company_vat = True
+            elif (partner.country_id != delivery.country_id and
+                     not is_partner_vat_eu and
+                     is_delivery_eu):
+                delivery = company.partner_id
+            else:
+                if (intra_eu and
+                        (vat_exclusion or
+                         (not delivery.vat and
+                          partner.country_code in eu_country_codes and
+                          is_delivery_eu))):
+                    delivery = partner
+                check_partner_vat = True
+        else:
             delivery = partner
 
         # partner manually set fiscal position always win
@@ -269,11 +286,11 @@ class AccountFiscalPosition(models.Model):
             return manual_fiscal_position
 
         # First search only matching VAT positions
-        vat_valid = self._get_vat_valid(delivery, company)
+        vat_valid = self._get_vat_valid(partner if check_partner_vat else company.partner_id if check_company_vat else delivery, company)
         fp = self._get_fpos_by_region(delivery.country_id.id, delivery.state_id.id, delivery.zip, vat_valid)
 
         # Then if VAT required found no match, try positions that do not require it
-        if not fp and vat_valid:
+        if (not fp and vat_valid) or (delivery.country_id == company.country_id and partner._is_extra_eu_with_eu_vat()):
             fp = self._get_fpos_by_region(delivery.country_id.id, delivery.state_id.id, delivery.zip, False)
 
         return fp or self.env['account.fiscal.position']
@@ -719,6 +736,14 @@ class ResPartner(models.Model):
         return super().can_edit_vat() and not self._has_invoice(
             [('partner_id', 'child_of', self.commercial_partner_id.id)]
         )
+
+    def _is_extra_eu_with_eu_vat(self):
+        self.ensure_one()
+        eu_country_codes = set(self.env.ref('base.europe').country_ids.mapped('code'))
+        vat_valid = self.env['account.fiscal.position']._get_vat_valid(self, self.env.company)
+        is_country_extra_eu = self.country_code not in eu_country_codes
+        is_vat_eu = vat_valid and self.vat[:2] in eu_country_codes
+        return is_country_extra_eu and is_vat_eu
 
     @api.model_create_multi
     def create(self, vals_list):
