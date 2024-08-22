@@ -179,9 +179,16 @@ export class PaymentScreen extends Component {
         } else {
             this.selectedPaymentLine.set_amount(amount);
         }
+<<<<<<< master
         if (!this.currentOrder.check_paymentlines_rounding()) {
             this._display_popup_error_paymentlines_rounding();
         }
+||||||| 2aa4ee0d66af8079694a42b84d341fe118f12c0b
+        if (!this.pos.get_order().check_paymentlines_rounding()) {
+            this._display_popup_error_paymentlines_rounding();
+        }
+=======
+>>>>>>> 8cf2f9be992672ed6b0ce48d4c8fea26389f14b6
     }
     toggleIsToInvoice() {
         this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
