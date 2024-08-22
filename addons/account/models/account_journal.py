@@ -402,6 +402,7 @@ class AccountJournal(models.Model):
         if not self._context.get('account_journal_skip_alias_sync'):
             for record in self:
                 record._update_mail_alias()
+        self.filtered(lambda journal: journal.type == 'general').default_account_id = False
 
     @api.depends('name')
     def _compute_alias_domain(self):
