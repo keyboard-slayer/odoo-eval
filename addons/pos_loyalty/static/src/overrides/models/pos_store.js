@@ -162,11 +162,7 @@ patch(PosStore.prototype, {
             }
             const oldChanges = changesPerProgram[program.id] || [];
             // Update point changes for those that exist
-            for (
-                let idx = 0;
-                idx < Math.min(pointsAdded.length, oldChanges.length) && !oldChanges[idx].manual;
-                idx++
-            ) {
+            for (let idx = 0; idx < Math.min(pointsAdded.length, oldChanges.length); idx++) {
                 Object.assign(oldChanges[idx], pointsAdded[idx]);
             }
             if (pointsAdded.length < oldChanges.length) {

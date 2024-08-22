@@ -611,7 +611,7 @@ patch(PosOrder.prototype, {
                                     line.get_quantity(),
                                 0.01
                             );
-                            if (pointsPerUnit > 0) {
+                            if (pointsPerUnit >= 0) {
                                 splitPoints.push(
                                     ...Array.apply(null, Array(line.get_quantity())).map(() => {
                                         if (line._gift_barcode && line.get_quantity() == 1) {

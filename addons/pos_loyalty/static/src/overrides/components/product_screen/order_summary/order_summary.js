@@ -14,7 +14,10 @@ patch(OrderSummary.prototype, {
     async updateSelectedOrderline({ buffer, key }) {
         const selectedLine = this.currentOrder.get_selected_orderline();
         if (key === "-") {
-            if (selectedLine && selectedLine._e_wallet_program_id) {
+            if (
+                selectedLine &&
+                (selectedLine._e_wallet_program_id || selectedLine.uiState.program_type)
+            ) {
                 // Do not allow negative quantity or price in a gift card or ewallet orderline.
                 // Refunding gift card or ewallet is not supported.
                 this.notification.add(
@@ -44,6 +47,23 @@ patch(OrderSummary.prototype, {
                 buffer = null;
             } else {
                 // Cancel backspace
+                return;
+            }
+        }
+        const numpadMode = this.pos.numpadMode;
+        if (
+            selectedLine?.uiState?.program_type === "gift_card" &&
+            ["quantity", "discount"].includes(numpadMode) &&
+            key !== "Backspace"
+        ) {
+            let notificationString = "";
+            if (numpadMode === "discount") {
+                notificationString = _t("You cannot add discount on gift card.");
+            } else if (selectedLine?.uiState?.gift_code) {
+                notificationString = _t("You cannot update quantity of physical gift card.");
+            }
+            if (notificationString) {
+                this.notification.add(notificationString, 4000);
                 return;
             }
         }
@@ -131,7 +151,7 @@ patch(OrderSummary.prototype, {
 
         await this.pos.addLineToCurrentOrder({ product_id: product }, { price_unit: points });
         selectedLine = this.currentOrder.get_selected_orderline();
-        selectedLine.gift_code = code;
+        selectedLine.uiState.gift_code = code;
     },
 
     manageGiftCard() {
