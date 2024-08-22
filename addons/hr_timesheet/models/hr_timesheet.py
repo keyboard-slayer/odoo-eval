@@ -433,3 +433,8 @@ class AccountAnalyticLine(models.Model):
                 'res_id': uom_hours.id,
                 'noupdate': True,
             })
+
+    @api.model
+    def _show_portal_timesheets(self):
+        domain = [("key", "=", "hr_timesheet.portal_my_home_timesheet")]
+        return self.env["ir.ui.view"].sudo().with_context(active_test=False).search(domain).filter_duplicate().active
