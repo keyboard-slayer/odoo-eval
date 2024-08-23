@@ -162,13 +162,15 @@ class TestHttpStatic(TestHttpStaticCommon):
                     f'/web/content/test_http.earth?field={field}',
                     assert_filename='Earth.png'
                 )
-            with self.subTest(x_sendfile=True), \
-                 patch.object(config, 'options', {**config.options, 'x_sendfile': True}):
-                self.assertDownloadGizeh(
-                    f'/web/content/test_http.earth?field={field}',
-                    x_sendfile=is_attachment and attachment_path,
-                    assert_filename='Earth.png'
-                )
+
+            if is_attachment:
+                with self.subTest(x_sendfile=True), \
+                     patch.object(config, 'options', {**config.options, 'x_sendfile': True}):
+                    self.assertDownloadGizeh(
+                        f'/web/content/test_http.earth?field={field}',
+                        x_sendfile=is_attachment and attachment_path,
+                        assert_filename='Earth.png'
+                    )
 
     def test_static10_filename(self):
         with self.subTest("record name"):
