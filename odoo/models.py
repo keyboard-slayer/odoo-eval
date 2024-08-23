@@ -33,6 +33,7 @@ import logging
 import operator
 import pytz
 import re
+import typing
 import uuid
 import warnings
 from collections import defaultdict, deque
@@ -65,11 +66,10 @@ from .tools.lru import LRU
 from .tools.misc import LastOrderedSet, ReversedIterable, unquote
 from .tools.translate import _, _lt
 
-import typing
 if typing.TYPE_CHECKING:
-    from collections.abc import Reversible
+    from collections.abc import Collection, Reversible
+    from .api import Environment, IdType, Self, ValuesType
     from .modules.registry import Registry
-    from odoo.api import Self, ValuesType, IdType
 
 
 _logger = logging.getLogger(__name__)
@@ -538,10 +538,14 @@ class BaseModel(metaclass=MetaModel):
     """
     __slots__ = ['env', '_ids', '_prefetch_ids']
 
-    env: api.Environment
+    env: Environment
+    _ids: tuple[IdType, ...]
+    _prefetch_ids: Collection[IdType]
+
+    # fields added by MetaModel: adding type information here
     id: IdType | typing.Literal[False]
     display_name: str | typing.Literal[False]
-    pool: Registry
+    pool: Registry  # available on the Concrete class
 
     _fields: dict[str, Field]
     _auto = False
