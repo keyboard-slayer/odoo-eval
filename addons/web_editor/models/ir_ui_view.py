@@ -172,7 +172,17 @@ class IrUiView(models.Model):
             record_from[name_field_from],
             {lang: record_from.with_context(prefetch_langs=True, lang=lang)[name_field_from] for lang in langs if lang != lang_env}
         )
-        existing_translation_dictionary.update(extra_translation_dictionary)
+        for term in extra_translation_dictionary:
+            extra_translation_values = extra_translation_dictionary.get(term)
+            existing_translation_values = existing_translation_dictionary.get(term, False)
+            # When a term has already some translation values.
+            if existing_translation_values:
+                for lang, translation_value in existing_translation_values.items():
+                    # Only adapt the default translation values (that are not
+                    # updated by the user).
+                    if translation_value and translation_value != term:
+                        extra_translation_values[lang] = translation_value
+            existing_translation_dictionary[term] = extra_translation_values
         translation_dictionary = existing_translation_dictionary
 
         # The `en_US` jsonb value should always be set, even if english is not
