@@ -1,4 +1,4 @@
-import { expect, test } from "@odoo/hoot";
+import { expect, test, getFixture } from "@odoo/hoot";
 import { click, press, queryAll } from "@odoo/hoot-dom";
 import { animationFrame } from "@odoo/hoot-mock";
 import { reactive } from "@odoo/owl";
@@ -41,8 +41,16 @@ test.tags`desktop`("breadcrumbs", async () => {
         { resModel: "foo" },
         {
             breadcrumbs: [
-                { jsId: "controller_7", name: "Previous", onSelected: () => expect.step("controller_7") },
-                { jsId: "controller_9", name: "Current", onSelected: () => expect.step("controller_9") },
+                {
+                    jsId: "controller_7",
+                    name: "Previous",
+                    onSelected: () => expect.step("controller_7"),
+                },
+                {
+                    jsId: "controller_9",
+                    name: "Current",
+                    onSelected: () => expect.step("controller_9"),
+                },
             ],
         }
     );
@@ -152,4 +160,38 @@ test("view switcher hotkey cycles through views", async () => {
     press(["alt", "shift", "v"]);
     await animationFrame();
     expect(`.o_list_view`).toHaveCount(1);
+});
+
+test.tags("mobile")("Control panel is shown/hide on top when scrolling", async () => {
+    await mountWithSearch(
+        ControlPanel,
+        { resModel: "foo" },
+        {
+            viewSwitcherEntries: [
+                { type: "list", active: true, icon: "oi-view-list", name: "List" },
+                { type: "kanban", icon: "oi-view-kanban", name: "Kanban" },
+            ],
+        }
+    );
+    const contentHeight = 200;
+    const sampleContent = document.createElement("div");
+    sampleContent.style.minHeight = `${2 * contentHeight}px`;
+    const target = getFixture();
+    target.appendChild(sampleContent);
+    const { maxHeight, overflow } = target.style;
+    target.style.maxHeight = `${contentHeight}px`;
+    target.style.overflow = "auto";
+    target.scrollTo({ top: 50 });
+    await animationFrame();
+    expect(".o_control_panel").toHaveClass("o_mobile_sticky", {
+        message: "control panel becomes sticky when the target is not on top",
+    });
+    target.scrollTo({ top: -50 });
+    await animationFrame();
+    expect(".o_control_panel").not.toHaveClass("o_mobile_sticky", {
+        message: "control panel is not sticky anymore",
+    });
+    target.style.maxHeight = maxHeight;
+    target.style.overflow = overflow;
+    target.removeChild(sampleContent);
 });
