@@ -92,8 +92,9 @@
             <Dropdown t-if="store.discuss.isSidebarCompact" state="floating" position="'right-middle'" menuClass="'o-mail-DiscussSidebar-floatingMenu bg-view border-0 p-2 m-0 min-w-0'" manual="true">
                 <t t-call="mail.DiscussSidebarChannel.main"/>
                 <t t-set-slot="content">
-                    <div class="overflow-hidden" t-ref="floating">
-                        <span class="fw-bolder user-select-none" t-esc="thread.displayName"/>
+                    <div class="overflow-hidden text-truncate d-flex flex-column" t-ref="floating">
+                        <span class="fw-bolder user-select-none text-truncate" t-esc="thread.displayName"/>
+                        <span t-if="thread.correspondent?.persona.custom_status" class="text-muted text-truncate" t-out="thread.correspondent.persona.custom_status" />
                         <t t-call="mail.DiscussSidebarChannel.commands"/>
                     </div>
                 </t>
@@ -113,8 +114,9 @@
                     <img class="w-100 h-100 rounded" t-att-src="thread.avatarUrl" alt="Thread Image"/>
                     <ThreadIcon t-if="thread.channel_type === 'chat' or (thread.channel_type === 'channel' and !thread.authorizedGroupFullName)" thread="thread" size="'small'" className="'o-mail-DiscussSidebarChannel-threadIcon position-absolute bottom-0 end-0 p-1 me-n1 mb-n1 d-flex align-items-center justify-content-center rounded-circle bg-inherit'"/>
                 </div>
-                <span t-if="!store.discuss.isSidebarCompact" class="mx-2 text-truncate" t-att-class="thread.selfMember?.message_unread_counter > 0 and !thread.mute_until_dt ? 'o-item-unread fw-bolder' : 'text-muted'">
-                    <t t-esc="thread.displayName"/>
+                <span t-if="!store.discuss.isSidebarCompact" class="mx-2 d-flex flex-column align-items-start text-truncate text-start" t-att-class="thread.selfMember?.message_unread_counter > 0 and !thread.mute_until_dt ? 'o-item-unread fw-bolder' : 'text-muted'">
+                    <span class="w-100 text-truncate" t-esc="thread.displayName"/>
+                    <span t-if="thread.correspondent?.persona.custom_status" class="fw-normal mt-n1 text-muted w-100 text-truncate" t-esc="thread.correspondent.persona.custom_status" />
                 </span>
             </button>
             <div t-if="!store.discuss.isSidebarCompact" class="flex-grow-1"/>

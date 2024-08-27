@@ -338,6 +338,7 @@ class TestDiscussFullPerformance(HttpCase, MailCommon):
                     "email": "odoobot@example.com",
                     "id": self.user_root.partner_id.id,
                     "im_status": "bot",
+                    "custom_status": False,
                     "isInternalUser": True,
                     "is_company": False,
                     "name": "OdooBot",
@@ -1385,6 +1386,7 @@ class TestDiscussFullPerformance(HttpCase, MailCommon):
         if user == self.users[0]:
             res = {
                 "active": True,
+                "custom_status": False,
                 "email": "e.e@example.com",
                 "id": user.partner_id.id,
                 "im_status": "online",
@@ -1434,6 +1436,7 @@ class TestDiscussFullPerformance(HttpCase, MailCommon):
                 }
             return {
                 "active": True,
+                "custom_status": False,
                 "email": "test2@example.com",
                 "id": user.partner_id.id,
                 "im_status": "offline",
@@ -1447,6 +1450,7 @@ class TestDiscussFullPerformance(HttpCase, MailCommon):
         if user == self.users[3]:
             return {
                 "active": True,
+                "custom_status": False,
                 "email": False,
                 "id": user.partner_id.id,
                 "im_status": "offline",
@@ -1460,6 +1464,7 @@ class TestDiscussFullPerformance(HttpCase, MailCommon):
         if user == self.users[12]:
             return {
                 "active": True,
+                "custom_status": False,
                 "email": False,
                 "id": user.partner_id.id,
                 "im_status": "offline",
@@ -1473,6 +1478,7 @@ class TestDiscussFullPerformance(HttpCase, MailCommon):
         if user == self.users[14]:
             return {
                 "active": True,
+                "custom_status": False,
                 "email": False,
                 "id": user.partner_id.id,
                 "im_status": "offline",
@@ -1486,6 +1492,7 @@ class TestDiscussFullPerformance(HttpCase, MailCommon):
         if user == self.users[15]:
             return {
                 "active": True,
+                "custom_status": False,
                 "email": False,
                 "id": user.partner_id.id,
                 "im_status": "offline",
