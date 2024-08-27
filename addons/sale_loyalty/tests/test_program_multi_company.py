@@ -81,3 +81,28 @@ class TestSaleCouponMultiCompany(TestSaleCouponCommon):
         order_b._update_programs_and_rewards()
         self.assertIn(self.immediate_promotion_program_c2, order_b._get_applied_programs())
         self.assertNotIn(self.immediate_promotion_program, order_b._get_applied_programs())
+
+    def test_applicable_programs_on_branch(self):
+        # create a branch
+        branch_a = self.env['res.company'].create(dict(name="Branch A", parent_id=self.company_a.id))
+
+        # create an order
+        order = self.empty_order
+        order.write({'order_line': [
+            (0, False, {
+                'product_id': self.product_A.id,
+                'name': '1 Product A',
+                'product_uom': self.uom_unit.id,
+                'product_uom_qty': 1.0,
+            }),
+            (0, False, {
+                'product_id': self.product_B.id,
+                'name': '2 Product B',
+                'product_uom': self.uom_unit.id,
+                'product_uom_qty': 1.0,
+            })
+            ],
+            'company_id': branch_a.id})
+
+        order._update_programs_and_rewards()
+        self.assertIn(self.immediate_promotion_program, order._get_applied_programs())
