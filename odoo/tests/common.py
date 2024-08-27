@@ -1109,7 +1109,7 @@ class ChromeBrowser:
             debug=False,
     ):
         headless_switches = {
-            '--headless': '',
+            '--headless': 'old',
             '--disable-extensions': '',
             '--disable-background-networking' : '',
             '--disable-background-timer-throttling' : '',
