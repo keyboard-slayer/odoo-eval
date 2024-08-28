@@ -29,7 +29,7 @@ from odoo.tools.xml_utils import cleanup_xml_node
 
 
 class AccountEdiFormat(models.Model):
-    _inherit = 'account.edi.format'
+    _inherit = ['account.edi.format']
 
     # -------------------------------------------------------------------------
     # OVERRIDES & EXTENSIONS

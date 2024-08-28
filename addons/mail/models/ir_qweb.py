@@ -5,7 +5,7 @@ class IrQweb(models.AbstractModel):
     """ Add ``raise_on_code`` option for qweb. When this option is activated
     then all directives are prohibited.
     """
-    _inherit = 'ir.qweb'
+    _inherit = ['ir.qweb']
 
     def _get_template_cache_keys(self):
         return super()._get_template_cache_keys() + ['raise_on_code']

@@ -38,7 +38,7 @@ L10N_ES_TBAI_LICENSE_DICT = {
 }
 
 class ResCompany(models.Model):
-    _inherit = 'res.company'
+    _inherit = ['res.company']
 
     # === TBAI config ===
     l10n_es_tbai_tax_agency = fields.Selection(

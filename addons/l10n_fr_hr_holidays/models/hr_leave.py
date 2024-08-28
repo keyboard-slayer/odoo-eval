@@ -8,7 +8,7 @@ from odoo import fields, models, api, _
 from odoo.exceptions import UserError
 
 class HrLeave(models.Model):
-    _inherit = 'hr.leave'
+    _inherit = ['hr.leave']
 
     l10n_fr_date_to_changed = fields.Boolean(export_string_translation=False)
 

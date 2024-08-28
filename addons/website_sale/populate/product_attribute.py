@@ -5,7 +5,7 @@ from odoo.tools import populate
 
 
 class ProductAttribute(models.Model):
-    _inherit = 'product.attribute'
+    _inherit = ['product.attribute']
 
     def _populate_factories(self):
         return super()._populate_factories() + [

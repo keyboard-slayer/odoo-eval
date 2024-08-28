@@ -9,7 +9,7 @@ from odoo.exceptions import UserError, AccessError, ValidationError
 from odoo.osv import expression
 
 class AccountAnalyticLine(models.Model):
-    _inherit = 'account.analytic.line'
+    _inherit = ['account.analytic.line']
 
     def _get_favorite_project_id_domain(self, employee_id=False):
         employee_id = employee_id or self.env.user.employee_id.id

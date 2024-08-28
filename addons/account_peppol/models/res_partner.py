@@ -16,7 +16,7 @@ NON_PEPPOL_FORMAT = (False, 'facturx', 'oioubl_201', 'ciusro')
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
+    _inherit = ['res.partner']
 
     peppol_verification_state = fields.Selection(
         selection=[

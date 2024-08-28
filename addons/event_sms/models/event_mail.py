@@ -5,7 +5,7 @@ from odoo import api, fields, models
 
 
 class EventTypeMail(models.Model):
-    _inherit = 'event.type.mail'
+    _inherit = ['event.type.mail']
 
     notification_type = fields.Selection(selection_add=[('sms', 'SMS')])
     template_ref = fields.Reference(ondelete={'sms.template': 'cascade'}, selection_add=[('sms.template', 'SMS')])
@@ -16,8 +16,8 @@ class EventTypeMail(models.Model):
         sms_schedulers.notification_type = 'sms'
 
 
-class EventMailScheduler(models.Model):
-    _inherit = 'event.mail'
+class EventMail(models.Model):
+    _inherit = ['event.mail']
 
     notification_type = fields.Selection(selection_add=[('sms', 'SMS')])
     template_ref = fields.Reference(ondelete={'sms.template': 'cascade'}, selection_add=[('sms.template', 'SMS')])
@@ -45,11 +45,11 @@ class EventMailScheduler(models.Model):
                         'mail_count_done': len(scheduler.event_id.registration_ids.filtered(lambda r: r.state != 'cancel'))
                     })
 
-        return super(EventMailScheduler, self).execute()
+        return super().execute()
 
 
 class EventMailRegistration(models.Model):
-    _inherit = 'event.mail.registration'
+    _inherit = ['event.mail.registration']
 
     def execute(self):
         now = fields.Datetime.now()

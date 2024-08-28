@@ -19,13 +19,12 @@ class TestINHERITMother(models.Model):
         return 42
 
 
-class TestMotherDot(models.Model):
+class TestMotherDot(models.Model, TestINHERITMother):
     _description = 'Test Inherit Daughter'
-    _inherit = ['test.inherit.mother']
 
 
 # pylint: disable=E0102
-class TestMotherUnderscore(models.Model):
+class TestMotherUnderscore(models.Model, TestINHERITMother):
     _name = 'test_mother_underscore'
     _description = 'Test Inherit Underscore'
     _inherit = ['test.inherit.mother']

@@ -2,7 +2,7 @@ from odoo import models
 
 
 class SaleOrder(models.Model):
-    _inherit = 'sale.order'
+    _inherit = ['sale.order']
 
     def _set_delivery_method(self, *args, **kwargs):
         carrier_before = self.carrier_id

@@ -6,8 +6,7 @@ from collections import defaultdict
 from odoo import api, fields, models, SUPERUSER_ID, _
 from odoo.tools import SQL
 
-class Job(models.Model):
-    _name = "hr.job"
+class HrJob(models.Model):
     _inherit = ["mail.alias.mixin", "hr.job"]
     _order = "sequence, name asc"
 

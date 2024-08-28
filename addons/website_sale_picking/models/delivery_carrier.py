@@ -6,7 +6,7 @@ from odoo.exceptions import ValidationError
 
 
 class DeliveryCarrier(models.Model):
-    _inherit = 'delivery.carrier'
+    _inherit = ['delivery.carrier']
 
     # Onsite delivery means the client comes to a physical store to get the products himself.
     delivery_type = fields.Selection(selection_add=[

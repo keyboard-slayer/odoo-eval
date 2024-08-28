@@ -5,8 +5,8 @@ from odoo import fields, models, _lt
 from odoo.osv import expression
 
 
-class Project(models.Model):
-    _inherit = "project.project"
+class ProjectProject(models.Model):
+    _inherit = ["project.project"]
 
     production_count = fields.Integer(related="analytic_account_id.production_count", groups='mrp.group_mrp_user', export_string_translation=False)
     workorder_count = fields.Integer(related="analytic_account_id.workorder_count", groups='mrp.group_mrp_user', export_string_translation=False)
@@ -90,7 +90,7 @@ class Project(models.Model):
         return profitability_items
 
     def _get_stat_buttons(self):
-        buttons = super(Project, self)._get_stat_buttons()
+        buttons = super()._get_stat_buttons()
         if self.env.user.has_group('mrp.group_mrp_user'):
             self_sudo = self.sudo()
             buttons.extend([{

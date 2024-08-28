@@ -10,7 +10,7 @@ from odoo.addons.account_edi_ubl_cii.models.account_edi_common import EAS_MAPPIN
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
+    _inherit = ['res.partner']
 
     ubl_cii_format = fields.Selection(
         string="Format",

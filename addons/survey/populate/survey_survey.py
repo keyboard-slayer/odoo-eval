@@ -3,8 +3,8 @@
 from odoo import fields, models
 from odoo.tools import populate
 
-class Survey(models.Model):
-    _inherit = 'survey.survey'
+class SurveySurvey(models.Model):
+    _inherit = ['survey.survey']
     _populate_sizes = {'small': 10, 'medium': 100, 'large': 1000}
     _populate_dependencies = ['res.users']
 

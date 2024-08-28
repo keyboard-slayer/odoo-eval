@@ -9,8 +9,8 @@ from dateutil.relativedelta import relativedelta
 from itertools import groupby
 
 
-class HolidaysType(models.Model):
-    _inherit = "hr.leave.type"
+class HrLeaveType(models.Model):
+    _inherit = ["hr.leave.type"]
     _populate_sizes = {"small": 10, "medium": 30, "large": 100}
     _populate_dependencies = ['res.company']
 
@@ -27,8 +27,8 @@ class HolidaysType(models.Model):
         ]
 
 
-class HolidaysRequest(models.Model):
-    _inherit = "hr.leave"
+class HrLeave(models.Model):
+    _inherit = ["hr.leave"]
     _populate_sizes = {"small": 100, "medium": 800, "large": 10000}
     _populate_dependencies = ['hr.employee', 'hr.leave.type']
 

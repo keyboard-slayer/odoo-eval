@@ -6,7 +6,7 @@ from odoo.exceptions import UserError
 
 
 class AccountPayment(models.Model):
-    _inherit = "account.payment"
+    _inherit = ["account.payment"]
 
     def action_open_expense_report(self):
         self.ensure_one()

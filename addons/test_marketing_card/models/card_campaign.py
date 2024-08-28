@@ -3,7 +3,7 @@ from odoo import fields, models
 
 
 class CardCampaign(models.Model):
-    _inherit = 'card.campaign'
+    _inherit = ['card.campaign']
 
     def _get_model_selection(self):
         return super()._get_model_selection() + [

@@ -5,7 +5,7 @@ from odoo import fields, models
 
 
 class PurchaseRequisition(models.Model):
-    _inherit = 'purchase.requisition'
+    _inherit = ['purchase.requisition']
 
     def _default_picking_type_id(self):
         return self.env['stock.picking.type'].search([('warehouse_id.company_id', '=', self.env.company.id), ('code', '=', 'incoming')], limit=1)
@@ -17,7 +17,7 @@ class PurchaseRequisition(models.Model):
 
 
 class PurchaseRequisitionLine(models.Model):
-    _inherit = "purchase.requisition.line"
+    _inherit = ["purchase.requisition.line"]
 
     move_dest_id = fields.Many2one('stock.move', 'Downstream Move')
 

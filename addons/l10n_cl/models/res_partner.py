@@ -6,8 +6,7 @@ from odoo.exceptions import UserError, ValidationError
 
 
 class ResPartner(models.Model):
-    _name = 'res.partner'
-    _inherit = 'res.partner'
+    _inherit = ['res.partner']
 
     _sii_taxpayer_types = [
         ('1', _('VAT Affected (1st Category)')),

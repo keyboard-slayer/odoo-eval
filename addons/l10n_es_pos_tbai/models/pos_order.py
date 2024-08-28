@@ -2,7 +2,7 @@ from odoo import models
 
 
 class PosOrder(models.Model):
-    _inherit = 'pos.order'
+    _inherit = ['pos.order']
 
     def get_l10n_es_pos_tbai_qrurl(self):
         """ This function manually triggers the account.edi post CRON and synchronously

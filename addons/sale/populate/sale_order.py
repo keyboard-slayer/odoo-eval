@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 
 
 class SaleOrder(models.Model):
-    _inherit = "sale.order"
+    _inherit = ["sale.order"]
     _populate_sizes = {"small": 100, "medium": 2_000, "large": 20_000}
     _populate_dependencies = ["res.partner", "res.company", "res.users", "product.pricelist"]
 
@@ -51,7 +51,7 @@ class SaleOrder(models.Model):
 
 
 class SaleOrderLine(models.Model):
-    _inherit = "sale.order.line"
+    _inherit = ["sale.order.line"]
     _populate_sizes = {"small": 1_000, "medium": 50_000, "large": 100_000}
     _populate_dependencies = ["sale.order", "product.product"]
 

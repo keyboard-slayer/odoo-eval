@@ -18,8 +18,7 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, format_datetime, format_d
 from odoo.tools.float_utils import float_compare, float_is_zero
 
 
-class PickingType(models.Model):
-    _name = "stock.picking.type"
+class StockPickingType(models.Model):
     _description = "Picking Type"
     _order = 'is_favorite desc, sequence, id'
     _rec_names_search = ['name', 'warehouse_id.name']
@@ -199,7 +198,7 @@ class PickingType(models.Model):
                         'prefix': vals['sequence_code'], 'padding': 5,
                         'company_id': picking_type.env.company.id,
                     })
-        return super(PickingType, self).write(vals)
+        return super().write(vals)
 
     @api.model
     def _search_is_favorite(self, operator, value):
@@ -529,8 +528,7 @@ class PickingType(models.Model):
         return graph_data
 
 
-class Picking(models.Model):
-    _name = "stock.picking"
+class StockPicking(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = "Transfer"
     _order = "priority desc, scheduled_date asc, id desc"
@@ -1094,7 +1092,7 @@ class Picking(models.Model):
             for picking in self:
                 if picking.picking_type_id != picking_type:
                     picking.name = picking_type.sequence_id.next_by_id()
-        res = super(Picking, self).write(vals)
+        res = super().write(vals)
         if vals.get('signature'):
             for picking in self:
                 picking._attach_sign()
@@ -1116,7 +1114,7 @@ class Picking(models.Model):
     def unlink(self):
         self.move_ids._action_cancel()
         self.with_context(prefetch_fields=False).move_ids.unlink()  # Checks if moves are not done
-        return super(Picking, self).unlink()
+        return super().unlink()
 
     def do_print_picking(self):
         self.write({'printed': True})

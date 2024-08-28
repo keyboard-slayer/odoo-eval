@@ -7,7 +7,7 @@ from odoo import models
 from odoo.tools import populate
 
 class AccountAnalyticLine(models.Model):
-    _inherit = "account.analytic.line"
+    _inherit = ["account.analytic.line"]
     _populate_sizes = {"small": 500, "medium": 5000, "large": 50000}
     _populate_dependencies = ["project.project", "project.task", "hr.employee"]
 

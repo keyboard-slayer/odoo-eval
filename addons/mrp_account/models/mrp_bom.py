@@ -6,7 +6,6 @@ from odoo import models, api, fields
 
 
 class MrpBom(models.Model):
-    _name = 'mrp.bom'
     _inherit = ['mrp.bom', 'analytic.mixin']
 
     # Company dependent JSON fields are not yet supported

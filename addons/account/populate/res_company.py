@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 class ResCompany(models.Model):
     """Populate factory part for the accountings applications of res.company."""
 
-    _inherit = "res.company"
+    _inherit = ["res.company"]
 
     def _populate(self, size):
         _logger.info('Loading Chart Template')

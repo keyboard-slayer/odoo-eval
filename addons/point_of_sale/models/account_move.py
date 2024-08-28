@@ -5,7 +5,7 @@ from odoo import fields, models, api
 
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _inherit = ['account.move']
 
     pos_order_ids = fields.One2many('pos.order', 'account_move')
     pos_payment_ids = fields.One2many('pos.payment', 'account_move_id')
@@ -68,7 +68,7 @@ class AccountMove(models.Model):
                 move.amount_total_signed = move.amount_total_signed * -1
 
 class AccountMoveLine(models.Model):
-    _inherit = 'account.move.line'
+    _inherit = ['account.move.line']
 
     def _stock_account_get_anglo_saxon_price_unit(self):
         self.ensure_one()

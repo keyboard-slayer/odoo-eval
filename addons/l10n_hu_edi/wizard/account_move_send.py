@@ -6,7 +6,7 @@ from odoo.addons.l10n_hu_edi.models.l10n_hu_edi_connection import L10nHuEdiConne
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     l10n_hu_edi_enable_nav_30 = fields.Boolean(
         compute='_compute_l10n_hu_edi_enable_nav_30'

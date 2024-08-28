@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     enable_ubl_cii_xml = fields.Boolean(compute='_compute_enable_ubl_cii_xml')
     checkbox_ubl_cii_label = fields.Char(compute='_compute_checkbox_ubl_cii_label')

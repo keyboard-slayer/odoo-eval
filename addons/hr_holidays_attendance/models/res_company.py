@@ -5,7 +5,7 @@ from odoo import api, models
 
 
 class ResCompany(models.Model):
-    _inherit = 'res.company'
+    _inherit = ['res.company']
 
     @api.model
     def _check_extra_hours_time_off(self):

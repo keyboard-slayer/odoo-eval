@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 
 
 class ResCompany(models.Model):
-    _inherit = "res.company"
+    _inherit = ["res.company"]
 
     def _l10n_sa_generate_private_key(self):
         """

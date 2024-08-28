@@ -5,7 +5,7 @@ from odoo import models
 
 
 class StockMove(models.Model):
-    _inherit = 'stock.move'
+    _inherit = ['stock.move']
 
     def _prepare_procurement_values(self):
         res = super()._prepare_procurement_values()
@@ -16,7 +16,7 @@ class StockMove(models.Model):
 
 
 class StockMoveLine(models.Model):
-    _inherit = 'stock.move.line'
+    _inherit = ['stock.move.line']
 
     def _compute_sale_price(self):
         kit_lines = self.filtered(lambda move_line: move_line.move_id.bom_line_id.bom_id.type == 'phantom')

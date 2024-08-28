@@ -8,7 +8,7 @@ from odoo.tools.float_utils import float_repr, float_split
 from odoo.addons.payment_payulatam import const
 
 class PaymentProvider(models.Model):
-    _inherit = 'payment.provider'
+    _inherit = ['payment.provider']
 
     code = fields.Selection(
         selection_add=[('payulatam', 'PayU Latam')], ondelete={'payulatam': 'set default'})

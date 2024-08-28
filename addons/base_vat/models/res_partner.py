@@ -86,7 +86,7 @@ _region_specific_vat_codes = {
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
+    _inherit = ['res.partner']
 
     vies_valid = fields.Boolean(
         string="Intra-Community Valid",

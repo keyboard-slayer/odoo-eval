@@ -9,7 +9,7 @@ from odoo.tools.misc import formatLang
 
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _inherit = ['account.move']
 
     def _stock_account_get_last_step_stock_moves(self):
         """ Overridden from stock_account.
@@ -134,7 +134,7 @@ class AccountMove(models.Model):
                 move.incoterm_location = incoterm_res
 
 class AccountMoveLine(models.Model):
-    _inherit = "account.move.line"
+    _inherit = ["account.move.line"]
 
     def _sale_can_be_reinvoice(self):
         self.ensure_one()

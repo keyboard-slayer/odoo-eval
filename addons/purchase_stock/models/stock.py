@@ -7,7 +7,7 @@ from odoo.osv.expression import AND
 
 
 class StockPicking(models.Model):
-    _inherit = 'stock.picking'
+    _inherit = ['stock.picking']
 
     purchase_id = fields.Many2one(
         'purchase.order', related='move_ids.purchase_line_id.order_id',
@@ -40,7 +40,7 @@ class StockPicking(models.Model):
 
 
 class StockWarehouse(models.Model):
-    _inherit = 'stock.warehouse'
+    _inherit = ['stock.warehouse']
 
     buy_to_resupply = fields.Boolean('Buy to Resupply', default=True,
                                      help="When products are bought, they can be delivered to this warehouse")
@@ -95,8 +95,8 @@ class StockWarehouse(models.Model):
         return res
 
 
-class ReturnPicking(models.TransientModel):
-    _inherit = "stock.return.picking"
+class StockReturnPicking(models.TransientModel):
+    _inherit = ["stock.return.picking"]
 
     def _prepare_move_default_values(self, return_line, new_picking):
         vals = super()._prepare_move_default_values(return_line, new_picking)
@@ -111,8 +111,8 @@ class ReturnPicking(models.TransientModel):
         return picking
 
 
-class Orderpoint(models.Model):
-    _inherit = "stock.warehouse.orderpoint"
+class StockWarehouseOrderpoint(models.Model):
+    _inherit = ["stock.warehouse.orderpoint"]
 
     show_supplier = fields.Boolean('Show supplier column', compute='_compute_show_suppplier')
     supplier_id = fields.Many2one(
@@ -238,7 +238,7 @@ class Orderpoint(models.Model):
 
 
 class StockLot(models.Model):
-    _inherit = 'stock.lot'
+    _inherit = ['stock.lot']
 
     purchase_order_ids = fields.Many2many('purchase.order', string="Purchase Orders", compute='_compute_purchase_order_ids', readonly=True, store=False)
     purchase_order_count = fields.Integer('Purchase order count', compute='_compute_purchase_order_ids')
@@ -263,7 +263,7 @@ class StockLot(models.Model):
 
 
 class ProcurementGroup(models.Model):
-    _inherit = 'procurement.group'
+    _inherit = ['procurement.group']
 
     @api.model
     def run(self, procurements, raise_user_error=True):

@@ -9,7 +9,7 @@ from odoo.osv.expression import AND
 
 
 class ProductTemplate(models.Model):
-    _inherit = 'product.template'
+    _inherit = ['product.template']
 
     available_in_pos = fields.Boolean(string='Available in POS', help='Check if you want this product to appear in the Point of Sale.', default=False)
     to_weight = fields.Boolean(string='To Weigh With Scale', help="Check if the product should be weighted using the hardware scale integration.")
@@ -72,7 +72,6 @@ class ProductTemplate(models.Model):
 
 
 class ProductProduct(models.Model):
-    _name = 'product.product'
     _inherit = ['product.product', 'pos.load.mixin']
 
     @api.model
@@ -232,7 +231,6 @@ class ProductProduct(models.Model):
 
 
 class ProductAttribute(models.Model):
-    _name = 'product.attribute'
     _inherit = ['product.attribute', 'pos.load.mixin']
 
     @api.model
@@ -241,7 +239,6 @@ class ProductAttribute(models.Model):
 
 
 class ProductAttributeCustomValue(models.Model):
-    _name = 'product.attribute.custom.value'
     _inherit = ["product.attribute.custom.value", "pos.load.mixin"]
 
     pos_order_line_id = fields.Many2one('pos.order.line', string="PoS Order Line", ondelete='cascade')
@@ -256,7 +253,6 @@ class ProductAttributeCustomValue(models.Model):
 
 
 class ProductTemplateAttributeLine(models.Model):
-    _name = 'product.template.attribute.line'
     _inherit = ['product.template.attribute.line', 'pos.load.mixin']
 
     @api.model
@@ -265,7 +261,6 @@ class ProductTemplateAttributeLine(models.Model):
 
 
 class ProductTemplateAttributeValue(models.Model):
-    _name = 'product.template.attribute.value'
     _inherit = ['product.template.attribute.value', 'pos.load.mixin']
 
     @api.model
@@ -278,7 +273,6 @@ class ProductTemplateAttributeValue(models.Model):
 
 
 class ProductPackaging(models.Model):
-    _name = 'product.packaging'
     _inherit = ['product.packaging', 'pos.load.mixin']
 
     @api.model
@@ -290,8 +284,7 @@ class ProductPackaging(models.Model):
         return ['id', 'name', 'barcode', 'product_id', 'qty']
 
 
-class UomCateg(models.Model):
-    _name = 'uom.category'
+class UomCategory(models.Model):
     _inherit = ['uom.category', 'pos.load.mixin']
 
     is_pos_groupable = fields.Boolean(string='Group Products in POS',
@@ -306,8 +299,7 @@ class UomCateg(models.Model):
         return ['id', 'name', 'uom_ids']
 
 
-class Uom(models.Model):
-    _name = 'uom.uom'
+class UomUom(models.Model):
     _inherit = ['uom.uom', 'pos.load.mixin']
 
     is_pos_groupable = fields.Boolean(related='category_id.is_pos_groupable', readonly=False)
@@ -326,7 +318,6 @@ class Uom(models.Model):
 
 
 class ProductPricelist(models.Model):
-    _name = 'product.pricelist'
     _inherit = ['product.pricelist', 'pos.load.mixin']
 
     @api.model
@@ -340,7 +331,6 @@ class ProductPricelist(models.Model):
 
 
 class ProductPricelistItem(models.Model):
-    _name = 'product.pricelist.item'
     _inherit = ['product.pricelist.item', 'pos.load.mixin']
 
     @api.model
@@ -362,7 +352,6 @@ class ProductPricelistItem(models.Model):
 
 
 class ProductCategory(models.Model):
-    _name = 'product.category'
     _inherit = ['product.category', 'pos.load.mixin']
 
     @api.model

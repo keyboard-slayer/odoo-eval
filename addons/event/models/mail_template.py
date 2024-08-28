@@ -6,7 +6,7 @@ from odoo.osv import expression
 
 
 class MailTemplate(models.Model):
-    _inherit = 'mail.template'
+    _inherit = ['mail.template']
 
     @api.model
     def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None):

@@ -4,7 +4,7 @@
 from odoo import models, _
 
 class Website(models.Model):
-    _inherit = "website"
+    _inherit = ["website"]
 
     def get_suggested_controllers(self):
         suggested_controllers = super(Website, self).get_suggested_controllers()

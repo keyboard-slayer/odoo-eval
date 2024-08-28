@@ -9,7 +9,7 @@ from odoo.addons.payment_sips import const
 
 
 class PaymentProvider(models.Model):
-    _inherit = 'payment.provider'
+    _inherit = ['payment.provider']
 
     code = fields.Selection(
         selection_add=[('sips', "Sips")], ondelete={'sips': 'set default'})

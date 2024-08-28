@@ -3,8 +3,10 @@
 
 from odoo import fields, models
 
-class ReportMoOverview(models.AbstractModel):
-    _inherit = 'report.mrp.report_mo_overview'
+class ReportMrpReportMoOverview(models.AbstractModel):
+    _name = "report.mrp.report_mo_overview"
+
+    _inherit = ['report.mrp.report_mo_overview']
 
     def _get_extra_replenishments(self, product):
         res = super()._get_extra_replenishments(product)

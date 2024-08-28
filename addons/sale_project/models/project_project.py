@@ -10,7 +10,7 @@ from odoo.tools import Query, SQL
 
 
 class ProjectProject(models.Model):
-    _inherit = 'project.project'
+    _inherit = ['project.project']
 
     allow_billable = fields.Boolean("Billable")
     sale_line_id = fields.Many2one(

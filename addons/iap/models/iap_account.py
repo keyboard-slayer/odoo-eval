@@ -16,7 +16,6 @@ DEFAULT_ENDPOINT = 'https://iap.odoo.com'
 
 
 class IapAccount(models.Model):
-    _name = 'iap.account'
     _rec_name = 'service_name'
     _description = 'IAP Account'
 
@@ -241,7 +240,6 @@ class IapAccount(models.Model):
 
 
 class IAPAccountInfo(models.TransientModel):
-    _name = 'iap.account.info'
     _description = 'IAP Account Info'
     _transient_max_hours = 1
 

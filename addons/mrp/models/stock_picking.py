@@ -5,7 +5,7 @@ from odoo import _, api, fields, models
 
 
 class StockPickingType(models.Model):
-    _inherit = 'stock.picking.type'
+    _inherit = ['stock.picking.type']
 
     code = fields.Selection(selection_add=[
         ('mrp_operation', 'Manufacturing')
@@ -104,7 +104,7 @@ class StockPickingType(models.Model):
         return records + mrp_records
 
 class StockPicking(models.Model):
-    _inherit = 'stock.picking'
+    _inherit = ['stock.picking']
 
     has_kits = fields.Boolean(compute='_compute_has_kits')
     production_count = fields.Integer(

@@ -7,7 +7,7 @@ from odoo import _, Command, fields, models
 
 
 class SMSComposer(models.TransientModel):
-    _inherit = 'sms.composer'
+    _inherit = ['sms.composer']
 
     # mass mode with mass sms
     mass_sms_allow_unsubscribe = fields.Boolean('Include opt-out link', default=True)

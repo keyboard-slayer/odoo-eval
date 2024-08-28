@@ -7,7 +7,7 @@ from odoo.tools import format_datetime
 
 
 class MailMessage(models.Model):
-    _inherit = 'mail.message'
+    _inherit = ['mail.message']
 
     def portal_message_format(self, options=None):
         """ Simpler and portal-oriented version of 'message_format'. Purpose

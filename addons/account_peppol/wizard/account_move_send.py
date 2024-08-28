@@ -7,7 +7,7 @@ from odoo.addons.account_edi_proxy_client.models.account_edi_proxy_user import A
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     checkbox_send_peppol = fields.Boolean(
         string='Send via PEPPOL',

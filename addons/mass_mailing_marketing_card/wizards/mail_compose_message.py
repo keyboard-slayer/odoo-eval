@@ -10,7 +10,7 @@ CARD_PREVIEW_URL = re.compile(r'(href=".*/cards)/([0-9]+)/preview"')
 
 
 class MailComposeMessage(models.TransientModel):
-    _inherit = 'mail.compose.message'
+    _inherit = ['mail.compose.message']
 
     @api.model
     def _process_generic_card_url_body(self, res_id_body_pairs: list[tuple[int, str]]) -> list[str]:

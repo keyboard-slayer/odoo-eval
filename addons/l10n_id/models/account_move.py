@@ -5,7 +5,7 @@ from odoo import fields, models, _
 
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _inherit = ['account.move']
 
     # Used to fetch the QR payment status.
     # List of dicts with the format: [{

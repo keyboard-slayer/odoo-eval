@@ -5,9 +5,9 @@ from odoo import models, _
 from stdnum.no import mva
 
 
-class AccountEdiXmlUBLBIS3(models.AbstractModel):
+class AccountEdiXmlUblBis3(models.AbstractModel):
     _name = "account.edi.xml.ubl_bis3"
-    _inherit = 'account.edi.xml.ubl_21'
+    _inherit = ['account.edi.xml.ubl_21']
     _description = "UBL BIS Billing 3.0.12"
 
     """

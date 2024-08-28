@@ -4,7 +4,7 @@ from odoo import api, models
 
 
 class IapAccount(models.Model):
-    _inherit = 'iap.account'
+    _inherit = ['iap.account']
 
     @api.model
     def _send_success_notification(self, message, title=None):

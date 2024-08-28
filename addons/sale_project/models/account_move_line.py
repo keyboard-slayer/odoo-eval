@@ -4,7 +4,7 @@ from odoo import models
 
 
 class AccountMoveLine(models.Model):
-    _inherit = 'account.move.line'
+    _inherit = ['account.move.line']
 
     def _compute_analytic_distribution(self):
         # when a project creates an aml, it adds an analytic account to it. the following filter is to save this

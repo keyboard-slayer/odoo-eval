@@ -5,8 +5,10 @@ from odoo import models
 from odoo.tools import format_date
 
 
-class ReceptionReport(models.AbstractModel):
-    _inherit = 'report.stock.report_reception'
+class ReportStockReportReception(models.AbstractModel):
+    _name = "report.stock.report_reception"
+
+    _inherit = ['report.stock.report_reception']
 
     def _get_docs(self, docids):
         if self.env.context.get('default_production_ids'):

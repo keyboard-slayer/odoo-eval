@@ -5,7 +5,7 @@ from odoo import api, models
 
 
 class PurchaseOrderLine(models.Model):
-    _inherit = 'purchase.order.line'
+    _inherit = ['purchase.order.line']
 
     def _compute_analytic_distribution(self):
         super()._compute_analytic_distribution()

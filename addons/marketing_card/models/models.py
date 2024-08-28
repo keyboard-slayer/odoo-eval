@@ -2,7 +2,9 @@ from odoo import api, models
 
 
 class BaseModel(models.AbstractModel):
-    _inherit = 'base'
+    _name = "base"
+
+    _inherit = ['base']
 
     @api.model
     def _marketing_card_allowed_field_paths(self) -> list[str]:

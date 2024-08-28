@@ -6,7 +6,7 @@ from odoo.tools import float_compare, float_is_zero
 
 
 class StockMoveLine(models.Model):
-    _inherit = 'stock.move.line'
+    _inherit = ['stock.move.line']
 
     # -------------------------------------------------------------------------
     # CRUD

@@ -5,7 +5,7 @@ from odoo.addons.mail.tools.discuss import Store
 
 
 class MailMessage(models.Model):
-    _inherit = "mail.message"
+    _inherit = ["mail.message"]
 
     def _validate_access_for_current_persona(self, operation):
         if not self:

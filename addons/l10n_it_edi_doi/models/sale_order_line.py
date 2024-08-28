@@ -4,7 +4,7 @@ from odoo import api, fields, models
 
 
 class SaleOrderLine(models.Model):
-    _inherit = "sale.order.line"
+    _inherit = ["sale.order.line"]
 
     qty_invoiced_posted = fields.Float(
         string="Invoiced Quantity (posted)",

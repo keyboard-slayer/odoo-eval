@@ -5,7 +5,7 @@ from odoo.tools import populate
 
 
 class ResourceCalendar(models.Model):
-    _inherit = "resource.calendar"
+    _inherit = ["resource.calendar"]
     _populate_dependencies = ["res.company"]  # multi-company setup
     _populate_sizes = {
         "small": 10,  # 1-2 per company

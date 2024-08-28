@@ -7,7 +7,7 @@ from odoo.osv import expression
 
 
 class Website(models.Model):
-    _inherit = 'website'
+    _inherit = ['website']
 
     #=== DEFAULT METHODS ===#
 

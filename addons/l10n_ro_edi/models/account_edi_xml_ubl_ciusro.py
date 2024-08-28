@@ -10,8 +10,8 @@ def get_formatted_sector_ro(city: str):
     return city.upper().replace(' ', '')
 
 
-class AccountEdiXmlUBLRO(models.AbstractModel):
-    _inherit = "account.edi.xml.ubl_bis3"
+class AccountEdiXmlUblRo(models.AbstractModel):
+    _inherit = ["account.edi.xml.ubl_bis3"]
     _name = "account.edi.xml.ubl_ro"
     _description = "CIUS RO"
 

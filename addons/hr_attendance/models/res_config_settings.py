@@ -5,7 +5,7 @@ from odoo import api, fields, models
 
 
 class ResConfigSettings(models.TransientModel):
-    _inherit = 'res.config.settings'
+    _inherit = ['res.config.settings']
 
     hr_attendance_overtime = fields.Boolean(
         string="Count Extra Hours", readonly=False)

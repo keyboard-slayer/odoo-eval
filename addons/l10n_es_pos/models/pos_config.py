@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 
 
 class PosConfig(models.Model):
-    _inherit = "pos.config"
+    _inherit = ["pos.config"]
 
     def _default_sinv_journal_id(self):
         return self.env['account.journal'].search([

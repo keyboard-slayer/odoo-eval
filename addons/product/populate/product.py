@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 
 class ProductCategory(models.Model):
-    _inherit = "product.category"
+    _inherit = ["product.category"]
     _populate_sizes = {"small": 50, "medium": 500, "large": 5_000}
 
     def _populate_factories(self):
@@ -45,7 +45,7 @@ class ProductCategory(models.Model):
             children.write({'parent_id': parent})
 
 class ProductProduct(models.Model):
-    _inherit = "product.product"
+    _inherit = ["product.product"]
     _populate_sizes = {"small": 150, "medium": 5_000, "large": 50_000}
     _populate_dependencies = ["product.category"]
 
@@ -90,8 +90,8 @@ class ProductProduct(models.Model):
         ] + self._populate_get_product_factories()
 
 
-class SupplierInfo(models.Model):
-    _inherit = 'product.supplierinfo'
+class ProductSupplierinfo(models.Model):
+    _inherit = ['product.supplierinfo']
 
     _populate_sizes = {'small': 450, 'medium': 15_000, 'large': 180_000}
     _populate_dependencies = ['res.partner', 'product.product', 'product.template']

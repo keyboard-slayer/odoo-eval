@@ -10,8 +10,7 @@ from datetime import datetime
 
 
 class ProductTemplate(models.Model):
-    _name = 'product.template'
-    _inherit = 'product.template'
+    _inherit = ['product.template']
 
     cost_method = fields.Selection(related="categ_id.property_cost_method", readonly=True)
     valuation = fields.Selection(related="categ_id.property_valuation", readonly=True)
@@ -96,7 +95,7 @@ class ProductTemplate(models.Model):
 
 
 class ProductProduct(models.Model):
-    _inherit = 'product.product'
+    _inherit = ['product.product']
 
     value_svl = fields.Float(compute='_compute_value_svl', compute_sudo=True)
     quantity_svl = fields.Float(compute='_compute_value_svl', compute_sudo=True)
@@ -810,7 +809,7 @@ class ProductProduct(models.Model):
 
 
 class ProductCategory(models.Model):
-    _inherit = 'product.category'
+    _inherit = ['product.category']
 
     property_valuation = fields.Selection([
         ('manual_periodic', 'Manual'),

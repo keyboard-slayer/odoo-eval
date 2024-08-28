@@ -31,7 +31,7 @@ L10N_ES_TBAI_CRC8_TABLE = [
 ]
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _inherit = ['account.move']
 
     # Stored fields
     l10n_es_tbai_chain_index = fields.Integer(

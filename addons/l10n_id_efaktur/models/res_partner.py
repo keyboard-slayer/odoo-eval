@@ -6,7 +6,7 @@ from odoo import fields, models, api
 
 class ResPartner(models.Model):
     """Inherit res.partner object to add NPWP field and Kode Transaksi"""
-    _inherit = "res.partner"
+    _inherit = ["res.partner"]
 
     l10n_id_pkp = fields.Boolean(string="ID PKP", compute='_compute_l10n_id_pkp', store=True, readonly=False)
     l10n_id_nik = fields.Char(string='NIK')
@@ -35,7 +35,7 @@ class ResPartner(models.Model):
 
 
 class ResConfigSettings(models.TransientModel):
-    _inherit = 'res.config.settings'
+    _inherit = ['res.config.settings']
 
     l10n_id_tax_address = fields.Char('Tax Address', related='company_id.partner_id.l10n_id_tax_address', readonly=False)
     l10n_id_tax_name = fields.Char('Tax Name', related='company_id.partner_id.l10n_id_tax_address', readonly=False)

@@ -5,8 +5,10 @@ from odoo import api, models, _, fields
 from odoo.tools import float_compare
 
 
-class ReportBomStructure(models.AbstractModel):
-    _inherit = 'report.mrp.report_bom_structure'
+class ReportMrpReportBomStructure(models.AbstractModel):
+    _name = "report.mrp.report_bom_structure"
+
+    _inherit = ['report.mrp.report_bom_structure']
 
     def _get_subcontracting_line(self, bom, seller, level, bom_quantity):
         ratio_uom_seller = seller.product_uom.ratio / bom.product_uom_id.ratio

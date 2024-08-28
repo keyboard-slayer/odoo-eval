@@ -8,8 +8,8 @@ from odoo.tools import populate
 _logger = logging.getLogger(__name__)
 
 
-class Message(models.Model):
-    _inherit = "mail.message"
+class MailMessage(models.Model):
+    _inherit = ["mail.message"]
 
     @property
     def _populate_dependencies(self):

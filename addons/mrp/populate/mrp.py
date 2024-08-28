@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 
 
 class ResCompany(models.Model):
-    _inherit = 'res.company'
+    _inherit = ['res.company']
 
     def _populate_factories(self):
         return super()._populate_factories() + [
@@ -21,8 +21,8 @@ class ResCompany(models.Model):
         ]
 
 
-class Warehouse(models.Model):
-    _inherit = 'stock.warehouse'
+class StockWarehouse(models.Model):
+    _inherit = ['stock.warehouse']
 
     def _populate_factories(self):
         return super()._populate_factories() + [
@@ -34,7 +34,7 @@ class Warehouse(models.Model):
 
 
 class MrpBom(models.Model):
-    _inherit = 'mrp.bom'
+    _inherit = ['mrp.bom']
 
     _populate_sizes = {'small': 100, 'medium': 2_000, 'large': 20_000}
     _populate_dependencies = ['product.product', 'stock.location']
@@ -71,7 +71,7 @@ class MrpBom(models.Model):
 
 
 class MrpBomLine(models.Model):
-    _inherit = 'mrp.bom.line'
+    _inherit = ['mrp.bom.line']
 
     _populate_sizes = {'small': 500, 'medium': 10_000, 'large': 100_000}
     _populate_dependencies = ['mrp.bom']
@@ -125,7 +125,7 @@ class MrpBomLine(models.Model):
 
 
 class MrpWorkcenter(models.Model):
-    _inherit = 'mrp.workcenter'
+    _inherit = ['mrp.workcenter']
 
     _populate_sizes = {'small': 20, 'medium': 100, 'large': 1_000}
 
@@ -178,7 +178,7 @@ class MrpWorkcenter(models.Model):
 
 
 class MrpRoutingWorkcenter(models.Model):
-    _inherit = 'mrp.routing.workcenter'
+    _inherit = ['mrp.routing.workcenter']
 
     _populate_sizes = {'small': 500, 'medium': 5_000, 'large': 50_000}
     _populate_dependencies = ['mrp.workcenter', 'mrp.bom']
@@ -218,7 +218,7 @@ class MrpRoutingWorkcenter(models.Model):
 
 
 class MrpBomByproduct(models.Model):
-    _inherit = 'mrp.bom.byproduct'
+    _inherit = ['mrp.bom.byproduct']
 
     _populate_sizes = {'small': 50, 'medium': 1_000, 'large': 5_000}
     _populate_dependencies = ['mrp.bom.line', 'mrp.routing.workcenter']
@@ -255,7 +255,7 @@ class MrpBomByproduct(models.Model):
 
 
 class MrpProduction(models.Model):
-    _inherit = 'mrp.production'
+    _inherit = ['mrp.production']
 
     _populate_sizes = {'small': 100, 'medium': 1_000, 'large': 10_000}
     _populate_dependencies = ['mrp.routing.workcenter', 'mrp.bom.line']
@@ -353,7 +353,7 @@ class MrpProduction(models.Model):
 
 
 class StockMove(models.Model):
-    _inherit = 'stock.move'
+    _inherit = ['stock.move']
 
     _populate_dependencies = ['stock.picking', 'mrp.production']
 

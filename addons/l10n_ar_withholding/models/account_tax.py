@@ -4,7 +4,7 @@ from odoo import api, fields, models
 
 class AccountTax(models.Model):
 
-    _inherit = 'account.tax'
+    _inherit = ['account.tax']
 
     l10n_ar_withholding_payment_type = fields.Selection(
         [('supplier', 'Supplier'), ('customer', 'Customer')], 'Argentinean Withholding type',

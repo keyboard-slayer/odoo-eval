@@ -5,8 +5,8 @@ from odoo import models
 from odoo.tools import populate
 
 
-class HolidaysAllocation(models.Model):
-    _inherit = "hr.leave.allocation"
+class HrLeaveAllocation(models.Model):
+    _inherit = ["hr.leave.allocation"]
     _populate_sizes = {"small": 100, "medium": 800, "large": 10000}
     _populate_dependencies = ['hr.employee', 'hr.leave.type']
 

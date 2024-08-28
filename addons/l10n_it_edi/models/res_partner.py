@@ -9,8 +9,7 @@ from odoo.exceptions import UserError
 
 
 class ResPartner(models.Model):
-    _name = 'res.partner'
-    _inherit = 'res.partner'
+    _inherit = ['res.partner']
 
     l10n_it_pec_email = fields.Char(string="PEC e-mail")
     l10n_it_codice_fiscale = fields.Char(string="Codice Fiscale", size=16)

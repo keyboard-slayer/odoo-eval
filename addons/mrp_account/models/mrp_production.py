@@ -8,7 +8,6 @@ from odoo.tools import float_round
 
 
 class MrpProduction(models.Model):
-    _name = 'mrp.production'
     _inherit = ['mrp.production', 'analytic.mixin']
 
     extra_cost = fields.Float(copy=False, string='Extra Unit Cost')

@@ -5,7 +5,6 @@ from odoo import models, fields
 
 
 class MailMessageReaction(models.Model):
-    _name = 'mail.message.reaction'
     _description = 'Message Reaction'
     _order = 'id desc'
     _log_access = False

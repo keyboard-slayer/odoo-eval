@@ -7,8 +7,10 @@ from odoo import models
 from odoo.addons.account.tools.certificate import load_key_and_certificates
 
 
-class Certificate(models.Model):
-    _inherit = 'l10n_es_edi.certificate'
+class L10nEsEdiCertificate(models.Model):
+    _name = "l10n_es_edi.certificate"
+
+    _inherit = ['l10n_es_edi.certificate']
 
     # -------------------------------------------------------------------------
     # HELPERS

@@ -4,7 +4,6 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 class LoyaltyProgram(models.Model):
-    _name = 'loyalty.program'
     _inherit = ['loyalty.program', 'pos.load.mixin']
 
     # NOTE: `pos_config_ids` satisfies an excpeptional use case: when no PoS is specified, the loyalty program is

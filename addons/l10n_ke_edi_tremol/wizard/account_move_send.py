@@ -3,7 +3,7 @@ from odoo.exceptions import UserError
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     def _get_l10n_ke_edi_tremol_warning_moves(self):
         return self.move_ids.filtered(lambda m: m.country_code == 'KE' and not m._l10n_ke_fiscal_device_details_filled())

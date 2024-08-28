@@ -4,8 +4,10 @@
 from odoo import api, models
 from odoo.tools import float_compare
 
-class ReportBomStructure(models.AbstractModel):
-    _inherit = 'report.mrp.report_bom_structure'
+class ReportMrpReportBomStructure(models.AbstractModel):
+    _name = "report.mrp.report_bom_structure"
+
+    _inherit = ['report.mrp.report_bom_structure']
 
     @api.model
     def _format_route_info(self, rules, rules_delay, warehouse, product, bom, quantity):
