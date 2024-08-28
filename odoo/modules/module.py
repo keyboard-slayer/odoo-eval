@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+"""Utility functions to manage module manifest files and discovery."""
 
 import ast
 import collections.abc
@@ -8,17 +8,34 @@ import functools
 import importlib
 import logging
 import os
-import pkg_resources
 import re
 import sys
 import warnings
-from os.path import join as opj, normpath
+from os.path import join as opj
+from os.path import normpath
 
-import odoo
-import odoo.tools as tools
+import pkg_resources
+
+import odoo.addons
 import odoo.release as release
+import odoo.tools as tools
+import odoo.upgrade
 from odoo.tools.misc import file_path
 
+__all__ = [
+    "adapt_version",
+    "check_manifest_dependencies",
+    "check_resource_path",
+    "get_manifest",
+    "get_module_path",
+    "get_module_resource",
+    "get_modules",
+    "get_modules_with_version",
+    "get_resource_from_path",
+    "get_resource_path",
+    "initialize_sys_path",
+    "load_openerp_module",
+]
 
 MANIFEST_NAMES = ('__manifest__.py', '__openerp__.py')
 README = ['README.rst', 'README.md', 'README.txt']
@@ -112,19 +129,18 @@ def initialize_sys_path():
         odoo.addons.__path__.append(base_path)
 
     # hook odoo.upgrade on upgrade-path
-    from odoo import upgrade
     legacy_upgrade_path = os.path.join(base_path, 'base', 'maintenance', 'migrations')
     for up in (tools.config['upgrade_path'] or legacy_upgrade_path).split(','):
         up = os.path.normcase(os.path.abspath(up.strip()))
-        if os.path.isdir(up) and up not in upgrade.__path__:
-            upgrade.__path__.append(up)
+        if os.path.isdir(up) and up not in odoo.upgrade.__path__:
+            odoo.upgrade.__path__.append(up)
 
     # create decrecated module alias from odoo.addons.base.maintenance.migrations to odoo.upgrade
     spec = importlib.machinery.ModuleSpec("odoo.addons.base.maintenance", None, is_package=True)
     maintenance_pkg = importlib.util.module_from_spec(spec)
-    maintenance_pkg.migrations = upgrade
+    maintenance_pkg.migrations = odoo.upgrade
     sys.modules["odoo.addons.base.maintenance"] = maintenance_pkg
-    sys.modules["odoo.addons.base.maintenance.migrations"] = upgrade
+    sys.modules["odoo.addons.base.maintenance.migrations"] = odoo.upgrade
 
     # hook deprecated module alias from openerp to odoo and "crm"-like to odoo.addons
     if not getattr(initialize_sys_path, 'called', False): # only initialize once
@@ -371,8 +387,9 @@ def load_openerp_module(module_name):
         _logger.critical("Couldn't load module %s", module_name)
         raise
 
+
 def get_modules():
-    """Returns the list of module names
+    """Get the list of module names that can be loaded.
     """
     def listdir(dir):
         def clean(name):
@@ -399,7 +416,9 @@ def get_modules():
         plist.extend(listdir(ad))
     return sorted(set(plist))
 
+
 def get_modules_with_version():
+    """Get the module list with the linked version."""
     modules = get_modules()
     res = dict.fromkeys(modules, adapt_version('1.0'))
     for module in modules:
@@ -410,7 +429,9 @@ def get_modules_with_version():
             continue
     return res
 
+
 def adapt_version(version):
+    """Reformat the version of the module into a standard format."""
     serie = release.major_version
     if version == serie or not version.startswith(serie + '.'):
         base_version = version
@@ -448,6 +469,13 @@ def check_python_external_dependency(pydep):
 
 
 def check_manifest_dependencies(manifest):
+    """Check that the dependecies of the manifest are available.
+
+    - Checking for external python dependencies
+    - Checking binaries are available in PATH
+
+    On missing dependencies, raise an error.
+    """
     depends = manifest.get('external_dependencies')
     if not depends:
         return
