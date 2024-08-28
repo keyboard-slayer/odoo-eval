@@ -27,7 +27,7 @@ export class TestsSharedJsPython extends Component {
                 rounding_method: params.rounding_method,
             };
             const results = {
-                results: accountTaxHelpers.evaluate_taxes_computation(
+                results: accountTaxHelpers.get_tax_details(
                     params.taxes,
                     params.price_unit,
                     params.quantity,
@@ -35,13 +35,13 @@ export class TestsSharedJsPython extends Component {
                 )
             };
             if (params.rounding_method === "round_globally") {
-                results.total_excluded_results = accountTaxHelpers.evaluate_taxes_computation(
+                results.total_excluded_results = accountTaxHelpers.get_tax_details(
                     params.taxes,
                     results.results.total_excluded / params.quantity,
                     params.quantity,
                     {...kwargs, special_mode: "total_excluded"}
                 );
-                results.total_included_results = accountTaxHelpers.evaluate_taxes_computation(
+                results.total_included_results = accountTaxHelpers.get_tax_details(
                     params.taxes,
                     results.results.total_included / params.quantity,
                     params.quantity,
@@ -60,13 +60,33 @@ export class TestsSharedJsPython extends Component {
                 )
             }
         }
+        if (params.test === "tax_totals_summary") {
+            const document = this.populateDocument(params.document);
+            const taxTotals = accountTaxHelpers.get_tax_totals_summary(
+                document.lines,
+                document.currency,
+                document.company,
+                {cash_rounding: document.cash_rounding}
+            );
+            return {tax_totals: taxTotals};
+        }
     }
 
     async processTests() {
         const tests = this.props.tests || [];
-        const results = tests.map(this.processTest);
+        const results = tests.map(this.processTest.bind(this));
         await rpc("/account/post_tests_shared_js_python", { results: results });
         this.state.done = true;
+    }
+
+    populateDocument(document) {
+        const base_lines = document.lines.map(line => accountTaxHelpers.prepare_base_line_for_taxes_computation(null, line));
+        accountTaxHelpers.add_base_lines_tax_details(base_lines, document.company);
+        accountTaxHelpers.round_base_lines_tax_details(base_lines, document.company);
+        return {
+            ...document,
+            lines: base_lines,
+        }
     }
 }
 

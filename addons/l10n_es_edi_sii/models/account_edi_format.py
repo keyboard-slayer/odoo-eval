@@ -67,8 +67,8 @@ class AccountEdiFormat(models.Model):
 
     def _l10n_es_edi_get_invoices_tax_details_info(self, invoice, filter_invl_to_apply=None):
 
-        def grouping_key_generator(base_line, tax_values):
-            tax = tax_values['tax_repartition_line'].tax_id
+        def grouping_key_generator(base_line, tax_data):
+            tax = tax_data['tax']
             return {
                 'applied_tax_amount': tax.amount,
                 'l10n_es_type': tax.l10n_es_type,

@@ -261,25 +261,23 @@ class AccountMove(models.Model):
             and self.l10n_it_edi_state in (False, 'rejected')
         )
 
-    def _l10n_it_edi_get_line_values(self, reverse_charge_refund=False, is_downpayment=False, convert_to_euros=True):
+    def _l10n_it_edi_get_line_values(self, aggregated_tax_values, reverse_charge_refund=False, is_downpayment=False):
         """ Returns a list of dictionaries passed to the template for the invoice lines (DettaglioLinee)
         """
         invoice_lines = []
-        lines = self.invoice_line_ids.filtered(lambda l: l.display_type not in ('line_note', 'line_section'))
-        base_lines = [invl._convert_to_tax_base_line_dict() for invl in lines]
         inverse_factor = (-1 if reverse_charge_refund else 1)
+        base_lines = aggregated_tax_values['base_lines']
         for num, line in enumerate(base_lines):
             sign = -1 if line['record'].move_id.is_inbound() else 1
             line['sequence'] = num
-            line['price_subtotal'] = line['record'].balance * sign if convert_to_euros else line['price_subtotal']
-            line['price_subtotal'] = line['price_subtotal'] * inverse_factor
+            line['price_subtotal'] = line['tax_details']['total_excluded_currency'] * inverse_factor
             if line['discount'] != 100.0 and line['quantity']:
                 gross_price = line['price_subtotal'] / (1 - line['discount'] / 100.0)
                 line['discount_amount_before_dispatching'] = (gross_price - line['price_subtotal']) * inverse_factor
-                line['gross_price_subtotal'] = line['currency'].round(gross_price * inverse_factor)
+                line['gross_price_subtotal'] = line['currency_id'].round(gross_price * inverse_factor)
                 line['price_unit'] = gross_price / abs(line['quantity'])
             else:
-                line['gross_price_subtotal'] = line['currency'].round(line['price_unit'] * line['quantity'])
+                line['gross_price_subtotal'] = line['currency_id'].round(line['price_unit'] * line['quantity'])
                 line['discount_amount_before_dispatching'] = line['gross_price_subtotal']
 
         dispatch_result = self.env['account.tax']._dispatch_negative_lines(base_lines)
@@ -321,15 +319,14 @@ class AccountMove(models.Model):
             })
         return invoice_lines
 
-    def _l10n_it_edi_get_tax_values(self, tax_details):
+    def _l10n_it_edi_get_tax_values(self, aggregated_tax_values):
         """ Returns a list of dictionaries passed to the template for the invoice lines (DatiRiepilogo)
         """
         tax_lines = []
-        for _tax_name, tax_dict in tax_details['tax_details'].items():
+        for tax, tax_dict in aggregated_tax_values['tax_details'].items():
             # The assumption is that the company currency is EUR.
             base_amount = tax_dict['base_amount']
             tax_amount = tax_dict['tax_amount']
-            tax = tax_dict['tax']
             tax_rate = tax.amount
             tax_exigibility_code = (
                 'S' if tax._l10n_it_is_split_payment()
@@ -338,7 +335,6 @@ class AccountMove(models.Model):
                 else False
             )
             expected_base_amount = tax_amount * 100 / tax_rate if tax_rate else False
-            tax = tax_dict['tax']
             # Constraints within the edi make local rounding on price included taxes a problem.
             # To solve this there is a <Arrotondamento> or 'rounding' field, such that:
             #   taxable base = sum(taxable base for each unit) + Arrotondamento
@@ -357,19 +353,16 @@ class AccountMove(models.Model):
             tax_lines.append(tax_line_dict)
         return tax_lines
 
-    def _l10n_it_edi_filter_tax_details(self, line, tax_values):
+    def _l10n_it_edi_filter_tax_details(self, base_line, tax_data):
         """Filters tax details to only include the positive amounted lines regarding VAT taxes."""
-        repartition_line = tax_values['tax_repartition_line']
-        return (repartition_line.factor_percent >= 0 and repartition_line.tax_id.amount >= 0)
+        tax = tax_data['tax']
+        result = tax.amount >= 0
 
-    def _get_l10n_it_amount_split_payment(self):
-        self.ensure_one()
-        amount = 0.0
-        if self.is_invoice(True):
-            for line in [line for line in self.line_ids if line.tax_line_id]:
-                if line.tax_line_id._l10n_it_is_split_payment() and line.credit > 0.0:
-                    amount += line.credit
-        return amount
+        # Self-invoices are technically -100%/+100% repartitioned
+        # but functionally need to be exported as 100%
+        if self.l10n_it_edi_is_self_invoice or tax._l10n_it_is_split_payment():
+            result = result and not tax_data['is_reverse_charge']
+        return result
 
     def _l10n_it_edi_get_values(self, pdf_values=None):
         self.ensure_one()
@@ -382,9 +375,10 @@ class AccountMove(models.Model):
         reverse_charge = document_type in ['TD16', 'TD17', 'TD18', 'TD19']
         is_downpayment = document_type in ['TD02']
         reverse_charge_refund = self.move_type == 'in_refund' and reverse_charge
+        inverse_factor = (-1 if reverse_charge_refund else 1)
         convert_to_euros = self.currency_id.name != 'EUR'
 
-        tax_details = self._prepare_invoice_aggregated_taxes(filter_tax_values_to_apply=self._l10n_it_edi_filter_tax_details)
+        aggregated_tax_values = self._prepare_invoice_aggregated_taxes(filter_tax_values_to_apply=self._l10n_it_edi_filter_tax_details)
 
         company = self.company_id
         partner = self.commercial_partner_id
@@ -403,25 +397,19 @@ class AccountMove(models.Model):
         else:
             formato_trasmissione = "FPR12"
 
-        # Self-invoices are technically -100%/+100% repartitioned
-        # but functionally need to be exported as 100%
-        document_total = self.amount_total
-        if is_self_invoice:
-            document_total += sum([abs(v['tax_amount_currency']) for k, v in tax_details['tax_details'].items()])
-            if reverse_charge_refund:
-                document_total = -abs(document_total)
-
-        split_payment_amount = self._get_l10n_it_amount_split_payment()
-        if split_payment_amount:
-            document_total += split_payment_amount
+        document_total = inverse_factor * (aggregated_tax_values['base_amount_currency'] + aggregated_tax_values['tax_amount_currency'])
 
         # Reference line for finding the conversion rate used in the document
         conversion_rate = float_repr(
             abs(self.amount_total / self.amount_total_signed), precision_digits=5,
         ) if convert_to_euros and self.invoice_line_ids else None
 
-        invoice_lines = self._l10n_it_edi_get_line_values(reverse_charge_refund, is_downpayment, convert_to_euros)
-        tax_lines = self._l10n_it_edi_get_tax_values(tax_details)
+        invoice_lines = self._l10n_it_edi_get_line_values(
+            aggregated_tax_values,
+            reverse_charge_refund=reverse_charge_refund,
+            is_downpayment=is_downpayment,
+        )
+        tax_lines = self._l10n_it_edi_get_tax_values(aggregated_tax_values)
 
         # Reduce downpayment views to a single recordset
         downpayment_moves = [l.get('downpayment_moves', self.env['account.move']) for l in invoice_lines]
@@ -429,6 +417,7 @@ class AccountMove(models.Model):
 
         return {
             'record': self,
+            'aggregated_tax_values': aggregated_tax_values,
             'company': company,
             'partner': partner,
             'sender': sender,
@@ -452,7 +441,7 @@ class AccountMove(models.Model):
             'formato_trasmissione': formato_trasmissione,
             'document_type': document_type,
             'payment_method': 'MP05',
-            'tax_details': tax_details,
+            'tax_details': aggregated_tax_values,
             'downpayment_moves': downpayment_moves,
             'rc_refund': reverse_charge_refund,
             'invoice_lines': invoice_lines,
@@ -1045,7 +1034,7 @@ class AccountMove(models.Model):
 
             # Global discount summarized in 1 amount
             if discount_elements := tree.xpath('.//DatiGeneraliDocumento/ScontoMaggiorazione'):
-                taxable_amount = float(self.tax_totals['amount_untaxed'])
+                taxable_amount = float(self.tax_totals['base_amount_currency'])
                 discounted_amount = taxable_amount
                 for discount_element in discount_elements:
                     discount_sign = 1

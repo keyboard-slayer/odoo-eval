@@ -848,27 +848,16 @@ class AccountMoveLine(models.Model):
 
     @api.depends('quantity', 'discount', 'price_unit', 'tax_ids', 'currency_id')
     def _compute_totals(self):
+        AccountTax = self.env['account.tax']
         for line in self:
             if line.display_type != 'product':
                 line.price_total = line.price_subtotal = False
-            # Compute 'price_subtotal'.
-            line_discount_price_unit = line.price_unit * (1 - (line.discount / 100.0))
-            subtotal = line.quantity * line_discount_price_unit
+                continue
 
-            # Compute 'price_total'.
-            if line.tax_ids:
-                taxes_res = line.tax_ids.compute_all(
-                    line_discount_price_unit,
-                    quantity=line.quantity,
-                    currency=line.currency_id,
-                    product=line.product_id,
-                    partner=line.partner_id,
-                    is_refund=line.is_refund,
-                )
-                line.price_subtotal = taxes_res['total_excluded']
-                line.price_total = taxes_res['total_included']
-            else:
-                line.price_total = line.price_subtotal = subtotal
+            base_line = line.move_id._prepare_product_base_line_for_taxes_computation(line)
+            AccountTax._add_base_line_tax_details(base_line, line.company_id)
+            line.price_subtotal = base_line['tax_details']['total_excluded_currency']
+            line.price_total = base_line['tax_details']['total_included_currency']
 
     @api.depends('product_id', 'product_uom_id')
     def _compute_price_unit(self):
@@ -928,15 +917,10 @@ class AccountMoveLine(models.Model):
     def _compute_tax_key(self):
         for line in self:
             if line.tax_repartition_line_id:
+                tax_line = line.move_id._prepare_tax_line_for_taxes_computation(line)
+                grouping_key = self.env['account.tax']._prepare_tax_line_repartition_grouping_key(tax_line)
                 line.tax_key = frozendict({
-                    'tax_repartition_line_id': line.tax_repartition_line_id.id,
-                    'group_tax_id': line.group_tax_id.id,
-                    'account_id': line.account_id.id,
-                    'currency_id': line.currency_id.id,
-                    'analytic_distribution': line.analytic_distribution,
-                    'tax_ids': [(6, 0, line.tax_ids.ids)],
-                    'tax_tag_ids': [(6, 0, line.tax_tag_ids.ids)],
-                    'partner_id': line.partner_id.id,
+                    **grouping_key,
                     'move_id': line.move_id.id,
                     'display_type': line.display_type,
                 })
@@ -945,58 +929,44 @@ class AccountMoveLine(models.Model):
 
     @api.depends('tax_ids', 'currency_id', 'partner_id', 'analytic_distribution', 'balance', 'partner_id', 'move_id.partner_id', 'price_unit', 'quantity')
     def _compute_all_tax(self):
+        AccountTax = self.env['account.tax']
+        amls_per_move = self.grouped('move_id')
         for line in self:
             if line.display_type == 'tax':
                 line.compute_all_tax = {}
                 line.compute_all_tax_dirty = False
-                continue
-            if line.display_type == 'product' and line.move_id.is_invoice(True):
-                sign = line.move_id.direction_sign
-                price_unit = line.price_unit * (1 - line.discount / 100)
-                handle_price_include = True
-                quantity = line.quantity
             else:
-                sign = 1
-                price_unit = line.amount_currency
-                handle_price_include = False
-                quantity = 1
-            compute_all_currency = line.tax_ids.compute_all(
-                price_unit,
-                currency=line.currency_id,
-                quantity=quantity,
-                product=line.product_id,
-                partner=line.move_id.partner_id or line.partner_id,
-                is_refund=line.is_refund,
-                handle_price_include=handle_price_include,
-                include_caba_tags=line.move_id.always_tax_exigible,
-            )
-            rate = line.amount_currency / line.balance if line.balance else 1
-            line.compute_all_tax_dirty = True
-            line.compute_all_tax = {
-                frozendict({
-                    'tax_repartition_line_id': tax['tax_repartition_line_id'],
-                    'group_tax_id': tax['group'] and tax['group'].id or False,
-                    'account_id': tax['account_id'] or line.account_id.id,
-                    'currency_id': line.currency_id.id,
-                    'analytic_distribution': (tax['analytic'] or not tax['use_in_tax_closing']) and line.analytic_distribution,
-                    'tax_ids': [(6, 0, tax['tax_ids'])],
-                    'tax_tag_ids': [(6, 0, tax['tag_ids'])],
-                    'partner_id': line.move_id.partner_id.id or line.partner_id.id,
-                    'move_id': line.move_id.id,
-                    'display_type': line.display_type,
-                }): {
-                    'name': _('%(tax_name)s (Discount)', tax_name=tax['name']) if line.display_type == 'epd' else tax['name'],
-                    'balance': sign * tax['amount'] / rate,
-                    'amount_currency': sign * tax['amount'],
-                    'tax_base_amount': sign * tax['base'] / rate * (-1 if line.tax_tag_invert else 1),
+                line.compute_all_tax_dirty = True
+                line.compute_all_tax = {frozendict({'id': line.id}): {'tax_tag_ids': [Command.set([])]}}
+        for move in self.move_id:
+            base_lines, _tax_lines = move._get_rounded_base_lines(round_from_tax_lines=False)
+            AccountTax._add_base_lines_accounting_tax_details(base_lines, move.company_id, include_caba_tags=move.always_tax_exigible)
+
+            for base_line in base_lines:
+                line = base_line['record']
+                if line not in amls_per_move[move]:
+                    continue
+
+                line.compute_all_tax_dirty = True
+                line.compute_all_tax = {
+                    frozendict({
+                        **tax_rep_data['grouping_key'],
+                        'move_id': line.move_id.id,
+                        'display_type': line.display_type,
+                    }): {
+                        'name': _('%(tax_name)s (Discount)', tax_name=tax_data['tax'].name) if line.display_type == 'epd' else tax_data['tax'].name,
+                        'balance': base_line['sign'] * tax_rep_data['tax_amount'],
+                        'amount_currency': base_line['sign'] * tax_rep_data['tax_amount_currency'],
+                        'tax_base_amount': base_line['sign'] * tax_data['base_amount'] * (-1 if line.tax_tag_invert else 1),
+                    }
+                    for tax_data in base_line['tax_details']['taxes_data']
+                    for tax_rep_data in tax_data['tax_reps_data']
+                    if not line.currency_id.is_zero(tax_data['tax_amount_currency']) or not line.company_currency_id.is_zero(tax_data['tax_amount'])
                 }
-                for tax in compute_all_currency['taxes']
-                if tax['amount']
-            }
-            if not line.tax_repartition_line_id:
-                line.compute_all_tax[frozendict({'id': line.id})] = {
-                    'tax_tag_ids': [(6, 0, compute_all_currency['base_tags'])],
-                }
+                if not line.tax_repartition_line_id:
+                    line.compute_all_tax[frozendict({'id': line.id})] = {
+                        'tax_tag_ids': [Command.set(base_line['tax_tag_ids'].ids)],
+                    }
 
     @api.depends('account_id', 'company_id')
     def _compute_discount_allocation_key(self):
@@ -1075,6 +1045,7 @@ class AccountMoveLine(models.Model):
 
             if not has_epd or line.display_type != 'product' or not line.tax_ids.ids or line.move_id.invoice_payment_term_id.early_pay_discount_computation != 'mixed':
                 continue
+
             discount_percentage_name = f"{discount_percentage}%"
             epd_needed = {}
             percentage = discount_percentage / 100
@@ -1092,12 +1063,14 @@ class AccountMoveLine(models.Model):
                     'name': _("Early Payment Discount (%s)", discount_percentage_name),
                     'amount_currency': 0.0,
                     'balance': 0.0,
-                    'price_subtotal': 0.0,
                 },
             )
-            epd_needed_vals['amount_currency'] -= line.currency_id.round(line.amount_currency * percentage)
-            epd_needed_vals['balance'] -= line.currency_id.round(line.balance * percentage)
-            epd_needed_vals['price_subtotal'] -= line.currency_id.round(line.price_subtotal * percentage)
+            sign = line.move_id.direction_sign
+            rate = line.move_id.invoice_currency_rate
+            amount_currency = line.currency_id.round(sign * line.price_subtotal * percentage)
+            balance = line.company_currency_id.round(sign * line.price_subtotal * percentage / rate) if rate else 0.0
+            epd_needed_vals['amount_currency'] -= amount_currency
+            epd_needed_vals['balance'] -= balance
             epd_needed_vals = epd_needed.setdefault(
                 frozendict({
                     'move_id': line.move_id.id,
@@ -1108,13 +1081,11 @@ class AccountMoveLine(models.Model):
                     'name': _("Early Payment Discount (%s)", discount_percentage_name),
                     'amount_currency': 0.0,
                     'balance': 0.0,
-                    'price_subtotal': 0.0,
                     'tax_ids': [Command.clear()],
                 },
             )
-            epd_needed_vals['amount_currency'] += line.currency_id.round(line.amount_currency * percentage)
-            epd_needed_vals['balance'] += line.currency_id.round(line.balance * percentage)
-            epd_needed_vals['price_subtotal'] += line.currency_id.round(line.price_subtotal * percentage)
+            epd_needed_vals['amount_currency'] += amount_currency
+            epd_needed_vals['balance'] += balance
             line.epd_needed = {k: frozendict(v) for k, v in epd_needed.items()}
 
     @api.depends('move_id.move_type', 'balance', 'tax_repartition_line_id', 'tax_ids')
@@ -1559,18 +1530,7 @@ class AccountMoveLine(models.Model):
         before = existing()
         yield
         after = existing()
-        for line in after:
-            if (
-                line.display_type == 'product'
-                and (not changed('amount_currency') or line not in before)
-            ):
-                amount_currency = line.move_id.direction_sign * line.currency_id.round(line.price_subtotal)
-                if line.amount_currency != amount_currency or line not in before:
-                    line.amount_currency = amount_currency
-                if line.currency_id == line.company_id.currency_id:
-                    line.balance = amount_currency
 
-        after = existing()
         for line in after:
             if (
                 (changed('amount_currency') or changed('currency_rate') or changed('move_type'))
@@ -1578,6 +1538,7 @@ class AccountMoveLine(models.Model):
             ):
                 balance = line.company_id.currency_id.round(line.amount_currency / line.currency_rate)
                 line.balance = balance
+
         # Since this method is called during the sync, inside of `create`/`write`, these fields
         # already have been computed and marked as so. But this method should re-trigger it since
         # it changes the dependencies.
@@ -3282,53 +3243,6 @@ class AccountMoveLine(models.Model):
             '|', ('tax_line_id.tax_exigibility', '!=', 'on_payment'),
             ('tax_ids.tax_exigibility', '!=', 'on_payment'), # So: exigible if at least one tax from tax_ids isn't on_payment
         ]
-
-    def _convert_to_tax_base_line_dict(self):
-        """ Convert the current record to a dictionary in order to use the generic taxes computation method
-        defined on account.tax.
-        :return: A python dictionary.
-        """
-        self.ensure_one()
-        is_invoice = self.move_id.is_invoice(include_receipts=True)
-        sign = -1 if self.move_id.is_inbound(include_receipts=True) else 1
-
-        return self.env['account.tax']._convert_to_tax_base_line_dict(
-            self,
-            partner=self.partner_id,
-            currency=self.currency_id,
-            product=self.product_id,
-            taxes=self.tax_ids,
-            price_unit=self.price_unit if is_invoice else self.amount_currency,
-            quantity=self.quantity if is_invoice else 1.0,
-            discount=self.discount if is_invoice else 0.0,
-            account=self.account_id,
-            analytic_distribution=self.analytic_distribution,
-            price_subtotal=sign * self.amount_currency,
-            is_refund=self.is_refund,
-            rate=(abs(self.amount_currency) / abs(self.balance)) if self.balance else 1.0
-        )
-
-    def _convert_to_tax_line_dict(self):
-        """ Convert the current record to a dictionary in order to use the generic taxes computation method
-        defined on account.tax.
-        :return: A python dictionary.
-        """
-        self.ensure_one()
-        sign = -1 if self.move_id.is_inbound(include_receipts=True) else 1
-
-        return self.env['account.tax']._convert_to_tax_line_dict(
-            self,
-            partner=self.partner_id,
-            currency=self.currency_id,
-            taxes=self.tax_ids,
-            tax_tags=self.tax_tag_ids,
-            tax_repartition_line=self.tax_repartition_line_id,
-            group_tax=self.group_tax_id,
-            account=self.account_id,
-            analytic_distribution=self.analytic_distribution,
-            tax_amount_currency=sign * self.amount_currency,
-            tax_amount=sign * self.balance,
-        )
 
     def _get_invoiced_qty_per_product(self):
         qties = defaultdict(float)

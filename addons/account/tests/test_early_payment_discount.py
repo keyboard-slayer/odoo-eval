@@ -454,29 +454,27 @@ class TestAccountEarlyPaymentDiscount(AccountTestInvoicingCommon):
                 line_form.quantity = 1
                 line_form.tax_ids.clear()
                 line_form.tax_ids.add(tax)
-
-            self.assert_tax_totals(invoice.tax_totals, invoice.currency_id, {
-                'amount_untaxed': 1000.0,
-                'amount_total': 1090.0,
-                'display_tax_base': True,
-                'groups_by_subtotal': {
-                    'Untaxed Amount': [
-                        {
-                            'tax_group_name': tax.tax_group_id.name,
-                            'tax_group_label': tax.tax_group_id.pos_receipt_label,
-                            'tax_group_amount': 90.0,
-                            'tax_group_base_amount': 900.0,
-                            'tax_group_id': tax.tax_group_id.id,
-                        },
-                    ],
-                },
+            self._assert_tax_totals_summary(invoice.tax_totals, {
+                'same_tax_base': True,
+                'currency_id': self.env.company.currency_id.id,
+                'base_amount_currency': 1000.0,
+                'tax_amount_currency': 90.0,
+                'total_amount_currency': 1090.0,
                 'subtotals': [
                     {
                         'name': "Untaxed Amount",
-                        'amount': 1000.0,
-                    }
+                        'base_amount_currency': 1000.0,
+                        'tax_amount_currency': 90.0,
+                        'tax_groups': [
+                            {
+                                'id': tax.tax_group_id.id,
+                                'base_amount_currency': 900.0,
+                                'tax_amount_currency': 90.0,
+                                'display_base_amount_currency': 900.0,
+                            },
+                        ],
+                    },
                 ],
-                'subtotals_order': ["Untaxed Amount"],
             })
 
     def test_intracomm_bill_with_early_payment_included(self):
@@ -645,28 +643,27 @@ class TestAccountEarlyPaymentDiscount(AccountTestInvoicingCommon):
                 line_form.quantity = 1
                 line_form.tax_ids.clear()
                 line_form.tax_ids.add(tax)
-            self.assert_tax_totals(invoice.tax_totals, invoice.currency_id, {
-                'amount_untaxed': 100,
-                'amount_total': 120.58,
-                'display_tax_base': True,
-                'groups_by_subtotal': {
-                    'Untaxed Amount': [
-                        {
-                            'tax_group_name': tax.tax_group_id.name,
-                            'tax_group_label': tax.tax_group_id.pos_receipt_label,
-                            'tax_group_amount': 20.58,
-                            'tax_group_base_amount': 98,
-                            'tax_group_id': tax.tax_group_id.id,
-                        },
-                    ],
-                },
+            self._assert_tax_totals_summary(invoice.tax_totals, {
+                'same_tax_base': True,
+                'currency_id': self.env.company.currency_id.id,
+                'base_amount_currency': 100.0,
+                'tax_amount_currency': 20.58,
+                'total_amount_currency': 120.58,
                 'subtotals': [
                     {
                         'name': "Untaxed Amount",
-                        'amount': 100,
-                    }
+                        'base_amount_currency': 100.0,
+                        'tax_amount_currency': 20.58,
+                        'tax_groups': [
+                            {
+                                'id': tax.tax_group_id.id,
+                                'base_amount_currency': 98.0,
+                                'tax_amount_currency': 20.58,
+                                'display_base_amount_currency': 98.0,
+                            },
+                        ],
+                    },
                 ],
-                'subtotals_order': ["Untaxed Amount"],
             })
 
     def test_mixed_epd_with_tax_no_duplication(self):

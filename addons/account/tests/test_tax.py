@@ -72,11 +72,11 @@ class TestTax(TestTaxCommon):
                     self._check_compute_all_results(
                         tax,
                         {
-                            'total_included': sign * 121.0,
-                            'total_excluded': sign * 100.0,
+                            'total_included': sign * price_unit,
+                            'total_excluded': sign * price_unit,
                             'taxes': (
-                                (sign * 100.0, sign * 21.0),
-                                (sign * 100.0, -sign * 21.0),
+                                (sign * price_unit, sign * 21.0),
+                                (sign * price_unit, -sign * 21.0),
                             ),
                         },
                         sign * price_unit,

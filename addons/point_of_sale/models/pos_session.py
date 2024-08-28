@@ -806,6 +806,7 @@ class PosSession(models.Model):
         # E.g. `combine_receivables_bank` is derived from pos.payment records
         # in the self.order_ids with group key of the `payment_method_id`
         # field of the pos.payment record.
+        AccountTax = self.env['account.tax']
         amounts = lambda: {'amount': 0.0, 'amount_converted': 0.0}
         tax_amounts = lambda: {'amount': 0.0, 'amount_converted': 0.0, 'base_amount': 0.0, 'base_amount_converted': 0.0}
         split_receivables_bank = defaultdict(amounts)
@@ -876,22 +877,28 @@ class PosSession(models.Model):
 
             if not order_is_invoiced:
                 base_lines = order._prepare_tax_base_line_values(sign=1)
-                tax_results = self.env['account.tax']._compute_taxes(base_lines, order.company_id)
-                for base_line, to_update in tax_results['base_lines_to_update']:
+                AccountTax._add_base_lines_tax_details(base_lines, order.company_id)
+                AccountTax._round_base_lines_tax_details(base_lines, order.company_id)
+                AccountTax._add_base_lines_accounting_tax_details(base_lines, order.company_id)
+                tax_results = AccountTax._prepare_tax_lines(base_lines, order.company_id)
+                for base_line, to_update in tax_results['base_lines_to_update'].values():
                     # Combine sales/refund lines
                     sale_key = (
                         # account
-                        base_line['account'].id,
+                        base_line['account_id'].id,
                         # sign
                         -1 if base_line['is_refund'] else 1,
                         # for taxes
                         tuple(base_line['record'].tax_ids_after_fiscal_position.flatten_taxes_hierarchy().ids),
-                        tuple(to_update['tax_tag_ids'][0][2]),
-                        base_line['product'].id if self.config_id.is_closing_entry_by_product else False,
+                        tuple(base_line['tax_tag_ids'].ids),
+                        base_line['product_id'].id if self.config_id.is_closing_entry_by_product else False,
                     )
                     sales[sale_key] = self._update_amounts(
                         sales[sale_key],
-                        {'amount': to_update['price_subtotal']},
+                        {
+                            'amount': to_update['amount_currency'],
+                            'amount_converted': to_update['balance'],
+                        },
                         order.date_order,
                     )
                     if self.config_id.is_closing_entry_by_product:
@@ -906,7 +913,11 @@ class PosSession(models.Model):
                     )
                     taxes[tax_key] = self._update_amounts(
                         taxes[tax_key],
-                        {'amount': -tax_line['tax_amount_currency'], 'base_amount': -tax_line['base_amount_currency']},
+                        {
+                            'amount': -tax_line['amount_currency'],
+                            'amount_converted': -tax_line['balance'],
+                            'base_amount_converted': -tax_line['tax_base_amount']
+                        },
                         order.date_order,
                     )
 

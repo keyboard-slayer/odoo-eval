@@ -208,7 +208,7 @@ class PosOrder(models.Model):
         """ Convert pos order lines into dictionaries that would be used to compute taxes later.
 
         :param sign: An optional parameter to force the sign of amounts.
-        :return: A list of python dictionaries (see '_convert_to_tax_base_line_dict' in account.tax).
+        :return: A list of python dictionaries (see '_prepare_base_line_for_taxes_computation' in account.tax).
         """
         self.ensure_one()
         return self.lines._prepare_tax_base_line_values(sign=sign)
@@ -216,13 +216,13 @@ class PosOrder(models.Model):
     @api.model
     def _get_invoice_lines_values(self, line_values, pos_order_line):
         return {
-            'product_id': line_values['product'].id,
+            'product_id': line_values['product_id'].id,
             'quantity': line_values['quantity'],
             'discount': line_values['discount'],
             'price_unit': line_values['price_unit'],
             'name': line_values['name'],
-            'tax_ids': [(6, 0, line_values['taxes'].ids)],
-            'product_uom_id': line_values['uom'].id,
+            'tax_ids': [(6, 0, line_values['tax_ids'].ids)],
+            'product_uom_id': line_values['uom_id'].id,
         }
 
     def _prepare_invoice_lines(self):
@@ -776,39 +776,32 @@ class PosOrder(models.Model):
 
     def _prepare_aml_values_list_per_nature(self):
         self.ensure_one()
+        AccountTax = self.env['account.tax']
         sign = 1 if self.amount_total < 0 else -1
         commercial_partner = self.partner_id.commercial_partner_id
         company_currency = self.company_id.currency_id
         rate = self.currency_id._get_conversion_rate(self.currency_id, company_currency, self.company_id, self.date_order)
 
         # Concert each order line to a dictionary containing business values. Also, prepare for taxes computation.
-        base_line_vals_list = self._prepare_tax_base_line_values(sign=-1)
-        tax_results = self.env['account.tax']._compute_taxes(base_line_vals_list, self.company_id)
+        base_lines = self._prepare_tax_base_line_values(sign=-1)
+        AccountTax._add_base_lines_tax_details(base_lines, self.company_id)
+        AccountTax._round_base_lines_tax_details(base_lines, self.company_id)
+        AccountTax._add_base_lines_accounting_tax_details(base_lines, self.company_id)
+        tax_results = AccountTax._prepare_tax_lines(base_lines, self.company_id)
 
         total_balance = 0.0
         total_amount_currency = 0.0
         aml_vals_list_per_nature = defaultdict(list)
 
         # Create the tax lines
-        for tax_line_vals in tax_results['tax_lines_to_add']:
-            tax_rep = self.env['account.tax.repartition.line'].browse(tax_line_vals['tax_repartition_line_id'])
-            amount_currency = tax_line_vals['tax_amount']
-            balance = company_currency.round(amount_currency * rate)
+        for tax_line in tax_results['tax_lines_to_add']:
+            tax_rep = self.env['account.tax.repartition.line'].browse(tax_line['tax_repartition_line_id'])
             aml_vals_list_per_nature['tax'].append({
-                'name': tax_rep.tax_id.name,
-                'account_id': tax_line_vals['account_id'],
-                'partner_id': tax_line_vals['partner_id'],
-                'currency_id': tax_line_vals['currency_id'],
-                'tax_repartition_line_id': tax_line_vals['tax_repartition_line_id'],
-                'tax_ids': tax_line_vals['tax_ids'],
-                'tax_tag_ids': tax_line_vals['tax_tag_ids'],
-                'group_tax_id': None if tax_rep.tax_id.id == tax_line_vals['tax_id'] else tax_line_vals['tax_id'],
-                'amount_currency': amount_currency,
-                'balance': balance,
-                'tax_tag_invert': tax_rep.document_type != 'refund',
+                **tax_line,
+                'tax_tag_invert': tax_rep.document_type == 'invoice',
             })
-            total_amount_currency += amount_currency
-            total_balance += balance
+            total_amount_currency += tax_line['amount_currency']
+            total_balance += tax_line['balance']
 
         # Create the aml values for order lines.
         for base_line_vals, update_base_line_vals in tax_results['base_lines_to_update']:
@@ -1432,13 +1425,11 @@ class PosOrderLine(models.Model):
 
     @api.depends('price_unit', 'tax_ids', 'qty', 'discount', 'product_id')
     def _compute_amount_line_all(self):
-        for orderline in self:
-            fpos = orderline.order_id.fiscal_position_id
-            tax_ids_after_fiscal_position = fpos.map_tax(orderline.tax_ids)
-            price = orderline.price_unit * (1 - (orderline.discount or 0.0) / 100.0)
-            taxes = tax_ids_after_fiscal_position.compute_all(price, orderline.order_id.currency_id, orderline.qty, product=orderline.product_id, partner=orderline.order_id.partner_id)
-            orderline.price_subtotal_incl = taxes['total_included']
-            orderline.price_subtotal = taxes['total_excluded']
+        for line in self:
+            base_line = line._prepare_tax_base_line_values()[0]
+            self.env['account.tax']._add_base_line_tax_details(base_line, line.company_id)
+            line.price_subtotal_incl = base_line['tax_details']['total_included_currency']
+            line.price_subtotal = base_line['tax_details']['total_excluded_currency']
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
@@ -1586,7 +1577,7 @@ class PosOrderLine(models.Model):
         """ Convert pos order lines into dictionaries that would be used to compute taxes later.
 
         :param sign: An optional parameter to force the sign of amounts.
-        :return: A list of python dictionaries (see '_convert_to_tax_base_line_dict' in account.tax).
+        :return: A list of python dictionaries (see '_prepare_base_line_for_taxes_computation' in account.tax).
         """
         base_line_vals_list = []
         for line in self:
@@ -1611,20 +1602,19 @@ class PosOrderLine(models.Model):
 
             base_line_vals_list.append(
                 {
-                    **self.env['account.tax']._convert_to_tax_base_line_dict(
+                    **self.env['account.tax']._prepare_base_line_for_taxes_computation(
                         line,
-                        partner=commercial_partner,
-                        currency=self.order_id.currency_id,
-                        product=line.product_id,
-                        taxes=line.tax_ids_after_fiscal_position,
+                        partner_id=commercial_partner,
+                        currency_id=self.order_id.currency_id,
+                        product_id=line.product_id,
+                        tax_ids=line.tax_ids_after_fiscal_position,
                         price_unit=line.price_unit,
                         quantity=sign * line.qty,
-                        price_subtotal=sign * line.price_subtotal,
                         discount=line.discount,
-                        account=account,
+                        account_id=account,
                         is_refund=is_refund,
                     ),
-                    'uom': line.product_uom_id,
+                    'uom_id': line.product_uom_id,
                     'name': product_name,
                 }
             )

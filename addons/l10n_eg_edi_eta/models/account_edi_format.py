@@ -214,8 +214,8 @@ class AccountEdiFormat(models.Model):
     @api.model
     def _l10n_eg_eta_prepare_eta_invoice(self, invoice):
 
-        def group_tax_retention(base_line, tax_values):
-            tax = tax_values['tax_repartition_line'].tax_id
+        def group_tax_retention(base_line, tax_data):
+            tax = tax_data['tax']
             return {'l10n_eg_eta_code': tax.l10n_eg_eta_code.split('_')[0]}
 
         date_string = invoice.invoice_date.strftime('%Y-%m-%dT%H:%M:%SZ')

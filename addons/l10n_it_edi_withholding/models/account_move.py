@@ -30,12 +30,6 @@ class AccountMove(models.Model):
             move.l10n_it_amount_pension_fund_signed = totals['pension_fund']
             move.l10n_it_amount_before_withholding_signed = move.amount_untaxed_signed + totals['vat'] + totals['pension_fund']
 
-    def _l10n_it_edi_filter_tax_details(self, line, tax_values):
-        """Filters tax details to only include the positive amounted lines regarding VAT taxes."""
-        repartition_line = tax_values['tax_repartition_line']
-        repartition_line_vat = repartition_line.tax_id._l10n_it_filter_kind('vat')
-        return repartition_line.factor_percent >= 0 and repartition_line_vat and repartition_line_vat.amount >= 0
-
     def _l10n_it_edi_get_values(self, pdf_values=None):
         """Add withholding and pension_fund features."""
         template_values = super()._l10n_it_edi_get_values(pdf_values)
@@ -76,13 +70,10 @@ class AccountMove(models.Model):
         # Pension fund must be expressed in the AltriDatiGestionali at the line detail level
         pension_fund_by_line_id = {}
         if pension_fund_values:
-            base_lines = [
-                line._convert_to_tax_base_line_dict()
-                for line in self.line_ids.filtered(lambda line: line.display_type == 'product')
-            ]
-            for base_line in base_lines:
+            aggregated_tax_values = template_values['aggregated_tax_values']
+            for base_line in aggregated_tax_values['base_lines']:
                 for pension_fund in pension_fund_values:
-                    if pension_fund.tax.id in base_line['taxes'].ids:
+                    if pension_fund.tax.id in base_line['tax_ids'].ids:
                         pension_fund_by_line_id[base_line['record'].id] = pension_fund.tax
 
         # Enasarco pension fund must be expressed in the AltriDatiGestionali at the line detail level
