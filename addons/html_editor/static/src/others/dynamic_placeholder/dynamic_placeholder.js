@@ -92,7 +92,12 @@ export class DynamicPlaceholderPlugin extends Plugin {
             return;
         }
 
-        let dynamicPlaceholder = "object." + chain;
+        let dynamicPlaceholder;
+        if (chain.includes("date")) {
+            dynamicPlaceholder = `format_datetime(object.${chain}, tz=object.partner_id.tz)`;
+        } else {
+            dynamicPlaceholder = "object." + chain;
+        }
         dynamicPlaceholder +=
             defaultValue && defaultValue !== "" ? ` or '''${defaultValue}'''` : "";
         const t = document.createElement("T");
