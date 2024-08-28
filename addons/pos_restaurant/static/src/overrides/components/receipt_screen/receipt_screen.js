@@ -50,8 +50,7 @@ patch(ReceiptScreen.prototype, {
     //@override
     get nextScreen() {
         if (this.pos.config.module_pos_restaurant) {
-            const table = this.pos.selectedTable;
-            return { name: "FloorScreen", props: { floor: table ? table.floor_id : null } };
+            return { name: "FloorScreen", props: { floor: this.pos.selectedTable?.floor_id } };
         } else {
             return super.nextScreen;
         }

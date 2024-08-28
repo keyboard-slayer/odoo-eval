@@ -179,7 +179,7 @@
                         </div>
                     </t>
                     <t t-else="">
-                        <CenteredIcon icon="'fa-shopping-cart fa-4x'" text.translate="'Select an order'" class="'bg-100 h-100'"/>
+                        <CenteredIcon icon="'fa-shopping-cart fa-4x'" text.translate="Select an order" class="'bg-100 h-100'"/>
                         <BackButton t-if="ui.isSmall" onClick="() => pos.onClickBackButton()"/>
                     </t>
                 </div>

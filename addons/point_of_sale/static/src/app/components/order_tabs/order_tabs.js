@@ -21,7 +21,6 @@ export class OrderTabs extends Component {
         this.dialog = useService("dialog");
     }
     newFloatingOrder() {
-        this.pos.selectedTable = null;
         this.pos.add_new_order();
         this.pos.showScreen("ProductScreen");
         if (this.env.inDialog) {
@@ -30,7 +29,6 @@ export class OrderTabs extends Component {
     }
     selectFloatingOrder(order) {
         this.pos.set_order(order);
-        this.pos.selectedTable = null;
         this.pos.showScreen("ProductScreen");
         if (this.env.inDialog) {
             this.dialog.closeAll();

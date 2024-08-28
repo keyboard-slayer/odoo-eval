@@ -99,14 +99,8 @@ patch(PosStore.prototype, {
         }, {});
         return Object.values(categories);
     },
-    createNewOrder() {
-        const order = super.createNewOrder(...arguments);
-
-        if (this.config.module_pos_restaurant && this.selectedTable && !order.table_id) {
-            order.update({ table_id: this.selectedTable });
-        }
-
-        return order;
+    get selectedTable() {
+        return this.get_order()?.table_id;
     },
     setActivityListeners() {
         IDLE_TIMER_SETTER = this.setIdleTimer.bind(this);
@@ -183,14 +177,6 @@ patch(PosStore.prototype, {
         return super.closePos(...arguments);
     },
     //@override
-    async afterProcessServerData() {
-        const res = await super.afterProcessServerData(...arguments);
-        if (this.config.module_pos_restaurant) {
-            this.selectedTable = null;
-        }
-        return res;
-    },
-    //@override
     add_new_order() {
         const order = super.add_new_order(...arguments);
         this.addPendingOrder([order.id]);
@@ -250,7 +236,6 @@ patch(PosStore.prototype, {
         return super.getDefaultSearchDetails();
     },
     async setTable(table, orderUuid = null) {
-        this.selectedTable = table;
         try {
             this.loadingOrderState = true;
             await this.syncAllOrders();
@@ -280,7 +265,7 @@ patch(PosStore.prototype, {
                     currentOrder.update({ table_id: table });
                     this.selectedOrderUuid = currentOrder.uuid;
                 } else {
-                    this.add_new_order();
+                    this.add_new_order({ table_id: table });
                 }
             }
         }
@@ -303,7 +288,7 @@ patch(PosStore.prototype, {
                 this.orderToTransferUuid = null;
                 this.showScreen(orders[0].get_screen_data().name);
             } else {
-                this.add_new_order();
+                this.add_new_order({ table_id: table });
                 this.showScreen("ProductScreen");
             }
         }
@@ -320,7 +305,6 @@ patch(PosStore.prototype, {
             }
             Promise.reject(e);
         }
-        this.selectedTable = null;
         const order = this.get_order();
         if (order && !order.isBooked) {
             this.removeOrder(order);

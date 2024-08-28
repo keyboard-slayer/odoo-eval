@@ -47,7 +47,6 @@ patch(Navbar.prototype, {
         return this.pos.get_open_orders().filter((order) => !order.table_id);
     },
     setFloatingOrder(floatingOrder) {
-        this.pos.selectedTable = null;
         this.pos.set_order(floatingOrder);
         this.pos.showScreen("ProductScreen");
     },
