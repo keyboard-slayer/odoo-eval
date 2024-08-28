@@ -15,7 +15,7 @@ class TestEventSale(TestEventSaleCommon):
     def setUpClass(cls):
         super(TestEventSale, cls).setUpClass()
 
-        product = cls.env['product.product'].create({
+        cls.product = cls.env['product.product'].create({
             'name': 'Event',
             'type': 'service',
             'service_tracking': 'event',
@@ -48,7 +48,7 @@ class TestEventSale(TestEventSaleCommon):
 
         # In the sales order I add some sales order lines. i choose event product
         cls.env['sale.order.line'].create({
-            'product_id': product.id,
+            'product_id': cls.product.id,
             'price_unit': 190.50,
             'order_id': cls.sale_order.id,
             'event_id': cls.event_0.id,
@@ -364,6 +364,26 @@ class TestEventSale(TestEventSaleCommon):
 
         with self.assertRaises(ValidationError):
             editor.action_make_registration()
+
+    def test_event_sale_stat_button(self):
+        """ Test that the sale amount displayed on the stat button matches the sale amount shown
+        when the stat button is clicked.
+        """
+        line = self.env['sale.order.line'].create({
+            'product_id': self.product.id,
+            'price_unit': 190.50,
+            'order_id': self.sale_order.id,
+            'event_id': self.event_0.id,
+            'event_ticket_id': self.ticket.id,
+        })
+        self.register_person.event_registration_ids.create({
+            'event_id': self.event_0.id,
+            'name': 'Test User',
+            'email': 'def@example.com',
+            'sale_order_line_id': line.id,
+        })
+        expected_price = sum(line.price_total for line in self.event_0.sale_order_lines_ids)
+        self.assertEqual(self.event_0.sale_price_total, expected_price)
 
     def test_ticket_price_with_currency_conversion(self):
         def _prepare_currency(self, currency_name):
