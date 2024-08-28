@@ -4,6 +4,104 @@ import { uniqueId } from "@web/core/utils/functions";
 import publicWidget from "@web/legacy/js/public/public_widget";
 import { renderToElement } from "@web/core/utils/render";
 
+export const CAROUSEL_SLIDING_CLASS = "o_carousel_sliding";
+
+/**
+ * @param {HTMLElement} carouselEl
+ * @returns {Promise<void>}
+ */
+export async function waitForCarouselToFinishSliding(carouselEl) {
+    if (carouselEl.classList.contains(CAROUSEL_SLIDING_CLASS)) {
+        await new Promise((resolve) => {
+            const handler = () => {
+                carouselEl.removeEventListener("slid.bs.carousel", handler);
+                resolve();
+            };
+            carouselEl.addEventListener("slid.bs.carousel", handler);
+        });
+    }
+}
+
+const CarouselWidget = publicWidget.Widget.extend({
+    selector: "[data-snippet] .carousel",
+    disabledInEditableMode: false,
+
+    /**
+     * @override
+     */
+    async start() {
+        const superResult = await this._super(...arguments);
+        this.$carousel = this.$el.is(".carousel") ? this.$el : this.$(".carousel");
+        const carouselEl = this.$carousel?.[0];
+        if (carouselEl) {
+            const hasInterval = ![undefined, "false", "0"].includes(carouselEl.dataset.bsInterval);
+            if (!hasInterval && carouselEl.dataset.bsRide) {
+                this.previousBsRide = carouselEl.dataset.bsRide;
+                delete carouselEl.dataset.bsRide;
+                await this._destroyCarouselInstance();
+                window.Carousel.getOrCreateInstance(carouselEl);
+            } else if (hasInterval && !carouselEl.dataset.bsRide) {
+                // Re-add bsRide on carousels that don't have it but still have
+                //  a bsInterval.
+                carouselEl.dataset.bsRide = "carousel";
+                await this._destroyCarouselInstance();
+                window.Carousel.getOrCreateInstance(carouselEl);
+            }
+
+            // Mark carousel with class o_carousel_sliding while sliding
+            carouselEl.classList.remove(CAROUSEL_SLIDING_CLASS);
+            carouselEl.addEventListener("slide.bs.carousel", this._markCarouselSliding);
+            carouselEl.addEventListener("slid.bs.carousel", this._unmarkCarouselSliding);
+        }
+
+        return superResult;
+    },
+    /**
+     * @override
+     */
+    async destroy() {
+        const superResult = await this._super(...arguments);
+        const carouselEl = this.$carousel?.[0];
+        if (carouselEl) {
+            if (this.previousBsRide) {
+                carouselEl.dataset.bsRide = this.previousBsRide;
+                delete this.previousBsRide;
+            }
+            await this._destroyCarouselInstance();
+
+            carouselEl.removeEventListener("slide.bs.carousel", this._markCarouselSliding);
+            carouselEl.removeEventListener("slid.bs.carousel", this._unmarkCarouselSliding);
+            carouselEl.classList.remove(CAROUSEL_SLIDING_CLASS);
+        }
+
+        return superResult;
+    },
+
+    //--------------------------------------------------------------------------
+    // Private
+    //--------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    async _destroyCarouselInstance() {
+        const carouselEl = this.$carousel[0];
+        await waitForCarouselToFinishSliding(carouselEl);
+        window.Carousel.getInstance(carouselEl)?.dispose();
+    },
+    /**
+     * @private
+     */
+    _markCarouselSliding(ev) {
+        ev.target.classList.add(CAROUSEL_SLIDING_CLASS);
+    },
+    /**
+     * @private
+     */
+    _unmarkCarouselSliding(ev) {
+        ev.target.classList.remove(CAROUSEL_SLIDING_CLASS);
+    },
+});
 
 const GalleryWidget = publicWidget.Widget.extend({
 
@@ -198,10 +296,12 @@ const GallerySliderWidget = publicWidget.Widget.extend({
     },
 });
 
+publicWidget.registry.__carouselBootstrapUpgradeFix__ = CarouselWidget; // TODO: rename in master
 publicWidget.registry.gallery = GalleryWidget;
 publicWidget.registry.gallerySlider = GallerySliderWidget;
 
 export default {
+    CarouselWidget: CarouselWidget,
     GalleryWidget: GalleryWidget,
     GallerySliderWidget: GallerySliderWidget,
 };
