@@ -1,11 +1,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import base
 
 from odoo import api, models
 from odoo.addons.phone_validation.tools import phone_validation
 
 
-class ResPartner(models.Model):
-    _inherit = ['res.partner']
+class ResPartner(models.Model, base.ResPartner):
 
     @api.onchange('phone', 'country_id', 'company_id')
     def _onchange_phone_validation(self):

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import event
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 
 
-class EventEvent(models.Model):
-    _inherit = ["event.event"]
+class EventEvent(models.Model, event.EventEvent):
 
     track_ids = fields.One2many('event.track', 'event_id', 'Tracks')
     track_count = fields.Integer('Track Count', compute='_compute_track_count')

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website_slides
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
 from odoo.osv import expression
 
 
-class SlideSlidePartner(models.Model):
-    _inherit = ['slide.slide.partner']
+class SlideSlidePartner(models.Model, website_slides.SlideSlidePartner):
 
     user_input_ids = fields.One2many('survey.user_input', 'slide_partner_id', 'Certification attempts')
     survey_scoring_success = fields.Boolean('Certification Succeeded', compute='_compute_survey_scoring_success', store=True)
@@ -43,8 +43,7 @@ class SlideSlidePartner(models.Model):
             certified_channels_domain]
         )).survey_certification_success = True
 
-class SlideSlide(models.Model):
-    _inherit = ['slide.slide']
+class SlideSlide(models.Model, website_slides.SlideSlide):
 
     name = fields.Char(compute='_compute_name', readonly=False, store=True)
     slide_category = fields.Selection(selection_add=[

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from .ir_actions import IrActionsActions
 
@@ -130,7 +131,7 @@ else:
     else:
         _logger.info('Wkhtmltoimage seems to be broken.')
 
-class IrActionsReport(models.Model, IrActionsActions):
+class IrActionsReport(models.Model, base.IrActionsActions):
     _description = 'Report Action'
     _table = 'ir_act_report_xml'
     _order = 'name, id'

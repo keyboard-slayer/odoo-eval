@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 from odoo import fields, models
 
 
@@ -108,8 +109,7 @@ class TestReadGroupTask(models.Model):
     date = fields.Date()
 
 
-class ResPartner(models.Model):
-    _inherit = ['res.partner']
+class ResPartner(models.Model, base.ResPartner):
 
     date = fields.Date()
 

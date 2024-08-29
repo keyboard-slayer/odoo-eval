@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import project
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, AccessError
@@ -6,8 +7,7 @@ from odoo.osv import expression
 from odoo.tools import SQL
 
 
-class ProjectTask(models.Model):
-    _inherit = ["project.task"]
+class ProjectTask(models.Model, project.ProjectTask):
 
     sale_order_id = fields.Many2one('sale.order', 'Sales Order', compute='_compute_sale_order_id', store=True, help="Sales order to which the task is linked.", group_expand="_group_expand_sales_order")
     sale_line_id = fields.Many2one(

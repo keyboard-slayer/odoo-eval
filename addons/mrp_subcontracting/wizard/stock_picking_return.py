@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import stock
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, models, fields
 
 
-class StockReturnPicking(models.TransientModel):
-    _inherit = ['stock.return.picking']
+class StockReturnPicking(models.TransientModel, stock.StockReturnPicking):
 
     subcontract_location_id = fields.Many2one('stock.location', compute='_compute_subcontract_location_id')
 

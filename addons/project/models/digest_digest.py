@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import digest
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, _
 from odoo.exceptions import AccessError
 
 
-class DigestDigest(models.Model):
-    _inherit = ['digest.digest']
+class DigestDigest(models.Model, digest.DigestDigest):
 
     kpi_project_task_opened = fields.Boolean('Open Tasks')
     kpi_project_task_opened_value = fields.Integer(compute='_compute_project_task_opened_value', export_string_translation=False)

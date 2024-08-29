@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import sms, test_base_automation
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from dateutil import relativedelta
@@ -55,9 +56,8 @@ class BaseAutomationLeadTest(models.Model):
         return result
 
 
-class BaseAutomationLeadThreadTest(models.Model):
+class BaseAutomationLeadThreadTest(models.Model, test_base_automation.BaseAutomationLeadTest, sms.MailThread):
     _description = "Automated Rule Test With Thread"
-    _inherit = ['base.automation.lead.test', 'mail.thread']
 
 
 class BaseAutomationLineTest(models.Model):
@@ -119,8 +119,7 @@ class TestBaseAutomationTag(models.Model):
     _name = _description = 'test_base_automation.tag'
     name = fields.Char()
 
-class BaseAutomationLeadThreadTest(models.Model):
-    _inherit = ["base.automation.lead.test", "mail.thread"]
+class BaseAutomationLeadThreadTest(models.Model, test_base_automation.BaseAutomationLeadTest, sms.MailThread):
     _description = "Threaded Lead Test"
 
 

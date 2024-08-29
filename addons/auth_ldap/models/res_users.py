@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.exceptions import AccessDenied
@@ -6,8 +7,7 @@ from odoo.exceptions import AccessDenied
 from odoo import api, models, registry, SUPERUSER_ID
 
 
-class ResUsers(models.Model):
-    _inherit = ["res.users"]
+class ResUsers(models.Model, base.ResUsers):
 
     @classmethod
     def _login(cls, db, credential, user_agent_env):

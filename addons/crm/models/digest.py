@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import digest
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
 
 
-class DigestDigest(models.Model):
-    _inherit = ['digest.digest']
+class DigestDigest(models.Model, digest.DigestDigest):
 
     kpi_crm_lead_created = fields.Boolean('New Leads')
     kpi_crm_lead_created_value = fields.Integer(compute='_compute_kpi_crm_lead_created_value')

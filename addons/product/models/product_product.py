@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import re
@@ -12,10 +13,9 @@ from odoo.tools.image import is_image_size_above
 from odoo.tools.misc import unique
 
 
-class ProductProduct(models.Model):
+class ProductProduct(models.Model, mail.MailThread, mail.MailActivityMixin):
     _description = "Product Variant"
     _inherits = {'product.template': 'product_tmpl_id'}
-    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'is_favorite desc, default_code, name, id'
     _check_company_domain = models.check_company_domain_parent_of
 

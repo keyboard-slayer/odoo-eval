@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import hr
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
 from collections import defaultdict
 
 
-class HrEmployee(models.Model):
-    _inherit = ['hr.employee']
+class HrEmployee(models.Model, hr.HrEmployee):
 
     @api.model_create_multi
     def create(self, vals_list):

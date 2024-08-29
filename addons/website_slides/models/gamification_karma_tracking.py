@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import gamification
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, models
 
 
-class GamificationKarmaTracking(models.Model):
-    _inherit = ['gamification.karma.tracking']
+class GamificationKarmaTracking(models.Model, gamification.GamificationKarmaTracking):
 
     def _get_origin_selection_values(self):
         return (

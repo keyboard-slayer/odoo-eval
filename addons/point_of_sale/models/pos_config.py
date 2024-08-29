@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import point_of_sale
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from datetime import datetime
@@ -12,8 +13,7 @@ from odoo.exceptions import AccessError, ValidationError, UserError
 from odoo.tools import convert, SQL
 
 
-class PosConfig(models.Model):
-    _inherit = ['pos.bus.mixin', 'pos.load.mixin']
+class PosConfig(models.Model, point_of_sale.PosBusMixin, point_of_sale.PosLoadMixin):
     _description = 'Point of Sale Configuration'
     _check_company_auto = True
 

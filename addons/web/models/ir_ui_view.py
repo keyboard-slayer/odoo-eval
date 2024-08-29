@@ -1,10 +1,10 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import base
 
 from odoo import models
 
 
-class IrUiView(models.Model):
-    _inherit = ['ir.ui.view']
+class IrUiView(models.Model, base.IrUiView):
 
     def get_view_info(self):
         _view_info = self._get_view_info()

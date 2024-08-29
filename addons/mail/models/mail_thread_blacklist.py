@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, tools, _
@@ -6,7 +7,7 @@ from odoo.exceptions import AccessError, UserError
 from odoo.tools import SQL
 
 
-class MailThreadBlacklist(models.AbstractModel):
+class MailThreadBlacklist(models.AbstractModel, mail.MailThread):
     """ Mixin that is inherited by all model with opt out. This mixin stores a normalized
     email based on primary_email field.
 
@@ -26,7 +27,6 @@ class MailThreadBlacklist(models.AbstractModel):
 
     Mail Thread capabilities are required for this mixin. """
 
-    _inherit = ['mail.thread']
     _description = 'Mail Blacklist mixin'
     _primary_email = 'email'
 

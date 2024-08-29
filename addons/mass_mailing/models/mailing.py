@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import utm, mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import base64
@@ -37,14 +38,9 @@ DEFAULT_IMAGE_CHUNK_SIZE = 32768
 
 mso_re = re.compile(r"\[if mso\]>[\s\S]*<!\[endif\]")
 
-class MailingMailing(models.Model):
+class MailingMailing(models.Model, mail.MailThread, mail.MailActivityMixin, mail.MailRenderMixin, utm.UtmSourceMixin):
     """ Mass Mailing models the sending of emails to a list of recipients for a mass mailing campaign."""
     _description = 'Mass Mailing'
-    _inherit = ['mail.thread',
-                'mail.activity.mixin',
-                'mail.render.mixin',
-                'utm.source.mixin'
-    ]
     _order = 'calendar_date DESC'
     _rec_name = "subject"
     _systray_view = 'list'

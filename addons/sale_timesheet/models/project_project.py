@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import project
 
 import json
 
@@ -8,8 +9,7 @@ from odoo.tools import SQL
 from odoo.exceptions import ValidationError, UserError
 
 
-class ProjectProject(models.Model):
-    _inherit = ['project.project']
+class ProjectProject(models.Model, project.ProjectProject):
 
     @api.model
     def default_get(self, fields):

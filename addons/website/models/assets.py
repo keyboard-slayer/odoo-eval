@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import web_editor
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import base64
@@ -10,10 +11,9 @@ from werkzeug.urls import url_parse
 from odoo import api, models
 
 
-class WebEditorAssets(models.AbstractModel):
+class WebEditorAssets(models.AbstractModel, web_editor.WebEditorAssets):
     _name = "web_editor.assets"
 
-    _inherit = ['web_editor.assets']
 
     @api.model
     def make_scss_customization(self, url, values):

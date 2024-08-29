@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import base, mail
 
 import itertools
 import logging
@@ -14,8 +15,7 @@ _logger = logging.getLogger(__name__)
 PRICE_CONTEXT_KEYS = ['pricelist', 'quantity', 'uom', 'date']
 
 
-class ProductTemplate(models.Model):
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'image.mixin']
+class ProductTemplate(models.Model, mail.MailThread, mail.MailActivityMixin, base.ImageMixin):
     _description = "Product"
     _order = "is_favorite desc, name"
     _check_company_auto = True

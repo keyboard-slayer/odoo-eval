@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
 
 
-class ForumTag(models.Model):
+class ForumTag(models.Model, portal.MailThread, website.WebsiteSearchableMixin, website.WebsiteSeoMetadata):
     _description = "Forum Tag"
-    _inherit = [
-        'mail.thread',
-        'website.searchable.mixin',
-        'website.seo.metadata',
-    ]
 
     name = fields.Char('Name', required=True)
     color = fields.Integer('Color')

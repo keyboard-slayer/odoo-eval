@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import event
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models
 
 
-class EventEvent(models.Model):
-    _inherit = ["event.event"]
+class EventEvent(models.Model, event.EventEvent):
 
     def action_mass_mailing_attendees(self):
         # Minimal override: set form view being the one mixing sms and mail (not prioritized one)

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import survey
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, api
 from odoo.osv import expression
 
 
-class SurveyUserInput(models.Model):
+class SurveyUserInput(models.Model, survey.SurveyUserInput):
     _name = "survey.user_input"
 
-    _inherit = ['survey.user_input']
 
     slide_id = fields.Many2one('slide.slide', 'Related course slide',
         help="The related course slide when there is no membership information")

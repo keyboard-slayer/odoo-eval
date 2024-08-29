@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mass_mailing
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -10,8 +11,7 @@ from odoo.osv import expression
 _logger = logging.getLogger(__name__)
 
 
-class MailingMailing(models.Model):
-    _inherit = ['mailing.mailing']
+class MailingMailing(models.Model, mass_mailing.MailingMailing):
 
     @api.model
     def default_get(self, fields):

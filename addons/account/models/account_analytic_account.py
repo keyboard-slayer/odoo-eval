@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import analytic
 
 from odoo import api, fields, models, _
 
 
-class AccountAnalyticAccount(models.Model):
-    _inherit = ['account.analytic.account']
+class AccountAnalyticAccount(models.Model, analytic.AccountAnalyticAccount):
 
     invoice_count = fields.Integer(
         "Invoice Count",

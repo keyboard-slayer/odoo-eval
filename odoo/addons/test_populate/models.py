@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import test_populate
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models, fields, api
@@ -73,8 +74,7 @@ class TestPopulateCategory(models.Model):
             ('name', populate.cartesian(['Cat1', 'Cat2', 'Cat3'])),
         ]
 
-class TestPopulateInherit(models.Model):
-    _inherit = ['test.populate']
+class TestPopulateInherit(models.Model, test_populate.TestPopulate):
 
     _description = 'Test populate inherit'
 

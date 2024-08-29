@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mass_mailing
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from markupsafe import Markup
@@ -6,8 +7,7 @@ from odoo import api, fields, models, _, tools
 from odoo.osv import expression
 
 
-class MailingMailing(models.Model):
-    _inherit = ['mailing.mailing']
+class MailingMailing(models.Model, mass_mailing.MailingMailing):
 
     sale_quotation_count = fields.Integer('Quotation Count', compute='_compute_sale_quotation_count')
     sale_invoiced_amount = fields.Integer('Invoiced Amount', compute='_compute_sale_invoiced_amount')

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import re
 import logging
@@ -19,10 +20,9 @@ _logger = logging.getLogger(__name__)
 re_background_image = re.compile(r"(background-image\s*:\s*url\(\s*['\"]?\s*)([^)'\"]+)")
 
 
-class IrQweb(models.AbstractModel):
+class IrQweb(models.AbstractModel, base.IrQweb):
     """ IrQWeb object for rendering stuff in the website context """
 
-    _inherit = ['ir.qweb']
 
     URL_ATTRS = {
         'form': 'action',

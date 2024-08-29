@@ -1,4 +1,5 @@
 from ast import literal_eval
+from odoo.addons import mail, portal
 
 from odoo import api, Command, fields, models, _
 from odoo.exceptions import UserError, ValidationError
@@ -26,14 +27,9 @@ class AccountJournalGroup(models.Model):
         ('uniq_name', 'unique(company_id, name)', 'A Ledger group name must be unique per company.'),
     ]
 
-class AccountJournal(models.Model):
+class AccountJournal(models.Model, portal.PortalMixin, mail.MailAliasMixinOptional, portal.MailThread, mail.MailActivityMixin):
     _description = "Journal"
     _order = 'sequence, type, code'
-    _inherit = ['portal.mixin',
-                'mail.alias.mixin.optional',
-                'mail.thread',
-                'mail.activity.mixin',
-               ]
     _check_company_auto = True
     _check_company_domain = models.check_company_domain_parent_of
     _rec_names_search = ['name', 'code']

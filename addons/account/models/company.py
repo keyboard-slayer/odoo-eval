@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base, portal
 
 from collections import defaultdict
 from datetime import timedelta, datetime, date
@@ -49,8 +50,7 @@ LOCK_DATE_FIELDS = [
 ]
 
 
-class ResCompany(models.Model):
-    _inherit = ["res.company", "mail.thread"]
+class ResCompany(models.Model, base.ResCompany, portal.MailThread):
 
     fiscalyear_last_day = fields.Integer(default=31, required=True)
     fiscalyear_last_month = fields.Selection(MONTH_SELECTION, default='12', required=True)

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import calendar, google_calendar
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import re
@@ -11,8 +12,7 @@ from odoo.addons.google_calendar.utils.google_calendar import GoogleCalendarServ
 
 _logger = logging.getLogger(__name__)
 
-class CalendarRecurrence(models.Model):
-    _inherit = ['calendar.recurrence', 'google.calendar.sync']
+class CalendarRecurrence(models.Model, calendar.CalendarRecurrence, google_calendar.GoogleCalendarSync):
 
 
     def _apply_recurrence(self, specific_values_creation=None, no_send_edit=False, generic_values_creation=None):

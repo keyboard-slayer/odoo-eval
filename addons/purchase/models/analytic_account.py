@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import analytic
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 
 
-class AccountAnalyticAccount(models.Model):
-    _inherit = ['account.analytic.account']
+class AccountAnalyticAccount(models.Model, analytic.AccountAnalyticAccount):
 
     purchase_order_count = fields.Integer("Purchase Order Count", compute='_compute_purchase_order_count')
 

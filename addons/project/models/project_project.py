@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import rating, mail, portal
 
 import ast
 import json
@@ -14,16 +15,8 @@ from .project_update import STATUS_COLOR
 from .project_task import CLOSED_STATES
 
 
-class ProjectProject(models.Model):
+class ProjectProject(models.Model, portal.PortalMixin, mail.MailAliasMixin, rating.RatingParentMixin, rating.MailThread, mail.MailActivityMixin, mail.MailTrackingDurationMixin):
     _description = "Project"
-    _inherit = [
-        'portal.mixin',
-        'mail.alias.mixin',
-        'rating.parent.mixin',
-        'mail.thread',
-        'mail.activity.mixin',
-        'mail.tracking.duration.mixin',
-    ]
     _order = "sequence, name, id"
     _rating_satisfaction_days = 30  # takes 30 days by default
     _systray_view = 'activity'

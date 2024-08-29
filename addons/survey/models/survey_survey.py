@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import random
@@ -13,13 +14,12 @@ from odoo.osv import expression
 from odoo.tools import is_html_empty
 
 
-class SurveySurvey(models.Model):
+class SurveySurvey(models.Model, mail.MailThread, mail.MailActivityMixin):
     """ Settings for a multi-page/multi-question survey. Each survey can have one or more attached pages
     and each page can display one or more questions. """
     _description = 'Survey'
     _order = 'create_date DESC'
     _rec_name = 'title'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     @api.model
     def _get_default_access_token(self):

@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import calendar, phone_validation, mail
 
 from collections import defaultdict
 
@@ -9,14 +10,8 @@ from odoo.exceptions import UserError
 from odoo.osv import expression
 
 
-class HrCandidate(models.Model):
+class HrCandidate(models.Model, mail.MailThreadCc, mail.MailThreadMainAttachment, mail.MailThreadBlacklist, phone_validation.MailThreadPhone, calendar.MailActivityMixin):
     _description = "Candidate"
-    _inherit = ['mail.thread.cc',
-               'mail.thread.main.attachment',
-               'mail.thread.blacklist',
-               'mail.thread.phone',
-               'mail.activity.mixin',
-    ]
     _order = "priority desc, availability asc, id desc"
     _mailing_enabled = True
     _primary_email = 'email_from'

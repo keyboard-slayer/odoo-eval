@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import mail, portal
 
 import base64
 import json
@@ -18,9 +19,8 @@ from odoo.addons.l10n_in_ewaybill_stock.tools.ewaybill_api import EWayBillApi, E
 _logger = logging.getLogger(__name__)
 
 
-class L10nInEwaybill(models.Model):
+class L10nInEwaybill(models.Model, portal.PortalMixin, portal.MailThread, mail.MailActivityMixin):
     _description = "e-Waybill"
-    _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
     _check_company_auto = True
 
     # Ewaybill details generated from the API

@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import base
 
 from markupsafe import Markup
 
@@ -6,9 +7,8 @@ from odoo import api, models, fields, _
 from odoo.addons.mail.tools.discuss import Store
 
 
-class ResPartner(models.Model):
+class ResPartner(models.Model, base.ResPartner):
     """Update of res.partner class to take into account the livechat username."""
-    _inherit = ['res.partner']
 
     user_livechat_username = fields.Char(compute='_compute_user_livechat_username')
 

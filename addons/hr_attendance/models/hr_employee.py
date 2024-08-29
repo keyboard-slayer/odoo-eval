@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import hr
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import pytz
@@ -8,8 +9,7 @@ from odoo import models, fields, api, exceptions, _
 from odoo.tools import float_round
 
 
-class HrEmployee(models.Model):
-    _inherit = ["hr.employee"]
+class HrEmployee(models.Model, hr.HrEmployee):
 
     attendance_manager_id = fields.Many2one(
         'res.users', store=True, readonly=False,

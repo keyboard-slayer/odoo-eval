@@ -1,11 +1,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import account
 
 from odoo import models
 from odoo.addons.account.models.account_journal_dashboard import group_by_journal
 
 
-class AccountJournal(models.Model):
-    _inherit = ["account.journal"]
+class AccountJournal(models.Model, account.AccountJournal):
 
     def _prepare_expense_sheet_data_domain(self):
         return [

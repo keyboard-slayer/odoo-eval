@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website, base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -346,8 +347,7 @@ class ThemeUtils(models.AbstractModel):
         self._toggle_view(xml_id, False)
 
 
-class IrUiView(models.Model):
-    _inherit = ['ir.ui.view']
+class IrUiView(models.Model, base.IrUiView):
 
     theme_template_id = fields.Many2one('theme.ir.ui.view', copy=False)
 
@@ -373,26 +373,22 @@ class IrUiView(models.Model):
         return res
 
 
-class IrAsset(models.Model):
-    _inherit = ['ir.asset']
+class IrAsset(models.Model, base.IrAsset):
 
     theme_template_id = fields.Many2one('theme.ir.asset', copy=False)
 
 
-class IrAttachment(models.Model):
-    _inherit = ['ir.attachment']
+class IrAttachment(models.Model, base.IrAttachment):
 
     key = fields.Char(copy=False)
     theme_template_id = fields.Many2one('theme.ir.attachment', copy=False)
 
 
-class WebsiteMenu(models.Model):
-    _inherit = ['website.menu']
+class WebsiteMenu(models.Model, website.WebsiteMenu):
 
     theme_template_id = fields.Many2one('theme.website.menu', copy=False)
 
 
-class WebsitePage(models.Model):
-    _inherit = ['website.page']
+class WebsitePage(models.Model, website.WebsitePage):
 
     theme_template_id = fields.Many2one('theme.website.page', copy=False)

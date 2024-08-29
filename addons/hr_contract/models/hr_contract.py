@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import threading
@@ -15,9 +16,8 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class HrContract(models.Model):
+class HrContract(models.Model, mail.MailThread, mail.MailActivityMixin):
     _description = 'Contract'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
     _mail_post_access = 'read'
 
     name = fields.Char('Contract Reference', required=True)

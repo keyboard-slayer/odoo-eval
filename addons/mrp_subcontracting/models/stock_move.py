@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import stock
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
@@ -9,8 +10,7 @@ from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 from odoo.tools.misc import OrderedSet
 
 
-class StockMove(models.Model):
-    _inherit = ['stock.move']
+class StockMove(models.Model, stock.StockMove):
 
     is_subcontract = fields.Boolean('The move is a subcontract receipt')
     show_subcontracting_details_visible = fields.Boolean(

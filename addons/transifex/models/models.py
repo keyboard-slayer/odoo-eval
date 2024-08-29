@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models
 
-class BaseModel(models.AbstractModel):
+class BaseModel(models.AbstractModel, base.Model):
     _name = "base"
 
-    _inherit = ['base']
 
     def get_field_translations(self, field_name, langs=None):
         """ get model/model_term translations for records with transifex url

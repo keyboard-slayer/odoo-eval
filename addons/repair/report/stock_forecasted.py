@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import stock
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models
 
 
-class StockForecastedProductProduct(models.AbstractModel):
+class StockForecastedProductProduct(models.AbstractModel, stock.StockForecastedProductProduct):
     _name = "stock.forecasted_product_product"
 
-    _inherit = ['stock.forecasted_product_product']
 
     def _get_reservation_data(self, move):
         if move.repair_id and move.repair_line_type:

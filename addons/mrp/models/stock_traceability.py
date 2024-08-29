@@ -1,7 +1,7 @@
 from odoo import models, api
+from odoo.addons import stock
 
-class StockTraceabilityReport(models.TransientModel):
-    _inherit = ['stock.traceability.report']
+class StockTraceabilityReport(models.TransientModel, stock.StockTraceabilityReport):
 
     @api.model
     def _get_reference(self, move_line):

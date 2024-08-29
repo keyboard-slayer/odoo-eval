@@ -1,4 +1,5 @@
 from odoo import api, Command, fields, models, _
+from odoo.addons import account
 from odoo.exceptions import UserError, ValidationError
 
 from xmlrpc.client import MAXINT
@@ -832,7 +833,6 @@ class AccountBankStatementLine(models.Model):
 
 # For optimization purpose, creating the reverse relation of m2o in _inherits saves
 # a lot of SQL queries
-class AccountMove(models.Model):
-    _inherit = ['account.move']
+class AccountMove(models.Model, account.AccountMove):
 
     statement_line_ids = fields.One2many('account.bank.statement.line', 'move_id', string='Statements')

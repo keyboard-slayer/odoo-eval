@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models, tools, _
 from odoo.addons.mail.tools.alias_error import AliasError
 
 
-class BaseModel(models.AbstractModel):
+class BaseModel(models.AbstractModel, base.Model):
     _name = "base"
 
-    _inherit = ['base']
 
     def _alias_get_error(self, message, message_dict, alias):
         if alias.alias_contact == 'employees':

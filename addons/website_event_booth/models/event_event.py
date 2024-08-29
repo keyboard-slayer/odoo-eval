@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import event
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 
 
-class EventEvent(models.Model):
-    _inherit = ['event.event']
+class EventEvent(models.Model, event.EventEvent):
 
     exhibition_map = fields.Image(string='Exhibition Map', max_width=1024, max_height=1024)
     # frontend menu management

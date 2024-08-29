@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import crm
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
 
 
-class CrmLead2opportunityPartnerMass(models.TransientModel):
+class CrmLead2opportunityPartnerMass(models.TransientModel, crm.CrmLead2opportunityPartner):
     _description = 'Convert Lead to Opportunity (in mass)'
-    _inherit = ['crm.lead2opportunity.partner']
 
     lead_id = fields.Many2one(required=False)
     lead_tomerge_ids = fields.Many2many(

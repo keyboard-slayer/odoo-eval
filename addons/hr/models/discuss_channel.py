@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
-class DiscussChannel(models.Model):
-    _inherit = ['discuss.channel']
+class DiscussChannel(models.Model, mail.DiscussChannel):
 
     subscription_department_ids = fields.Many2many(
         'hr.department', string='HR Departments',

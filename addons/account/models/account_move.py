@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import account, product, mail, portal
 
 import calendar
 from collections import defaultdict
@@ -66,8 +67,7 @@ TYPE_REVERSE_MAP = {
 EMPTY = object()
 
 
-class AccountMove(models.Model):
-    _inherit = ['portal.mixin', 'mail.thread.main.attachment', 'mail.activity.mixin', 'sequence.mixin', 'product.catalog.mixin']
+class AccountMove(models.Model, portal.PortalMixin, mail.MailThreadMainAttachment, mail.MailActivityMixin, account.SequenceMixin, product.ProductCatalogMixin):
     _description = "Journal Entry"
     _order = 'date desc, name desc, invoice_date desc, id desc'
     _mail_post_access = 'read'

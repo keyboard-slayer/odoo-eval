@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from odoo import api, models, _
 from odoo.tools import format_list
 
 
-class BasePartnerMergeAutomaticWizard(models.TransientModel):
+class BasePartnerMergeAutomaticWizard(models.TransientModel, base.BasePartnerMergeAutomaticWizard):
 
-    _inherit = ['base.partner.merge.automatic.wizard']
 
     def _log_merge_operation(self, src_partners, dst_partner):
         super()._log_merge_operation(src_partners, dst_partner)

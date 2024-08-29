@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import calendar, google_calendar
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import pytz
@@ -11,8 +12,7 @@ from odoo.exceptions import ValidationError
 
 from odoo.addons.google_calendar.utils.google_calendar import GoogleCalendarService
 
-class CalendarEvent(models.Model):
-    _inherit = ['calendar.event', 'google.calendar.sync']
+class CalendarEvent(models.Model, calendar.CalendarEvent, google_calendar.GoogleCalendarSync):
 
     MEET_ROUTE = 'meet.google.com'
 

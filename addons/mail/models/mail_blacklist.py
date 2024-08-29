@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import UserError
 
 
-class MailBlacklist(models.Model):
+class MailBlacklist(models.Model, mail.MailThread):
     """ Model of blacklisted email addresses to stop sending emails."""
-    _inherit = ['mail.thread']
     _description = 'Mail Blacklist'
     _rec_name = 'email'
 

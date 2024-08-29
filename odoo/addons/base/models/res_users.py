@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from .ir_module import IrModuleCategory
 
@@ -178,7 +179,7 @@ def check_identity(fn):
 # Basic res.groups and res.users
 #----------------------------------------------------------
 
-class ResGroups(models.Model):
+class ResGroups(models.Model, base.ResGroups):
     _description = "Access Groups"
     _rec_name = 'full_name'
     _order = 'name'
@@ -316,7 +317,7 @@ class ResUsersLog(models.Model):
         _logger.info("GC'd %d user log entries", self._cr.rowcount)
 
 
-class ResUsers(models.Model):
+class ResUsers(models.Model, base.ResUsers):
     """ User class. A res.users record models an OpenERP user and is different
         from an employee.
 
@@ -1428,7 +1429,7 @@ class ResUsers(models.Model):
 # to the implied groups (transitively).
 #
 
-class ResGroups(ResGroups):
+class ResGroups(models.Model, base.ResGroups):
 
     implied_ids = fields.Many2many('res.groups', 'res_groups_implied_rel', 'gid', 'hid',
         string='Inherits', help='Users of this group automatically inherit those groups')
@@ -1543,7 +1544,7 @@ class ResGroups(ResGroups):
         return SetDefinitions(data)
 
 
-class ResUsers(ResUsers):
+class ResUsers(models.Model, base.ResUsers):
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -1598,7 +1599,7 @@ class ResUsers(ResUsers):
 #       ID is in 'groups_id' and ID is maximal in the set {ID1, ..., IDk}
 #
 
-class ResGroups(ResGroups):
+class ResGroups(models.Model, base.ResGroups):
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -1817,7 +1818,7 @@ class ResGroups(ResGroups):
         return res
 
 
-class IrModuleCategory(IrModuleCategory):
+class IrModuleCategory(models.Model, base.IrModuleCategory):
 
     def write(self, values):
         res = super().write(values)
@@ -1831,7 +1832,7 @@ class IrModuleCategory(IrModuleCategory):
         return res
 
 
-class ResUsers(ResUsers):
+class ResUsers(models.Model, base.ResUsers):
 
     user_group_warning = fields.Text(string="User Group Warning", compute="_compute_user_group_warning")
 
@@ -2207,7 +2208,7 @@ KEY_CRYPT_CONTEXT = CryptContext(
     # attacks on API keys isn't much of a concern
     ['pbkdf2_sha512'], pbkdf2_sha512__rounds=6000,
 )
-class ResUsers(ResUsers):
+class ResUsers(models.Model, base.ResUsers):
 
     api_key_ids = fields.One2many('res.users.apikeys', 'user_id', string="API Keys")
 

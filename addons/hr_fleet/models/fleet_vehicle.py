@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
+from odoo.addons import fleet
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
-class FleetVehicle(models.Model):
-    _inherit = ['fleet.vehicle']
+class FleetVehicle(models.Model, fleet.FleetVehicle):
 
     mobility_card = fields.Char(compute='_compute_mobility_card', store=True)
     driver_employee_id = fields.Many2one(

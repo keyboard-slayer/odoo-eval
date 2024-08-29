@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import stock
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models, fields, api, _
 
 
-class StockPicking(models.Model):
-    _inherit = ['stock.picking']
+class StockPicking(models.Model, stock.StockPicking):
 
     subcontracting_source_purchase_count = fields.Integer(
         "Number of subcontracting PO Source", compute='_compute_subcontracting_source_purchase_count',

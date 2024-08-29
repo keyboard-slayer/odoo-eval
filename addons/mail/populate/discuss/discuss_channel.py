@@ -1,11 +1,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import mail
 
 from odoo import models
 from odoo.tools import populate
 
 
-class DiscussChannel(models.Model):
-    _inherit = ["discuss.channel"]
+class DiscussChannel(models.Model, mail.DiscussChannel):
     _populate_sizes = {"small": 150, "medium": 1000, "large": 10000}
 
     def _populate_factories(self):

@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import bus, mail
 
 import base64
 from collections import defaultdict
@@ -24,11 +25,10 @@ group_avatar = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 530.06 53
 </svg>'''
 
 
-class DiscussChannel(models.Model):
+class DiscussChannel(models.Model, mail.MailThread, bus.BusListenerMixin):
     _description = 'Discussion Channel'
     _mail_flat_thread = False
     _mail_post_access = 'read'
-    _inherit = ["mail.thread", "bus.listener.mixin"]
 
     MAX_BOUNCE_LIMIT = 10
 

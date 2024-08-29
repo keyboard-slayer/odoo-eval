@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import product, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _, Command
@@ -10,10 +11,9 @@ from odoo.tools.misc import clean_context
 from collections import defaultdict
 
 
-class MrpBom(models.Model):
+class MrpBom(models.Model, portal.MailThread, product.ProductCatalogMixin):
     """ Defines bills of material for a product or a product template """
     _description = 'Bill of Material'
-    _inherit = ['mail.thread', 'product.catalog.mixin']
     _rec_name = 'product_tmpl_id'
     _rec_names_search = ['product_tmpl_id', 'code']
     _order = "sequence, id"

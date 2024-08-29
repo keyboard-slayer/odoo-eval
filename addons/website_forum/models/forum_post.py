@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -15,13 +16,8 @@ from odoo.tools.json import scriptsafe as json_safe
 _logger = logging.getLogger(__name__)
 
 
-class ForumPost(models.Model):
+class ForumPost(models.Model, portal.MailThread, website.WebsiteSeoMetadata, website.WebsiteSearchableMixin):
     _description = 'Forum Post'
-    _inherit = [
-        'mail.thread',
-        'website.seo.metadata',
-        'website.searchable.mixin',
-    ]
     _order = "is_correct DESC, vote_count DESC, last_activity_date DESC"
 
     name = fields.Char('Title')

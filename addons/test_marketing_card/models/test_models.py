@@ -1,11 +1,11 @@
 
+from odoo.addons import mass_mailing
 from odoo import fields, models
 
 
-class CardTestEventPerformance(models.Model):
+class CardTestEventPerformance(models.Model, mass_mailing.MailThread):
     """ Model that may be used in marketing cards """
     _description = 'Marketing Card Test Event Performance'
-    _inherit = ['mail.thread']
 
     name = fields.Char()
     event_id = fields.Many2one('card.test.event')

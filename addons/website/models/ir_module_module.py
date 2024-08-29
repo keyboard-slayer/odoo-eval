@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -14,9 +15,8 @@ from odoo.tools import escape_psql, split_every, SQL
 _logger = logging.getLogger(__name__)
 
 
-class IrModuleModule(models.Model):
+class IrModuleModule(models.Model, base.IrModuleModule):
     _description = 'Module'
-    _inherit = 'ir.module.module'
 
     # The order is important because of dependencies (page need view, menu need page)
     _theme_model_names = OrderedDict([

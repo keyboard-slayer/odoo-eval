@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import hr
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models, fields, _
 
-class HrEmployee(models.Model):
-    _inherit = ['hr.employee']
+class HrEmployee(models.Model, hr.HrEmployee):
 
     has_work_entries = fields.Boolean(compute='_compute_has_work_entries', groups="base.group_system,hr.group_hr_user")
 

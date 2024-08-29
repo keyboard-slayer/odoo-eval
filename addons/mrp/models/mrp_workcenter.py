@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import resource
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from dateutil import relativedelta
@@ -13,10 +14,9 @@ from odoo.addons.resource.models.utils import make_aware, Intervals
 from odoo.tools.float_utils import float_compare
 
 
-class MrpWorkcenter(models.Model):
+class MrpWorkcenter(models.Model, resource.ResourceMixin):
     _description = 'Work Center'
     _order = "sequence, id"
-    _inherit = ['resource.mixin']
     _check_company_auto = True
 
     # resource

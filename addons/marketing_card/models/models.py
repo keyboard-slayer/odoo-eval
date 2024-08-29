@@ -1,10 +1,10 @@
 from odoo import api, models
+from odoo.addons import base
 
 
-class BaseModel(models.AbstractModel):
+class BaseModel(models.AbstractModel, base.Model):
     _name = "base"
 
-    _inherit = ['base']
 
     @api.model
     def _marketing_card_allowed_field_paths(self) -> list[str]:

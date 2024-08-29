@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import hr, mail
 
 import ast
 from collections import defaultdict
@@ -6,8 +7,7 @@ from collections import defaultdict
 from odoo import api, fields, models, SUPERUSER_ID, _
 from odoo.tools import SQL
 
-class HrJob(models.Model):
-    _inherit = ["mail.alias.mixin", "hr.job"]
+class HrJob(models.Model, mail.MailAliasMixin, hr.HrJob):
     _order = "sequence, name asc"
 
     @api.model

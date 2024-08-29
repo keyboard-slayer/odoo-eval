@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import mail, portal
 
 import json
 import math
@@ -528,8 +529,7 @@ class StockPickingType(models.Model):
         return graph_data
 
 
-class StockPicking(models.Model):
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+class StockPicking(models.Model, portal.MailThread, mail.MailActivityMixin):
     _description = "Transfer"
     _order = "priority desc, scheduled_date asc, id desc"
 

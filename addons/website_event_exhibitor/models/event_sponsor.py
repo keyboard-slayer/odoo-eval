@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website, mail, website_jitsi, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from datetime import datetime, timedelta
@@ -10,17 +11,11 @@ from odoo.tools import is_html_empty
 from odoo.tools.translate import html_translate
 
 
-class EventSponsor(models.Model):
+class EventSponsor(models.Model, portal.MailThread, mail.MailActivityMixin, website.WebsitePublishedMixin, website_jitsi.ChatRoomMixin):
     _description = 'Event Sponsor'
     _order = "sequence, sponsor_type_id"
     # _order = 'sponsor_type_id, sequence' TDE FIXME
     _rec_name = 'name'
-    _inherit = [
-        'mail.thread',
-        'mail.activity.mixin',
-        'website.published.mixin',
-        'chat.room.mixin'
-    ]
 
     def _default_sponsor_type_id(self):
         return self.env['event.sponsor.type'].search([], order="sequence desc", limit=1).id

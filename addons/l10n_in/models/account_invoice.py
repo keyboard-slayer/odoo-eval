@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import account
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import base64
 import re
@@ -8,8 +9,7 @@ from odoo.exceptions import ValidationError, RedirectWarning, UserError
 from odoo.tools.image import image_data_uri
 
 
-class AccountMove(models.Model):
-    _inherit = ["account.move"]
+class AccountMove(models.Model, account.AccountMove):
 
     l10n_in_gst_treatment = fields.Selection([
             ('regular', 'Registered Business - Regular'),

@@ -1,13 +1,13 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import mail
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools.misc import formatLang
 
 
-class L10nItEdiDoiDeclarationOfIntent(models.Model):
+class L10nItEdiDoiDeclarationOfIntent(models.Model, mail.MailThreadMainAttachment, mail.MailActivityMixin):
     _name = "l10n_it_edi_doi.declaration_of_intent"
-    _inherit = ['mail.thread.main.attachment', 'mail.activity.mixin']
     _description = "Declaration of Intent"
     _order = 'protocol_number_part1, protocol_number_part2'
 

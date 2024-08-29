@@ -1,8 +1,8 @@
 from odoo import models
+from odoo.addons import account
 
 
-class AccountPayment(models.Model):
-    _inherit = ["account.payment"]
+class AccountPayment(models.Model, account.AccountPayment):
 
     def action_l10n_in_withholding_entries(self):
         self.ensure_one()

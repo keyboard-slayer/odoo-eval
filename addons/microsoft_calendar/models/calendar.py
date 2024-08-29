@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import calendar, microsoft_calendar
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -34,8 +35,7 @@ MAX_RECURRENT_EVENT = 720
 
 _logger = logging.getLogger(__name__)
 
-class CalendarEvent(models.Model):
-    _inherit = ['calendar.event', 'microsoft.calendar.sync']
+class CalendarEvent(models.Model, calendar.CalendarEvent, microsoft_calendar.MicrosoftCalendarSync):
 
     microsoft_recurrence_master_id = fields.Char('Microsoft Recurrence Master Id')
 

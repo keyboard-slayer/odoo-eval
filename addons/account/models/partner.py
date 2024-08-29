@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
@@ -330,8 +331,7 @@ class AccountFiscalPositionAccount(models.Model):
     ]
 
 
-class ResPartner(models.Model):
-    _inherit = ['res.partner']
+class ResPartner(models.Model, base.ResPartner):
 
     fiscal_country_codes = fields.Char(compute='_compute_fiscal_country_codes')
 

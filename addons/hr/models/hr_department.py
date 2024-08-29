@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
-class HrDepartment(models.Model):
+class HrDepartment(models.Model, mail.MailThread):
     _description = "Department"
-    _inherit = ['mail.thread']
     _order = "name"
     _rec_name = 'complete_name'
     _parent_store = True

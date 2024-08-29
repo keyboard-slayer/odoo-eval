@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
@@ -6,9 +7,8 @@ from odoo.exceptions import ValidationError
 from odoo.tools import float_round
 
 
-class MrpRoutingWorkcenter(models.Model):
+class MrpRoutingWorkcenter(models.Model, portal.MailThread, mail.MailActivityMixin):
     _description = 'Work Center Usage'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     _order = 'bom_id, sequence, id'
     _check_company_auto = True

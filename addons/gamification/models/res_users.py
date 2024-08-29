@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, api, fields, models
 from odoo.tools import SQL
 
 
-class ResUsers(models.Model):
-    _inherit = ['res.users']
+class ResUsers(models.Model, base.ResUsers):
 
     karma = fields.Integer('Karma', compute='_compute_karma', store=True, readonly=False)
     karma_tracking_ids = fields.One2many('gamification.karma.tracking', 'user_id', string='Karma Changes', groups="base.group_system")

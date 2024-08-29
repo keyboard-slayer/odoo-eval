@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website, base
 
 from odoo import api, fields, models
 from odoo.tools.translate import html_translate
 
 
-class ResPartner(models.Model):
-    _inherit = ['res.partner', 'website.seo.metadata']
+class ResPartner(models.Model, base.ResPartner, website.WebsiteSeoMetadata):
 
     website_description = fields.Html('Website Partner Full Description', strip_style=True, sanitize_overridable=True, translate=html_translate)
     website_short_description = fields.Text('Website Partner Short Description', translate=True)

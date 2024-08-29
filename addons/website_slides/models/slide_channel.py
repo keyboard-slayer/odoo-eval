@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website, rating, base, mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import ast
@@ -270,18 +271,9 @@ class SlideChannelPartner(models.Model):
         expired_invitations.unlink()
 
 
-class SlideChannel(models.Model):
+class SlideChannel(models.Model, rating.RatingMixin, mail.MailActivityMixin, base.ImageMixin, website.WebsiteCoverPropertiesMixin, website.WebsiteSeoMetadata, website.WebsitePublishedMultiMixin, website.WebsiteSearchableMixin):
     """ A channel is a container of slides. """
     _description = 'Course'
-    _inherit = [
-        'rating.mixin',
-        'mail.activity.mixin',
-        'image.mixin',
-        'website.cover_properties.mixin',
-        'website.seo.metadata',
-        'website.published.multi.mixin',
-        'website.searchable.mixin',
-    ]
     _order = 'sequence, id'
     _partner_unfollow_enabled = True
 

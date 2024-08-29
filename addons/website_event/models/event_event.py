@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import event, website
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from ast import literal_eval
@@ -16,14 +17,7 @@ from odoo.tools.misc import get_lang, format_date
 GOOGLE_CALENDAR_URL = 'https://www.google.com/calendar/render?'
 
 
-class EventEvent(models.Model):
-    _inherit = [
-        'event.event',
-        'website.seo.metadata',
-        'website.published.multi.mixin',
-        'website.cover_properties.mixin',
-        'website.searchable.mixin',
-    ]
+class EventEvent(models.Model, event.EventEvent, website.WebsiteSeoMetadata, website.WebsitePublishedMultiMixin, website.WebsiteCoverPropertiesMixin, website.WebsiteSearchableMixin):
 
     def _default_cover_properties(self):
         res = super()._default_cover_properties()

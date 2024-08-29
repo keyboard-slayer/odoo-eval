@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 """
@@ -34,10 +35,9 @@ REMOTE_CONNECTION_TIMEOUT = 2.5
 logger = logging.getLogger(__name__)
 
 
-class IrQweb(models.AbstractModel):
+class IrQweb(models.AbstractModel, base.IrQweb):
     """ IrQWeb object for rendering editor stuff
     """
-    _inherit = ['ir.qweb']
 
     def _compile_node(self, el, compile_context, indent):
         snippet_key = compile_context.get('snippet-key')
@@ -151,9 +151,8 @@ class IrQweb(models.AbstractModel):
 #------------------------------------------------------
 
 
-class IrQwebField(models.AbstractModel):
+class IrQwebField(models.AbstractModel, base.IrQwebField):
     _description = 'Qweb Field'
-    _inherit = ['ir.qweb.field']
 
     @api.model
     def attributes(self, record, field_name, options, values):
@@ -184,9 +183,8 @@ class IrQwebField(models.AbstractModel):
         return self.value_from_string(element.text_content().strip())
 
 
-class IrQwebFieldInteger(models.AbstractModel):
+class IrQwebFieldInteger(models.AbstractModel, base.IrQwebFieldInteger):
     _description = 'Qweb Field Integer'
-    _inherit = ['ir.qweb.field.integer']
 
     @api.model
     def from_html(self, model, field, element):
@@ -195,9 +193,8 @@ class IrQwebFieldInteger(models.AbstractModel):
         return int(value.replace(lang.thousands_sep or '', ''))
 
 
-class IrQwebFieldFloat(models.AbstractModel):
+class IrQwebFieldFloat(models.AbstractModel, base.IrQwebFieldFloat):
     _description = 'Qweb Field Float'
-    _inherit = ['ir.qweb.field.float']
 
     @api.model
     def from_html(self, model, field, element):
@@ -207,9 +204,8 @@ class IrQwebFieldFloat(models.AbstractModel):
                           .replace(lang.decimal_point, '.'))
 
 
-class IrQwebFieldMany2one(models.AbstractModel):
+class IrQwebFieldMany2one(models.AbstractModel, base.IrQwebFieldMany2one):
     _description = 'Qweb Field Many to One'
-    _inherit = ['ir.qweb.field.many2one']
 
     @api.model
     def attributes(self, record, field_name, options, values):
@@ -247,9 +243,8 @@ class IrQwebFieldMany2one(models.AbstractModel):
         return None
 
 
-class IrQwebFieldContact(models.AbstractModel):
+class IrQwebFieldContact(models.AbstractModel, base.IrQwebFieldContact):
     _description = 'Qweb Field Contact'
-    _inherit = ['ir.qweb.field.contact']
 
     @api.model
     def attributes(self, record, field_name, options, values):
@@ -264,9 +259,8 @@ class IrQwebFieldContact(models.AbstractModel):
         return self.value_to_html(self.env['res.partner'].search([('id', '=', ids[0])]), options=options)
 
 
-class IrQwebFieldDate(models.AbstractModel):
+class IrQwebFieldDate(models.AbstractModel, base.IrQwebFieldDate):
     _description = 'Qweb Field Date'
-    _inherit = ['ir.qweb.field.date']
 
     @api.model
     def attributes(self, record, field_name, options, values):
@@ -301,9 +295,8 @@ class IrQwebFieldDate(models.AbstractModel):
         return fields.Date.to_string(date)
 
 
-class IrQwebFieldDatetime(models.AbstractModel):
+class IrQwebFieldDatetime(models.AbstractModel, base.IrQwebFieldDatetime):
     _description = 'Qweb Field Datetime'
-    _inherit = ['ir.qweb.field.datetime']
 
     @api.model
     def attributes(self, record, field_name, options, values):
@@ -364,18 +357,16 @@ class IrQwebFieldDatetime(models.AbstractModel):
         return fields.Datetime.to_string(dt)
 
 
-class IrQwebFieldText(models.AbstractModel):
+class IrQwebFieldText(models.AbstractModel, base.IrQwebFieldText):
     _description = 'Qweb Field Text'
-    _inherit = ['ir.qweb.field.text']
 
     @api.model
     def from_html(self, model, field, element):
         return html_to_text(element)
 
 
-class IrQwebFieldSelection(models.AbstractModel):
+class IrQwebFieldSelection(models.AbstractModel, base.IrQwebFieldSelection):
     _description = 'Qweb Field Selection'
-    _inherit = ['ir.qweb.field.selection']
 
     @api.model
     def from_html(self, model, field, element):
@@ -389,9 +380,8 @@ class IrQwebFieldSelection(models.AbstractModel):
                          value, selection))
 
 
-class IrQwebFieldHtml(models.AbstractModel):
+class IrQwebFieldHtml(models.AbstractModel, base.IrQwebFieldHtml):
     _description = 'Qweb Field HTML'
-    _inherit = ['ir.qweb.field.html']
 
     @api.model
     def attributes(self, record, field_name, options, values=None):
@@ -431,7 +421,7 @@ class IrQwebFieldHtml(models.AbstractModel):
         return '\n'.join(content)
 
 
-class IrQwebFieldImage(models.AbstractModel):
+class IrQwebFieldImage(models.AbstractModel, base.IrQwebFieldImage):
     """
     Widget options:
 
@@ -439,7 +429,6 @@ class IrQwebFieldImage(models.AbstractModel):
         set as attribute on the generated <img> tag
     """
     _description = 'Qweb Field Image'
-    _inherit = ['ir.qweb.field.image']
 
     local_url_re = re.compile(r'^/(?P<module>[^]]+)/static/(?P<rest>.+)$')
     redirect_url_re = re.compile(r'\/web\/image\/\d+-redirect\/')
@@ -518,8 +507,7 @@ class IrQwebFieldImage(models.AbstractModel):
         return base64.b64encode(out.getvalue())
 
 
-class IrQwebFieldMonetary(models.AbstractModel):
-    _inherit = ['ir.qweb.field.monetary']
+class IrQwebFieldMonetary(models.AbstractModel, base.IrQwebFieldMonetary):
 
     @api.model
     def from_html(self, model, field, element):
@@ -531,9 +519,8 @@ class IrQwebFieldMonetary(models.AbstractModel):
                           .replace(lang.decimal_point, '.'))
 
 
-class IrQwebFieldDuration(models.AbstractModel):
+class IrQwebFieldDuration(models.AbstractModel, base.IrQwebFieldDuration):
     _description = 'Qweb Field Duration'
-    _inherit = ['ir.qweb.field.duration']
 
     @api.model
     def attributes(self, record, field_name, options, values):
@@ -550,16 +537,14 @@ class IrQwebFieldDuration(models.AbstractModel):
         return float(value)
 
 
-class IrQwebFieldRelative(models.AbstractModel):
+class IrQwebFieldRelative(models.AbstractModel, base.IrQwebFieldRelative):
     _description = 'Qweb Field Relative'
-    _inherit = ['ir.qweb.field.relative']
 
     # get formatting from ir.qweb.field.relative but edition/save from datetime
 
 
-class IrQwebFieldQweb(models.AbstractModel):
+class IrQwebFieldQweb(models.AbstractModel, base.IrQwebFieldQweb):
     _description = 'Qweb Field qweb'
-    _inherit = ['ir.qweb.field.qweb']
 
 
 def html_to_text(element):

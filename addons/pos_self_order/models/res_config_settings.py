@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 
 import qrcode
 import zipfile
@@ -11,8 +12,7 @@ from odoo.osv.expression import AND
 from werkzeug.urls import url_unquote
 
 
-class ResConfigSettings(models.TransientModel):
-    _inherit = ["res.config.settings"]
+class ResConfigSettings(models.TransientModel, base.ResConfigSettings):
 
     pos_self_ordering_takeaway = fields.Boolean(related="pos_config_id.self_ordering_takeaway", readonly=False)
     pos_self_ordering_service_mode = fields.Selection(related="pos_config_id.self_ordering_service_mode", readonly=False, required=True)

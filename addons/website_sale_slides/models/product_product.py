@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import product
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, fields, models
 
 
-class ProductProduct(models.Model):
-    _inherit = ["product.product"]
+class ProductProduct(models.Model, product.ProductProduct):
 
     channel_ids = fields.One2many('slide.channel', 'product_id', string='Courses')
 

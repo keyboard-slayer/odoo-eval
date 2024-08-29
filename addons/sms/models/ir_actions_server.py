@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
-class IrActionsServer(models.Model):
+class IrActionsServer(models.Model, base.IrActionsServer):
     """ Add SMS option in server actions. """
-    _inherit = ['ir.actions.server']
 
     state = fields.Selection(selection_add=[
         ('sms', 'Send SMS'), ('followers',),

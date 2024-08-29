@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import digest
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, _
 from odoo.exceptions import AccessError
 
 
-class DigestDigest(models.Model):
-    _inherit = ['digest.digest']
+class DigestDigest(models.Model, digest.DigestDigest):
 
     kpi_all_sale_total = fields.Boolean('All Sales')
     kpi_all_sale_total_value = fields.Monetary(compute='_compute_kpi_sale_total_value')

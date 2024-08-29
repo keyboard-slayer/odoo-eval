@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -9,9 +10,8 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-class PhoneBlacklist(models.Model):
+class PhoneBlacklist(models.Model, mail.MailThread):
     """ Blacklist of phone numbers. Used to avoid sending unwanted messages to people. """
-    _inherit = ['mail.thread']
     _description = 'Phone Blacklist'
     _rec_name = 'number'
 

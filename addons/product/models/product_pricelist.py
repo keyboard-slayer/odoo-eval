@@ -1,11 +1,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import mail
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
-class ProductPricelist(models.Model):
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+class ProductPricelist(models.Model, mail.MailThread, mail.MailActivityMixin):
     _description = "Pricelist"
     _rec_names_search = ['name', 'currency_id']  # TODO check if should be removed
     _order = "sequence, id, name"

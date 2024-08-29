@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import point_of_sale
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from hashlib import sha256
 from json import dumps, loads
@@ -10,8 +11,7 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-class PosConfig(models.Model):
-    _inherit = ['pos.config']
+class PosConfig(models.Model, point_of_sale.PosConfig):
 
     def open_ui(self):
         for config in self:
@@ -23,8 +23,7 @@ class PosConfig(models.Model):
         return super().open_ui()
 
 
-class PosSession(models.Model):
-    _inherit = ['pos.session']
+class PosSession(models.Model, point_of_sale.PosSession):
 
     def _check_session_timing(self):
         self.ensure_one()
@@ -43,8 +42,7 @@ ORDER_FIELDS_FROM_17_4 = ['date_order', 'user_id', 'lines', 'payment_ids', 'pric
 LINE_FIELDS = ['notice', 'product_id', 'qty', 'price_unit', 'discount', 'tax_ids', 'tax_ids_after_fiscal_position']
 
 
-class PosOrder(models.Model):
-    _inherit = ['pos.order']
+class PosOrder(models.Model, point_of_sale.PosOrder):
 
     l10n_fr_hash = fields.Char(string="Inalteralbility Hash", readonly=True, copy=False)
     l10n_fr_secure_sequence_number = fields.Integer(string="Inalteralbility No Gap Sequence #", readonly=True, copy=False)
@@ -154,8 +152,7 @@ class PosOrder(models.Model):
             if order.company_id._is_accounting_unalterable():
                 raise UserError(_("According to French law, you cannot delete a point of sale order."))
 
-class PosOrderLine(models.Model):
-    _inherit = ["pos.order.line"]
+class PosOrderLine(models.Model, point_of_sale.PosOrderLine):
 
     def write(self, vals):
         # restrict the operation in case we are trying to write a forbidden field

@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import website, hr
 
 from werkzeug.urls import url_join
 
@@ -7,13 +8,7 @@ from odoo.tools import mute_logger
 from odoo.tools.translate import html_translate
 
 
-class HrJob(models.Model):
-    _inherit = [
-        'hr.job',
-        'website.seo.metadata',
-        'website.published.multi.mixin',
-        'website.searchable.mixin',
-    ]
+class HrJob(models.Model, hr.HrJob, website.WebsiteSeoMetadata, website.WebsitePublishedMultiMixin, website.WebsiteSearchableMixin):
 
     @mute_logger('odoo.addons.base.models.ir_qweb')
     def _get_default_description(self):

@@ -1,10 +1,10 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import stock
 
 from odoo import models, api
 
 
-class StockTraceabilityReport(models.TransientModel):
-    _inherit = ['stock.traceability.report']
+class StockTraceabilityReport(models.TransientModel, stock.StockTraceabilityReport):
 
     @api.model
     def _get_reference(self, move_line):

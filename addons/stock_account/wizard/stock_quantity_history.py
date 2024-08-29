@@ -1,11 +1,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import stock
 
 from odoo import models
 from odoo.tools.misc import format_datetime
 
 
-class StockQuantityHistory(models.TransientModel):
-    _inherit = ['stock.quantity.history']
+class StockQuantityHistory(models.TransientModel, stock.StockQuantityHistory):
 
     def open_at_date(self):
         active_model = self.env.context.get('active_model')

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import survey
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import ast
@@ -9,8 +10,7 @@ from odoo.tools import format_list
 
 
 
-class SurveySurvey(models.Model):
-    _inherit = ['survey.survey']
+class SurveySurvey(models.Model, survey.SurveySurvey):
 
     slide_ids = fields.One2many(
         'slide.slide', 'survey_id', string="Certification Slides",

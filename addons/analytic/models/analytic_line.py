@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import analytic
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from lxml.builder import E
 
@@ -101,8 +102,7 @@ class AnalyticPlanFieldsMixin(models.AbstractModel):
         return arch, view
 
 
-class AccountAnalyticLine(models.Model):
-    _inherit = ['analytic.plan.fields.mixin']
+class AccountAnalyticLine(models.Model, analytic.AnalyticPlanFieldsMixin):
     _description = 'Analytic Line'
     _order = 'date desc, id desc'
     _check_company_auto = True

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from odoo.addons import analytic
 from contextlib import contextmanager
 from datetime import date
 import logging
@@ -17,8 +18,7 @@ from odoo.addons.account.models.account_move import MAX_HASH_VERSION
 _logger = logging.getLogger(__name__)
 
 
-class AccountMoveLine(models.Model):
-    _inherit = ["analytic.mixin"]
+class AccountMoveLine(models.Model, analytic.AnalyticMixin):
     _description = "Journal Item"
     _order = "date desc, move_name desc, id"
     _check_company_auto = True

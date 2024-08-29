@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 import ast
 import base64
 import json
@@ -27,8 +28,7 @@ APPS_URL = "https://apps.odoo.com"
 MAX_FILE_SIZE = 100 * 1024 * 1024  # in megabytes
 
 
-class IrModuleModule(models.Model):
-    _inherit = ["ir.module.module"]
+class IrModuleModule(models.Model, base.IrModuleModule):
 
     imported = fields.Boolean(string="Imported Module")
     module_type = fields.Selection([

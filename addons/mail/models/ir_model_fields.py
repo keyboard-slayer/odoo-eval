@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
 from odoo.tools import groupby
 
 
-class IrModelFields(models.Model):
-    _inherit = ['ir.model.fields']
+class IrModelFields(models.Model, base.IrModelFields):
 
     tracking = fields.Integer(
         string="Enable Ordered Tracking",

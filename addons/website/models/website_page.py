@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import re
@@ -10,12 +11,8 @@ from odoo.tools import escape_psql, SQL
 from odoo.tools.translate import _
 
 
-class WebsitePage(models.Model):
+class WebsitePage(models.Model, website.WebsitePublishedMultiMixin, website.WebsiteSearchableMixin):
     _inherits = {'ir.ui.view': 'view_id'}
-    _inherit = [
-        'website.published.multi.mixin',
-        'website.searchable.mixin',
-    ]
     _description = 'Page'
     _order = 'website_id'
 

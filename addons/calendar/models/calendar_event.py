@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -64,10 +65,9 @@ def get_weekday_occurence(date):
     return occurence_in_month
 
 
-class CalendarEvent(models.Model):
+class CalendarEvent(models.Model, mail.MailThread):
     _description = "Calendar Event"
     _order = "start desc"
-    _inherit = ["mail.thread"]
     _systray_view = 'calendar'
 
     DISCUSS_ROUTE = 'calendar/join_videocall'

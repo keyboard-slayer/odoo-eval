@@ -1,11 +1,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import account
 
 from odoo import _, api, Command, fields, models
 from odoo.exceptions import ValidationError
 
 
-class AccountPayment(models.Model):
-    _inherit = ['account.payment']
+class AccountPayment(models.Model, account.AccountPayment):
 
     # == Business fields ==
     payment_transaction_id = fields.Many2one(

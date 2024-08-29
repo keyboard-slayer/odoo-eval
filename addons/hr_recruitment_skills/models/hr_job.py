@@ -1,11 +1,11 @@
 from markupsafe import Markup
+from odoo.addons import hr
 from ast import literal_eval
 
 from odoo import fields, models, _
 
 
-class HrJob(models.Model):
-    _inherit = ["hr.job"]
+class HrJob(models.Model, hr.HrJob):
 
     skill_ids = fields.Many2many(comodel_name='hr.skill', string="Expected Skills")
 

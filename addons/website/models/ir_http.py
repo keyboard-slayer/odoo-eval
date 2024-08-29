@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import base
 import contextlib
 import functools
 import logging
@@ -58,8 +59,7 @@ def get_request_website():
     return request and getattr(request, 'website', False) or False
 
 
-class IrHttp(models.AbstractModel):
-    _inherit = ['ir.http']
+class IrHttp(models.AbstractModel, base.IrHttp):
 
     def routing_map(self, key=None):
         if not key and request:

@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import project
 
 import ast
 import json
@@ -9,8 +10,7 @@ from odoo.osv import expression
 from odoo.tools import Query, SQL
 
 
-class ProjectProject(models.Model):
-    _inherit = ['project.project']
+class ProjectProject(models.Model, project.ProjectProject):
 
     allow_billable = fields.Boolean("Billable")
     sale_line_id = fields.Many2one(

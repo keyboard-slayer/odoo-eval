@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import account
 
 from odoo import models, fields, api
 from odoo.tools import SQL
@@ -177,10 +178,9 @@ class ReportAccountReportInvoice(models.AbstractModel):
             'qr_code_urls': qr_code_urls,
         }
 
-class ReportAccountReportInvoiceWithPayments(models.AbstractModel):
+class ReportAccountReportInvoiceWithPayments(models.AbstractModel, account.ReportAccountReportInvoice):
     _name = 'report.account.report_invoice_with_payments'
     _description = 'Account report with payment lines'
-    _inherit = ['report.account.report_invoice']
 
     @api.model
     def _get_report_values(self, docids, data=None):

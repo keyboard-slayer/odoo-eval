@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
@@ -62,11 +63,10 @@ class TestAccessRightTicket(models.Model):
     message_partner_ids = fields.Many2many(comodel_name='res.partner')
 
 
-class ResPartner(models.Model):
+class ResPartner(models.Model, base.ResPartner):
     """User inherits partner, so we are implicitly adding these fields to User
        This essentially reproduces the (sad) situation introduced by account.
     """
-    _inherit = ['res.partner']
 
     currency_id = fields.Many2one('res.currency', compute='_get_company_currency', readonly=True)
     monetary = fields.Monetary()  # implicitly depends on currency_id as currency_field

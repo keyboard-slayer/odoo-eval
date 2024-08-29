@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
 
 
-class ResPartner(models.Model):
-    _inherit = ['res.partner']
+class ResPartner(models.Model, base.ResPartner):
 
     certifications_count = fields.Integer('Certifications Count', compute='_compute_certifications_count')
     certifications_company_count = fields.Integer('Company Certifications Count', compute='_compute_certifications_company_count')

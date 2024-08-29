@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import test_new_api
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import datetime
@@ -296,9 +297,8 @@ class TestNewApiMultiLine(models.Model):
     tags = fields.Many2many('test_new_api.multi.tag')
 
 
-class TestNewApiMultiLine2(models.Model):
+class TestNewApiMultiLine2(models.Model, test_new_api.TestNewApiMultiLine):
     _name = 'test_new_api.multi.line2'
-    _inherit = ['test_new_api.multi.line']
     _description = 'Test New API Multi Line 2'
 
 
@@ -1182,7 +1182,7 @@ class TestNewApiModelChildNocheck(models.Model):
 
 
 # model with explicit and stored field 'display_name'
-class TestNewApiDisplay(models.Model):
+class TestNewApiDisplay(models.Model, test_new_api.TestNewApiMixin, test_new_api.TestNewApiDisplay):
     _name = 'test_new_api.display'
     _description = 'Model that overrides display_name'
 
@@ -1201,9 +1201,8 @@ class TestNewApiMixin(models.AbstractModel):
 
 # in this model extension, the field 'display_name' should not be inherited from
 # 'test_new_api.mixin'
-class TestNewApiDisplay(models.Model):
+class TestNewApiDisplay(models.Model, test_new_api.TestNewApiMixin, test_new_api.TestNewApiDisplay):
     _name = 'test_new_api.display'
-    _inherit = ['test_new_api.mixin', 'test_new_api.display']
 
 
 class TestNewApiModelActiveField(models.Model):
@@ -1321,7 +1320,7 @@ class TestNewApiStateMixin(models.AbstractModel):
     ])
 
 
-class TestNewApiModelSelectionBase(models.Model):
+class TestNewApiModelSelectionBase(models.Model, test_new_api.TestNewApiModelSelectionBase):
     _name = 'test_new_api.model_selection_base'
     _description = "Model with a base selection field"
 
@@ -1331,10 +1330,9 @@ class TestNewApiModelSelectionBase(models.Model):
     ])
 
 
-class TestNewApiModelSelectionBase(models.Model):
+class TestNewApiModelSelectionBase(models.Model, test_new_api.TestNewApiModelSelectionBase):
     _name = "test_new_api.model_selection_base"
 
-    _inherit = ['test_new_api.model_selection_base']
     _description = "Model with a selection field extension with ondelete null"
 
     my_selection = fields.Selection(selection_add=[
@@ -1342,10 +1340,9 @@ class TestNewApiModelSelectionBase(models.Model):
     ], ondelete={'quux': 'set null'})
 
 
-class TestNewApiModelSelectionBase(models.Model):
+class TestNewApiModelSelectionBase(models.Model, test_new_api.TestNewApiModelSelectionBase):
     _name = "test_new_api.model_selection_base"
 
-    _inherit = ['test_new_api.model_selection_base']
     _description = "Model with a selection field extension without ondelete"
 
     my_selection = fields.Selection(selection_add=[
@@ -1380,7 +1377,7 @@ class TestNewApiModelSelectionRelatedUpdatable(models.Model):
     )
 
 
-class TestNewApiModelSelectionRequired(models.Model):
+class TestNewApiModelSelectionRequired(models.Model, test_new_api.TestNewApiModelSelectionRequired):
     _name = 'test_new_api.model_selection_required'
     _description = "Model with a required selection field"
 
@@ -1391,10 +1388,9 @@ class TestNewApiModelSelectionRequired(models.Model):
     ], required=True, default='foo')
 
 
-class TestNewApiModelSelectionRequired(models.Model):
+class TestNewApiModelSelectionRequired(models.Model, test_new_api.TestNewApiModelSelectionRequired):
     _name = "test_new_api.model_selection_required"
 
-    _inherit = ['test_new_api.model_selection_required']
     _description = "Model with a selection field extension with ondelete default"
 
     my_selection = fields.Selection(selection_add=[
@@ -1402,10 +1398,9 @@ class TestNewApiModelSelectionRequired(models.Model):
     ], ondelete={'baz': 'set default'})
 
 
-class TestNewApiModelSelectionRequired(models.Model):
+class TestNewApiModelSelectionRequired(models.Model, test_new_api.TestNewApiModelSelectionRequired):
     _name = "test_new_api.model_selection_required"
 
-    _inherit = ['test_new_api.model_selection_required']
     _description = "Model with a selection field extension with ondelete cascade"
 
     my_selection = fields.Selection(selection_add=[
@@ -1413,10 +1408,9 @@ class TestNewApiModelSelectionRequired(models.Model):
     ], ondelete={'eggs': 'cascade'})
 
 
-class TestNewApiModelSelectionRequired(models.Model):
+class TestNewApiModelSelectionRequired(models.Model, test_new_api.TestNewApiModelSelectionRequired):
     _name = "test_new_api.model_selection_required"
 
-    _inherit = ['test_new_api.model_selection_required']
     _description = "Model with a selection field extension with ondelete set <option>"
 
     my_selection = fields.Selection(selection_add=[
@@ -1424,10 +1418,9 @@ class TestNewApiModelSelectionRequired(models.Model):
     ], ondelete={'bacon': 'set bar'})
 
 
-class TestNewApiModelSelectionRequired(models.Model):
+class TestNewApiModelSelectionRequired(models.Model, test_new_api.TestNewApiModelSelectionRequired):
     _name = "test_new_api.model_selection_required"
 
-    _inherit = ['test_new_api.model_selection_required']
     _description = "Model with a selection field extension with multiple ondelete policies"
 
     my_selection = fields.Selection(selection_add=[
@@ -1436,10 +1429,9 @@ class TestNewApiModelSelectionRequired(models.Model):
     ], ondelete={'pikachu': 'set default', 'eevee': lambda r: r.write({'my_selection': 'bar'})})
 
 
-class TestNewApiModelSelectionRequired(models.Model):
+class TestNewApiModelSelectionRequired(models.Model, test_new_api.TestNewApiModelSelectionRequired):
     _name = "test_new_api.model_selection_required"
 
-    _inherit = ['test_new_api.model_selection_required']
     _description = "Model with a selection field extension with ondelete callback"
 
     my_selection = fields.Selection(selection_add=[
@@ -1459,7 +1451,7 @@ class TestNewApiModelSelectionNonStored(models.Model):
     ], store=False)
 
 
-class TestNewApiModelSelectionRequiredForWriteOverride(models.Model):
+class TestNewApiModelSelectionRequiredForWriteOverride(models.Model, test_new_api.TestNewApiModelSelectionRequiredForWriteOverride):
     _name = 'test_new_api.model_selection_required_for_write_override'
     _description = "Model with required selection field for an extension with write override"
 
@@ -1469,10 +1461,9 @@ class TestNewApiModelSelectionRequiredForWriteOverride(models.Model):
     ], required=True, default='foo')
 
 
-class TestNewApiModelSelectionRequiredForWriteOverride(models.Model):
+class TestNewApiModelSelectionRequiredForWriteOverride(models.Model, test_new_api.TestNewApiModelSelectionRequiredForWriteOverride):
     _name = "test_new_api.model_selection_required_for_write_override"
 
-    _inherit = ['test_new_api.model_selection_required_for_write_override']
 
     my_selection = fields.Selection(selection_add=[
         ('divinity', "Divinity: Original Sin 2"),

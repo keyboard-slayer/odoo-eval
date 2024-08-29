@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import project
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import json
@@ -7,8 +8,7 @@ from odoo import api, fields, models, _, _lt
 from odoo.osv import expression
 
 
-class ProjectProject(models.Model):
-    _inherit = ["project.project"]
+class ProjectProject(models.Model, project.ProjectProject):
 
     purchase_orders_count = fields.Integer('# Purchase Orders', compute='_compute_purchase_orders_count', groups='purchase.group_purchase_user', export_string_translation=False)
 

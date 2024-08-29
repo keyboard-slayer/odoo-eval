@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
@@ -6,8 +7,7 @@ from odoo.osv import expression
 
 
 
-class ResPartner(models.Model):
-    _inherit = ['res.partner']
+class ResPartner(models.Model, base.ResPartner):
 
     opportunity_ids = fields.One2many('crm.lead', 'partner_id', string='Opportunities', domain=[('type', '=', 'opportunity')])
     opportunity_count = fields.Integer("Opportunity", compute='_compute_opportunity_count')

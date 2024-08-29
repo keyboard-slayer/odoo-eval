@@ -1,4 +1,5 @@
 from bisect import bisect_left
+from odoo.addons import portal
 from collections import defaultdict
 import itertools
 import re
@@ -15,8 +16,7 @@ ACCOUNT_CODE_REGEX = re.compile(r'^[A-Za-z0-9.]+$')
 ACCOUNT_CODE_NUMBER_REGEX = re.compile(r'(.*?)(\d*)(\D*?)$')
 
 
-class AccountAccount(models.Model):
-    _inherit = ['mail.thread']
+class AccountAccount(models.Model, portal.MailThread):
     _description = "Account"
     _order = "code"
     _check_company_auto = True

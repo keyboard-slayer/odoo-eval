@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import event
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
 
 
-class EventTypeMail(models.Model):
-    _inherit = ['event.type.mail']
+class EventTypeMail(models.Model, event.EventTypeMail):
 
     notification_type = fields.Selection(selection_add=[('sms', 'SMS')])
     template_ref = fields.Reference(ondelete={'sms.template': 'cascade'}, selection_add=[('sms.template', 'SMS')])
@@ -16,8 +16,7 @@ class EventTypeMail(models.Model):
         sms_schedulers.notification_type = 'sms'
 
 
-class EventMail(models.Model):
-    _inherit = ['event.mail']
+class EventMail(models.Model, event.EventMail):
 
     notification_type = fields.Selection(selection_add=[('sms', 'SMS')])
     template_ref = fields.Reference(ondelete={'sms.template': 'cascade'}, selection_add=[('sms.template', 'SMS')])
@@ -48,8 +47,7 @@ class EventMail(models.Model):
         return super().execute()
 
 
-class EventMailRegistration(models.Model):
-    _inherit = ['event.mail.registration']
+class EventMailRegistration(models.Model, event.EventMailRegistration):
 
     def execute(self):
         now = fields.Datetime.now()

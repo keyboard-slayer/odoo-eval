@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import sale
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 
 
-class SaleOrder(models.Model):
-    _inherit = ['sale.order']
+class SaleOrder(models.Model, sale.SaleOrder):
 
     purchase_order_count = fields.Integer(
         "Number of Purchase Order Generated",

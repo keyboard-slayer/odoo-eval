@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website, base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -15,9 +16,8 @@ from odoo.http import request
 _logger = logging.getLogger(__name__)
 
 
-class IrUiView(models.Model):
+class IrUiView(models.Model, base.IrUiView, website.WebsiteSeoMetadata):
 
-    _inherit = ["ir.ui.view", "website.seo.metadata"]
 
     website_id = fields.Many2one('website', ondelete='cascade', string="Website")
     page_ids = fields.One2many('website.page', 'view_id')

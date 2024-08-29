@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import stock
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import time
@@ -8,8 +9,7 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.tools.misc import clean_context
 
 
-class StockPickingType(models.Model):
-    _inherit = ['stock.picking.type']
+class StockPickingType(models.Model, stock.StockPickingType):
 
     code = fields.Selection(selection_add=[
         ('repair_operation', 'Repair')
@@ -147,8 +147,7 @@ class StockPickingType(models.Model):
         return records + repair_records
 
 
-class StockPicking(models.Model):
-    _inherit = ['stock.picking']
+class StockPicking(models.Model, stock.StockPicking):
 
     is_repairable = fields.Boolean(compute='_compute_is_repairable')
     repair_ids = fields.One2many('repair.order', 'picking_id')

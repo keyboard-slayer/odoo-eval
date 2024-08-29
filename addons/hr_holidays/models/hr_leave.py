@@ -1,4 +1,5 @@
 import logging
+from odoo.addons import calendar, mail
 import pytz
 
 from collections import namedtuple, defaultdict
@@ -31,7 +32,7 @@ def get_employee_from_context(values, context, user_employee_id):
     employee_id_value = employee_ids[0] if employee_ids else False
     return employee_id_value or context.get('default_employee_id', context.get('employee_id', user_employee_id))
 
-class HrLeave(models.Model):
+class HrLeave(models.Model, mail.MailThreadMainAttachment, calendar.MailActivityMixin):
     """ Time Off Requests Access specifications
 
      - a regular employee / user
@@ -68,7 +69,6 @@ class HrLeave(models.Model):
     """
     _description = "Time Off"
     _order = "date_from desc"
-    _inherit = ['mail.thread.main.attachment', 'mail.activity.mixin']
     _mail_post_access = 'read'
 
     @api.model

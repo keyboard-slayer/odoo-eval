@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import operator as py_operator
@@ -19,8 +20,7 @@ OPERATORS = {
 }
 
 
-class StockLot(models.Model):
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+class StockLot(models.Model, portal.MailThread, mail.MailActivityMixin):
     _description = 'Lot/Serial'
     _check_company_auto = True
     _order = 'name, id'

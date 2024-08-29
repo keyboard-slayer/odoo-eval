@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 from odoo.addons.web_editor.tools import handle_history_divergence
 
 
-class HrJob(models.Model):
+class HrJob(models.Model, mail.MailThread):
     _description = "Job Position"
-    _inherit = ['mail.thread']
     _order = 'sequence'
 
     active = fields.Boolean(default=True)

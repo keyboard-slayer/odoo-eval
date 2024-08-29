@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base, calendar, utm, phone_validation, mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -85,17 +86,9 @@ PLS_COMPUTE_BATCH_STEP = 50000  # odoo.models.PREFETCH_MAX = 1000 but larger clu
 PLS_UPDATE_BATCH_STEP = 5000
 
 
-class CrmLead(models.Model):
+class CrmLead(models.Model, mail.MailThreadCc, mail.MailThreadBlacklist, phone_validation.MailThreadPhone, calendar.MailActivityMixin, utm.UtmMixin, base.FormatAddressMixin, mail.MailTrackingDurationMixin):
     _description = "Lead/Opportunity"
     _order = "priority desc, id desc"
-    _inherit = ['mail.thread.cc',
-                'mail.thread.blacklist',
-                'mail.thread.phone',
-                'mail.activity.mixin',
-                'utm.mixin',
-                'format.address.mixin',
-                'mail.tracking.duration.mixin',
-               ]
     _primary_email = 'email_from'
     _check_company_auto = True
     _track_duration_field = 'stage_id'

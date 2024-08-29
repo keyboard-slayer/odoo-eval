@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import project
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from collections import defaultdict
 
@@ -7,8 +8,7 @@ from odoo.exceptions import ValidationError, RedirectWarning
 from odoo.tools import SQL
 
 
-class ProjectProject(models.Model):
-    _inherit = ["project.project"]
+class ProjectProject(models.Model, project.ProjectProject):
 
     allow_timesheets = fields.Boolean(
         "Timesheets", compute='_compute_allow_timesheets', store=True, readonly=False,

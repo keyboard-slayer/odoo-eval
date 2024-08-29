@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website_slides
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
 
 
-class SlideChannel(models.Model):
-    _inherit = ['slide.channel']
+class SlideChannel(models.Model, website_slides.SlideChannel):
 
     forum_id = fields.Many2one('forum.forum', 'Course Forum', copy=False)
     forum_total_posts = fields.Integer('Number of active forum posts', related="forum_id.total_posts")

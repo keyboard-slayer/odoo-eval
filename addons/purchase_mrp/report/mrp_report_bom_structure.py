@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mrp
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, models
 from odoo.tools import float_compare
 
-class ReportMrpReportBomStructure(models.AbstractModel):
+class ReportMrpReportBomStructure(models.AbstractModel, mrp.ReportMrpReportBomStructure):
     _name = "report.mrp.report_bom_structure"
 
-    _inherit = ['report.mrp.report_bom_structure']
 
     @api.model
     def _format_route_info(self, rules, rules_delay, warehouse, product, bom, quantity):

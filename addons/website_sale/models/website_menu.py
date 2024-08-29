@@ -1,10 +1,10 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import website
 
 from odoo import models
 
 
-class WebsiteMenu(models.Model):
-    _inherit = ['website.menu']
+class WebsiteMenu(models.Model, website.WebsiteMenu):
 
     def _compute_visible(self):
         """ Hide '/shop' menus to the public user if only logged-in users can access it. """

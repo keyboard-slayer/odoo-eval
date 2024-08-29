@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from random import randint
@@ -6,9 +7,8 @@ from random import randint
 from odoo import fields, models
 
 
-class SlideChannelTagGroup(models.Model):
+class SlideChannelTagGroup(models.Model, website.WebsitePublishedMixin):
     _description = 'Channel/Course Groups'
-    _inherit = ['website.published.mixin']
     _order = 'sequence asc'
 
     name = fields.Char('Group Name', required=True, translate=True)

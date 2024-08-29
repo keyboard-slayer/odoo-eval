@@ -1,10 +1,10 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import payment
 
 from odoo import api, fields, models, SUPERUSER_ID, _
 
 
-class PaymentTransaction(models.Model):
-    _inherit = ['payment.transaction']
+class PaymentTransaction(models.Model, payment.PaymentTransaction):
 
     payment_id = fields.Many2one(
         string="Payment", comodel_name='account.payment', readonly=True)

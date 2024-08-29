@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from werkzeug import urls
 
@@ -7,10 +8,9 @@ from odoo.http import request
 from odoo.tools.json import scriptsafe as json_scriptsafe
 
 
-class IrActionsServer(models.Model):
+class IrActionsServer(models.Model, base.IrActionsServer):
     """ Add website option in server actions. """
 
-    _inherit = ['ir.actions.server']
 
     xml_id = fields.Char('External ID', compute='_compute_xml_id', help="ID of the action if defined in a XML file")
     website_path = fields.Char('Website Path')

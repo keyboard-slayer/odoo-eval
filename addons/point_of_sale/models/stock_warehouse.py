@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import stock
 
 from odoo import models, fields, api, _
 
 
-class StockWarehouse(models.Model):
-    _inherit = ["stock.warehouse"]
+class StockWarehouse(models.Model, stock.StockWarehouse):
 
     pos_type_id = fields.Many2one('stock.picking.type', string="Point of Sale Operation Type")
 

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from hashlib import sha256
 
 from odoo import api, models
 
 
-class Base(models.AbstractModel):
-    _inherit = ['base']
+class Base(models.AbstractModel, base.Model):
 
     @api.model
     def _get_view_field_attributes(self):
@@ -16,10 +16,9 @@ class Base(models.AbstractModel):
         return keys
 
 
-class BaseModel(models.AbstractModel):
+class BaseModel(models.AbstractModel, base.Model):
     _name = "base"
 
-    _inherit = ['base']
 
     def web_update_field_translations(self, fname, translations):
         field = self._fields[fname]

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
@@ -17,9 +18,8 @@ SPLIT_METHOD = [
 ]
 
 
-class StockLandedCost(models.Model):
+class StockLandedCost(models.Model, portal.MailThread, mail.MailActivityMixin):
     _description = 'Stock Landed Cost'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'date desc, id desc'
 
     def _default_account_journal_id(self):

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, api, fields, models, tools
@@ -6,12 +7,11 @@ from odoo.exceptions import UserError
 from odoo.osv import expression
 
 
-class MailingContact(models.Model):
+class MailingContact(models.Model, mail.MailThreadBlacklist):
     """Model of a contact. This model is different from the partner model
     because it holds only some basic information: name, email. The purpose is to
     be able to deal with large contact list to email without bloating the partner
     base."""
-    _inherit = ['mail.thread.blacklist']
     _description = 'Mailing Contact'
     _order = 'name ASC, id DESC'
     _mailing_enabled = True

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mail, point_of_sale, stock, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from collections import defaultdict
 from datetime import timedelta
@@ -12,10 +13,9 @@ from odoo.service.common import exp_version
 from odoo.osv.expression import AND
 
 
-class PosSession(models.Model):
+class PosSession(models.Model, portal.MailThread, mail.MailActivityMixin, point_of_sale.PosBusMixin, point_of_sale.PosLoadMixin):
     _order = 'id desc'
     _description = 'Point of Sale Session'
-    _inherit = ['mail.thread', 'mail.activity.mixin', "pos.bus.mixin", 'pos.load.mixin']
 
     POS_SESSION_STATE = [
         ('opening_control', 'Opening Control'),  # method action_pos_session_open
@@ -1831,8 +1831,7 @@ class PosSession(models.Model):
     def _get_closed_orders(self):
         return self.order_ids.filtered(lambda o: o.state not in ['draft', 'cancel'])
 
-class ProcurementGroup(models.Model):
-    _inherit = ['procurement.group']
+class ProcurementGroup(models.Model, stock.ProcurementGroup):
 
     @api.model
     def _run_scheduler_tasks(self, use_new_cursor=False, company_id=False):

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import project
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import re
 
@@ -26,8 +27,7 @@ PROJECT_TASK_READABLE_FIELDS = {
     'total_hours_spent',
 }
 
-class ProjectTask(models.Model):
-    _inherit = ["project.task"]
+class ProjectTask(models.Model, project.ProjectTask):
 
     project_id = fields.Many2one(domain="['|', ('company_id', '=', False), ('company_id', '=?',  company_id), ('is_internal_project', '=', False)]")
     analytic_account_active = fields.Boolean("Active Analytic Account", compute='_compute_analytic_account_active', compute_sudo=True, recursive=True, export_string_translation=False)

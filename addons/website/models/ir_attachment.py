@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -6,9 +7,8 @@ from odoo import fields, models, api
 _logger = logging.getLogger(__name__)
 
 
-class IrAttachment(models.Model):
+class IrAttachment(models.Model, base.IrAttachment):
 
-    _inherit = ["ir.attachment"]
 
     # Technical field used to resolve multiple attachments in a multi-website environment.
     key = fields.Char()

@@ -1,4 +1,5 @@
 import ast
+from odoo.addons import account
 from babel.dates import format_datetime, format_date
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -21,8 +22,7 @@ def group_by_journal(vals_list):
     return res
 
 
-class AccountJournal(models.Model):
-    _inherit = ["account.journal"]
+class AccountJournal(models.Model, account.AccountJournal):
 
     kanban_dashboard = fields.Text(compute='_kanban_dashboard')
     kanban_dashboard_graph = fields.Text(compute='_kanban_dashboard_graph')

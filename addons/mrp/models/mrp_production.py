@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import product, mail, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import json
@@ -22,11 +23,10 @@ from odoo.addons.stock.models.stock_move import PROCUREMENT_PRIORITIES
 SIZE_BACK_ORDER_NUMERING = 3
 
 
-class MrpProduction(models.Model):
+class MrpProduction(models.Model, portal.MailThread, mail.MailActivityMixin, product.ProductCatalogMixin):
     """ Manufacturing Orders """
     _description = 'Manufacturing Order'
     _date_name = 'date_start'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'product.catalog.mixin']
     _order = 'priority desc, date_start asc,id'
 
     @api.model

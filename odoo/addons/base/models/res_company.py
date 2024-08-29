@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from .res_partner import FormatAddressMixin, FormatVATLabelMixin
 
@@ -14,7 +15,7 @@ from odoo.tools import html2plaintext, file_open, ormcache
 _logger = logging.getLogger(__name__)
 
 
-class ResCompany(models.Model, FormatAddressMixin, FormatVATLabelMixin):
+class ResCompany(models.Model, base.FormatAddressMixin, base.FormatVATLabelMixin):
     _description = 'Companies'
     _order = 'sequence, name'
     _parent_store = True

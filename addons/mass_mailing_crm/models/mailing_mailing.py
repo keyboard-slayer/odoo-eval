@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import mass_mailing
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from markupsafe import Markup
 from odoo import fields, models, _, tools
 
 
-class MailingMailing(models.Model):
-    _inherit = ['mailing.mailing']
+class MailingMailing(models.Model, mass_mailing.MailingMailing):
 
     use_leads = fields.Boolean('Use Leads', compute='_compute_use_leads')
     crm_lead_count = fields.Integer('Leads/Opportunities Count', compute='_compute_crm_lead_count')

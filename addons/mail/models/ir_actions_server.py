@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from dateutil.relativedelta import relativedelta
@@ -7,10 +8,9 @@ from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
-class IrActionsServer(models.Model):
+class IrActionsServer(models.Model, base.IrActionsServer):
     """ Add mail.thread related options in server actions. """
     _description = 'Server Action'
-    _inherit = ['ir.actions.server']
 
     state = fields.Selection(
         selection_add=[

@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import base
 
 from odoo import models, tools, _
 from odoo.addons.base.models.res_lang import LangDataDict, LangData
@@ -6,8 +7,7 @@ from odoo.exceptions import UserError
 from odoo.http import request
 
 
-class ResLang(models.Model):
-    _inherit = ["res.lang"]
+class ResLang(models.Model, base.ResLang):
 
     def write(self, vals):
         if 'active' in vals and not vals['active']:

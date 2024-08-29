@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import base
 
 from collections import defaultdict
 
@@ -7,14 +8,13 @@ from odoo.tools import email_normalize
 from odoo.addons.mail.tools.discuss import Store
 
 
-class ResUsers(models.Model):
+class ResUsers(models.Model, base.ResUsers):
     """ Update of res.users class
         - add a preference about sending emails about notifications
         - make a new user follow itself
         - add a welcome message
         - add suggestion preference
     """
-    _inherit = ['res.users']
 
     notification_type = fields.Selection([
         ('email', 'Handle by Emails'),

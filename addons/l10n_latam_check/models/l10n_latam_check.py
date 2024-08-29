@@ -1,4 +1,5 @@
 # pylint: disable=protected-access
+from odoo.addons import mail, portal
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import logging
 import stdnum
@@ -11,11 +12,10 @@ from odoo.tools import index_exists
 _logger = logging.getLogger(__name__)
 
 
-class L10nLatamCheck(models.Model):
+class L10nLatamCheck(models.Model, portal.MailThread, mail.MailActivityMixin):
     _name = 'l10n_latam.check'
     _description = 'Account payment check'
     _check_company_auto = True
-    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     payment_id = fields.Many2one(
         'account.payment',

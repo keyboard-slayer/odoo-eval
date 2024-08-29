@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import resource, hr, base, mail
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import base64
@@ -15,7 +16,7 @@ from odoo.osv import expression
 from odoo.tools import convert, format_date
 
 
-class HrEmployee(models.Model):
+class HrEmployee(models.Model, hr.HrEmployeeBase, mail.MailThreadMainAttachment, mail.MailActivityMixin, resource.ResourceMixin, base.AvatarMixin):
     """
     NB: Any field only available on the model hr.employee (i.e. not on the
     hr.employee.public model) should have `groups="hr.group_hr_user"` on its
@@ -25,7 +26,6 @@ class HrEmployee(models.Model):
     """
     _description = "Employee"
     _order = 'name'
-    _inherit = ['hr.employee.base', 'mail.thread.main.attachment', 'mail.activity.mixin', 'resource.mixin', 'avatar.mixin']
     _mail_post_access = 'read'
 
     @api.model

@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import calendar, utm, mail
 import re
 
 from markupsafe import Markup
@@ -19,15 +20,9 @@ AVAILABLE_PRIORITIES = [
 ]
 
 
-class HrApplicant(models.Model):
+class HrApplicant(models.Model, mail.MailThreadCc, mail.MailThreadMainAttachment, calendar.MailActivityMixin, utm.UtmMixin, mail.MailTrackingDurationMixin):
     _description = "Applicant"
     _order = "priority desc, id desc"
-    _inherit = ['mail.thread.cc',
-               'mail.thread.main.attachment',
-               'mail.activity.mixin',
-               'utm.mixin',
-               'mail.tracking.duration.mixin',
-    ]
     _rec_name = "partner_name"
     _mailing_enabled = True
     _primary_email = 'email_from'

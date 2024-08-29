@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import portal
 from odoo import api, fields, models, _, Command
 from odoo.osv import expression
 from odoo.exceptions import UserError, ValidationError
@@ -83,8 +84,7 @@ class AccountTaxGroup(models.Model):
         ], limit=1))
 
 
-class AccountTax(models.Model):
-    _inherit = ['mail.thread']
+class AccountTax(models.Model, portal.MailThread):
     _description = 'Tax'
     _order = 'sequence,id'
     _check_company_auto = True

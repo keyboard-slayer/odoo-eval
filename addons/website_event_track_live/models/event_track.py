@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website_event_track
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import re
@@ -6,8 +7,7 @@ import re
 from odoo import api, fields, models
 
 
-class EventTrack(models.Model):
-    _inherit = ['event.track']
+class EventTrack(models.Model, website_event_track.EventTrack):
 
     youtube_video_url = fields.Char('YouTube Video Link')
     youtube_video_id = fields.Char('YouTube video ID', compute='_compute_youtube_video_id',

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import hr
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
@@ -11,8 +12,7 @@ from odoo.fields import Datetime
 _logger = logging.getLogger(__name__)
 
 
-class HrEmployeeBase(models.AbstractModel):
-    _inherit = ['hr.employee.base']
+class HrEmployeeBase(models.AbstractModel, hr.HrEmployeeBase):
 
     email_sent = fields.Boolean(default=False)
     ip_connected = fields.Boolean(default=False)

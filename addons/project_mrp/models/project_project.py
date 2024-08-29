@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import project
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, _lt
 from odoo.osv import expression
 
 
-class ProjectProject(models.Model):
-    _inherit = ["project.project"]
+class ProjectProject(models.Model, project.ProjectProject):
 
     production_count = fields.Integer(related="analytic_account_id.production_count", groups='mrp.group_mrp_user', export_string_translation=False)
     workorder_count = fields.Integer(related="analytic_account_id.workorder_count", groups='mrp.group_mrp_user', export_string_translation=False)

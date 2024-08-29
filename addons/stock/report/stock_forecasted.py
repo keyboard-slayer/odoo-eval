@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import stock
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
@@ -427,10 +428,9 @@ class StockForecastedProductProduct(models.AbstractModel):
         return move_ids
 
 
-class StockForecastedProductTemplate(models.AbstractModel):
+class StockForecastedProductTemplate(models.AbstractModel, stock.StockForecastedProductProduct):
     _name = 'stock.forecasted_product_template'
     _description = "Stock Replenishment Report"
-    _inherit = ['stock.forecasted_product_product']
 
     @api.model
     def get_report_values(self, docids, data=None):

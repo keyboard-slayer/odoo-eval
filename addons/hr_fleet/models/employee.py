@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import hr
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
-class HrEmployee(models.Model):
-    _inherit = ['hr.employee']
+class HrEmployee(models.Model, hr.HrEmployee):
 
     employee_cars_count = fields.Integer(compute="_compute_employee_cars_count", string="Cars", groups="fleet.fleet_group_manager")
     car_ids = fields.One2many(
@@ -86,7 +86,6 @@ class HrEmployee(models.Model):
                     car.driver_id = user.partner_id
 
 
-class HrEmployeePublic(models.Model):
-    _inherit = ['hr.employee.public']
+class HrEmployeePublic(models.Model, hr.HrEmployeePublic):
 
     mobility_card = fields.Char(readonly=True)

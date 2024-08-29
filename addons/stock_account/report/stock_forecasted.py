@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import stock
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models
 from odoo.tools.float_utils import float_is_zero, float_repr
 
 
-class StockForecastedProductProduct(models.AbstractModel):
+class StockForecastedProductProduct(models.AbstractModel, stock.StockForecastedProductProduct):
     _name = "stock.forecasted_product_product"
 
-    _inherit = ['stock.forecasted_product_product']
 
     def _get_report_header(self, product_template_ids, product_ids, wh_location_ids):
         """ Overrides to computes the valuations of the stock. """

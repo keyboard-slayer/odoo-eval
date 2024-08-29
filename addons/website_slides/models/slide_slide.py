@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import website, portal_rating, base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import base64
@@ -87,14 +88,7 @@ class SlideTag(models.Model):
     ]
 
 
-class SlideSlide(models.Model):
-    _inherit = [
-        'mail.thread',
-        'image.mixin',
-        'website.seo.metadata',
-        'website.published.mixin',
-        'website.searchable.mixin',
-    ]
+class SlideSlide(models.Model, portal_rating.MailThread, base.ImageMixin, website.WebsiteSeoMetadata, website.WebsitePublishedMixin, website.WebsiteSearchableMixin):
     _description = 'Slides'
     _mail_post_access = 'read'
     _order_by_strategy = {

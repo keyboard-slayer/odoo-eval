@@ -1,4 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+from odoo.addons import product, mail, portal
 
 from collections import defaultdict
 from random import randint
@@ -17,10 +18,9 @@ MAP_REPAIR_TO_PICKING_LOCATIONS = {
 }
 
 
-class RepairOrder(models.Model):
+class RepairOrder(models.Model, portal.MailThread, mail.MailActivityMixin, product.ProductCatalogMixin):
     """ Repair Orders """
     _description = 'Repair Order'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'product.catalog.mixin']
     _order = 'priority desc, create_date desc'
     _check_company_auto = True
 

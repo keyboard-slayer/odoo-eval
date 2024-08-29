@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from markupsafe import Markup
@@ -75,8 +76,7 @@ HR_WRITABLE_FIELDS = [
 ]
 
 
-class ResUsers(models.Model):
-    _inherit = ['res.users']
+class ResUsers(models.Model, base.ResUsers):
 
     def _employee_ids_domain(self):
         # employee_ids is considered a safe field and as such will be fetched as sudo.

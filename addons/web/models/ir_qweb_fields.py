@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo.addons import base
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import hashlib
@@ -10,7 +11,7 @@ from odoo import api, models, fields
 from odoo.tools import html_escape as escape
 
 
-class IrQwebFieldImage(models.AbstractModel):
+class IrQwebFieldImage(models.AbstractModel, base.IrQwebFieldImage):
     """
     Widget options:
 
@@ -18,7 +19,6 @@ class IrQwebFieldImage(models.AbstractModel):
         set as attribute on the generated <img> tag
     """
     _description = 'Qweb Field Image'
-    _inherit = ['ir.qweb.field.image']
 
     def _get_src_urls(self, record, field_name, options):
         """Considering the rendering options, returns the src and data-zoom-image urls.
@@ -112,11 +112,10 @@ class IrQwebFieldImage(models.AbstractModel):
 
         return Markup(''.join(img))
 
-class IrQwebFieldImageUrl(models.AbstractModel):
+class IrQwebFieldImageUrl(models.AbstractModel, base.IrQwebFieldImageUrl):
     _description = 'Qweb Field Image'
     _name = "ir.qweb.field.image_url"
 
-    _inherit = ['ir.qweb.field.image_url']
 
     def _get_src_urls(self, record, field_name, options):
         image_url = record[options.get('preview_image', field_name)]
