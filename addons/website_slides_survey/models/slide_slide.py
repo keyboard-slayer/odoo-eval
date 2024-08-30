@@ -17,7 +17,7 @@ class SlidePartnerRelation(models.Model):
             ('slide_partner_id', 'in', self.ids),
             ('scoring_success', '=', True)
         ])
-        succeeded_slide_partners = succeeded_user_inputs.mapped('slide_partner_id')
+        succeeded_slide_partners = succeeded_user_inputs.slide_partner_id
         for record in self:
             record.survey_scoring_success = record in succeeded_slide_partners
 
@@ -103,14 +103,14 @@ class Slide(models.Model):
         return slides
 
     def write(self, values):
-        old_surveys = self.mapped('survey_id')
+        old_surveys = self.survey_id
         result = super(Slide, self).write(values)
         if 'survey_id' in values:
-            self._ensure_challenge_category(old_surveys=old_surveys - self.mapped('survey_id'))
+            self._ensure_challenge_category(old_surveys=old_surveys - self.survey_id)
         return result
 
     def unlink(self):
-        old_surveys = self.mapped('survey_id')
+        old_surveys = self.survey_id
         result = super(Slide, self).unlink()
         self._ensure_challenge_category(old_surveys=old_surveys, unlink=True)
         return result
@@ -120,7 +120,7 @@ class Slide(models.Model):
         set to 'slides' in order to appear under the certification badge list on ranks_badges page.
         If the survey is unlinked from the slide, the challenge category must be reset to 'certification'"""
         if old_surveys:
-            old_certification_challenges = old_surveys.mapped('certification_badge_id').challenge_ids
+            old_certification_challenges = old_surveys.certification_badge_id.challenge_ids
             old_certification_challenges.write({'challenge_category': 'certification'})
         if not unlink:
             certification_challenges = self.survey_id.certification_badge_id.challenge_ids

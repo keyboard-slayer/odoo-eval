@@ -95,7 +95,7 @@ class TestPopulate(common.TransactionCase):
             'd2_1', 'd2_2', 'd2_3_0',
             'd2_1', 'd2_2', 'd2_3_1'
         ])
-        used_category_ids = set(records.mapped('category_id').ids[:20])
+        used_category_ids = set(records.category_id.ids[:20])
         self.assertEqual(len(used_category_ids), 6) # event if id may change, with given seed, the 6 category are used
         generated_category_ids = set(populated['test.populate.category'])
         self.assertFalse(used_category_ids-generated_category_ids) # all category are the generated one

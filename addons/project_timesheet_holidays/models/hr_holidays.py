@@ -131,7 +131,7 @@ class Holidays(models.Model):
     def action_refuse(self):
         """ Remove the timesheets linked to the refused holidays """
         result = super(Holidays, self).action_refuse()
-        timesheets = self.sudo().mapped('timesheet_ids')
+        timesheets = self.sudo().timesheet_ids
         timesheets.write({'holiday_id': False})
         timesheets.unlink()
         self._check_missing_global_leave_timesheets()

@@ -1212,7 +1212,7 @@ class AccountTax(models.Model):
         document_type = 'refund' if is_refund else 'invoice'
         return self.repartition_line_ids\
             .filtered(lambda x: x.repartition_type == repartition_type and x.document_type == document_type)\
-            .mapped('tag_ids')
+            .tag_ids
 
     @api.model
     def _prepare_base_line_tax_details(

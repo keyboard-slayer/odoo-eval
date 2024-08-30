@@ -17,7 +17,7 @@ class PosConfig(models.Model):
 
     def _get_special_products(self):
         res = super()._get_special_products()
-        return res | self.env['pos.config'].search([]).mapped('down_payment_product_id')
+        return res | self.env['pos.config'].search([]).down_payment_product_id
 
     def _get_available_product_domain(self):
         domain = super()._get_available_product_domain()

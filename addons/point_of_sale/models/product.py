@@ -57,7 +57,7 @@ class ProductTemplate(models.Model):
                 ])
                 if combo_items_to_delete:
                     # Delete old combo item
-                    combo_ids = combo_items_to_delete.mapped('combo_id')
+                    combo_ids = combo_items_to_delete.combo_id
                     combo_items_to_delete.unlink()
                     # Create new combo item (one for each new variant) in each combo
                     new_variants = template.product_variant_ids.filtered(lambda v: v.active)

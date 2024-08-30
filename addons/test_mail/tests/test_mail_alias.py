@@ -66,7 +66,7 @@ class TestMailAlias(TestMailAliasCommon):
             (alias_mc_c1 + alias_mc_c2).alias_parent_model_id,
             self.env['ir.model']._get('mail.test.container.mc'))
         self.assertEqual(
-            (alias_mc_c1 + alias_mc_c2).mapped('alias_parent_thread_id'),
+            (alias_mc_c1 + alias_mc_c2).alias_parent_thread_id,
             (record_mc_c1 + record_mc_c2).ids)
         self.assertEqual(alias_mc_c1.alias_domain_id, self.mail_alias_domain)
         self.assertEqual(alias_mc_c2.alias_domain_id, self.mail_alias_domain_c2)
@@ -91,7 +91,7 @@ class TestMailAlias(TestMailAliasCommon):
         ])
         alias_update_c1, alias_update_c2 = record_upd_c1.alias_id, record_upd_c2.alias_id
         self.assertEqual(
-            (alias_update_c1 + alias_update_c2).mapped('alias_force_thread_id'),
+            (alias_update_c1 + alias_update_c2).alias_force_thread_id,
             (record_upd_c1 + record_upd_c2).ids)
         self.assertEqual(alias_update_c1.alias_domain_id, self.mail_alias_domain)
         self.assertEqual(alias_update_c2.alias_domain_id, self.mail_alias_domain_c2)

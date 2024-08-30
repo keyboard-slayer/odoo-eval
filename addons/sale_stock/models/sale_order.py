@@ -114,7 +114,7 @@ class SaleOrder(models.Model):
         if values.get('partner_shipping_id'):
             new_partner = self.env['res.partner'].browse(values.get('partner_shipping_id'))
             for record in self:
-                picking = record.mapped('picking_ids').filtered(lambda x: x.state not in ('done', 'cancel'))
+                picking = record.picking_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
                 message = _("""The delivery address has been changed on the Sales Order<br/>
                         From <strong>"%(old_address)s"</strong> to <strong>"%(new_address)s"</strong>,
                         You should probably update the partner on this document.""",
@@ -252,8 +252,8 @@ class SaleOrder(models.Model):
             visited_moves = list(visited_moves)
             visited_moves = self.env[visited_moves[0]._name].concat(*visited_moves)
             order_line_ids = self.env['sale.order.line'].browse([order_line.id for order in order_exceptions.values() for order_line in order[0]])
-            sale_order_ids = order_line_ids.mapped('order_id')
-            impacted_pickings = visited_moves.filtered(lambda m: m.state not in ('done', 'cancel')).mapped('picking_id')
+            sale_order_ids = order_line_ids.order_id
+            impacted_pickings = visited_moves.filtered(lambda m: m.state not in ('done', 'cancel')).picking_id
             values = {
                 'sale_order_ids': sale_order_ids,
                 'order_exceptions': order_exceptions.values(),

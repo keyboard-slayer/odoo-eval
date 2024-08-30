@@ -320,7 +320,7 @@ class Contract(models.Model):
         if calendar:
             self.filtered(
                 lambda c: c.state == 'open' or (c.state == 'draft' and c.kanban_state == 'done' and c.employee_id.contracts_count == 1)
-            ).mapped('employee_id').filtered(
+            ).employee_id.filtered(
                 lambda e: e.resource_calendar_id
             ).write({'resource_calendar_id': calendar})
 

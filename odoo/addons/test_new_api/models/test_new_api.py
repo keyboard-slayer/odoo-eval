@@ -728,7 +728,7 @@ class ComputeRecursiveTree(models.Model):
     @api.depends('name', 'children_ids.display_name')
     def _compute_display_name(self):
         for rec in self:
-            children_names = rec.mapped('children_ids.display_name')
+            children_names = rec.children_ids.mapped('display_name')
             rec.display_name = '%s(%s)' % (rec.name, ', '.join(children_names))
 
 

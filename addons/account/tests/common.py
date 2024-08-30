@@ -277,8 +277,8 @@ class AccountTestInvoicingCommon(ProductCommon):
                     ('company_ids', '=', company.id),
                     ('account_type', '=', 'liability_current')
                 ], limit=1),
-            'default_account_tax_sale': company.account_sale_tax_id.mapped('invoice_repartition_line_ids.account_id'),
-            'default_account_tax_purchase': company.account_purchase_tax_id.mapped('invoice_repartition_line_ids.account_id'),
+            'default_account_tax_sale': company.account_sale_tax_id.invoice_repartition_line_ids.account_id,
+            'default_account_tax_purchase': company.account_purchase_tax_id.invoice_repartition_line_ids.account_id,
             'default_journal_misc': cls.env['account.journal'].search([
                     ('company_id', '=', company.id),
                     ('type', '=', 'general')

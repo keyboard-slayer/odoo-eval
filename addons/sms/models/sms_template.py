@@ -46,7 +46,7 @@ class SMSTemplate(models.Model):
         return [dict(vals, name=self.env._("%s (copy)", template.name)) for template, vals in zip(self, vals_list)]
 
     def unlink(self):
-        self.sudo().mapped('sidebar_action_id').unlink()
+        self.sudo().sidebar_action_id.unlink()
         return super(SMSTemplate, self).unlink()
 
     def action_create_sidebar_action(self):

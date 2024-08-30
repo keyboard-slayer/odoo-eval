@@ -19,7 +19,7 @@ class AccountChartTemplate(models.AbstractModel):
             ('res_id', '!=', False),
         ])
         for fname in fields_name:
-            if fname in existing_props.mapped('fields_id.name'):
+            if fname in existing_props.fields_id.mapped('name'):
                 continue
             value = template_data.get(fname)
             if value:

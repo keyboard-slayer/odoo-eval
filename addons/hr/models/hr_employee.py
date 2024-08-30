@@ -539,7 +539,7 @@ class HrEmployeePrivate(models.Model):
         return res
 
     def unlink(self):
-        resources = self.mapped('resource_id')
+        resources = self.resource_id
         super(HrEmployeePrivate, self).unlink()
         return resources.unlink()
 

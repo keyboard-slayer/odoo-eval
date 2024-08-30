@@ -454,7 +454,11 @@ class BaseModel(models.AbstractModel):
             return ''
 
         try:
-            field_value = self.mapped(field_path)
+            last_model = self
+            path, _dummy, last_fname = field_path.rpartition(".")
+            for part in (path.split('.') if path else ()):
+                last_model = last_model[part]
+            field_value = last_model.mapped(last_fname)
         except KeyError:
             raise exceptions.UserError(
                 _("%(model_name)s.%(field_path)s does not seem to be a valid field path", model_name=self._name, field_path=field_path)
@@ -463,20 +467,14 @@ class BaseModel(models.AbstractModel):
             raise exceptions.UserError(
                 _("We were not able to fetch value of field '%(field)s'", field=field_path)
             ) from err
-        if isinstance(field_value, models.Model):
-            return ' '.join((value.display_name or '') for value in field_value)
+        if any(isinstance(value, models.Model) for value in field_value):
+            return ' '.join(name for value in field_value for name in value.mapped('display_name') if name)
         if any(isinstance(value, datetime) for value in field_value):
             tz = self._mail_get_timezone()
             return ' '.join([f"{tools.format_datetime(self.env, value, tz=tz)} {tz}"
                              for value in field_value if value and isinstance(value, datetime)])
         # find last field / last model when having chained fields
         # e.g. 'partner_id.country_id.state' -> ['partner_id.country_id', 'state']
-        field_path_models = field_path.rsplit('.', 1)
-        if len(field_path_models) > 1:
-            last_model_path, last_fname = field_path_models
-            last_model = self.mapped(last_model_path)
-        else:
-            last_model, last_fname = self, field_path
         last_field = last_model._fields[last_fname]
         # if selection -> return value, not the key
         if last_field.type == 'selection':

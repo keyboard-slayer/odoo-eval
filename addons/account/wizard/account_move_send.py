@@ -373,7 +373,7 @@ class AccountMoveSend(models.TransientModel):
 
     def action_open_partners_without_email(self, res_ids=None):
         # TODO: remove this method in master
-        return self.move_ids.mapped("partner_id").filtered(lambda x: not x.email)._get_records_action(name=_("Partners without email"))
+        return self.move_ids.partner_id.filtered(lambda x: not x.email)._get_records_action(name=_("Partners without email"))
 
     @api.model
     def _need_invoice_document(self, invoice):

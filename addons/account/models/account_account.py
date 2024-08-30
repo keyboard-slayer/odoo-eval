@@ -1094,7 +1094,7 @@ class AccountAccount(models.Model):
             raise UserError(_("You must select at least 2 accounts to merge."))
 
         for field in ['currency_id', 'deprecated', 'account_type', 'reconcile', 'non_trade']:
-            if len(set(self.mapped(field))) > 1:
+            if len(self[field]) > 1:
                 raise UserError(_(
                     "You may only merge accounts that have the same account type, currency, deprecated status, "
                     "reconciliation status, and trade/non-trade receivable status."

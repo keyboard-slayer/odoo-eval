@@ -10,7 +10,7 @@ class ResCurrency(models.Model):
     _inherit = 'res.currency'
 
     def _get_fiscal_country_codes(self):
-        return ','.join(self.env.companies.mapped('account_fiscal_country_id.code'))
+        return ','.join(self.env.companies.account_fiscal_country_id.mapped('code'))
 
     display_rounding_warning = fields.Boolean(string="Display Rounding Warning", compute='_compute_display_rounding_warning',
         help="The warning informs a rounding factor change might be dangerous on res.currency's form view.")
@@ -56,7 +56,7 @@ class ResCurrency(models.Model):
         else:
             if user_company not in companies:
                 companies |= user_company
-            currency_rates = companies.mapped('currency_id')._get_rates(user_company, conversion_date)
+            currency_rates = companies.currency_id._get_rates(user_company, conversion_date)
 
         conversion_rates = []
         for company in companies:

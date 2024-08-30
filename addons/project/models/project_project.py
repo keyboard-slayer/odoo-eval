@@ -585,7 +585,7 @@ class Project(models.Model):
         res = super(Project, self).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
         if subtype_ids:
             project_subtypes = self.env['mail.message.subtype'].browse(subtype_ids)
-            task_subtypes = (project_subtypes.mapped('parent_id') | project_subtypes.filtered(lambda sub: sub.internal or sub.default)).ids
+            task_subtypes = (project_subtypes.parent_id | project_subtypes.filtered(lambda sub: sub.internal or sub.default)).ids
             if task_subtypes:
                 for task in self.task_ids:
                     partners = set(task.message_partner_ids.ids) & set(partner_ids)
