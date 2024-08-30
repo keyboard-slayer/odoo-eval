@@ -16,7 +16,7 @@ import {
     isZwnbsp,
 } from "@html_editor/utils/dom_info";
 import { closestElement, descendants } from "@html_editor/utils/dom_traversal";
-import { isCSSColor } from "@web/core/utils/colors";
+import { isCSSColor, normalizeCSSColor } from "@web/core/utils/colors";
 import { ColorSelector } from "./color_selector";
 import { reactive } from "@odoo/owl";
 import { _t } from "@web/core/l10n/translation";
@@ -177,7 +177,14 @@ export class ColorPlugin extends Plugin {
         const selectedNodes =
             mode === "backgroundColor"
                 ? selectionNodes.filter((node) => !closestElement(node, "table.o_selected_table"))
-                : selectionNodes;
+                : selectionNodes.filter((node) => {
+                      const li = closestElement(node, "li");
+                      if (li && this.shared.isNodeContentsFullySelected(li)) {
+                          return normalizeCSSColor(li.style.color) !== normalizeCSSColor(color);
+                      } else {
+                          return true;
+                      }
+                  });
 
         const selectedFieldNodes = new Set(
             this.shared
@@ -261,6 +268,10 @@ export class ColorPlugin extends Plugin {
         // Color the selected <font>s and remove uncolored fonts.
         const fontsSet = new Set(fonts);
         for (const font of fontsSet) {
+            const closestLI = closestElement(font, "li");
+            if (font && color === "" && closestLI?.style.color) {
+                color = "initial";
+            }
             this.colorElement(font, color, mode);
             if (
                 !hasColor(font, "color") &&
