@@ -29,7 +29,7 @@ test("can create a new channel [REQUIRE FOCUS]", async () => {
     onRpc((params) => {
         if (
             params.model === "discuss.channel" &&
-            ["search_read", "channel_create"].includes(params.method)
+            ["search_read", "channel_create_store"].includes(params.method)
         ) {
             step(
                 `${params.route} - ${JSON.stringify(
@@ -88,7 +88,7 @@ test("can create a new channel [REQUIRE FOCUS]", async () => {
         ["partner_id", "=", serverState.partnerId],
     ]);
     await assertSteps([
-        `/web/dataset/call_kw/discuss.channel/channel_create - ${JSON.stringify({
+        `/web/dataset/call_kw/discuss.channel/channel_create_store - ${JSON.stringify({
             args: ["abc", null],
             kwargs: {
                 context: {
@@ -98,7 +98,7 @@ test("can create a new channel [REQUIRE FOCUS]", async () => {
                     allowed_company_ids: [1],
                 },
             },
-            method: "channel_create",
+            method: "channel_create_store",
             model: "discuss.channel",
         })}`,
         `/discuss/channel/messages - {"channel_id":${channelId},"limit":60,"around":${selfMember.new_message_separator}}`,
@@ -137,7 +137,7 @@ test("can join a chat conversation", async () => {
     onRpc((params) => {
         if (
             params.model === "discuss.channel" &&
-            ["search_read", "channel_create", "channel_get"].includes(params.method)
+            ["search_read", "channel_create_store", "channel_get_store"].includes(params.method)
         ) {
             step(
                 `${params.route} - ${JSON.stringify(
@@ -173,7 +173,7 @@ test("can join a chat conversation", async () => {
     await contains(".o-mail-Message", { count: 0 });
     const channelId = pyEnv["discuss.channel"].search([["name", "=", "Mario, Mitchell Admin"]]);
     await assertSteps([
-        `/web/dataset/call_kw/discuss.channel/channel_get - ${JSON.stringify({
+        `/web/dataset/call_kw/discuss.channel/channel_get_store - ${JSON.stringify({
             args: [],
             kwargs: {
                 partners_to: [partnerId],
@@ -185,7 +185,7 @@ test("can join a chat conversation", async () => {
                     allowed_company_ids: [1],
                 },
             },
-            method: "channel_get",
+            method: "channel_get_store",
             model: "discuss.channel",
         })}`,
         `/discuss/channel/messages - {"channel_id":${channelId},"limit":60,"around":0}`,
