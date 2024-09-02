@@ -2,7 +2,7 @@
 
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.exceptions import ValidationError
-from odoo.tests import tagged
+from odoo.tests import tagged, users
 from odoo import fields, Command
 from odoo.tests.common import Form
 
@@ -397,3 +397,25 @@ class TestAccountPaymentTerms(AccountTestInvoicingCommon):
                     'discount_amount_currency': 362.30,
                 },
             ])
+
+    @users('__system__')
+    def test_payment_term_multi_company(self):
+        """
+        Ensure that the payment term is determined by `move.company_id` rather than `user.company_id`.
+        OdooBot has `res.company(1)` set as the default company. The test checks that the payment term correctly reflects
+        the company associated with the move, independent of the user's default company.
+        """
+        company_1, company_2 = self.company_data_2.get('company'), self.company_data.get('company')
+        self.env.user.write({
+            'company_ids': [company_1.id, company_2.id],
+            'company_id': company_1.id,
+        })
+        self.pay_terms_a.company_id = company_1
+        self.partner_a.with_company(company_1).property_payment_term_id = self.pay_terms_a
+        self.partner_a.with_company(company_2).property_payment_term_id = False
+
+        invoice = self.env['account.move'].with_context(default_move_type='out_invoice').create({
+            'partner_id': self.partner_a.id,
+            'company_id': company_2.id
+        })
+        self.assertFalse(invoice.invoice_payment_term_id)
