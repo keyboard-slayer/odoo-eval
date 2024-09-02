@@ -1650,7 +1650,10 @@ class BaseModel(metaclass=MetaModel):
 
         fields_to_fetch = self._determine_fields_to_fetch(field_names)
 
-        return self._fetch_query(query, fields_to_fetch)
+        fetched = self._fetch_query(query, fields_to_fetch)
+        if not self.env.su:
+            self.env.transaction.access_read[self._name][self.env.uid].update(dict.fromkeys(fetched._ids, True))
+        return fetched
 
     #
     # display_name, name_create, name_search
@@ -3986,6 +3989,8 @@ class BaseModel(metaclass=MetaModel):
 
         # fetch the fields
         fetched = self._fetch_query(query, fields_to_fetch)
+        if not self.env.su:
+            self.env.transaction.access_read[self._name][self.env.uid].update(dict.fromkeys(fetched._ids, True))
 
         # possibly raise exception for the records that could not be read
         if fetched != self:
@@ -4301,18 +4306,66 @@ class BaseModel(metaclass=MetaModel):
         and :meth:`_filtered_access`. The method may be overridden in order to
         restrict the access to ``self``.
         """
-        Access = self.env['ir.model.access']
-        if not Access.check(self._name, operation, raise_exception=False):
-            return self, functools.partial(Access._make_access_error, self._name, operation)
+        # get the cached access
+        env = self.env
+        if operation == 'read':
+            access = env.transaction.access_read[self._name][env.uid]
+        elif operation == 'write':
+            access = env.transaction.access_write[self._name][env.uid]
+        else:
+            access = {}
+        # note: access[0] is reserved for the model
+        # - no value => we don't know if we have access to the model
+        # - False => we have access to the model
+        # - True => we have access to the model and to all records (empty domain)
+
+        # if we have access to some records, the model is accessible
+        if not access:
+            Access = env['ir.model.access']
+            if not Access.check(self._name, operation, raise_exception=False):
+                return self, functools.partial(Access._make_access_error, self._name, operation)
+            access[0] = False  # just make the cache non-empty so that we skip this check
 
         # we only check access rules on real records, which should not be mixed
         # with new records
-        if any(self._ids):
-            Rule = self.env['ir.rule']
-            domain = Rule._compute_domain(self._name, operation)
-            if domain and (forbidden := self - self.sudo().filtered_domain(domain)):
-                return forbidden, functools.partial(Rule._make_access_error, operation, forbidden)
+        # if we have access to all records, we can stop here
+        ids = self._ids
+        if not any(ids) or all(map(access.get, ids)):
+            return None
 
+        # check the rule and find all forbidden records
+        domain = None if access[0] else env['ir.rule']._compute_domain(self._name, operation)
+        if operation in ('read', 'write'):
+            if not domain:
+                access[0] = True
+                access.update(dict.fromkeys(self._prefetch_ids, True))
+                return None
+            # check record rules for the prefetch and cache the result
+            records = self.sudo().browse(id_ for id_ in self._prefetch_ids if id_ not in access)
+            # check cache for forbidden records if we do not check all of records
+            try:
+                accessible = records.filtered_domain(domain)
+            except MissingError:
+                # add inexisting records as inaccessible to avoid retrying them
+                # XXX expected behaviour?
+                existing = records.exists()
+                records, missing = existing, records - existing
+                access.update(dict.fromkeys(missing._ids, False))
+                accessible = records.filtered_domain(domain)
+            # update the cache
+            inaccessible = records - accessible
+            access.update(dict.fromkeys(accessible._ids, True))
+            access.update(dict.fromkeys(inaccessible._ids, False))
+            # forbidden are not only inaccessible records, there were also records we already knew were inaccessible
+            forbidden = self.browse(id_ for id_ in ids if not access[id_])
+        elif not domain:
+            return None
+        else:
+            # simple version without caching, this may raise a MissingError
+            forbidden = self - self.sudo().filtered_domain(domain)
+
+        if forbidden:
+            return forbidden, functools.partial(env['ir.rule']._make_access_error, operation, forbidden)
         return None
 
     @api.model

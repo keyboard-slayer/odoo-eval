@@ -1202,15 +1202,22 @@ class Field(MetaField('DummyField', (object,), {}), typing.Generic[T]):
         if record is None:
             return self         # the field is accessed through the owner class
 
+        env = record.env
+
+        if not env.su and not self.is_accessible(env):
+            record.check_field_access_rights('read', [self.name])
+
         if not record._ids:
             # null record -> return the null value for this field
+            record.check_access('read')
             value = self.convert_to_cache(False, record, validate=False)
             return self.convert_to_record(value, record)
 
-        env = record.env
-
-        # only a single record may be accessed
-        record.ensure_one()
+        # only a single record may be accessed and is accessible
+        if env.su:
+            record.ensure_one()
+        elif not env.transaction.access_read[record._name][env.uid].get(record.id):
+            record.check_access('read')
 
         if self.compute and self.store:
             # process pending computations
@@ -2988,6 +2995,10 @@ class _Relational(Field[M], typing.Generic[M]):
         if records is None or len(records._ids) <= 1:
             return super().__get__(records, owner)
         # multirecord case: use mapped
+        env = records.env
+        if not env.su and not self.is_accessible(env):
+            records.check_field_access_rights('read', [self.name])
+        records.check_access('read')
         return self.mapped(records)
 
     def setup_nonrelated(self, model):
@@ -4971,7 +4982,7 @@ class Many2many(_RelationalMulti[M]):
                 self.read(records.browse(missing_ids))
 
         # determine new relation {x: ys}
-        old_relation = {record.id: set(record[self.name]._ids) for record in records}
+        old_relation = {record.id: set() if create else set(record[self.name]._ids) for record in records}
         new_relation = {x: set(ys) for x, ys in old_relation.items()}
 
         # operations on new relation

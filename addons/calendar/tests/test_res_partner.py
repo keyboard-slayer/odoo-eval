@@ -53,7 +53,9 @@ class TestResPartner(TransactionCase):
                       'partner_ids': [(6, 0, [test_partner_5.id,
                                               test_partner_7.id])]})
 
-        #Test rule to see if ir.rules are applied
+        # Test rule to see if ir.rules are applied
+        # XXX does not work because we need to read event_id
+        # during subscription of attendees and during `_validate_fields``
         calendar_event_model_id = self.env['ir.model']._get('calendar.event').id
         self.env['ir.rule'].create({'name': 'test_rule',
                                     'model_id': calendar_event_model_id,

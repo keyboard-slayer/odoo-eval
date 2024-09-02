@@ -1881,6 +1881,7 @@ class TestFields(TransactionCaseWithUserDemo, TransactionExpressionCase):
         existing.categories
 
         # invalidate 'categories' for the assertQueryCount
+        self.env.transaction.clear_access_cache()
         records.invalidate_model(['categories'])
         with self.assertQueryCount(4):
             # <categories>.__get__(existing)
@@ -2308,7 +2309,7 @@ class TestFields(TransactionCaseWithUserDemo, TransactionExpressionCase):
 
         # read the related field discussion_name
         self.assertNotEqual(message.sudo().env, message.env)
-        self.assertEqual(message.discussion_name, discussion.name)
+        self.assertEqual(message.discussion_name, discussion.sudo().name)
 
     def test_43_new_related(self):
         """ test the behavior of one2many related fields """
