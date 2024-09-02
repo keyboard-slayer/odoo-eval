@@ -8,7 +8,6 @@ import {
     onPatched,
     onWillStart,
     onWillUnmount,
-    onWillUpdateProps,
     useComponent,
     useExternalListener,
     useRef,
@@ -114,13 +113,10 @@ export function useFullCalendar(refName, params) {
         }
     });
 
-    let isWeekendVisible = params.isWeekendVisible;
-    onWillUpdateProps((np) => {
-        isWeekendVisible = np.isWeekendVisible;
-    });
     onPatched(() => {
-        instance.refetchEvents();
-        instance.setOption("weekends", isWeekendVisible);
+        instance.destroy();
+        instance.setOption("weekends", component.props.isWeekendVisible);
+        instance.render();
     });
     onWillUnmount(() => {
         instance.destroy();
