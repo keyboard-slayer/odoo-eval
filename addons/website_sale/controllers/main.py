@@ -1637,13 +1637,13 @@ class WebsiteSale(payment_portal.PaymentPortal):
         ], limit=1)
         address.update(country_id=country.id, state_id=state.id)
 
-    @route('/shop/update_address', type='json', auth='public', website=True)
-    def shop_update_address(self, partner_id, address_type='billing', **kw):
+    @route('/address/update_address', type='json')
+    def portal_update_address(self, partner_id, address_type='billing', **kw):
         partner_id = int(partner_id)
 
         order_sudo = request.website.sale_get_order()
         if not order_sudo:
-            return
+            return super().portal_update_address(partner_id, address_type, **kw)
 
         ResPartner = request.env['res.partner'].sudo()
         partner_sudo = ResPartner.browse(partner_id).exists()
@@ -1660,7 +1660,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
 
         partner_fnames = set()
         if (
-            address_type == 'billing'
+            address_type == 'billing' or address_type == 'invoice'
             and partner_sudo != order_sudo.partner_invoice_id
         ):
             partner_fnames.add('partner_invoice_id')
@@ -1670,6 +1670,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
         ):
             partner_fnames.add('partner_shipping_id')
 
+        partner_sudo._update_delivery_and_shipping_address(partner_id, address_type, **kw)
         order_sudo._update_address(partner_id, partner_fnames)
 
     @route(['/shop/confirm_order'], type='http', auth="public", website=True, sitemap=False)

@@ -67,3 +67,6 @@ class ResPartner(models.Model):
                     # Only delivery addresses are editable as delivery
                     return True
         return super()._can_be_edited_by_current_customer(address_type, order_sudo=sale_order)
+
+    def can_edit_company(self):
+        return not self._has_invoice(['|', ('partner_id', '=', self.id), ('partner_id', 'child_of', self.commercial_partner_id.id)])

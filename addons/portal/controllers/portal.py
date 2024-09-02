@@ -276,10 +276,10 @@ class CustomerPortal(Controller):
         return request.render(template_to_render, address_form_values)
 
     @route('/address/update_address', type='json', auth='public', website=True)
-    def portal_update_address(self, partner_id, mode='billing', **kw):
+    def portal_update_address(self, partner_id, address_type='billing', **kw):
         partner_id = int(partner_id)
         ResPartner = request.env['res.partner'].sudo()
-        ResPartner._update_delivery_and_shipping_address(partner_id, mode)
+        ResPartner._update_delivery_and_shipping_address(partner_id, address_type, **kw)
 
     @route(['/archive/address/<int:partner_id>'], type='http', auth="user")
     def address_archive(self, partner_id):
@@ -338,7 +338,7 @@ class CustomerPortal(Controller):
         :rtype: dict
         """
         can_edit_vat = (
-            address_type == 'invoice'
+            address_type in ['invoice', 'billing']
             and (not partner_sudo or partner_sudo.can_edit_vat())
         )
 
@@ -350,6 +350,7 @@ class CustomerPortal(Controller):
         state_id = partner_sudo.state_id.id
 
         address_fields = country_sudo and country_sudo.get_address_fields() or ['city', 'zip']
+        partner = partner_sudo or request.env.user.partner_id
 
         return {
             'partner_sudo': partner_sudo,  # If set, customer is editing an existing address
@@ -362,17 +363,17 @@ class CustomerPortal(Controller):
             'discard_url': '/my/addresses',
             'country': country_sudo,
             'countries': ResCountrySudo.search([]),
+            'show_country': partner.can_edit_company(),
             'state_id': state_id or 1,
             'country_states': country_sudo.state_ids,
             'zip_before_city': (
                 'zip' in address_fields
                 and address_fields.index('zip') < address_fields.index('city')
             ),
-            'show_vat': bool(address_type == 'invoice' and can_edit_vat),
+            'show_vat': bool(address_type in ['invoice', 'billing'] and not partner_sudo.parent_id and (can_edit_vat or partner_sudo.vat)),
             'vat_label': _lt("VAT"),
         }
 
-    # Submit code
     @route(
         '/portal/address/submit', type='http', methods=['POST'], auth='public', website=True,
         sitemap=False
@@ -413,7 +414,7 @@ class CustomerPortal(Controller):
         address_values, extra_form_data = self._parse_portal_form_data(form_data)
 
         # Validate the address values and highlights the problems in the form, if any.
-        invalid_fields, missing_fields, error_messages = self._validate_address_values(
+        invalid_fields, missing_fields, error_messages = self._validate_portal_address_values(
             address_values, partner_sudo, address_type, use_same, required_fields, **extra_form_data
         )
 
@@ -423,12 +424,11 @@ class CustomerPortal(Controller):
                 'messages': error_messages,
             })
         if not partner_sudo:  # Creation of a new address.
-            # self._complete_address_values(address_values, address_type, use_same, order_sudo)
             address_values['parent_id'] = request.env.user.partner_id.id
             create_context = tools.clean_context(request.env.context)
             create_context.update({
                 'tracking_disable': True,
-                'no_vat_validation': True,  # Already verified in _validate_address_values
+                'no_vat_validation': True,
             })
             partner_sudo = request.env['res.partner'].sudo().with_context(
                 create_context
@@ -437,7 +437,9 @@ class CustomerPortal(Controller):
             partner_sudo.write(address_values)
 
         callback = callback or 'my/addresses'
-        return request.redirect(callback)
+        return json.dumps({
+            'successUrl': callback,
+        })
 
     def _parse_portal_form_data(self, form_data):
         """ Parse the form data and return them converted into address values and extra form data.
@@ -477,10 +479,10 @@ class CustomerPortal(Controller):
         return address_values, extra_form_data
 
     def _get_writable_fields(self):
-        # Need to override iti in ecommerce
+        # Need to override it in ecommerce
         return {}
 
-    def _validate_address_values(
+    def _validate_portal_address_values(
         self, address_values, partner_sudo, address_type, use_same, required_fields, **_kwargs
     ):
         """ Validate the address values and return the invalid fields, the missing fields, and any
