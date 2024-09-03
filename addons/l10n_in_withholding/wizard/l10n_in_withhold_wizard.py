@@ -109,7 +109,8 @@ class L10nInWithholdWizard(models.TransientModel):
     def _compute_journal(self):
         for wizard in self:
             wizard.journal_id = wizard.company_id.l10n_in_withholding_journal_id or \
-                                wizard.env['account.journal'].search([('company_id', '=', wizard.company_id.id), ('type', '=', 'general')], limit=1)
+                                wizard.company_id.parent_id.l10n_in_withholding_journal_id or \
+                                wizard.env['account.journal'].search([*self.env['account.journal']._check_company_domain(wizard.company_id), ('type', '=', 'general')], limit=1)
 
     @api.depends('related_move_id', 'related_payment_id', 'withhold_line_ids.base')
     def _compute_warning_message(self):
