@@ -130,6 +130,7 @@ else:
     else:
         _logger.info('Wkhtmltoimage seems to be broken.')
 
+
 class IrActionsReport(models.Model, IrActionsActions):
     _description = 'Report Action'
     _table = 'ir_act_report_xml'

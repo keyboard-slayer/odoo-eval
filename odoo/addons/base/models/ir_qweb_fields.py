@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from odoo.addons import base
 import base64
 import binascii
 from datetime import time
@@ -41,6 +40,7 @@ def nl2br_enclose(string: str, enclosure_tag: str = 'div') -> Markup:
 #--------------------------------------------------------------------
 # QWeb Fields converters
 #--------------------------------------------------------------------
+
 
 class IrQwebField(models.AbstractModel):
     """ Used to convert a t-field specification into an output HTML field.
@@ -393,6 +393,7 @@ class IrQwebFieldImage(models.AbstractModel, IrQwebField):
     def value_to_html(self, value, options):
         return Markup('<img src="%s">') % self._get_src_data_b64(value, options)
 
+
 class IrQwebFieldImageUrl(models.AbstractModel, IrQwebFieldImage):
     """ ``image_url`` widget rendering, inserts an image tag in the
     document.
@@ -403,6 +404,7 @@ class IrQwebFieldImageUrl(models.AbstractModel, IrQwebFieldImage):
     @api.model
     def value_to_html(self, value, options):
         return Markup('<img src="%s">' % (value))
+
 
 class IrQwebFieldMonetary(models.AbstractModel, IrQwebField):
     """ ``monetary`` converter, has a mandatory option

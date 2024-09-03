@@ -3,6 +3,7 @@
 
 from odoo import api, fields, models, tools
 
+
 class ResPartner(models.Model):
     _inherit = ['res.partner']
 

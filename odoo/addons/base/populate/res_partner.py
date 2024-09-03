@@ -145,6 +145,7 @@ class ResPartner(base.ResPartner):
             partners.write({'parent_id': company.id})
             partners._onchange_company_id()
 
+
 class ResPartnerIndustry(base.ResPartnerIndustry):
 
     _populate_sizes = {

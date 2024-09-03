@@ -6,6 +6,7 @@ from odoo.tests import common
 from ..models.mother_inherit_4 import TestINHERITMother
 from odoo import models
 
+
 class test_inherits(common.TransactionCase):
 
     def test_00_inherits(self):
@@ -116,8 +117,8 @@ class test_inherits(common.TransactionCase):
         class NewTestInheritModel(NewTestInheritModel):
             pass
 
-        with self.assertRaisesRegex(TypeError, r"The new Model 'Inherit2OdooModelClass' must contains the Odoo model type \(AbstractModel, Model, TransientModel\)"):
-            class Inherit2OdooModelClass(MixinFoo, NewTestInheritModel):
+        with self.assertRaisesRegex(TypeError, r"The new Model 'InheritOdooModelClass' must contains the Odoo model type \(AbstractModel, Model, TransientModel\)"):
+            class InheritOdooModelClass(MixinFoo, NewTestInheritModel):
                 pass
 
         with self.assertRaisesRegex(TypeError, r"Model 'Inherit2OdooModelClass' can only extend BaseModel classes."):

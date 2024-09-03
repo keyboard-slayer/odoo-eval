@@ -5,7 +5,7 @@ from . import assetsbundle
 from .ir_model import IrModelRelation, Base, IrModelInherit, IrModelFieldsSelection, IrModel, IrModelData, IrModelAccess, Unknown, WizardIrModelMenuCreate, IrModelConstraint, IrModelFields
 from .ir_sequence import IrSequenceDateRange, IrSequence
 from .ir_ui_menu import IrUiMenu
-from .ir_ui_view import IrUiView, Base, ResetViewArchWizard, IrUiViewCustom
+from .ir_ui_view import IrUiView, Base, ResetViewArchWizard, IrUiViewCustom  # noqa: F811
 from .ir_asset import IrAsset
 from .ir_actions import IrActionsActUrl, IrActionsTodo, IrActionsActWindow, IrActionsServer, IrActionsClient, IrActionsActions, IrActionsActWindowClose, IrActionsActWindowView
 from .ir_embedded_actions import IrEmbeddedActions
@@ -43,7 +43,7 @@ from .res_bank import ResPartnerBank, ResBank
 from .res_config import ResConfig, ResConfigSettings
 from .res_currency import ResCurrencyRate, ResCurrency
 from .res_company import ResCompany
-from .res_users import ResUsers, ResGroups, ResUsersApikeysShow, IrModuleCategory, ResUsersLog, ResUsersApikeys, ResUsersApikeysDescription, ChangePasswordUser, ChangePasswordWizard, ResUsersIdentitycheck, ResUsers, ChangePasswordOwn, ResGroups
+from .res_users import ResUsers, ResGroups, ResUsersApikeysShow, IrModuleCategory, ResUsersLog, ResUsersApikeys, ResUsersApikeysDescription, ChangePasswordUser, ChangePasswordWizard, ResUsersIdentitycheck, ResUsers, ChangePasswordOwn, ResGroups  # noqa: F811
 from .res_users_settings import ResUsersSettings
 from .res_users_deletion import ResUsersDeletion
 from .res_device import ResDeviceLog, ResDevice
