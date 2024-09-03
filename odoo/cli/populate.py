@@ -37,7 +37,7 @@ class Populate(Command):
                          help="Specify if you want to rollback database population.",
                          default=False)
         parser.add_option_group(group)
-        opt = odoo.tools.config.parse_config(cmdargs)
+        opt = odoo.tools.config.parse_config(cmdargs, setup_logging=True)
         populate_models = opt.populate_models and set(opt.populate_models.split(','))
         dbname = odoo.tools.config['db_name']
         registry = Registry(dbname)
