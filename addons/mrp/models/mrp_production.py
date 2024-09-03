@@ -1877,7 +1877,7 @@ class MrpProduction(models.Model):
                 ml_vals = initial_move._prepare_move_line_vals()
                 backorder_move_to_ignore = backorder_moves[-1] if has_backorder_to_ignore[initial_move.raw_material_production_id] else self.env['stock.move']
                 for move in (initial_move + backorder_moves - backorder_move_to_ignore):
-                    if not initial_move.move_line_ids:
+                    if not move.move_line_ids:
                         new_ml_vals = dict(
                             ml_vals,
                             quantity=move.product_uom_qty,
