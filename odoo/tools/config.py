@@ -372,7 +372,7 @@ class configmanager(object):
         # generate default config
         self._parse_config()
 
-    def parse_config(self, args=None):
+    def parse_config(self, args=None, *, setup_logging=False):
         """ Parse the configuration file (if any) and the command-line
         arguments.
 
@@ -388,7 +388,8 @@ class configmanager(object):
             odoo.tools.config.parse_config(sys.argv[1:])
         """
         opt = self._parse_config(args)
-        odoo.netsvc.init_logger()
+        if setup_logging:
+            odoo.netsvc.init_logger()
         self._warn_deprecated_options()
         odoo.modules.module.initialize_sys_path()
         return opt
