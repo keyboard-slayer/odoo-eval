@@ -212,7 +212,7 @@ class CountryState(models.Model):
                 '|', ('country_id.name', 'ilike', m['country'].strip()),
                 ('country_id.code', '=', m['country'].strip()),
             ]
-        return None
+        return []
 
     @api.depends('country_id')
     def _compute_display_name(self):
