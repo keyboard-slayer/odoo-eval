@@ -20,6 +20,7 @@ export class MediaPlugin extends Plugin {
     /** @type { (p: MediaPlugin) => Record<string, any> } */
     static resources = (p) => {
         const powerboxItems = [];
+        const magicButtons = [];
         if (!p.config.disableImage) {
             powerboxItems.push({
                 name: _t("Image"),
@@ -29,6 +30,15 @@ export class MediaPlugin extends Plugin {
                 action() {
                     p.openMediaDialog();
                 },
+            });
+            magicButtons.push({
+                id: "image",
+                title: _t("Image"),
+                fontawesome: "fa-file-image-o",
+                async action() {
+                    await p.openMediaDialog();
+                },
+                sequence: 5,
             });
         }
         if (!p.config.disableVideo) {
@@ -63,6 +73,7 @@ export class MediaPlugin extends Plugin {
                 },
             ],
             isUnsplittable: isIconElement, // avoid merge
+            magicButtons,
         };
         return resources;
     };
@@ -165,24 +176,33 @@ export class MediaPlugin extends Plugin {
             this.shared.setSelection(selection);
         };
         const { resModel, resId, field, type } = this.recordInfo;
-        this.services.dialog.add(MediaDialog, {
-            resModel,
-            resId,
-            useMediaLibrary: !!(
-                field &&
-                ((resModel === "ir.ui.view" && field === "arch") || type === "html")
-            ), // @todo @phoenix: should be removed and moved to config.mediaModalParams
-            media: params.node,
-            save: (element) => {
-                this.onSaveMediaDialog(element, { node: params.node, restoreSelection });
-            },
-            close: restoreSelection,
-            onAttachmentChange: this.config.onAttachmentChange || (() => {}),
-            noVideos: !!this.config.disableVideo,
-            noImages: !!this.config.disableImage,
-            ...this.config.mediaModalParams,
-            ...params,
+        const mediaDialogClosedPromise = new Promise((resolve) => {
+            this.services.dialog.add(
+                MediaDialog,
+                {
+                    resModel,
+                    resId,
+                    useMediaLibrary: !!(
+                        field &&
+                        ((resModel === "ir.ui.view" && field === "arch") || type === "html")
+                    ), // @todo @phoenix: should be removed and moved to config.mediaModalParams
+                    media: params.node,
+                    save: (element) => {
+                        this.onSaveMediaDialog(element, { node: params.node, restoreSelection });
+                    },
+                    close: restoreSelection,
+                    onAttachmentChange: this.config.onAttachmentChange || (() => {}),
+                    noVideos: !!this.config.disableVideo,
+                    noImages: !!this.config.disableImage,
+                    ...this.config.mediaModalParams,
+                    ...params,
+                },
+                {
+                    onClose: () => resolve(),
+                }
+            );
         });
+        return mediaDialogClosedPromise;
     }
 
     async savePendingImages() {

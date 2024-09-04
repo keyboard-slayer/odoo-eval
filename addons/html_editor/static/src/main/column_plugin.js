@@ -85,6 +85,7 @@ export class ColumnPlugin extends Plugin {
                 hint: _t("Empty column"),
             },
         ],
+        showMagicButtons: (selection) => !closestElement(selection.anchorNode, ".o_text_columns"),
     });
 
     handleCommand(command, payload) {

@@ -31,6 +31,16 @@ export class DynamicPlaceholderPlugin extends Plugin {
                 dispatch("OPEN_DYNAMIC_PLACEHOLDER");
             },
         },
+        magicButtons: [
+            {
+                id: "dynamic_placeholder",
+                title: _t("Dynamic placeholder"),
+                fontawesome: "fa-hashtag",
+                action(dispatch) {
+                    dispatch("OPEN_DYNAMIC_PLACEHOLDER");
+                },
+            },
+        ],
     });
     setup() {
         this.defaultResModel = this.config.dynamicPlaceholderResModel;

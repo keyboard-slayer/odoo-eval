@@ -29,6 +29,17 @@ export class TableUIPlugin extends Plugin {
                 },
             },
         ],
+        magicButtons: [
+            {
+                id: "table",
+                title: _t("Table"),
+                fontawesome: "fa-table",
+                action(dispatch) {
+                    dispatch("OPEN_TABLE_PICKER");
+                },
+                sequence: 4,
+            },
+        ],
     });
 
     setup() {

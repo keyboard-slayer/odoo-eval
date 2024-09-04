@@ -158,6 +158,17 @@ export class LinkPlugin extends Plugin {
         onSelectionChange: p.handleSelectionChange.bind(p),
         split_element_block: { callback: p.handleSplitBlock.bind(p) },
         handle_insert_line_break_element: { callback: p.handleInsertLineBreak.bind(p) },
+        magicButtons: [
+            {
+                id: "link",
+                title: _t("Link"),
+                fontawesome: "fa-link",
+                action(dispatch) {
+                    dispatch("TOGGLE_LINK");
+                },
+                sequence: 6,
+            },
+        ],
     });
     setup() {
         this.overlay = this.shared.createOverlay(LinkPopover);

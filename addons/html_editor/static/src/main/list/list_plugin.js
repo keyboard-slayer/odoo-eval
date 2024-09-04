@@ -110,6 +110,35 @@ export class ListPlugin extends Plugin {
             // to display the checkbox.
         ],
         onInput: { handler: p.onInput.bind(p) },
+        magicButtons: [
+            {
+                id: "numbered_list",
+                title: _t("Numbered List"),
+                fontawesome: "fa-list-ol",
+                action(dispatch) {
+                    dispatch("TOGGLE_LIST", { mode: "OL" });
+                },
+                sequence: 1,
+            },
+            {
+                id: "bullet_list",
+                title: _t("Bullet List"),
+                fontawesome: "fa-list-ul",
+                action(dispatch) {
+                    dispatch("TOGGLE_LIST", { mode: "UL" });
+                },
+                sequence: 2,
+            },
+            {
+                id: "checked_list",
+                title: _t("Checklist"),
+                fontawesome: "fa-check-square-o",
+                action(dispatch) {
+                    dispatch("TOGGLE_LIST", { mode: "CL" });
+                },
+                sequence: 3,
+            },
+        ],
     });
 
     setup() {

@@ -54,6 +54,7 @@ export class BannerPlugin extends Plugin {
                 },
             },
         ],
+        showMagicButtons: (selection) => !closestElement(selection.anchorNode, ".o_editor_banner"),
     });
 
     setup() {
