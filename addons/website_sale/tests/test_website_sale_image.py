@@ -345,13 +345,11 @@ class TestWebsiteSaleRemoveImage(HttpCase):
     def setUpClass(cls):
         super().setUpClass()
         # Attachment needed for the replacement of images
-        IrAttachment = cls.env['ir.attachment']
-        base = "http://%s:%s" % (HOST, config['http_port'])
-        IrAttachment.create({
+        cls.env['ir.attachment'].create({
             'public': True,
             'name': 's_default_image.jpg',
             'type': 'url',
-            'url': base + '/web/image/website.s_banner_default_image.jpg',
+            'url': f'{cls.base_url()}/web/image/website.s_banner_default_image.jpg',
         })
 
         # First image (blue) for the template.

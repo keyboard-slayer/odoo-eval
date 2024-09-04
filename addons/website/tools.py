@@ -240,9 +240,8 @@ def create_image_attachment(env, image_path, image_name):
     :param image_name: the name to give to the image (e.g. 's_banner_default_image.jpg')
     :return: the image attachment
     """
-    IrAttachment = env['ir.attachment']
-    base = 'http://%s:%s' % (HOST, config['http_port'])
-    img = IrAttachment.create({
+    base = env['ir.config_parameter'].get_param('web.base.url')
+    img = env['ir.attachment'].create({
         'public': True,
         'name': image_name,
         'type': 'url',

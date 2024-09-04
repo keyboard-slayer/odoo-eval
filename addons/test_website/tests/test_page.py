@@ -12,7 +12,7 @@ class WithContext(HttpCase):
         website = self.env['website'].browse([1])
         website.write({
             'name': 'Test Website',
-            'domain': f'http://{HOST}:{config["http_port"]}',
+            'domain': self.base_url(),
             'homepage_url': '/unexisting',
         })
         home_url = '/'
