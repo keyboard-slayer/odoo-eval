@@ -26,13 +26,16 @@ class PaymentProvider(models.Model):
     razorpay_key_id = fields.Char(
         string="Razorpay Key Id",
         help="The key solely used to identify the account with Razorpay.",
+        required_if_provider='razorpay',
     )
     razorpay_key_secret = fields.Char(
         string="Razorpay Key Secret",
+        required_if_provider='razorpay',
         groups='base.group_system',
     )
     razorpay_webhook_secret = fields.Char(
         string="Razorpay Webhook Secret",
+        required_if_provider='razorpay',
         groups='base.group_system',
     )
 

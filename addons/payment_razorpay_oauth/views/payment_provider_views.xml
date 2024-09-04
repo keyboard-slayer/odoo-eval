@@ -6,6 +6,18 @@
         <field name="model">payment.provider</field>
         <field name="inherit_id" ref="payment_razorpay.payment_provider_form_razorpay"/>
         <field name="arch" type="xml">
+            <group name="razorpay_credentials" position="attributes">
+                <attribute name="invisible">code != 'razorpay'</attribute>
+            </group>
+            <field name="razorpay_key_id" position="attributes">
+                <attribute name="required">False</attribute>
+            </field>
+            <field name="razorpay_key_secret" position="attributes">
+                <attribute name="required">False</attribute>
+            </field>
+            <field name="razorpay_webhook_secret" position="attributes">
+                <attribute name="required">False</attribute>
+            </field>
             <xpath expr="//field[@name='razorpay_webhook_secret']" position="replace">
                 <label for="razorpay_webhook_secret"/>
                 <div class="o_row">

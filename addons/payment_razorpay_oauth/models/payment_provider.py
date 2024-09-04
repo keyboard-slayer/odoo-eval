@@ -19,6 +19,18 @@ _logger = logging.getLogger(__name__)
 class PaymentProvider(models.Model):
     _inherit = 'payment.provider'
 
+    razorpay_key_id = fields.Char(
+        required_if_provider=False,
+        copy=False
+    )
+    razorpay_key_secret = fields.Char(
+        required_if_provider=False,
+        copy=False
+    )
+    razorpay_webhook_secret = fields.Char(
+        required_if_provider=False,
+        copy=False
+    )
     # Use for Oauth
     razorpay_access_token = fields.Char(
         string='Access Token',
@@ -112,8 +124,7 @@ class PaymentProvider(models.Model):
         :rtype: str
         """
         self.ensure_one()
-        OAUTH_URL = const.OAUTH_TEST_URL if self.state == 'test' else const.OAUTH_URL
-        return self.env['ir.config_parameter'].sudo().get_param('payment_razorpay.oauth_url', OAUTH_URL)
+        return self.env['ir.config_parameter'].sudo().get_param('payment_razorpay.oauth_url', const.OAUTH_URL)
 
     def action_razorpay_create_or_update_webhook(self):
         """

@@ -66,7 +66,7 @@ class RazorpayController(http.Controller):
                     })
             except (AccessError, UserError) as e:
                 return request.render(
-                    'payment_razorpay.razorpay_authorization_error',
+                    'payment_razorpay_oauth.razorpay_authorization_error',
                     qcontext={'error_message': str(e), 'redirect_url': redirect_url},
                 )
             try:

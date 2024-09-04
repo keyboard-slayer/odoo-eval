@@ -1,6 +1,5 @@
 # TODO: change IAP url to the correct one (right now it's a test url)
-OAUTH_URL = "https://razorpay.api.odoo.com"
-OAUTH_TEST_URL = "https://razorpay.test.odoo.com"
+OAUTH_URL = "https://razorpay.test.odoo.com"
 
 
 # Events that are handled by the webhook.
