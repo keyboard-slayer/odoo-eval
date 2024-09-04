@@ -19,6 +19,7 @@ export class EventScanView extends Component {
     setup() {
         this.actionService = useService("action");
         this.dialog = useService("dialog");
+        this.home = useService("home_menu");
         this.notification = useService("notification");
         this.orm = useService("orm");
 
@@ -116,25 +117,20 @@ export class EventScanView extends Component {
 
     onClickSelectAttendee() {
         if (this.isMultiEvent) {
-            this.actionService.doAction("event.event_registration_action");
+            this.actionService.doAction("event.event_registration_action", {
+                additionalContext: {
+                    is_registration_desk_view: true,
+                },
+            });
         } else {
             this.actionService.doAction("event.event_registration_action_kanban", {
                 additionalContext: {
                     active_id: this.eventId,
+                    is_registration_desk_view: true,
                     search_default_unconfirmed: true,
                     search_default_confirmed: true,
                 },
             });
-        }
-    }
-
-    onClickBackToEvents() {
-        if (this.isMultiEvent) {
-            // define action from scratch instead of using existing 'action_event_view' to avoid
-            // messing with menu bar
-            this.actionService.doAction("event.action_event_view", { clearBreadcrumbs: true });
-        } else {
-            this.actionService.restore();
         }
     }
 }
