@@ -26,17 +26,14 @@ class PaymentProvider(models.Model):
     razorpay_key_id = fields.Char(
         string="Razorpay Key Id",
         help="The key solely used to identify the account with Razorpay.",
-        copy=False
     )
     razorpay_key_secret = fields.Char(
         string="Razorpay Key Secret",
         groups='base.group_system',
-        copy=False
     )
     razorpay_webhook_secret = fields.Char(
         string="Razorpay Webhook Secret",
         groups='base.group_system',
-        copy=False
     )
 
     #=== COMPUTE METHODS ===#
@@ -89,9 +86,21 @@ class PaymentProvider(models.Model):
             auth = (self.razorpay_key_id, self.razorpay_key_secret)
         try:
             if method == 'GET':
-                response = requests.get(url, params=payload, headers=headers, auth=auth, timeout=10)
+                response = requests.get(
+                    url,
+                    params=payload,
+                    headers=headers,
+                    auth=auth,
+                    timeout=10,
+                )
             else:
-                response = requests.post(url, json=payload, headers=headers, auth=auth, timeout=10)
+                response = requests.post(
+                    url,
+                    json=payload,
+                    headers=headers,
+                    auth=auth,
+                    timeout=10,
+                )
             try:
                 response.raise_for_status()
             except requests.exceptions.HTTPError:

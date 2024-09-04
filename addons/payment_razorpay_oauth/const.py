@@ -10,5 +10,4 @@ HANDLED_WEBHOOK_EVENTS = [
     'payment.failed',
     'refund.failed',
     'refund.processed',
-    'account.app.authorization_revoked',
 ]
