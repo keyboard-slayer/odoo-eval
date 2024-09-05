@@ -1,7 +1,3 @@
-# - fetch https://runbot.odoo.com/runbot/auto-tags (check if modified and shit)
-# - during `pytest_collection_modifyitems`, check items against tags and skip()
-#   them
-# - use can ignore the plugin or `-p no:odoo.tests.autotags` to disable the feature
 import re
 import urllib.error
 import urllib.request
