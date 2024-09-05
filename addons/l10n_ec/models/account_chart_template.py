@@ -7,6 +7,12 @@ from odoo import models
 class AccountChartTemplate(models.Model):
     _inherit = "account.chart.template"
 
+    def _get_account_from_template(self, company, template):
+        if template:
+            account = self.env['account.account'].search([('company_id', '=', company.id), ('code', '=', template.code)])
+            return account
+        return self.env['account.account']
+
     def _load(self, company):
         # EXTENDS account to setup taxes groups accounts configuration
         res = super()._load(company)
@@ -60,6 +66,14 @@ class AccountChartTemplate(models.Model):
                         'l10n_ec_entity': '001',
                         'l10n_ec_emission': '001',
                         'l10n_ec_emission_address_id': company.partner_id.id,
+                    })
+                    if acc_template_ref.get(self.env.ref('l10n_ec.ec410101', raise_if_not_found=False)):
+                        journal_values.update({
+                            'default_account_id': acc_template_ref.get(self.env.ref('l10n_ec.ec410101')).id,
+                        })
+                if journal_values.get('type') == 'purchase' and acc_template_ref.get(self.env.ref('l10n_ec.ec52022816', raise_if_not_found=False)):
+                    journal_values.update({
+                        'default_account_id': acc_template_ref.get(self.env.ref('l10n_ec.ec52022816')).id,
                     })
 
         return res
