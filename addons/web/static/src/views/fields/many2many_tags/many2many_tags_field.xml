@@ -23,6 +23,7 @@
                     isToMany="true"
                     nameCreateField="props.nameCreateField"
                     noSearchMore="props.noSearchMore"
+                    mapRecord.bind="mapRecord"
                 />
             </div>
         </div>

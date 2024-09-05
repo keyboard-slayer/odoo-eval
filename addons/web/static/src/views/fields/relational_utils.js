@@ -203,6 +203,7 @@ export class Many2XAutocomplete extends Component {
         autocomplete_container: { type: Function, optional: true },
         dropdown: { type: Boolean, optional: true },
         autofocus: { type: Boolean, optional: true },
+        mapRecord: { type: Function, optional: true },
     };
     static defaultProps = {
         searchLimit: 7,
@@ -318,6 +319,9 @@ export class Many2XAutocomplete extends Component {
         });
     }
     mapRecordToOption(result) {
+        if (this.props.mapRecord) {
+            return this.props.mapRecord({ id: result[0], display_name: result[1] });
+        }
         return {
             value: result[0],
             label: result[1] ? result[1].split("\n")[0] : _t("Unnamed"),
