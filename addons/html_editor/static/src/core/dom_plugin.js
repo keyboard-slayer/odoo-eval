@@ -252,7 +252,8 @@ export class DomPlugin extends Plugin {
                 while (
                     !this.isEditionBoundary(currentNode.parentElement) &&
                     (!allowsParagraphRelatedElements(currentNode.parentElement) ||
-                        currentNode.parentElement.nodeName === "LI")
+                        (currentNode.parentElement.nodeName === "LI" &&
+                            !this.shared.isUnsplittable(nodeToInsert)))
                 ) {
                     if (this.shared.isUnsplittable(currentNode.parentElement)) {
                         // If we have to insert a table, we cannot afford to unwrap it
@@ -300,6 +301,14 @@ export class DomPlugin extends Plugin {
                     }
                     doesCurrentNodeAllowsP = allowsParagraphRelatedElements(currentNode);
                 }
+                if (
+                    currentNode.parentElement.nodeName === "LI" &&
+                    isBlock(nodeToInsert) &&
+                    this.shared.isUnsplittable(nodeToInsert)
+                ) {
+                    const br = document.createElement("br");
+                    currentNode[currentNode.textContent ? "after" : "before"](br);
+                }
             }
             if (insertBefore) {
                 currentNode.before(nodeToInsert);
@@ -308,9 +317,10 @@ export class DomPlugin extends Plugin {
                 currentNode.after(nodeToInsert);
             }
             if (
-                nodeToInsert.nodeType !== Node.ELEMENT_NODE ||
-                nodeToInsert.tagName !== "BR" ||
-                nodeToInsert.nextSibling
+                (nodeToInsert.nodeType !== Node.ELEMENT_NODE ||
+                    nodeToInsert.tagName !== "BR" ||
+                    nodeToInsert.nextSibling) &&
+                !(isBlock(nodeToInsert) && this.shared.isUnsplittable(nodeToInsert))
             ) {
                 // Avoid cleaning the trailing BR if it is nodeToInsert
                 cleanTrailingBR(currentNode.parentElement);
@@ -321,7 +331,10 @@ export class DomPlugin extends Plugin {
             currentNode = nodeToInsert;
         }
         const previousNode = currentNode.previousSibling;
-        if (cleanTrailingBR(currentNode.parentElement)) {
+        if (
+            !(isBlock(currentNode) && this.shared.isUnsplittable(currentNode)) &&
+            cleanTrailingBR(currentNode.parentElement)
+        ) {
             // Clean the last inserted trailing BR if any
             currentNode = previousNode;
         }
