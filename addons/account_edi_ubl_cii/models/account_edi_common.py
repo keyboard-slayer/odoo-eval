@@ -363,7 +363,7 @@ class AccountEdiCommon(models.AbstractModel):
 
         return attachments
 
-    def _import_partner(self, company_id, name, phone, email, vat, country_code=False, peppol_eas=False, peppol_endpoint=False):
+    def _import_partner(self, company_id, name, phone, email, vat, country_code=False, peppol_eas=False, peppol_endpoint=False, postal_address={}):
         """ Retrieve the partner, if no matching partner is found, create it (only if he has a vat and a name) """
         logs = []
         if peppol_eas and peppol_endpoint:
@@ -374,16 +374,44 @@ class AccountEdiCommon(models.AbstractModel):
             .with_company(company_id) \
             ._retrieve_partner(name=name, phone=phone, email=email, vat=vat, domain=domain)
         if not partner and name and vat:
-            partner_vals = {'name': name, 'email': email, 'phone': phone}
+            partner_vals = {
+                'name': name,
+                'email': email,
+                'phone': phone,
+                'street': postal_address.get('street'),
+                'street2': postal_address.get('additional_street'),
+                'city': postal_address.get('city'),
+                'zip': postal_address.get('zip'),
+            }
             if peppol_eas and peppol_endpoint:
                 partner_vals.update({'peppol_eas': peppol_eas, 'peppol_endpoint': peppol_endpoint})
             country = self.env.ref(f'base.{country_code.lower()}', raise_if_not_found=False) if country_code else False
             if country:
                 partner_vals['country_id'] = country.id
+                state_code = postal_address.get('state_code')
+                state = self.env['res.country.state'].search(
+                    [('country_id', '=', country.id), ('code', '=', state_code)]
+                ) if state_code else None
+                if state:
+                    partner_vals['state_id'] = state.id
             partner = self.env['res.partner'].create(partner_vals)
             if vat and self.env['res.partner']._run_vat_test(vat, country, partner.is_company):
                 partner.vat = vat
             logs.append(_("Could not retrieve a partner corresponding to '%s'. A new partner was created.", name))
+        elif partner:
+            if not partner.street and not partner.street2 and not partner.city and not partner.zip and not partner.state_id:
+                state_code = postal_address.get('state_code')
+                state = self.env['res.country.state'].search(
+                    [('country_id', '=', partner.country_id.id), ('code', '=', state_code)]
+                ) if state_code and partner.country_id else None
+                state_id = state.id if state else None
+                partner.write({
+                    'street': postal_address.get('street'),
+                    'street2': postal_address.get('street2'),
+                    'city': postal_address.get('city'),
+                    'zip': postal_address.get('zip'),
+                    'state_id': state_id
+                })
         return partner, logs
 
     def _import_partner_bank(self, invoice, bank_details):
