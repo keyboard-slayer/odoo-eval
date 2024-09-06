@@ -424,7 +424,6 @@ class ProductTemplate(models.Model):
             'product_template_id': self.id,
             'display_name': display_name,
             'is_combination_possible': self._is_combination_possible(combination=combination, parent_combination=parent_combination),
-            'parent_exclusions': self._get_parent_attribute_exclusions(parent_combination=parent_combination),
 
             **self._get_additionnal_combination_info(
                 product_or_template=product_or_template,
@@ -484,27 +483,20 @@ class ProductTemplate(models.Model):
             'has_discounted_price': has_discounted_price,
         }
 
-        comparison_price = None
         if (
             not has_discounted_price
             and product_or_template.compare_list_price
             and self.env.user.has_group('website_sale.group_product_price_comparison')
         ):
-            comparison_price = product_or_template.currency_id._convert(
+            # TODO VCR comparison price only depends on the product template, but is shown/hidden
+            # depending on product price, should be removed from combination info in the future
+            combination_info['compare_list_price'] = product_or_template.currency_id._convert(
                 from_amount=product_or_template.compare_list_price,
                 to_currency=currency,
                 company=self.env.company,
                 date=date,
-                round=False)
-        combination_info['compare_list_price'] = comparison_price
-
-        combination_info['price_extra'] = product_or_template.currency_id._convert(
-            from_amount=product_or_template._get_attributes_extra_price(),
-            to_currency=currency,
-            company=self.env.company,
-            date=date,
-            round=False,
-        )
+                round=False,
+            )
 
         # Apply taxes
         fiscal_position = website.fiscal_position_id.sudo()
@@ -515,7 +507,7 @@ class ProductTemplate(models.Model):
             taxes = fiscal_position.map_tax(product_taxes)
             # We do not apply taxes on the compare_list_price value because it's meant to be
             # a strict value displayed as is.
-            for price_key in ('price', 'list_price', 'price_extra'):
+            for price_key in ('price', 'list_price'):
                 combination_info[price_key] = self._apply_taxes_to_price(
                     combination_info[price_key],
                     currency,
@@ -824,7 +816,7 @@ class ProductTemplate(models.Model):
             list_price = self.env['ir.qweb.field.monetary'].value_to_html(
                 combination_info['list_price'], monetary_options
             )
-        if combination_info['compare_list_price']:
+        if combination_info.get('compare_list_price'):
             list_price = self.env['ir.qweb.field.monetary'].value_to_html(
                 combination_info['compare_list_price'], monetary_options
             )
