@@ -5,6 +5,7 @@ from typing import Callable
 
 import pytest
 
+SKIP_TAGGED = pytest.mark.skip(reason="tagged on runbot")
 
 TagPredicate = pytest.StashKey[Callable[[pytest.Item], None]]()
 tag_re = re.compile(r"""
@@ -50,9 +51,8 @@ def pytest_configure(config: pytest.Config):
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    skip_tagged = pytest.mark.skip(reason="tagged on runbot")
     p = config.stash[TagPredicate]
     for item in items:
         # all items here seem to be function but might as well check
         if isinstance(item, pytest.Function) and p(item.function):
-            item.add_marker(skip_tagged)
+            item.add_marker(SKIP_TAGGED)
