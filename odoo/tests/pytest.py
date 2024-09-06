@@ -39,11 +39,26 @@ from odoo.tests import HttpCase, BaseCase
 
 LoadedModules = pytest.StashKey[set[str]]()
 
+SKIP_NON_POST = pytest.mark.skip(reason="non post-install tests are skipped by default")
+SKIP_NON_STANDARD = pytest.mark.skip(reason="non-standard tests are skipped by default")
+SKIP_INHERITED = pytest.mark.skip(
+    reason="inherited tests are skipped unless `allow_inherited_tests_method` "
+           "is set on the class also they're bad and should be fixed"
+)
+
 pytest_plugins = [
     # pytest does not implement TestCase.subTest by default
     "pytest_subtests",
 ]
 
+collect_ignore = [
+    "__*__",
+    # irrelevant frontend stuff
+    "static",
+    # packaging
+    "debian",
+    "setup",
+]
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -81,17 +96,6 @@ def pytest_configure(config: pytest.Config):
     # Configuration for Odoo setup
     if not config.getini('python_files'):
         config.addinivalue_line("python_files", "*/tests/test_*.py")
-
-    if not config.getini('norecursedirs'):
-        config.addinivalue_line(
-            'norecursedirs',
-            # generic
-            ".* __*__ venv "
-            # packaging
-            "debian setup build dist "
-            # irrelevant frontend stuff
-            "static "
-        )
 
 
 def pytest_ignore_collect(collection_path, path, config):
@@ -247,9 +251,6 @@ def pytest_pycollect_makemodule(module_path, path, parent):
 
 
 class OdooModule(pytest.Module):
-    """filters the collection set to only post_install unittests (as that's the
-     only thing currently supported).
-    """
     def collect(self) -> Iterable[pytest.Item | pytest.Collector]:
         for item in super().collect():
             if isinstance(item, pytest.Class) and issubclass(item.obj, BaseCase):
@@ -259,6 +260,7 @@ class OdooModule(pytest.Module):
             yield item
 
 
+
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     """
     - adds the `odoo_test` and `odoo_fixtures` to the relevant classes
@@ -266,26 +268,25 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
     - skip any test which is not tagged as standard or post_install unless the
       relevant option is set
     """
-    skip_non_standard = None if config.getoption('--non-standard') else pytest.mark.skip(
-        reason="non-standard tests are skipped by default")
-    skip_non_post = None if config.getoption('--non-post') else pytest.mark.skip(
-        reason="non post-install tests are skipped by default")
+    skip_non_standard = None if config.getoption('--non-standard') else SKIP_NON_STANDARD
+    skip_non_post = None if config.getoption('--non-post') else SKIP_NON_POST
 
     for item in items:
-        ut = next((
-            node
-            for node in item.iter_parents()
-            if isinstance(node, pytest.Class)
-            if issubclass(node.obj, unittest.TestCase)
-            if hasattr(node.obj, 'test_tags')
-        ), None)
+        cls = item.parent if isinstance(item.parent, pytest.Class) and issubclass(item.parent.obj, unittest.TestCase) else None
+        if cls and item.originalname not in cls.obj.__dict__:
+            # if a test method was inherited, skip it unless the class is marked
+            # to allow it
+            if not getattr(cls.obj, 'allow_inherited_tests_method', False):
+                item.add_marker(SKIP_INHERITED)
+
+        ut = cls if cls and hasattr(cls.obj, 'test_tags') else None
 
         tags = () if ut is None else ut.obj.test_tags
 
         # marking needs to be done on the item to avoid inheritance issues
         # mucking things up, as markers are additive through inheritance
         #
-        # also we want to skip free functions and non-odoo test cases
+        # also we want to skip free functions (e.g. standalone) and non-odoo test cases
         if skip_non_standard and 'standard' not in tags:
             item.add_marker(skip_non_standard)
         if skip_non_post and 'post_install' not in tags:
