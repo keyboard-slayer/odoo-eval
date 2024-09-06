@@ -2130,6 +2130,7 @@ class AccountMove(models.Model):
         if unbalanced_moves:
             error_msg = _("An error has occurred.")
             for move_id, sum_debit, sum_credit in unbalanced_moves:
+                import pudb; pu.db
                 move = self.browse(move_id)
                 error_msg += _(
                     "\n\n"
