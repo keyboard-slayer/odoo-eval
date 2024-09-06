@@ -458,9 +458,10 @@ var VariantMixin = {
      * @param {Array} combination
      */
     _onChangeCombination: function (ev, $parent, combination) {
+        const isCombinationPossible = !!combination.is_combination_possible;
         const $pricePerUom = $parent.find(".o_base_unit_price:first .oe_currency_value");
         if ($pricePerUom.length) {
-            if (combination.is_combination_possible !== false && combination.base_unit_price != 0) {
+            if (isCombinationPossible && combination.base_unit_price != 0) {
                 $pricePerUom.parents(".o_base_unit_price_wrapper").removeClass("d-none");
                 $pricePerUom.text(this._priceToStr(combination.base_unit_price));
                 $parent.find(".oe_custom_base_unit:first").text(combination.base_unit_name);
@@ -488,26 +489,22 @@ var VariantMixin = {
             quantity.removeClass('d-inline-flex').addClass('d-none');
             addToCart.removeClass('d-inline-flex').addClass('d-none');
             contactUsButton.removeClass('d-none').addClass('d-flex');
-            product_unavailable.removeClass('d-none').addClass('d-flex')
+            product_unavailable.removeClass('d-none').addClass('d-flex');
         } else {
             productPrice.removeClass('d-none').addClass('d-inline-block');
             quantity.removeClass('d-none').addClass('d-inline-flex');
             addToCart.removeClass('d-none').addClass('d-inline-flex');
             contactUsButton.removeClass('d-flex').addClass('d-none');
-            product_unavailable.removeClass('d-flex').addClass('d-none')
+            product_unavailable.removeClass('d-flex').addClass('d-none');
         }
 
-        var self = this;
-        var $price = $parent.find(".oe_price:first .oe_currency_value");
-        var $default_price = $parent.find(".oe_default_price:first .oe_currency_value");
-        var $compare_price = $parent.find(".oe_compare_list_price")
+        const self = this;
+        const $price = $parent.find(".oe_price:first .oe_currency_value");
+        const $default_price = $parent.find(".oe_default_price:first .oe_currency_value");
+        const $compare_price = $parent.find(".oe_compare_list_price")
         $price.text(self._priceToStr(combination.price));
         $default_price.text(self._priceToStr(combination.list_price));
 
-        var isCombinationPossible = true;
-        if (typeof combination.is_combination_possible !== "undefined") {
-            isCombinationPossible = combination.is_combination_possible;
-        }
         this._toggleDisable($parent, isCombinationPossible);
 
         if (combination.has_discounted_price && !combination.compare_list_price) {
