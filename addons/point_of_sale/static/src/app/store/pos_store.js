@@ -399,7 +399,7 @@ export class PosStore extends Reactive {
                 ? openOrders[openOrders.length - 1].uuid
                 : this.add_new_order().uuid;
         }
-
+        this.syncAllOrders();
         this.markReady();
     }
 
