@@ -57,9 +57,14 @@ class IrActionsReport(models.Model):
         # Add the pdf report in the XML as base64 string.
         collected_streams = super()._render_qweb_pdf_prepare_streams(report_ref, data, res_ids=res_ids)
 
+        # allows to add factur-x.xml to custom PDF templates as well (comma separated list of template names)
+        custom_templates = self.env['ir.config_parameter'].sudo().get_param('account.custom_templates_facturx_list', '')
+        custom_templates = [report.strip() for report in custom_templates.split(',')]
+        report_name = self._get_report(report_ref).report_name
+
         if collected_streams \
                 and res_ids \
-                and self._is_invoice_report(report_ref):
+                and (self._is_invoice_report(report_ref) or report_name in custom_templates):
             for res_id, stream_data in collected_streams.items():
                 invoice = self.env['account.move'].browse(res_id)
                 self._add_pdf_into_invoice_xml(invoice, stream_data)
