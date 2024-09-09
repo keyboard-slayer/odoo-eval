@@ -10,9 +10,10 @@ class HrDepartureWizard(models.TransientModel):
     _inherit = 'hr.departure.wizard'
 
     def action_register_departure(self):
+        employees = self.employee_ids
         super(HrDepartureWizard, self).action_register_departure()
         employee_leaves = self.env['hr.leave'].search([
-            ('employee_id', '=', self.employee_id.id),
+            ('employee_id', 'in', employees.ids),
             ('date_to', '>', self.departure_date),
             ('state', '!=', 'refuse')
         ])
@@ -23,11 +24,12 @@ class HrDepartureWizard(models.TransientModel):
                 to_cancel |= leave
             else:
                 to_delete |= leave
+        to_delete.write({'state': 'confirm'})  # Needs to be confirmed before it can be unlinked
         to_delete.unlink()
         to_cancel._force_cancel(_('The employee no longer works in the company'), notify_responsibles=False)
 
         employee_allocations = self.env['hr.leave.allocation'].search([
-            ('employee_id', '=', self.employee_id.id),
+            ('employee_id', 'in', employees.ids),
             '|',
                 ('date_to', '=', False),
                 ('date_to', '>', self.departure_date),
