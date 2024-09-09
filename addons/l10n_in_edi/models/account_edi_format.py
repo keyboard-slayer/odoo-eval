@@ -29,19 +29,19 @@ class AccountEdiFormat(models.Model):
         return super()._is_enabled_by_default_on_journal(journal)
 
     def _get_l10n_in_gst_tags(self):
-        return (
-           self.env.ref('l10n_in.tax_tag_base_sgst')
-           + self.env.ref('l10n_in.tax_tag_base_cgst')
-           + self.env.ref('l10n_in.tax_tag_base_igst')
-           + self.env.ref('l10n_in.tax_tag_base_cess')
-           + self.env.ref('l10n_in.tax_tag_zero_rated')
+        return self.env['account.chart.template'].ref(
+           'l10n_in.tax_tag_base_sgst',
+           'l10n_in.tax_tag_base_cgst',
+           'l10n_in.tax_tag_base_igst',
+           'l10n_in.tax_tag_base_cess',
+           'l10n_in.tax_tag_zero_rated',
         ).ids
 
     def _get_l10n_in_non_taxable_tags(self):
-        return (
-           self.env.ref("l10n_in.tax_tag_exempt")
-           + self.env.ref("l10n_in.tax_tag_nil_rated")
-           + self.env.ref("l10n_in.tax_tag_non_gst_supplies")
+        return self.env['account.chart.template'].ref(
+           "l10n_in.tax_tag_exempt",
+           "l10n_in.tax_tag_nil_rated",
+           "l10n_in.tax_tag_non_gst_supplies",
         ).ids
 
     def _get_move_applicability(self, move):

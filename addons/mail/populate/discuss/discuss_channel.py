@@ -9,7 +9,7 @@ class Channel(models.Model):
     _populate_sizes = {"small": 150, "medium": 1000, "large": 10000}
 
     def _populate_factories(self):
-        groups = self.env.ref("base.group_portal") + self.env.ref("base.group_user") + self.env.ref("base.group_system")
+        groups = self.env.ref("base.group_portal", "base.group_user", "base.group_system")
 
         def compute_group(values, counter, random):
             if values["channel_type"] == "channel" and random.randrange(2):
