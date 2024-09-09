@@ -8,7 +8,6 @@ only when their containing modules are installed in the provided database.
 - odoo tests currently really don't like xdist
 - parameterization is not supported with unittest, and pytest-repeat uses parametrization
 """
-
 import importlib
 import os
 import secrets
@@ -30,7 +29,6 @@ import pytest
 
 import odoo
 from odoo import api
-from odoo.cli.server import check_postgres_user
 from odoo.modules import module, registry, graph
 from odoo.modules.loading import load_module_graph, load_marked_modules
 from odoo.service import server
@@ -150,10 +148,9 @@ def pytest_collection(session: pytest.Session):
 
 @pytest.fixture(scope='session')
 def odoo_session(pytestconfig: pytest.Config):
-    from odoo.tests import BaseCase
     # remove odoo test harness's retry magic, pytest has rerunfailures as well
     # as failure selection (--lf, --sw, ...) and it breaks because pytest
-    # doesn't correctly implement `unittest.TestResult`
+    # doesn't fully implement `unittest.TestResult`
     del BaseCase.run
 
     # odoo.cli.server.main()
@@ -161,6 +158,8 @@ def odoo_session(pytestconfig: pytest.Config):
 
     # alternatively we could request.getfixturevalue('worker_id') but that raises...
     if environ.get('PYTEST_XDIST_WORKER') is not None:
+        # if we run multiple test workers against the same db, we get deadlocks
+        # and additional failures, so create a copy per worker
         dbname = "testdb_" + secrets.token_urlsafe(16)
         with closing(psycopg2.connect(dbname='postgres')) as conn, conn.cursor() as cr:
             conn.autocommit = True
@@ -178,12 +177,14 @@ def odoo_session(pytestconfig: pytest.Config):
     # but prevent running tests via odoo (mostly at_install)
     odoo.tools.config['test_enable'] = True
     odoo.tools.config['test_tags'] = ''
-    check_postgres_user()
-    # odoo.service.server.start()
     server.load_server_wide_modules()
+
+    module.current_test = threading.current_thread().testing = True
 
     # preload registry
     yield registry.Registry.new(dbname)
+
+    threading.current_thread().testing = module.current_test = False
 
     if dbfilestore:
         shutil.rmtree(dbfilestore)
@@ -194,15 +195,14 @@ def odoo_session(pytestconfig: pytest.Config):
 
 @pytest.fixture
 def odoo_test(odoo_session):
-    module.current_test = threading.current_thread().testing = True
-
     yield
-
-    threading.current_thread().testing = module.current_test = False
 
 
 @pytest.fixture(scope='session')
 def odoo_http(odoo_session):
+    """For :class:`HttpCase` tests, we need to start the http server and
+    pregenerate the assets.
+    """
     server.server = server.ThreadedServer(odoo.http.root)
     # keep the server running until we stop it
     server.server.start(stop=False)
