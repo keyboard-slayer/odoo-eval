@@ -39,6 +39,7 @@ models which only purpose is to run tests.""",
             'http://test.external.link/style2.css',
         ],
         'web.assets_frontend': [
+            # its code is no where used in frontedn files, check its validity
             'test_website/static/src/js/test_error.js',
         ],
         'web.assets_tests': [
