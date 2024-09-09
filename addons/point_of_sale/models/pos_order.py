@@ -891,8 +891,6 @@ class PosOrder(models.Model):
             new_move = order._create_invoice(move_vals)
 
             order.write({'account_move': new_move.id, 'state': 'invoiced'})
-            new_move.sudo().l10n_br_edi_payment_method = '01'
-            # new_move.sudo().l10n_latam_document_type_id = self.env.ref('l10n_br.dt_65')
             new_move.sudo().with_company(order.company_id).with_context(skip_invoice_sync=False)._post()
 
             moves += new_move
