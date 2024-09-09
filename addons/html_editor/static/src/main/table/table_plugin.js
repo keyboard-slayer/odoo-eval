@@ -6,12 +6,15 @@ import {
     isProtected,
     isProtecting,
     isEmptyBlock,
+    nextLeaf,
+    previousLeaf,
 } from "@html_editor/utils/dom_info";
 import { ancestors, closestElement, descendants, lastLeaf } from "@html_editor/utils/dom_traversal";
 import { parseHTML } from "@html_editor/utils/html";
 import { DIRECTIONS, leftPos, rightPos, nodeSize } from "@html_editor/utils/position";
 import { findInSelection } from "@html_editor/utils/selection";
-import { getColumnIndex, getRowIndex } from "@html_editor/utils/table";
+import { getColumnIndex, getRowIndex, getTableCells } from "@html_editor/utils/table";
+import { getActiveHotkey } from "@web/core/hotkeys/hotkey_service";
 
 export const BORDER_SENSITIVITY = 5;
 
@@ -52,6 +55,19 @@ export class TablePlugin extends Plugin {
         this.addDomListener(this.editable, "mousedown", this.onMousedown);
         this.addDomListener(this.editable, "mouseup", this.onMouseup);
         this.onMousemove = this.onMousemove.bind(this);
+
+        this.addDomListener(this.editable, "keydown", (ev) => {
+            const handled = [
+                "shift+arrowup",
+                "shift+arrowright",
+                "shift+arrowdown",
+                "shift+arrowleft",
+            ];
+            if (handled.includes(getActiveHotkey(ev))) {
+                this.isShiftKey = true;
+                this.onKeyDown(ev);
+            }
+        });
     }
 
     handleCommand(command, payload) {
@@ -448,11 +464,152 @@ export class TablePlugin extends Plugin {
         return true;
     }
 
+    /**
+     * Sets selection in table to make cell selection
+     * rectangularly when pressing shift + arrow key.
+     *
+     * @private
+     * @param {KeyboardEvent} ev
+     */
+    onKeyDown(ev) {
+        const selection = this.shared.getEditableSelection();
+        const startTable = closestElement(selection.anchorNode, "table");
+        const endTable = closestElement(selection.focusNode, "table");
+        if (!(startTable && endTable) || startTable !== endTable) {
+            return;
+        }
+        const [startTd, endTd] = [
+            closestElement(selection.anchorNode, "td"),
+            closestElement(selection.focusNode, "td"),
+        ];
+        // Handle selection for the single cell.
+        if (startTd === endTd && !startTd.classList.contains("o_selected_td")) {
+            const { focusNode, focusOffset } = selection;
+            let shouldSelectCell;
+            //Do not prevent default when there is a text in cell.
+            if (focusNode.nodeType === Node.TEXT_NODE) {
+                const lastTextChild = descendants(startTd)
+                    .filter((node) => node.nodeType === 3)
+                    .pop();
+                const firstTextChild = descendants(startTd)
+                    .filter((node) => node.nodeType === 3)
+                    .shift();
+                switch (ev.key) {
+                    case "ArrowRight": {
+                        if (nodeSize(focusNode) === focusOffset && focusNode === lastTextChild) {
+                            shouldSelectCell = true;
+                        }
+                        break;
+                    }
+                    case "ArrowLeft": {
+                        if (focusOffset === 0 && focusNode === firstTextChild) {
+                            shouldSelectCell = true;
+                        }
+                        break;
+                    }
+                    case "ArrowUp": {
+                        if (firstTextChild === focusNode) {
+                            shouldSelectCell = true;
+                        }
+                        break;
+                    }
+                    case "ArrowDown": {
+                        if (lastTextChild === focusNode) {
+                            shouldSelectCell = true;
+                        }
+                        break;
+                    }
+                }
+            } else {
+                shouldSelectCell = true; // If cell is empty then select it.
+            }
+            if (shouldSelectCell) {
+                ev.preventDefault();
+                this.selectTableCells(this.shared.getEditableSelection());
+            }
+            return;
+        }
+        const endCellPosition = { x: getRowIndex(endTd), y: getColumnIndex(endTd) };
+        const tds = [...startTable.querySelectorAll("tr")]
+            .filter((tr) => closestElement(tr, "table") === startTable)
+            .map((tr) =>
+                [...tr.querySelectorAll("td")].filter(
+                    (td) => closestElement(td, "table") === startTable
+                )
+            );
+        let targetTd, targetNode;
+        switch (ev.key) {
+            case "ArrowUp": {
+                if (endCellPosition.x > 0) {
+                    targetTd = tds[endCellPosition.x - 1][endCellPosition.y];
+                } else {
+                    if (previousLeaf(startTable, this.editable)) {
+                        targetNode = previousLeaf(startTable, this.editable);
+                    } else {
+                        ev.preventDefault();
+                        return;
+                    }
+                }
+                break;
+            }
+            case "ArrowDown": {
+                if (endCellPosition.x < tds.length - 1) {
+                    targetTd = tds[endCellPosition.x + 1][endCellPosition.y];
+                } else {
+                    targetNode = nextLeaf(startTable, this.editable);
+                }
+                break;
+            }
+            case "ArrowRight": {
+                if (endCellPosition.y < tds[0].length - 1) {
+                    targetTd = tds[endCellPosition.x][endCellPosition.y + 1];
+                } else {
+                    ev.preventDefault();
+                    return;
+                }
+                break;
+            }
+            case "ArrowLeft": {
+                if (endCellPosition.y > 0) {
+                    targetTd = tds[endCellPosition.x][endCellPosition.y - 1];
+                } else {
+                    ev.preventDefault();
+                    return;
+                }
+                break;
+            }
+        }
+        if (targetTd) {
+            ev.preventDefault();
+            this.shared.setSelection({
+                anchorNode: selection.anchorNode,
+                anchorOffset: selection.anchorOffset,
+                focusNode: targetTd,
+                focusOffset: 0,
+            });
+        } else if (targetNode) {
+            ev.preventDefault();
+            this.shared.setSelection({
+                anchorNode: selection.anchorNode,
+                anchorOffset: selection.anchorOffset,
+                focusNode: targetNode,
+                focusOffset: 0,
+            });
+        }
+    }
+
     updateSelectionTable(selectionData) {
         this.deselectTable();
         const selection = selectionData.editableSelection;
         const startTd = closestElement(selection.startContainer, "td");
         const endTd = closestElement(selection.endContainer, "td");
+        const selectSingleCell =
+            startTd &&
+            startTd === endTd &&
+            startTd.classList.contains("o_selected_td") &&
+            this.isShiftKey;
+        this.deselectTable();
+        delete this.isShiftKey;
         const startTable = ancestors(selection.startContainer, this.editable)
             .filter((node) => node.nodeName === "TABLE")
             .pop();
@@ -461,7 +618,7 @@ export class TablePlugin extends Plugin {
             .pop();
 
         const traversedNodes = this.shared.getTraversedNodes({ deep: true });
-        if (startTd !== endTd && startTable === endTable) {
+        if ((startTd !== endTd || selectSingleCell) && startTable === endTable) {
             if (!isProtected(startTable) && !isProtecting(startTable)) {
                 // The selection goes through at least two different cells ->
                 // select cells.
@@ -477,9 +634,7 @@ export class TablePlugin extends Plugin {
                 // Don't apply several nested levels of selection.
                 if (!ancestors(table, this.editable).some((node) => traversedTables.has(node))) {
                     table.classList.toggle("o_selected_table", true);
-                    for (const td of [...table.querySelectorAll("td")].filter(
-                        (td) => closestElement(td, "table") === table
-                    )) {
+                    for (const td of getTableCells(table)) {
                         td.classList.toggle("o_selected_td", true);
                     }
                 }
@@ -566,9 +721,7 @@ export class TablePlugin extends Plugin {
     selectTableCells(selection) {
         const table = closestElement(selection.commonAncestorContainer, "table");
         table.classList.toggle("o_selected_table", true);
-        const columns = [...table.querySelectorAll("td")].filter(
-            (td) => closestElement(td, "table") === table
-        );
+        const columns = getTableCells(table);
         const startCol =
             [selection.startContainer, ...ancestors(selection.startContainer, this.editable)].find(
                 (node) => node.nodeName === "TD" && closestElement(node, "table") === table
