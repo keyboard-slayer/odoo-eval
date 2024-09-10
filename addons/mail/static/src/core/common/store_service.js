@@ -19,6 +19,7 @@ let prevLastMessageId = null;
 let temporaryIdOffset = 0.01;
 
 export const pyToJsModels = {
+    "discuss.channel.category": "DiscussAppCategory",
     "discuss.channel.member": "ChannelMember",
     "discuss.channel.rtc.session": "RtcSession",
     "discuss.channel": "Thread",
@@ -633,6 +634,8 @@ export class Store extends BaseStore {
         await this.env.services.orm.call("discuss.channel", "add_members", [[id]], {
             partner_ids: [this.self.id],
         });
+        // const channelInfo = await rpc("/discuss/channel/info", { channel_id: id });
+        // this.insert(channelInfo);
         const thread = this.Thread.insert({
             channel_type: "channel",
             id,

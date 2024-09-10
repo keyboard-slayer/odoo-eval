@@ -59,6 +59,10 @@ class Channel(models.Model):
         compute='_compute_channel_partner_ids', inverse='_inverse_channel_partner_ids',
         search='_search_channel_partner_ids')
     channel_member_ids = fields.One2many('discuss.channel.member', 'channel_id', string='Members')
+    channel_category_id = fields.Many2one(
+        "discuss.channel.category",
+        "Channel category",
+        groups="mail.group_mail_discuss_admin")
     pinned_message_ids = fields.One2many('mail.message', 'res_id', domain=[('model', '=', 'discuss.channel'), ('pinned_at', '!=', False)], string='Pinned Messages')
     sfu_channel_uuid = fields.Char(groups="base.group_system")
     sfu_server_url = fields.Char(groups="base.group_system")
@@ -807,6 +811,7 @@ class Channel(models.Model):
         data["defaultDisplayMode"] = self.default_display_mode
         data["group_based_subscription"] = bool(self.group_ids)
         data["memberCount"] = self.member_count
+        data["channel_category_id"] = Store.one(self.channel_category_id)
         return data
 
     def _to_store(self, store: Store):

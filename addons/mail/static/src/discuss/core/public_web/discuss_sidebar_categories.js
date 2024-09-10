@@ -39,12 +39,12 @@ export class DiscussSidebarChannel extends Component {
         return {
             "bg-inherit": this.thread.notEq(this.store.discuss.thread),
             "o-active": this.thread.eq(this.store.discuss.thread),
-            "o-unread":
-                this.thread.selfMember?.message_unread_counter > 0 && !this.thread.isMuted,
+            "o-unread": this.thread.selfMember?.message_unread_counter > 0 && !this.thread.isMuted,
             "opacity-50": this.thread.mute_until_dt,
             "position-relative justify-content-center mx-2 o-compact":
                 this.store.discuss.isSidebarCompact,
             "mx-2": !this.store.discuss.isSidebarCompact,
+            "ms-4": this.store.discuss.hasSubCategories && !this.store.discuss.isSidebarCompact,
         };
     }
 
@@ -121,8 +121,12 @@ export class DiscussSidebarChannel extends Component {
 
 export class DiscussSidebarCategory extends Component {
     static template = "mail.DiscussSidebarCategory";
-    static props = ["category"];
-    static components = { Dropdown };
+    static props = ["category", "quickSearchVal"];
+    static components = {
+        Dropdown,
+        DiscussSidebarChannel,
+        DiscussSidebarCategory,
+    };
 
     setup() {
         super.setup();
@@ -137,6 +141,36 @@ export class DiscussSidebarCategory extends Component {
 
     onHover(hovering) {
         this.floating.isOpen = hovering;
+    }
+
+    get filteredThreads() {
+        const threads =
+            this.category.id === "all"
+                ? this.store.discuss.channels.channel_ids
+                : this.category.channel_ids;
+        return threads.filter((thread) => {
+            return (
+                (thread.displayToSelf || thread.isLocallyPinned) &&
+                (!this.props.quickSearchVal ||
+                    cleanTerm(thread.displayName).includes(cleanTerm(this.props.quickSearchVal)))
+            );
+        });
+    }
+
+    get channelsCategories() {
+        return this.store.discuss.allCategories.filter((c) => !c.isRootCategory);
+    }
+
+    get displayThreadWhenClosed() {
+        return (
+            this.store.discuss.thread?.in(this.category.channel_ids) ||
+            (this.category.id === "channels" &&
+                this.store.discuss.thread?.in(
+                    this.channelsCategories.map((c) => [...c.channel_ids]).flat(1)
+                )) ||
+            (this.category.id === "all" &&
+                this.store.discuss.thread?.in(this.store.discuss.channels.channel_ids))
+        );
     }
 
     /** @returns {import("models").DiscussAppCategory} */
@@ -203,16 +237,6 @@ export class DiscussSidebarCategories extends Component {
             },
         });
         this.quickSearchFloating = useDropdownState();
-    }
-
-    filteredThreads(category) {
-        return category.threads.filter((thread) => {
-            return (
-                (thread.displayToSelf || thread.isLocallyPinned) &&
-                (!this.state.quickSearchVal ||
-                    cleanTerm(thread.displayName).includes(cleanTerm(this.state.quickSearchVal)))
-            );
-        });
     }
 
     get hasQuickSearch() {

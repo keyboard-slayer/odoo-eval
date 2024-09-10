@@ -76,31 +76,47 @@ export class ChannelSelector extends Component {
                     ["name", "ilike", cleanedTerm],
                 ];
                 const fields = ["name"];
-                const results = await this.sequential(async () => {
+                const [channels, categories] = await this.sequential(async () => {
                     this.state.navigableListProps.isLoading = true;
-                    const res = await this.orm.searchRead("discuss.channel", domain, fields, {
+                    const channels = await this.orm.searchRead("discuss.channel", domain, fields, {
                         limit: 10,
                     });
+                    const categories = await this.orm.searchRead(
+                        "discuss.channel.category",
+                        [["name", "ilike", cleanedTerm]],
+                        fields,
+                        { limit: 10 }
+                    );
                     this.state.navigableListProps.isLoading = false;
-                    return res;
+                    return [channels, categories];
                 });
-                if (!results) {
-                    this.state.navigableListProps.options = [];
-                    return;
-                }
-                const choices = results.map((channel) => {
+                const channelChoices = channels.map((channel) => {
                     return {
+                        group: 1,
                         channelId: channel.id,
                         classList: "o-discuss-ChannelSelector-suggestion",
                         label: channel.name,
                     };
                 });
-                choices.push({
+                const categoryChoices = categories.map((category) => {
+                    return {
+                        group: 0,
+                        categoryId: category.id,
+                        classList: "o-discuss-ChannelSelector-suggestion",
+                        label: category.name,
+                    };
+                });
+                const createChoice = {
+                    group: 1,
                     channelId: "__create__",
                     classList: "o-discuss-ChannelSelector-suggestion",
                     label: this.state.value,
-                });
-                this.state.navigableListProps.options = choices;
+                };
+                this.state.navigableListProps.options = [
+                    ...categoryChoices,
+                    ...channelChoices,
+                    createChoice,
+                ];
                 return;
             }
             if (this.props.category.id === "chats") {
@@ -163,8 +179,16 @@ export class ChannelSelector extends Component {
                         const [channel] = Thread;
                         channel.open();
                     });
-            } else {
+            } else if (option.channelId) {
                 this.store.joinChannel(option.channelId, option.label);
+            } else if (option.categoryId) {
+                const category = this.store.DiscussAppCategory.get({
+                    id: option.categoryId,
+                });
+                // should fetch all channels in the category first
+                for (const thread of category.channel_ids) {
+                    this.store.joinChannel(thread.id, thread.name);
+                }
             }
             this.onValidate();
         }

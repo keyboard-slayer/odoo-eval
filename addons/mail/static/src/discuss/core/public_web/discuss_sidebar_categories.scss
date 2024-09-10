@@ -16,12 +16,14 @@
     --border-opacity: 0.25;
 }
 
-.o-mail-DiscussSidebar-item {
-    &:hover .o-mail-DiscussSidebarChannel-commands {
-        display: flex !important;
-        .btn-group .btn:not(:hover) {
-            border-color: transparent;
-            background-color: transparent;
+.o-mail-DiscussSidebar-item, .o-mail-DiscussSidebarCategory {
+    &:hover {
+        .o-mail-DiscussSidebarChannel-commands, .o-mail-DiscussSidebarCategory-actions {
+            display: flex !important;
+            .btn-group .btn:not(:hover) {
+                border-color: transparent;
+                background-color: transparent;
+            }
         }
     }
 }

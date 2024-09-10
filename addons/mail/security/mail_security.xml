@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
+<odoo noupdate="0">
         <record id="ir_rule_discuss_channel_all" model="ir.rule">
             <field name="name">discuss.channel: can access channels (as member or as group allowed)</field>
             <field name="model_id" ref="mail.model_discuss_channel"/>
@@ -276,6 +276,13 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>
         </record>
+
+        <!-- <record id="ir_rule_mail_channel_category_admin" model="ir.rule">
+            <field name="name">Channel category: discuss admin can do all</field>
+            <field name="model_id" ref="model_discuss_channel_category"/>
+            <field name="groups" eval="[Command.link(ref('group_mail_discuss_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record> -->
 
         <record id="ir_rule_mail_canned_response_admin" model="ir.rule">
             <field name="name">Canned response: admin can do all</field>
