@@ -158,87 +158,84 @@ This module provides the core of the Odoo Web Client.
             'web/static/src/legacy/js/public/lazyloader.js',
         ],
         'web.assets_frontend': [
-            ('include', 'web._assets_helpers'), # Essential helpers
+            ('include', 'web._assets_helpers'),
             ('include', 'web._assets_frontend_helpers'),
 
-            'web/static/src/scss/pre_variables.scss',  # Essential for variable definitions
-            'web/static/lib/bootstrap/scss/_variables.scss',  # Essential for Bootstrap variables
-            'web/static/lib/bootstrap/scss/_variables-dark.scss',  # Essential for dark mode variables
-            'web/static/lib/bootstrap/scss/_maps.scss',  # Essential for Bootstrap maps
-            'web/static/lib/luxon/luxon.js',  # Essential for date and time manipulation
+            'web/static/src/scss/pre_variables.scss',
+            'web/static/lib/bootstrap/scss/_variables.scss',
+            'web/static/lib/bootstrap/scss/_variables-dark.scss',
+            'web/static/lib/bootstrap/scss/_maps.scss',
+            'web/static/lib/luxon/luxon.js',
 
-            ('include', 'web._assets_bootstrap_frontend'),  # Essential for Bootstrap frontend
+            ('include', 'web._assets_bootstrap_frontend'),
 
-            'web/static/src/libs/fontawesome/css/font-awesome.css',  # Essential for FontAwesome icons
-            'web/static/lib/odoo_ui_icons/*',  # Essential for Odoo UI icons
-            'web/static/lib/select2/select2.css',  # Essential for Select2 styles
-            'web/static/lib/select2-bootstrap-css/select2-bootstrap.css',  # Essential for Select2 Bootstrap styles
-            'web/static/src/webclient/navbar/navbar.scss',  # Essential for navbar styles
-            'web/static/src/scss/animation.scss',  # Essential for animations
-            'web/static/src/scss/base_frontend.scss',  # Essential for base frontend styles
-            'web/static/src/scss/fontawesome_overridden.scss',  # Essential for overriding FontAwesome styles
-            'web/static/src/scss/mimetypes.scss',  # Essential for mimetype styles
-            'web/static/src/scss/ui.scss',  # Essential for UI styles
-            'web/static/src/views/fields/translation_dialog.scss',  # Essential for translation dialog styles
-            'web/static/src/views/fields/signature/signature_field.scss',  # Essential for signature field styles
+            'web/static/src/libs/fontawesome/css/font-awesome.css',
+            'web/static/lib/odoo_ui_icons/*',
+            'web/static/src/webclient/navbar/navbar.scss',
+            'web/static/src/scss/animation.scss',
+            'web/static/src/scss/base_frontend.scss',
+            'web/static/src/scss/fontawesome_overridden.scss',
+            'web/static/src/scss/mimetypes.scss',
+            'web/static/src/scss/ui.scss',
+            'web/static/src/views/fields/translation_dialog.scss',
+            'web/static/src/views/fields/signature/signature_field.scss',
 
-            'web/static/src/legacy/scss/ui.scss',  # Essential for legacy UI styles
+            'web/static/src/legacy/scss/ui.scss',
 
-            ('include', 'web.assets_frontend_minimal'),  # Essential minimal frontend assets
+            ('include', 'web.assets_frontend_minimal'),
 
-            'web/static/lib/owl/owl.js',  # Essential for OWL framework
-            'web/static/lib/owl/odoo_module.js',  # Essential for OWL framework
-            'web/static/lib/jquery/jquery.js',  # Essential for jQuery
-            'web/static/lib/popper/popper.js',  # Essential for Popper.js
-            'web/static/lib/bootstrap/js/dist/util/index.js',  # Essential for Bootstrap utilities
-            'web/static/lib/bootstrap/js/dist/dom/data.js',  # Essential for Bootstrap DOM data
-            'web/static/lib/bootstrap/js/dist/dom/event-handler.js',  # Essential for Bootstrap event handling
-            'web/static/lib/bootstrap/js/dist/dom/manipulator.js',  # Essential for Bootstrap DOM manipulation
-            'web/static/lib/bootstrap/js/dist/dom/selector-engine.js',  # Essential for Bootstrap selector engine
-            'web/static/lib/bootstrap/js/dist/util/config.js',  # Essential for Bootstrap configuration
-            'web/static/lib/bootstrap/js/dist/util/component-functions.js',  # Essential for Bootstrap component functions
-            'web/static/lib/bootstrap/js/dist/util/backdrop.js',  # Essential for Bootstrap backdrop
-            'web/static/lib/bootstrap/js/dist/util/focustrap.js',  # Essential for Bootstrap focus trap
-            'web/static/lib/bootstrap/js/dist/util/sanitizer.js',  # Essential for Bootstrap sanitizer
-            'web/static/lib/bootstrap/js/dist/util/scrollbar.js',  # Essential for Bootstrap scrollbar
-            'web/static/lib/bootstrap/js/dist/util/swipe.js',  # Essential for Bootstrap swipe
-            'web/static/lib/bootstrap/js/dist/util/template-factory.js',  # Essential for Bootstrap template factory
-            'web/static/lib/bootstrap/js/dist/base-component.js',  # Essential for Bootstrap base component
-            'web/static/lib/bootstrap/js/dist/alert.js',  # Essential for Bootstrap alert
-            'web/static/lib/bootstrap/js/dist/button.js',  # Essential for Bootstrap button
-            'web/static/lib/bootstrap/js/dist/carousel.js',  # Essential for Bootstrap carousel
-            'web/static/lib/bootstrap/js/dist/collapse.js',  # Essential for Bootstrap collapse
-            'web/static/lib/bootstrap/js/dist/dropdown.js',  # Essential for Bootstrap dropdown
-            'web/static/lib/bootstrap/js/dist/modal.js',  # Essential for Bootstrap modal
-            'web/static/lib/bootstrap/js/dist/offcanvas.js',  # Essential for Bootstrap offcanvas
-            'web/static/lib/bootstrap/js/dist/tooltip.js',  # Essential for Bootstrap tooltip
-            'web/static/lib/bootstrap/js/dist/popover.js',  # Essential for Bootstrap popover
-            'web/static/lib/bootstrap/js/dist/scrollspy.js',  # Essential for Bootstrap scrollspy
-            'web/static/lib/bootstrap/js/dist/tab.js',  # Essential for Bootstrap tab
-            'web/static/lib/bootstrap/js/dist/toast.js',  # Essential for Bootstrap toast
-            'web/static/lib/select2/select2.js',  # Essential for Select2
-            'web/static/src/libs/bootstrap.js',  # Essential for Bootstrap integration
-            'web/static/src/legacy/js/libs/jquery.js',  # Essential for legacy jQuery
-            'web/static/src/legacy/js/core/class.js',  # Essential for legacy class
+            'web/static/lib/owl/owl.js',
+            'web/static/lib/owl/odoo_module.js',
+            'web/static/lib/jquery/jquery.js',
+            'web/static/lib/popper/popper.js',
+            'web/static/lib/bootstrap/js/dist/util/index.js',
+            'web/static/lib/bootstrap/js/dist/dom/data.js',
+            'web/static/lib/bootstrap/js/dist/dom/event-handler.js',
+            'web/static/lib/bootstrap/js/dist/dom/manipulator.js',
+            'web/static/lib/bootstrap/js/dist/dom/selector-engine.js',
+            'web/static/lib/bootstrap/js/dist/util/config.js',
+            'web/static/lib/bootstrap/js/dist/util/component-functions.js',
+            'web/static/lib/bootstrap/js/dist/util/backdrop.js',
+            'web/static/lib/bootstrap/js/dist/util/focustrap.js',
+            'web/static/lib/bootstrap/js/dist/util/sanitizer.js',
+            'web/static/lib/bootstrap/js/dist/util/scrollbar.js',
+            'web/static/lib/bootstrap/js/dist/util/swipe.js',
+            'web/static/lib/bootstrap/js/dist/util/template-factory.js',
+            'web/static/lib/bootstrap/js/dist/base-component.js',
+            'web/static/lib/bootstrap/js/dist/alert.js',
+            'web/static/lib/bootstrap/js/dist/button.js',
+            'web/static/lib/bootstrap/js/dist/carousel.js',
+            'web/static/lib/bootstrap/js/dist/collapse.js',
+            'web/static/lib/bootstrap/js/dist/dropdown.js',
+            'web/static/lib/bootstrap/js/dist/modal.js',
+            'web/static/lib/bootstrap/js/dist/offcanvas.js',
+            'web/static/lib/bootstrap/js/dist/tooltip.js',
+            'web/static/lib/bootstrap/js/dist/popover.js',
+            'web/static/lib/bootstrap/js/dist/scrollspy.js',
+            'web/static/lib/bootstrap/js/dist/tab.js',
+            'web/static/lib/bootstrap/js/dist/toast.js',
+            'web/static/src/libs/bootstrap.js',
+            'web/static/src/legacy/js/libs/jquery.js',
+            'web/static/src/legacy/js/core/class.js',
 
-            'web/static/src/env.js',  # Essential for environment configuration
-            'web/static/src/core/utils/transitions.scss',  # Essential for transitions
-            'web/static/src/core/**/*',  # Essential for core functionalities
-            ('remove', 'web/static/src/core/commands/**/*'),  # Commands might not be necessary for frontend
-            ('remove', 'web/static/src/core/debug/debug_menu.js'),  # Debug menu might not be necessary for frontend
-            ('remove', 'web/static/src/core/file_viewer/file_viewer.dark.scss'),  # File viewer dark mode might not be necessary
-            ('remove', 'web/static/src/core/emoji_picker/emoji_data.js'),  # Emoji picker data might not be necessary
-            'web/static/src/core/commands/default_providers.js',  # Essential for default command providers
-            'web/static/src/core/commands/command_palette.js',  # Essential for command palette
-            'web/static/src/public/error_notifications.js',  # Essential for error notifications
-            'web/static/src/public/public_component_service.js',  # Essential for public component service
-            'web/static/src/public/datetime_picker_widget.js',  # Essential for datetime picker widget
-            'web/static/src/libs/pdfjs.js',  # Essential for PDF.js ? ---> only used in backend code ----> remove it
+            'web/static/src/env.js',
+            'web/static/src/core/utils/transitions.scss',  # included early because used by other files
+            'web/static/src/core/**/*',  # Note that 'web/static/src/core/utils/ui.js' is included in assets_frontend_minimal already
+            ('remove', 'web/static/src/core/commands/**/*'),
+            ('remove', 'web/static/src/core/debug/debug_menu.js'),
+            ('remove', 'web/static/src/core/file_viewer/file_viewer.dark.scss'),
+            ('remove', 'web/static/src/core/emoji_picker/emoji_data.js'),
+            'web/static/src/core/commands/default_providers.js',
+            'web/static/src/core/commands/command_palette.js',
+            'web/static/src/public/error_notifications.js',
+            'web/static/src/public/public_component_service.js',
+            'web/static/src/public/datetime_picker_widget.js',
+            # 'web/static/src/libs/pdfjs.js',  # Essential for PDF.js ? ---> only used in backend code ----> remove it
 
-            'web/static/src/legacy/js/public/public_root.js',  # Essential for legacy public root
-            'web/static/src/legacy/js/public/public_root_instance.js',  # Essential for legacy public root instance
-            'web/static/src/legacy/js/public/public_widget.js',  # Essential for legacy public widget
-            'web/static/src/legacy/js/public/signin.js',  # Essential for legacy signin
+            'web/static/src/legacy/js/public/public_root.js',
+            'web/static/src/legacy/js/public/public_root_instance.js',
+            'web/static/src/legacy/js/public/public_widget.js',
+            # 'web/static/src/legacy/js/public/signin.js',  #> no impact on flow even if i remove it
         ],
         'web.assets_frontend_lazy': [
             ('include', 'web.assets_frontend'),
