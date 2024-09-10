@@ -130,7 +130,7 @@ class EventRegistration(models.Model):
             # update description fields: each lead has to be updated, otherwise
             # update in batch
             upd_description_fields = [field for field in self._get_lead_description_fields() if field in new_vals.keys()]
-            if any(new_vals[field] != old_vals[field] for field in upd_description_fields):
+            if any(new_vals[field] != old_vals.get(field) for field in upd_description_fields):
                 for lead in leads_attendee:
                     lead_values['description'] = "%s<br/>%s" % (
                         lead.description,

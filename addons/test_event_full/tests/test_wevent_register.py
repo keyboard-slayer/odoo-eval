@@ -42,3 +42,44 @@ class TestWEventRegister(TestWEventCommon):
         self.assertEqual(visitor.partner_id, self.env['res.partner'])
         self.assertEqual(visitor.mobile, "0456112233")
         self.assertEqual(visitor.email, "raoulette@example.com")
+
+    def assertLeadTicketConvertData(self, lead, ticket, partner, crm_team, user_id):
+        # ticket update: archived
+        self.assertFalse(ticket.active)
+
+        # new lead: data from ticket and convert options
+        self.assertEqual(lead.name, ticket.name)
+        self.assertEqual(lead.description, ticket.description)
+        self.assertEqual(lead.partner_id, partner)
+        self.assertEqual(lead.email_cc, ticket.email_cc)
+        self.assertEqual(lead.email_from, partner.email)
+        self.assertEqual(lead.phone, partner.phone)
+        self.assertEqual(lead.team_id, crm_team)
+        self.assertEqual(lead.user_id, user_id)
+        self.assertEqual(lead.campaign_id, ticket.campaign_id)
+        self.assertEqual(lead.medium_id, ticket.medium_id)
+        self.assertEqual(lead.source_id, ticket.source_id)
+
+
+    def test_event_update_lead(self):
+        """Make sure that we update leads without issues when question's answer is added to an event attendee."""
+        self.env['event.lead.rule'].create({
+            'name': 'test_event_lead_rule',
+            'lead_creation_basis': 'attendee',
+            'lead_creation_trigger': 'create',
+            'event_registration_filter': [['partner_id', '!=', False]],
+            'lead_type': 'lead',
+        })
+        event_registration = self.env['event.registration'].create({
+                    'name': 'Event Registration without answers added at first',
+                    'event_id': self.event.id,
+                    'partner_id': self.event_customer.id,
+        })
+        event_registration.write({
+            'registration_answer_ids': [(0, 0, {
+                'question_id': self.event_question_2.id,
+                'value_text_box': (answer_string := 'Attendee Answer')
+            })]
+        })
+        self.assertIn(answer_string, event_registration.lead_ids.description,
+            "lead description not updated with the answer to the question")
