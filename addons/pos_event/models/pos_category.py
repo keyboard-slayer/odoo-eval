@@ -3,7 +3,7 @@ from odoo.exceptions import UserError
 
 
 class PosCategory(models.Model):
-    _inherit = "pos.category"
+    _inherit = ["pos.category"]
 
     @api.ondelete(at_uninstall=False)
     def _unlink_except_pos_event_category(self):

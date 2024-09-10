@@ -6,8 +6,8 @@ from odoo import models
 from odoo.addons.website_slides.populate.slide_channel import SlideChannel
 
 
-class SlidesForum(models.Model):
-    _inherit = 'forum.forum'
+class ForumForum(models.Model):
+    _inherit = ['forum.forum']
 
     @property
     def _populate_sizes(self):

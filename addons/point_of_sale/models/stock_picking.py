@@ -9,7 +9,7 @@ from itertools import groupby
 from collections import defaultdict
 
 class StockPicking(models.Model):
-    _inherit='stock.picking'
+    _inherit = ['stock.picking']
 
     pos_session_id = fields.Many2one('pos.session', index=True)
     pos_order_id = fields.Many2one('pos.order', index=True)
@@ -158,7 +158,6 @@ class StockPicking(models.Model):
         return res
 
 class StockPickingType(models.Model):
-    _name = 'stock.picking.type'
     _inherit = ['stock.picking.type', 'pos.load.mixin']
 
     @api.depends('warehouse_id')
@@ -184,12 +183,12 @@ class StockPickingType(models.Model):
         return ['id', 'use_create_lots', 'use_existing_lots']
 
 class ProcurementGroup(models.Model):
-    _inherit = 'procurement.group'
+    _inherit = ['procurement.group']
 
     pos_order_id = fields.Many2one('pos.order', 'POS Order')
 
 class StockMove(models.Model):
-    _inherit = 'stock.move'
+    _inherit = ['stock.move']
 
     def _get_new_picking_values(self):
         vals = super(StockMove, self)._get_new_picking_values()

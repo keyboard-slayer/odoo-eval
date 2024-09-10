@@ -1548,8 +1548,7 @@ class ResGroups(models.Model):
         return SetDefinitions(data)
 
 
-class UsersImplied(models.Model):
-    _name = 'res.users'
+class ResUsers(models.Model):
     _inherit = ['res.users']
 
     @api.model_create_multi
@@ -1572,7 +1571,7 @@ class UsersImplied(models.Model):
         if demoted_users:
             # demoted users are restricted to the assigned groups only
             vals = {'groups_id': [Command.clear()] + values['groups_id']}
-            super(UsersImplied, demoted_users).write(vals)
+            super(ResUsers, demoted_users).write(vals)
         # add implied groups for all users (in batches)
         users_batch = defaultdict(self.browse)
         for user in self:
@@ -1580,7 +1579,7 @@ class UsersImplied(models.Model):
         for groups, users in users_batch.items():
             gs = set(concat(g.trans_implied_ids for g in groups))
             vals = {'groups_id': [Command.link(g.id) for g in gs]}
-            super(UsersImplied, users).write(vals)
+            super(ResUsers, users).write(vals)
         return res
 
 #

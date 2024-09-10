@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class AccountJournal(models.Model):
     """Populate factory part for account.journal."""
 
-    _inherit = "account.journal"
+    _inherit = ["account.journal"]
     _populate_sizes = {
         'small': 10,
         'medium': 30,

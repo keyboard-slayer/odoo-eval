@@ -12,8 +12,7 @@ from odoo.addons.base.models.ir_asset import AFTER_DIRECTIVE, APPEND_DIRECTIVE, 
 _logger = logging.getLogger(__name__)
 
 
-class ThemeAsset(models.Model):
-    _name = 'theme.ir.asset'
+class ThemeIrAsset(models.Model):
     _description = 'Theme Asset'
 
     key = fields.Char()
@@ -50,8 +49,7 @@ class ThemeAsset(models.Model):
         return new_asset
 
 
-class ThemeView(models.Model):
-    _name = 'theme.ir.ui.view'
+class ThemeIrUiView(models.Model):
     _description = 'Theme UI View'
 
     def compute_arch_fs(self):
@@ -110,8 +108,7 @@ class ThemeView(models.Model):
         return new_view
 
 
-class ThemeAttachment(models.Model):
-    _name = 'theme.ir.attachment'
+class ThemeIrAttachment(models.Model):
     _description = 'Theme Attachments'
 
     name = fields.Char(required=True)
@@ -134,8 +131,7 @@ class ThemeAttachment(models.Model):
         return new_attach
 
 
-class ThemeMenu(models.Model):
-    _name = 'theme.website.menu'
+class ThemeWebsiteMenu(models.Model):
     _description = 'Website Theme Menu'
 
     name = fields.Char(required=True, translate=True)
@@ -175,8 +171,7 @@ class ThemeMenu(models.Model):
         return new_menu
 
 
-class ThemePage(models.Model):
-    _name = 'theme.website.page'
+class ThemeWebsitePage(models.Model):
     _description = 'Website Theme Page'
 
     url = fields.Char()
@@ -215,8 +210,7 @@ class ThemePage(models.Model):
         return new_page
 
 
-class Theme(models.AbstractModel):
-    _name = 'theme.utils'
+class ThemeUtils(models.AbstractModel):
     _description = 'Theme Utils'
     _auto = False
 
@@ -293,8 +287,8 @@ class Theme(models.AbstractModel):
 
     @api.model
     def _toggle_asset(self, key, active):
-        ThemeAsset = self.env['theme.ir.asset'].sudo().with_context(active_test=False)
-        obj = ThemeAsset.search([('key', '=', key)])
+        ThemeIrAsset = self.env['theme.ir.asset'].sudo().with_context(active_test=False)
+        obj = ThemeIrAsset.search([('key', '=', key)])
         website = self.env['website'].get_current_website()
         if obj:
             obj = obj.copy_ids.filtered(lambda x: x.website_id == website)
@@ -355,7 +349,7 @@ class Theme(models.AbstractModel):
 
 
 class IrUiView(models.Model):
-    _inherit = 'ir.ui.view'
+    _inherit = ['ir.ui.view']
 
     theme_template_id = fields.Many2one('theme.ir.ui.view', copy=False)
 
@@ -382,25 +376,25 @@ class IrUiView(models.Model):
 
 
 class IrAsset(models.Model):
-    _inherit = 'ir.asset'
+    _inherit = ['ir.asset']
 
     theme_template_id = fields.Many2one('theme.ir.asset', copy=False)
 
 
 class IrAttachment(models.Model):
-    _inherit = 'ir.attachment'
+    _inherit = ['ir.attachment']
 
     key = fields.Char(copy=False)
     theme_template_id = fields.Many2one('theme.ir.attachment', copy=False)
 
 
 class WebsiteMenu(models.Model):
-    _inherit = 'website.menu'
+    _inherit = ['website.menu']
 
     theme_template_id = fields.Many2one('theme.website.menu', copy=False)
 
 
 class WebsitePage(models.Model):
-    _inherit = 'website.page'
+    _inherit = ['website.page']
 
     theme_template_id = fields.Many2one('theme.website.page', copy=False)

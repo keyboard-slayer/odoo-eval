@@ -6,7 +6,7 @@ from odoo.osv.expression import OR
 
 
 class PosConfig(models.Model):
-    _inherit = 'pos.config'
+    _inherit = ['pos.config']
 
     crm_team_id = fields.Many2one(
         'crm.team', string="Sales Team", ondelete="set null",

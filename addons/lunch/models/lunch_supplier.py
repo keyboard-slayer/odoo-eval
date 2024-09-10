@@ -31,7 +31,6 @@ def time_to_float(t):
     return float_round(t.hour + t.minute/60 + t.second/3600, precision_digits=2)
 
 class LunchSupplier(models.Model):
-    _name = 'lunch.supplier'
     _description = 'Lunch Supplier'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 

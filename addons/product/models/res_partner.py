@@ -5,7 +5,7 @@ from odoo import api, fields, models
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
+    _inherit = ['res.partner']
 
     # NOT A REAL PROPERTY !!!!
     property_product_pricelist = fields.Many2one(

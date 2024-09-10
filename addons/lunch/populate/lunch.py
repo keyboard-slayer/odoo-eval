@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 
 class LunchProductCategory(models.Model):
-    _inherit = 'lunch.product.category'
+    _inherit = ['lunch.product.category']
     _populate_sizes = {'small': 5, 'medium': 150, 'large': 400}
     _populate_dependencies = ['res.company']
 
@@ -28,7 +28,7 @@ class LunchProductCategory(models.Model):
 
 
 class LunchProduct(models.Model):
-    _inherit = 'lunch.product'
+    _inherit = ['lunch.product']
     _populate_sizes = {'small': 10, 'medium': 150, 'large': 10000}
     _populate_dependencies = ['lunch.product.category', 'lunch.supplier']
 
@@ -54,7 +54,7 @@ class LunchProduct(models.Model):
 
 
 class LunchLocation(models.Model):
-    _inherit = 'lunch.location'
+    _inherit = ['lunch.location']
 
     _populate_sizes = {'small': 3, 'medium': 50, 'large': 500}
     _populate_dependencies = ['res.company']
@@ -70,7 +70,7 @@ class LunchLocation(models.Model):
 
 
 class LunchSupplier(models.Model):
-    _inherit = 'lunch.supplier'
+    _inherit = ['lunch.supplier']
 
     _populate_sizes = {'small': 3, 'medium': 50, 'large': 1500}
 
@@ -109,7 +109,7 @@ class LunchSupplier(models.Model):
 
 
 class LunchOrder(models.Model):
-    _inherit = 'lunch.order'
+    _inherit = ['lunch.order']
     _populate_sizes = {'small': 20, 'medium': 3000, 'large': 15000}
     _populate_dependencies = ['lunch.product', 'res.users', 'res.company']
 
@@ -132,7 +132,7 @@ class LunchOrder(models.Model):
 
 
 class LunchAlert(models.Model):
-    _inherit = 'lunch.alert'
+    _inherit = ['lunch.alert']
     _populate_sizes = {'small': 10, 'medium': 40, 'large': 150}
 
     _populate_dependencies = ['lunch.location']

@@ -5,7 +5,7 @@ from odoo import models, _
 from odoo.exceptions import UserError
 
 class CalendarEvent(models.Model):
-    _inherit = 'calendar.event'
+    _inherit = ['calendar.event']
 
     def _do_sms_reminder(self, alarms):
         """ Send an SMS text reminder to attendees that haven't declined the event """

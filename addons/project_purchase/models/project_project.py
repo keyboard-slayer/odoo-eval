@@ -7,8 +7,8 @@ from odoo import api, fields, models, _, _lt
 from odoo.osv import expression
 
 
-class Project(models.Model):
-    _inherit = "project.project"
+class ProjectProject(models.Model):
+    _inherit = ["project.project"]
 
     purchase_orders_count = fields.Integer('# Purchase Orders', compute='_compute_purchase_orders_count', groups='purchase.group_purchase_user', export_string_translation=False)
 
@@ -74,7 +74,7 @@ class Project(models.Model):
     # ----------------------------
 
     def _get_stat_buttons(self):
-        buttons = super(Project, self)._get_stat_buttons()
+        buttons = super()._get_stat_buttons()
         if self.env.user.has_group('purchase.group_purchase_user'):
             self_sudo = self.sudo()
             buttons.append({

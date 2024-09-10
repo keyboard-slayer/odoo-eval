@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class PurchaseOrder(models.Model):
-    _inherit = "purchase.order"
+    _inherit = ["purchase.order"]
 
     _populate_dependencies = ["res.partner", "stock.picking.type"]
 

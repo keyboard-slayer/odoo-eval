@@ -6,7 +6,7 @@ from odoo import models
 from odoo.tools import populate
 
 class HrDepartment(models.Model):
-    _inherit = 'hr.department'
+    _inherit = ['hr.department']
 
     _populate_sizes = {'small': 5, 'medium': 30, 'large': 200}
 
@@ -38,7 +38,7 @@ class HrDepartment(models.Model):
             children.write({'parent_id': parent})
 
 class HrJob(models.Model):
-    _inherit = 'hr.job'
+    _inherit = ['hr.job']
 
     _populate_sizes = {'small': 5, 'medium': 20, 'large': 100}
     _populate_dependencies = ['hr.department']
@@ -52,7 +52,7 @@ class HrJob(models.Model):
         ]
 
 class HrWorkLocation(models.Model):
-    _inherit = 'hr.work.location'
+    _inherit = ['hr.work.location']
 
     _populate_sizes = {'small': 2, 'medium': 5, 'large': 20}
     def _populate_factories(self):
@@ -64,7 +64,7 @@ class HrWorkLocation(models.Model):
         ]
 
 class HrEmployeeCategory(models.Model):
-    _inherit = 'hr.employee.category'
+    _inherit = ['hr.employee.category']
 
     _populate_sizes = {'small': 10, 'medium': 50, 'large': 200}
 
@@ -74,7 +74,7 @@ class HrEmployeeCategory(models.Model):
         ]
 
 class HrEmployee(models.Model):
-    _inherit = 'hr.employee'
+    _inherit = ['hr.employee']
 
     _populate_sizes = {'small': 100, 'medium': 2000, 'large': 20000}
     _populate_dependencies = ['res.company', 'res.users', 'resource.calendar', 'hr.department',

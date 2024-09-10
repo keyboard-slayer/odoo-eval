@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 
 class AccountPaymentRegister(models.TransientModel):
-    _inherit = 'account.payment.register'
+    _inherit = ['account.payment.register']
 
     l10n_ar_withholding_ids = fields.One2many('l10n_ar.payment.register.withholding', 'payment_register_id', string="Withholdings")
     l10n_ar_net_amount = fields.Monetary(compute='_compute_l10n_ar_net_amount', readonly=True, help="Net amount after withholdings")

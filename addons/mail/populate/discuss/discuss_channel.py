@@ -4,8 +4,8 @@ from odoo import models
 from odoo.tools import populate
 
 
-class Channel(models.Model):
-    _inherit = "discuss.channel"
+class DiscussChannel(models.Model):
+    _inherit = ["discuss.channel"]
     _populate_sizes = {"small": 150, "medium": 1000, "large": 10000}
 
     def _populate_factories(self):
@@ -25,4 +25,4 @@ class Channel(models.Model):
 
     def _populate(self, size):
         # install_mode to prevent from automatically adding system as member
-        return super(Channel, self.with_context(install_mode=True))._populate(size)
+        return super(DiscussChannel, self.with_context(install_mode=True))._populate(size)

@@ -4,8 +4,10 @@
 from odoo import models
 
 
-class StockForecasted(models.AbstractModel):
-    _inherit = 'stock.forecasted_product_product'
+class StockForecastedProductProduct(models.AbstractModel):
+    _name = "stock.forecasted_product_product"
+
+    _inherit = ['stock.forecasted_product_product']
 
     def _get_report_header(self, product_template_ids, product_ids, wh_location_ids):
         res = super()._get_report_header(product_template_ids, product_ids, wh_location_ids)

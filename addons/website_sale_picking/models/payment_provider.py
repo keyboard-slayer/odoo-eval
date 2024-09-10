@@ -7,7 +7,7 @@ from odoo.addons.website_sale_picking import const
 
 
 class PaymentProvider(models.Model):
-    _inherit = 'payment.provider'
+    _inherit = ['payment.provider']
 
     custom_mode = fields.Selection(
         selection_add=[('onsite', "On Site")]

@@ -7,7 +7,7 @@ from odoo import SUPERUSER_ID, _, api, fields, models
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     l10n_vn_edi_enable = fields.Boolean(
         compute='_compute_l10n_vn_edi_enable',

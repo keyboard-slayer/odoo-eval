@@ -9,7 +9,6 @@ from odoo.tools import format_date
 from .project_task import CLOSED_STATES
 
 class ProjectMilestone(models.Model):
-    _name = 'project.milestone'
     _description = "Project Milestone"
     _inherit = ['mail.thread']
     _order = 'deadline, is_reached desc, name'

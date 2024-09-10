@@ -4,7 +4,7 @@ from odoo import api, fields, models, _
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     enable_send_by_post = fields.Boolean(compute='_compute_enable_send_by_post')
     checkbox_send_by_post = fields.Boolean(

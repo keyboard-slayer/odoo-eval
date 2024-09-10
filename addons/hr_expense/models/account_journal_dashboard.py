@@ -5,7 +5,7 @@ from odoo.addons.account.models.account_journal_dashboard import group_by_journa
 
 
 class AccountJournal(models.Model):
-    _inherit = "account.journal"
+    _inherit = ["account.journal"]
 
     def _prepare_expense_sheet_data_domain(self):
         return [

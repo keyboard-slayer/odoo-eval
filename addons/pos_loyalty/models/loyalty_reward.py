@@ -6,7 +6,6 @@ import ast
 import json
 
 class LoyaltyReward(models.Model):
-    _name = 'loyalty.reward'
     _inherit = ['loyalty.reward', 'pos.load.mixin']
 
     def _get_discount_product_values(self):

@@ -11,7 +11,7 @@ from odoo.tools import index_exists
 _logger = logging.getLogger(__name__)
 
 
-class l10nLatamAccountPaymentCheck(models.Model):
+class L10nLatamCheck(models.Model):
     _name = 'l10n_latam.check'
     _description = 'Account payment check'
     _check_company_auto = True

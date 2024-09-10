@@ -7,8 +7,8 @@ from odoo import api, fields, models, modules, _
 from pytz import timezone, UTC
 
 
-class Users(models.Model):
-    _inherit = 'res.users'
+class ResUsers(models.Model):
+    _inherit = ['res.users']
 
     calendar_default_privacy = fields.Selection(related='res_users_settings_id.calendar_default_privacy', readonly=False, required=True)
 

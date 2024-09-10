@@ -5,7 +5,7 @@ from odoo import models
 
 
 class AccountMove(models.Model):
-    _inherit = "account.move"
+    _inherit = ["account.move"]
 
     def _get_pdf_and_send_invoice_vals(self, template, **kwargs):
         # EXTENDS account

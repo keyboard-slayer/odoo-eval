@@ -4,7 +4,7 @@ from odoo import _, api, fields, models
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     l10n_it_edi_enable_xml_export = fields.Boolean(compute='_compute_l10n_it_edi_xml_export')
     l10n_it_edi_readonly_xml_export = fields.Boolean(compute='_compute_l10n_it_edi_xml_export')

@@ -6,7 +6,7 @@ from odoo.tools import populate
 
 
 class ProductProduct(models.Model):
-    _inherit = 'product.product'
+    _inherit = ['product.product']
 
     def _populate_factories(self):
         def get_is_storable(values, counter, random):

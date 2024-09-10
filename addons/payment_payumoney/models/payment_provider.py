@@ -8,7 +8,7 @@ from odoo.addons.payment_payulatam.const import DEFAULT_PAYMENT_METHOD_CODES
 
 
 class PaymentProvider(models.Model):
-    _inherit = 'payment.provider'
+    _inherit = ['payment.provider']
 
     code = fields.Selection(
         selection_add=[('payumoney', "PayUmoney")], ondelete={'payumoney': 'set default'})

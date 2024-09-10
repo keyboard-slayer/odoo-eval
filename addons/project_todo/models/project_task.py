@@ -4,8 +4,8 @@
 from odoo import api, models, _, _lt, Command
 from odoo.tools import html2plaintext
 
-class Task(models.Model):
-    _inherit = 'project.task'
+class ProjectTask(models.Model):
+    _inherit = ['project.task']
 
     @api.model_create_multi
     def create(self, vals_list):

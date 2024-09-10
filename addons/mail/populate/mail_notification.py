@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 
 
 class MailNotification(models.Model):
-    _inherit = "mail.notification"
+    _inherit = ["mail.notification"]
     _populate_dependencies = ["res.partner", "mail.message"]
 
     def _populate(self, size):

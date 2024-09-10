@@ -3,8 +3,8 @@
 from odoo import models
 
 
-class Expense(models.Model):
-    _inherit = "hr.expense"
+class HrExpense(models.Model):
+    _inherit = ["hr.expense"]
 
     def _compute_analytic_distribution(self):
         super()._compute_analytic_distribution()

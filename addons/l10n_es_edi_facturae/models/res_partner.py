@@ -3,7 +3,7 @@ from odoo.exceptions import ValidationError
 from odoo.tools import check_barcode_encoding
 
 
-class AcRoleType(models.Model):
+class L10nEsEdiFacturaeAcRoleType(models.Model):
     _name = 'l10n_es_edi_facturae.ac_role_type'
     _description = 'Administrative Center Role Type'
 
@@ -11,8 +11,8 @@ class AcRoleType(models.Model):
     name = fields.Char(required=True, translate=True)
 
 
-class Partner(models.Model):
-    _inherit = 'res.partner'
+class ResPartner(models.Model):
+    _inherit = ['res.partner']
 
     type = fields.Selection(selection_add=[('facturae_ac', 'FACe Center'), ('other',)])
     l10n_es_edi_facturae_ac_center_code = fields.Char(string='Code', size=10, help="Code of the issuing department.")

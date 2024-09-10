@@ -6,7 +6,7 @@ from odoo.addons.base.models.res_partner import WARNING_MESSAGE, WARNING_HELP
 from odoo.osv import expression
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'
+    _inherit = ['res.partner']
 
     sale_order_count = fields.Integer(compute='_compute_sale_order_count', string='Sale Order Count')
     sale_order_ids = fields.One2many('sale.order', 'partner_id', 'Sales Order')

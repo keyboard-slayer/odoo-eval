@@ -8,7 +8,7 @@ from collections import defaultdict
 
 
 class ResourceCalendar(models.Model):
-    _inherit = 'resource.calendar'
+    _inherit = ['resource.calendar']
 
     def _works_on_date(self, date):
         self.ensure_one()

@@ -8,7 +8,7 @@ from odoo.exceptions import UserError
 
 # Invoice template that needs to be passed to Sinvoice and will determine the format of the resulting
 # invoice pdf on their system
-class SInvoiceTemplate(models.Model):
+class L10nVnEdiViettelSinvoiceTemplate(models.Model):
     _name = 'l10n_vn_edi_viettel.sinvoice.template'
     _description = 'SInvoice template'
 
@@ -49,7 +49,7 @@ class SInvoiceTemplate(models.Model):
 
 # Invoice symbol that needs to be passed to Sinvoice and will determine the prefix of the
 # invoice number on their system
-class SInvoiceSymbol(models.Model):
+class L10nVnEdiViettelSinvoiceSymbol(models.Model):
     _name = 'l10n_vn_edi_viettel.sinvoice.symbol'
     _description = 'SInvoice symbol'
     """

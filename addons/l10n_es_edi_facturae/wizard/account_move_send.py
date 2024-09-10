@@ -7,7 +7,7 @@ _logger = logging.getLogger(__name__)
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     l10n_es_edi_facturae_enable_xml = fields.Boolean(compute='_compute_l10n_es_edi_facturae_enable_xml')
     l10n_es_edi_facturae_checkbox_xml = fields.Boolean(

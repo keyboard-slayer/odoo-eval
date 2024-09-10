@@ -4,7 +4,7 @@ from odoo import models
 
 class AccountPayment(models.Model):
 
-    _inherit = 'account.payment'
+    _inherit = ['account.payment']
 
     def _synchronize_to_moves(self, changed_fields):
         ''' If we change a payment with withholdings, delete all withholding lines as the synchronization mechanism is not

@@ -117,7 +117,7 @@ class ImportValidationError(Exception):
 
 
 class Base(models.AbstractModel):
-    _inherit = 'base'
+    _inherit = ['base']
 
     @api.model
     def get_import_templates(self):
@@ -129,7 +129,7 @@ class Base(models.AbstractModel):
         """
         return []
 
-class ImportMapping(models.Model):
+class BaseImportMapping(models.Model):
     """ mapping of previous column:field selections
 
     This is useful when repeatedly importing from a third-party
@@ -150,7 +150,7 @@ class ImportMapping(models.Model):
 
 
 class ResUsers(models.Model):
-    _inherit = 'res.users'
+    _inherit = ['res.users']
 
     def _can_import_remote_urls(self):
         """ Hook to decide whether the current user is allowed to import
@@ -162,7 +162,7 @@ class ResUsers(models.Model):
         self.ensure_one()
         return self._is_admin()
 
-class Import(models.TransientModel):
+class BaseImportImport(models.TransientModel):
     """
     This model is used to prepare the loading of data coming from a user file.
 
@@ -993,7 +993,7 @@ class Import(models.TransientModel):
         try:
             file_length, rows = self._read_file(options)
             if file_length <= 0:
-                raise ImportValidationError(_("Import file has no content or is corrupt"))
+                raise ImportValidationError(_("BaseImportImport file has no content or is corrupt"))
 
             preview = rows[:count]
 

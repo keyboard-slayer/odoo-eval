@@ -9,7 +9,7 @@ from odoo.addons.crm.populate import tools
 
 
 class CrmLead(models.Model):
-    _inherit = 'crm.lead'
+    _inherit = ['crm.lead']
     _populate_dependencies = [
         'res.partner',  # customer
     ]

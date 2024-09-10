@@ -48,7 +48,7 @@ CRC8_TABLE = [
 class L10nEsEdiTbaiDocument(models.Model):
     _name = 'l10n_es_edi_tbai.document'
     _description = 'TicketBAI Document'
-    _inherit = 'sequence.mixin'
+    _inherit = ['sequence.mixin']
 
     name = fields.Char(
         required=True,

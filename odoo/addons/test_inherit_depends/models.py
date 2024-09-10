@@ -4,7 +4,7 @@ from odoo import models, fields
 from odoo.addons.test_inherit.models import mother_base
 
 
-class PublishedFoo(models.Model):
+class TestNewApiFoo(models.Model):
     _name = 'test_new_api.foo'
     _inherit = ['test_new_api.foo', 'test_inherit_mixin']
 

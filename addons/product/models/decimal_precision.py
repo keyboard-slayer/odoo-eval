@@ -6,7 +6,7 @@ from odoo.exceptions import ValidationError
 
 
 class DecimalPrecision(models.Model):
-    _inherit = 'decimal.precision'
+    _inherit = ['decimal.precision']
 
     @api.constrains('digits')
     def _check_main_currency_rounding(self):

@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class AccountReconcileModel(models.Model):
     """Populate factory part for account.reconcile.model."""
 
-    _inherit = "account.reconcile.model"
+    _inherit = ["account.reconcile.model"]
 
     _populate_sizes = {
         'small': 5,
@@ -42,7 +42,7 @@ class AccountReconcileModel(models.Model):
 class AccountReconcileModelLine(models.Model):
     """Populate factory part for account.reconcile.model.line."""
 
-    _inherit = "account.reconcile.model.line"
+    _inherit = ["account.reconcile.model.line"]
 
     _populate_sizes = {
         'small': 10,

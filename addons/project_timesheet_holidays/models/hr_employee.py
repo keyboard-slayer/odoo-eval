@@ -5,8 +5,8 @@ from odoo import api, fields, models
 from collections import defaultdict
 
 
-class Employee(models.Model):
-    _inherit = 'hr.employee'
+class HrEmployee(models.Model):
+    _inherit = ['hr.employee']
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -21,7 +21,7 @@ class Employee(models.Model):
         return employees
 
     def write(self, vals):
-        result = super(Employee, self).write(vals)
+        result = super().write(vals)
         self_company = self.with_context(allowed_company_ids=self.company_id.ids)
         if 'active' in vals:
             if vals.get('active'):

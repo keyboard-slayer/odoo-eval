@@ -4,7 +4,7 @@ from odoo import fields, models
 
 
 class AccountAnalyticDistributionModel(models.Model):
-    _inherit = 'account.analytic.distribution.model'
+    _inherit = ['account.analytic.distribution.model']
 
     account_prefix = fields.Char(
         string='Accounts Prefix',

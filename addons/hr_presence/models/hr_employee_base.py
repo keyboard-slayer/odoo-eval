@@ -4,7 +4,7 @@ from odoo import fields, models
 
 
 class HrEmployeeBase(models.AbstractModel):
-    _inherit = "hr.employee.base"
+    _inherit = ["hr.employee.base"]
 
     def _compute_presence_state(self):
         super()._compute_presence_state()

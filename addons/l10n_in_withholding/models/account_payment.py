@@ -2,7 +2,7 @@ from odoo import models
 
 
 class AccountPayment(models.Model):
-    _inherit = "account.payment"
+    _inherit = ["account.payment"]
 
     def action_l10n_in_withholding_entries(self):
         self.ensure_one()

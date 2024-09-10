@@ -5,7 +5,7 @@ from odoo import api, fields, models
 
 
 class StockReturnPicking(models.TransientModel):
-    _inherit = "stock.return.picking"
+    _inherit = ["stock.return.picking"]
 
     @api.model
     def default_get(self, default_fields):
@@ -22,7 +22,7 @@ class StockReturnPicking(models.TransientModel):
 
 
 class StockReturnPickingLine(models.TransientModel):
-    _inherit = "stock.return.picking.line"
+    _inherit = ["stock.return.picking.line"]
 
     to_refund = fields.Boolean(string="Update quantities on SO/PO", default=True,
         help='Trigger a decrease of the delivered/received quantity in the associated Sale Order/Purchase Order')

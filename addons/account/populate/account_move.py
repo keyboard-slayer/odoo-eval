@@ -18,7 +18,7 @@ class AccountMove(models.Model):
     both models are actualy generated in the same factory.
     """
 
-    _inherit = "account.move"
+    _inherit = ["account.move"]
 
     _populate_sizes = {
         'small': 1000,

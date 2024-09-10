@@ -5,7 +5,9 @@ from odoo import models
 
 
 class IrConfigParameter(models.Model):
-    _inherit = 'ir.config_parameter'
+    _name = "ir.config_parameter"
+
+    _inherit = ['ir.config_parameter']
 
     def init(self, force=False):
         super(IrConfigParameter, self).init(force=force)

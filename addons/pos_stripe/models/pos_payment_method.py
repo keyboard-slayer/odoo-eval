@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 TIMEOUT = 10
 
 class PosPaymentMethod(models.Model):
-    _inherit = 'pos.payment.method'
+    _inherit = ['pos.payment.method']
 
     def _get_payment_terminal_selection(self):
         return super()._get_payment_terminal_selection() + [('stripe', 'Stripe')]

@@ -20,7 +20,6 @@ MODEL_FIELDS_TO_VEHICLE = {
 
 class FleetVehicle(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin', 'avatar.mixin']
-    _name = 'fleet.vehicle'
     _description = 'Vehicle'
     _order = 'license_plate asc, acquisition_date asc'
     _rec_names_search = ['name', 'driver_id.name']

@@ -7,8 +7,8 @@ from odoo.exceptions import ValidationError, RedirectWarning
 from odoo.tools import SQL
 
 
-class Project(models.Model):
-    _inherit = "project.project"
+class ProjectProject(models.Model):
+    _inherit = ["project.project"]
 
     allow_timesheets = fields.Boolean(
         "Timesheets", compute='_compute_allow_timesheets', store=True, readonly=False,
@@ -101,7 +101,7 @@ class Project(models.Model):
                AND Task.parent_id IS NULL
                AND Task.state IN ('01_in_progress', '02_changes_requested', '03_approved', '04_waiting_normal')
           GROUP BY Project.id
-            HAVING Project.allocated_hours - SUM(Task.effective_hours) < 0
+            HAVING ProjectProject.allocated_hours - SUM(Task.effective_hours) < 0
         )""")
         if (operator == '=' and value is True) or (operator == '!=' and value is False):
             operator_new = 'in'
@@ -168,7 +168,7 @@ class Project(models.Model):
             project_wo_account = self.filtered(lambda project: not project.account_id)
             if project_wo_account:
                 project_wo_account._create_analytic_account()
-        return super(Project, self).write(values)
+        return super().write(values)
 
     @api.depends('is_internal_project', 'company_id')
     @api.depends_context('allowed_company_ids')
@@ -222,7 +222,7 @@ class Project(models.Model):
     # ----------------------------
 
     def _get_stat_buttons(self):
-        buttons = super(Project, self)._get_stat_buttons()
+        buttons = super()._get_stat_buttons()
         if not self.allow_timesheets or not self.env.user.has_group("hr_timesheet.group_hr_timesheet_user"):
             return buttons
 

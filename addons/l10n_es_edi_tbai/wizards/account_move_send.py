@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 
 
 class AccountMoveSend(models.TransientModel):
-    _inherit = 'account.move.send'
+    _inherit = ['account.move.send']
 
     l10n_es_tbai_show_checkbox = fields.Boolean(compute='_compute_l10n_es_tbai_show_checkbox')
     l10n_es_tbai_checkbox_send = fields.Boolean(

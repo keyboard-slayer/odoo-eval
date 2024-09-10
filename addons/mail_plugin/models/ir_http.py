@@ -7,7 +7,7 @@ from odoo import models
 from odoo.http import request
 
 class IrHttp(models.AbstractModel):
-    _inherit = 'ir.http'
+    _inherit = ['ir.http']
 
     @classmethod
     def _auth_method_outlook(cls):

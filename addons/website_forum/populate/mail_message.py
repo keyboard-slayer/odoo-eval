@@ -8,8 +8,8 @@ from odoo.tools import populate
 CP_WEIGHTS = {1: 35, 2: 30, 3: 25, 4: 10}
 _logger = logging.getLogger(__name__)
 
-class Message(models.Model):
-    _inherit = 'mail.message'
+class MailMessage(models.Model):
+    _inherit = ['mail.message']
 
     @property
     def _populate_dependencies(self):

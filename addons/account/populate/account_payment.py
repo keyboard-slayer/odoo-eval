@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class AccountPayment(models.Model):
     """Populate factory part for account.payment."""
 
-    _inherit = "account.payment"
+    _inherit = ["account.payment"]
 
     _populate_sizes = {
         'small': 100,

@@ -5,8 +5,8 @@ from odoo import models
 import re
 
 
-class AccountEdiXmlUBLEFFF(models.AbstractModel):
-    _inherit = "account.edi.xml.ubl_20"
+class AccountEdiXmlUblEfff(models.AbstractModel):
+    _inherit = ["account.edi.xml.ubl_20"]
     _name = 'account.edi.xml.ubl_efff'
     _description = "E-FFF (BE)"
 

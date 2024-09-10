@@ -17,9 +17,8 @@ from odoo.tools.json import scriptsafe as json_safe
 logger = logging.getLogger(__name__)
 
 
-class SeoMetadata(models.AbstractModel):
+class WebsiteSeoMetadata(models.AbstractModel):
 
-    _name = 'website.seo.metadata'
     _description = 'SEO metadata'
 
     is_seo_optimized = fields.Boolean("SEO optimized", compute='_compute_is_seo_optimized')
@@ -156,7 +155,6 @@ class WebsiteCoverPropertiesMixin(models.AbstractModel):
 
 class WebsiteMultiMixin(models.AbstractModel):
 
-    _name = 'website.multi.mixin'
     _description = 'Multi Website Mixin'
 
     website_id = fields.Many2one(
@@ -178,7 +176,6 @@ class WebsiteMultiMixin(models.AbstractModel):
 
 class WebsitePublishedMixin(models.AbstractModel):
 
-    _name = "website.published.mixin"
     _description = 'Website Published Mixin'
 
     website_published = fields.Boolean('Visible on current website', related='is_published', readonly=False)
@@ -292,7 +289,6 @@ class WebsitePublishedMultiMixin(WebsitePublishedMixin):
 
 class WebsiteSearchableMixin(models.AbstractModel):
     """Mixin to be inherited by all models that need to searchable through website"""
-    _name = 'website.searchable.mixin'
     _description = 'Website Searchable Mixin'
 
     @api.model

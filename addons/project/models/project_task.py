@@ -78,8 +78,7 @@ CLOSED_STATES = {
 }
 
 
-class Task(models.Model):
-    _name = "project.task"
+class ProjectTask(models.Model):
     _description = "Task"
     _date_name = "date_assign"
     _inherit = [
@@ -97,7 +96,7 @@ class Task(models.Model):
     _track_duration_field = 'stage_id'
 
     def _get_versioned_fields(self):
-        return [Task.description.name]
+        return [ProjectTask.description.name]
 
     @api.model
     def _get_default_partner_id(self, project=None, parent=None):
@@ -587,12 +586,12 @@ class Task(models.Model):
             ['working_hours_open', 'working_hours_close', 'working_days_open', 'working_days_close'], 0.0))
 
     def _compute_access_url(self):
-        super(Task, self)._compute_access_url()
+        super()._compute_access_url()
         for task in self:
             task.access_url = f'/my/tasks/{task.id}'
 
     def _compute_access_warning(self):
-        super(Task, self)._compute_access_warning()
+        super()._compute_access_warning()
         for task in self.filtered(lambda x: x.project_id.privacy_visibility != 'portal'):
             visibility_field = self.env['ir.model.fields'].search([('model', '=', 'project.project'), ('name', '=', 'privacy_visibility')], limit=1)
             visibility_public = self.env['ir.model.fields.selection'].search([('field_id', '=', visibility_field.id), ('value', '=', 'portal')])
@@ -831,7 +830,7 @@ class Task(models.Model):
             'depend_on_ids': False,
             'dependent_ids': False,
         })
-        copied_tasks = super(Task, self.with_context(
+        copied_tasks = super(ProjectTask, self.with_context(
             mail_auto_subscribe_no_notify=True,
             mail_create_nosubscribe=True,
             mail_create_nolog=True,
@@ -866,7 +865,7 @@ class Task(models.Model):
             empty_list_help_model='project.project',
             empty_list_help_document_name=tname,
         )
-        return super(Task, self).get_empty_list_help(help)
+        return super().get_empty_list_help(help)
 
     # ----------------------------------------
     # Case management
@@ -921,7 +920,7 @@ class Task(models.Model):
 
     @api.model
     def default_get(self, default_fields):
-        vals = super(Task, self).default_get(default_fields)
+        vals = super().default_get(default_fields)
 
         # prevent creating new task in the waiting state
         if 'state' in default_fields and vals.get('state') == '04_waiting_normal':
@@ -1104,7 +1103,7 @@ class Task(models.Model):
         if is_portal_user:
             vals_list_no_sudo, vals_list = zip(*(self._get_portal_sudo_vals(vals, defaults=True) for vals in vals_list))
             self_no_sudo, self = self, self.sudo().with_context(self._get_portal_sudo_context())
-        tasks = super(Task, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
+        tasks = super(ProjectTask, self.with_context(mail_create_nosubscribe=True)).create(vals_list)
         if is_portal_user:
             for task, vals in zip(tasks.with_env(self_no_sudo.env), vals_list_no_sudo):
                 task.write(vals)
@@ -1261,7 +1260,7 @@ class Task(models.Model):
                         project_link_per_task_id[task.id] = project_link
         result = super().write(vals)
         if portal_can_write:
-            super(Task, self_no_sudo).write(vals_no_sudo)
+            super(ProjectTask, self_no_sudo).write(vals_no_sudo)
 
         if 'user_ids' in vals:
             self._populate_missing_personal_stages()
@@ -1509,7 +1508,7 @@ class Task(models.Model):
         return new_followers
 
     def _track_template(self, changes):
-        res = super(Task, self)._track_template(changes)
+        res = super()._track_template(changes)
         test_task = self[0]
         if 'stage_id' in changes and test_task.stage_id.mail_template_id:
             res['stage_id'] = (test_task.stage_id.mail_template_id, {
@@ -1544,7 +1543,7 @@ class Task(models.Model):
             return self.env.ref('project.mt_task_stage')
         elif 'state' in init_values and self.state in mail_message_subtype_per_state:
             return self.env.ref(mail_message_subtype_per_state[self.state])
-        return super(Task, self)._track_subtype(init_values)
+        return super()._track_subtype(init_values)
 
     def _mail_get_message_subtypes(self):
         res = super()._mail_get_message_subtypes()
@@ -1599,7 +1598,7 @@ class Task(models.Model):
         res = {task.id: aliases.get(task.project_id.id) for task in self}
         leftover = self.filtered(lambda rec: not rec.project_id)
         if leftover:
-            res.update(super(Task, leftover)._notify_get_reply_to(default=default))
+            res.update(super(ProjectTask, leftover)._notify_get_reply_to(default=default))
         return res
 
     def _ensure_personal_stages(self):
@@ -1645,7 +1644,7 @@ class Task(models.Model):
         }
         defaults.update(custom_values)
 
-        task = super(Task, self.with_context(create_context)).message_new(msg, custom_values=defaults)
+        task = super(ProjectTask, self.with_context(create_context)).message_new(msg, custom_values=defaults)
         email_list = task.email_split(msg)
         partner_ids = [p.id for p in self.env['mail.thread']._mail_find_partner_from_emails(email_list, records=task, force_create=False) if p]
         task.message_subscribe(partner_ids)
@@ -1656,7 +1655,7 @@ class Task(models.Model):
         email_list = self.email_split(msg)
         partner_ids = [p.id for p in self.env['mail.thread']._mail_find_partner_from_emails(email_list, records=self, force_create=False) if p]
         self.message_subscribe(partner_ids)
-        return super(Task, self).message_update(msg, update_vals=update_vals)
+        return super().message_update(msg, update_vals=update_vals)
 
     def _message_get_suggested_recipients(self):
         recipients = super()._message_get_suggested_recipients()
@@ -1666,7 +1665,7 @@ class Task(models.Model):
         return recipients
 
     def _notify_by_email_get_headers(self, headers=None):
-        headers = super(Task, self)._notify_by_email_get_headers(headers=headers)
+        headers = super()._notify_by_email_get_headers(headers=headers)
         if self.project_id:
             current_objects = [h for h in headers.get('X-Odoo-Objects', '').split(',') if h]
             current_objects.insert(0, 'project.project-%s, ' % self.project_id.id)
@@ -1684,7 +1683,7 @@ class Task(models.Model):
         # use the sanitized body of the email from the message thread to populate the task's description
         if not self.description and message.subtype_id == self._creation_subtype() and self.partner_id == message.author_id:
             self.description = message.body
-        return super(Task, self)._message_post_after_hook(message, msg_vals)
+        return super()._message_post_after_hook(message, msg_vals)
 
     def _get_projects_to_make_billable_domain(self, additional_domain=None):
         return expression.AND([
@@ -1912,14 +1911,14 @@ class Task(models.Model):
                 task.rating_send_request(rating_template, lang=task.partner_id.lang, force_send=force_send)
 
     def _rating_get_partner(self):
-        res = super(Task, self)._rating_get_partner()
+        res = super()._rating_get_partner()
         if not res and self.project_id.partner_id:
             return self.project_id.partner_id
         return res
 
     def rating_apply(self, rate, token=None, rating=None, feedback=None,
                      subtype_xmlid=None, notify_delay_send=False):
-        rating = super(Task, self).rating_apply(
+        rating = super().rating_apply(
             rate, token=token, rating=rating, feedback=feedback,
             subtype_xmlid=subtype_xmlid, notify_delay_send=notify_delay_send)
         if self.stage_id and self.stage_id.auto_validation_state:

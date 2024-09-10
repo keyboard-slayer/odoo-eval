@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 
 class ProductAttribute(models.Model):
-    _inherit = "product.attribute"
+    _inherit = ["product.attribute"]
     _populate_sizes = {"small": 20, "medium": 150, "large": 750}
 
     def _populate(self, size):
@@ -32,7 +32,7 @@ class ProductAttribute(models.Model):
 
 
 class ProductAttributeValue(models.Model):
-    _inherit = "product.attribute.value"
+    _inherit = ["product.attribute.value"]
     _populate_dependencies = ["product.attribute"]
     _populate_sizes = {"small": 100, "medium": 1_000, "large": 10_000}
 
@@ -47,7 +47,7 @@ class ProductAttributeValue(models.Model):
 
 
 class ProductTemplate(models.Model):
-    _inherit = "product.template"
+    _inherit = ["product.template"]
     _populate_sizes = {"small": 150, "medium": 5_000, "large": 50_000}
     _populate_dependencies = ["product.attribute.value", "product.category"]
 
@@ -130,7 +130,7 @@ class ProductTemplate(models.Model):
 
 
 class ProductTemplateAttributeExclusion(models.Model):
-    _inherit = "product.template.attribute.exclusion"
+    _inherit = ["product.template.attribute.exclusion"]
     _populate_dependencies = ["product.template"]
     _populate_sizes = {"small": 200, "medium": 1_000, "large": 5_000}
 
@@ -171,7 +171,7 @@ class ProductTemplateAttributeExclusion(models.Model):
 
 
 class ProductTemplateAttributeValue(models.Model):
-    _inherit = "product.template.attribute.value"
+    _inherit = ["product.template.attribute.value"]
     _populate_dependencies = ["product.template"]
 
     def _populate(self, size):

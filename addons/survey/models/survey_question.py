@@ -42,7 +42,6 @@ class SurveyQuestion(models.Model):
 
         That makes the use and display of these information at view and controller levels easier to understand.
     """
-    _name = 'survey.question'
     _description = 'Survey Question'
     _rec_name = 'title'
     _order = 'sequence,id'
@@ -790,7 +789,6 @@ class SurveyQuestionAnswer(models.Model):
       * matrix: row and column values;
 
     """
-    _name = 'survey.question.answer'
     _rec_name = 'value'
     _rec_names_search = ['question_id.title', 'value']
     _order = 'question_id, sequence, id'

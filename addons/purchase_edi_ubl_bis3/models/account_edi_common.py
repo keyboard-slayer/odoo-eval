@@ -2,7 +2,7 @@ from odoo import models, _
 
 
 class AccountEdiCommon(models.AbstractModel):
-    _inherit = "account.edi.common"
+    _inherit = ["account.edi.common"]
 
     def get_tax_unece_codes_order(self, order, tax):
         """

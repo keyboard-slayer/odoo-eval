@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class AccountBankStatement(models.Model):
     """Populate factory part for account.bank.statements."""
 
-    _inherit = "account.bank.statement"
+    _inherit = ["account.bank.statement"]
     _populate_dependencies = ['account.bank.statement.line']
 
     def _populate(self, size):
@@ -55,7 +55,7 @@ class AccountBankStatement(models.Model):
 class AccountBankStatementLine(models.Model):
     """Populate factory part for account.bank.statements.line."""
 
-    _inherit = "account.bank.statement.line"
+    _inherit = ["account.bank.statement.line"]
 
     _populate_sizes = {
         'small': 100,

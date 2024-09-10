@@ -6,7 +6,7 @@ from odoo import _, api, fields, models
 
 
 class HRLeaveType(models.Model):
-    _inherit = 'hr.leave.type'
+    _inherit = ['hr.leave.type']
 
     overtime_deductible = fields.Boolean(
         "Deduct Extra Hours", default=False,

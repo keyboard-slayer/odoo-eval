@@ -6,7 +6,7 @@ from odoo.exceptions import ValidationError
 
 
 class ResConfigSettings(models.TransientModel):
-    _inherit = 'res.config.settings'
+    _inherit = ['res.config.settings']
 
     resource_calendar_id = fields.Many2one(
         'resource.calendar', 'Company Working Hours',

@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 
 class ProductPublicCategory(models.Model):
-    _inherit = 'product.public.category'
+    _inherit = ['product.public.category']
     _populate_sizes = {'small': 20, 'medium': 100, 'large': 1_500}
     _populate_dependencies = ['product.template']
 

@@ -10,7 +10,7 @@ from odoo.addons.payment_payumoney.controllers.main import PayUMoneyController
 
 
 class PaymentTransaction(models.Model):
-    _inherit = 'payment.transaction'
+    _inherit = ['payment.transaction']
 
     def _get_specific_rendering_values(self, processing_values):
         """ Override of payment to return Payumoney-specific rendering values.

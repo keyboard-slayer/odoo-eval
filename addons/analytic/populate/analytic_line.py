@@ -5,8 +5,8 @@ from odoo.tools import populate
 _logger = logging.getLogger(__name__)
 
 
-class AnalyticLine(models.Model):
-    _inherit = "account.analytic.line"
+class AccountAnalyticLine(models.Model):
+    _inherit = ["account.analytic.line"]
     _populate_sizes = {
         'small': 100,
         'medium': 1_000,

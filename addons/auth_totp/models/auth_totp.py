@@ -13,7 +13,7 @@ class AuthTotpDevice(models.Model):
     # two different concepts
 
     _name = "auth_totp.device"
-    _inherit = "res.users.apikeys"
+    _inherit = ["res.users.apikeys"]
     _description = "Authentication Device"
     _auto = False
 

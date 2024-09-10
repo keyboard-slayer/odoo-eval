@@ -7,7 +7,7 @@ from collections import defaultdict
 
 
 class AccountMoveLine(models.Model):
-    _inherit = "account.move.line"
+    _inherit = ["account.move.line"]
 
     def _get_invoiced_qty_per_product(self):
         # Replace the kit-type products with their components

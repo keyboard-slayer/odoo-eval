@@ -8,8 +8,8 @@ from odoo.tools import populate
 
 _logger = logging.getLogger(__name__)
 
-class ProjectStage(models.Model):
-    _inherit = "project.task.type"
+class ProjectTaskType(models.Model):
+    _inherit = ["project.task.type"]
     _populate_sizes = {"small": 10, "medium": 50, "large": 500}
 
     def _populate_factories(self):
@@ -21,7 +21,7 @@ class ProjectStage(models.Model):
         ]
 
 class ProjectProject(models.Model):
-    _inherit = "project.project"
+    _inherit = ["project.project"]
     _populate_sizes = {"small": 10, "medium": 50, "large": 1000}
     _populate_dependencies = ["res.company", "project.task.type"]
 
@@ -54,7 +54,7 @@ class ProjectProject(models.Model):
 
 
 class ProjectTask(models.Model):
-    _inherit = "project.task"
+    _inherit = ["project.task"]
     _populate_sizes = {"small": 500, "medium": 5000, "large": 50000}
     _populate_dependencies = ["project.project", "res.partner", "res.users"]
 

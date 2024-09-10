@@ -6,8 +6,7 @@ from odoo import models, fields, api, _
 from odoo.tools import consteq
 
 class SpreadsheetDashboardShare(models.Model):
-    _name = 'spreadsheet.dashboard.share'
-    _inherit = 'spreadsheet.mixin'
+    _inherit = ['spreadsheet.mixin']
     _description = 'Copy of a shared dashboard'
 
     dashboard_id = fields.Many2one('spreadsheet.dashboard', required=True, ondelete='cascade')

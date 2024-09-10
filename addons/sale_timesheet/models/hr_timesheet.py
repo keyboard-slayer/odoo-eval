@@ -19,7 +19,7 @@ TIMESHEET_INVOICE_TYPES = [
 ]
 
 class AccountAnalyticLine(models.Model):
-    _inherit = 'account.analytic.line'
+    _inherit = ['account.analytic.line']
 
     timesheet_invoice_type = fields.Selection(TIMESHEET_INVOICE_TYPES, string="Billable Type",
             compute='_compute_timesheet_invoice_type', compute_sudo=True, store=True, readonly=True)
