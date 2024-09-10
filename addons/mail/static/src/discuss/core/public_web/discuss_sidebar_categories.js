@@ -2,7 +2,6 @@ import { CountryFlag } from "@mail/core/common/country_flag";
 import { ImStatus } from "@mail/core/common/im_status";
 import { ThreadIcon } from "@mail/core/common/thread_icon";
 import { discussSidebarItemsRegistry } from "@mail/core/public_web/discuss_sidebar";
-import { cleanTerm } from "@mail/utils/common/format";
 import { useHover } from "@mail/utils/common/hooks";
 
 import { Component, useState } from "@odoo/owl";
@@ -12,8 +11,9 @@ import { Dropdown } from "@web/core/dropdown/dropdown";
 import { useDropdownState } from "@web/core/dropdown/dropdown_hooks";
 import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
-import { useAutofocus, useService } from "@web/core/utils/hooks";
+import { useService } from "@web/core/utils/hooks";
 import { markEventHandled } from "@web/core/utils/misc";
+import { DiscussSearch } from "./discuss_search";
 
 export const discussSidebarChannelIndicatorsRegistry = registry.category(
     "mail.discuss_sidebar_channel_indicators"
@@ -39,8 +39,7 @@ export class DiscussSidebarChannel extends Component {
         return {
             "bg-inherit": this.thread.notEq(this.store.discuss.thread),
             "o-active": this.thread.eq(this.store.discuss.thread),
-            "o-unread":
-                this.thread.selfMember?.message_unread_counter > 0 && !this.thread.isMuted,
+            "o-unread": this.thread.selfMember?.message_unread_counter > 0 && !this.thread.isMuted,
             "opacity-50": this.thread.mute_until_dt,
             "position-relative justify-content-center mx-2 o-compact":
                 this.store.discuss.isSidebarCompact,
@@ -157,23 +156,6 @@ export class DiscussSidebarCategory extends Component {
     }
 }
 
-export class DiscussSidebarQuickSearchInput extends Component {
-    static template = "mail.DiscussSidebarQuickSearchInput";
-    static props = ["state", "autofocus?"];
-
-    setup() {
-        super.setup();
-        this.store = useState(useService("mail.store"));
-        if (this.props.autofocus) {
-            useAutofocus({ refName: "root" });
-        }
-    }
-
-    get state() {
-        return this.props.state;
-    }
-}
-
 /**
  * @typedef {Object} Props
  * @extends {Component<Props, Env>}
@@ -184,7 +166,7 @@ export class DiscussSidebarCategories extends Component {
     static components = {
         DiscussSidebarCategory,
         DiscussSidebarChannel,
-        DiscussSidebarQuickSearchInput,
+        DiscussSearch,
         Dropdown,
     };
 
@@ -192,12 +174,12 @@ export class DiscussSidebarCategories extends Component {
         super.setup();
         this.store = useState(useService("mail.store"));
         this.discusscorePublicWebService = useState(useService("discuss.core.public.web"));
-        this.state = useState({ quickSearchVal: "", floatingQuickSearchOpen: false });
+        this.state = useState({ searchValue: "", floatingQuickSearchOpen: false });
         this.orm = useService("orm");
         this.quickSearchHover = useHover(["quick-search-btn", "quick-search-floating*"], {
             onHover: () => (this.quickSearchFloating.isOpen = true),
             onAway: () => {
-                if (!this.quickSearchHover.isHover && !this.state.quickSearchVal.length) {
+                if (!this.quickSearchHover.isHover && !this.state.searchValue.length) {
                     this.state.floatingQuickSearchOpen = false;
                 }
             },
@@ -206,21 +188,7 @@ export class DiscussSidebarCategories extends Component {
     }
 
     filteredThreads(category) {
-        return category.threads.filter((thread) => {
-            return (
-                (thread.displayToSelf || thread.isLocallyPinned) &&
-                (!this.state.quickSearchVal ||
-                    cleanTerm(thread.displayName).includes(cleanTerm(this.state.quickSearchVal)))
-            );
-        });
-    }
-
-    get hasQuickSearch() {
-        return (
-            Object.values(this.store.Thread.records).filter(
-                (thread) => thread.is_pinned && thread.model === "discuss.channel"
-            ).length > 19
-        );
+        return category.threads.filter((thread) => thread.displayToSelf || thread.isLocallyPinned);
     }
 }
 

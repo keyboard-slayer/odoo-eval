@@ -25,9 +25,8 @@ test("Channel subscription is renewed when channel is manually added", async () 
         },
     });
     await openDiscuss();
-    await click("[title='Add or join a channel']");
-    await insertText(".o-discuss-ChannelSelector input", "General");
-    await click(":nth-child(1 of .o-discuss-ChannelSelector-suggestion)");
+    await insertText(".o-mail-DiscussSearch input", "General");
+    await click(":nth-child(1 of .o-mail-DiscussSearch-suggestion)");
     await contains(".o-mail-DiscussSidebarChannel", { text: "General" });
     await assertSteps(["update-channels"]);
 });

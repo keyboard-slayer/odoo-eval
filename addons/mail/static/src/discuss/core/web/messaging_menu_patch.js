@@ -1,8 +1,8 @@
 import { MessagingMenu } from "@mail/core/public_web/messaging_menu";
-import { ChannelSelector } from "@mail/discuss/core/web/channel_selector";
 import { patch } from "@web/core/utils/patch";
+import { DiscussSearch } from "../public_web/discuss_search";
 
-Object.assign(MessagingMenu.components, { ChannelSelector });
+Object.assign(MessagingMenu.components, { DiscussSearch });
 
 patch(MessagingMenu.prototype, {
     beforeOpen() {

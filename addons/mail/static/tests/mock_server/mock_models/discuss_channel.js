@@ -25,6 +25,7 @@ export class DiscussChannel extends models.ServerModel {
         [`form,${DEFAULT_MAIL_VIEW_ID}`]: `<form/>`,
     };
 
+    // name = fields.Char({ string: "Name" });
     author_id = fields.Many2one({
         relation: "res.partner",
         default: () => serverState.partnerId,

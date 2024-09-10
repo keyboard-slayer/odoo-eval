@@ -24,16 +24,13 @@ test("sidebar find shows channels matching search term", async () => {
     });
     await start();
     await openDiscuss();
-    await click(
-        ":nth-child(1 of .o-mail-DiscussSidebarCategory) .o-mail-DiscussSidebarCategory-add"
-    );
-    await insertText(".o-discuss-ChannelSelector input", "test");
+    await insertText(".o-mail-DiscussSearch input", "test");
     // When searching for a single existing channel, the results list will have at least 2 lines:
     // One for the existing channel itself
     // One for creating a channel with the search term
     await contains(".o-mail-NavigableList-item", { count: 2 });
     await contains(".o-mail-NavigableList-item", { text: "test" });
-    await contains(".o-mail-NavigableList-item", { text: "Create: # test" });
+    await contains(".o-mail-NavigableList-item", { text: "#test" });
 });
 
 test("sidebar find shows channels matching search term even when user is member", async () => {
@@ -46,16 +43,13 @@ test("sidebar find shows channels matching search term even when user is member"
     });
     await start();
     await openDiscuss();
-    await click(
-        ":nth-child(1 of .o-mail-DiscussSidebarCategory) .o-mail-DiscussSidebarCategory-add"
-    );
-    await insertText(".o-discuss-ChannelSelector input", "test");
+    await insertText(".o-mail-DiscussSearch input", "test");
     // When searching for a single existing channel, the results list will have at least 2 lines:
     // One for the existing channel itself
     // One for creating a channel with the search term
     await contains(".o-mail-NavigableList-item", { count: 2 });
     await contains(".o-mail-NavigableList-item", { text: "test" });
-    await contains(".o-mail-NavigableList-item", { text: "Create: # test" });
+    await contains(".o-mail-NavigableList-item", { text: "#test" });
 });
 
 test("unknown channel can be displayed and interacted with", async () => {
