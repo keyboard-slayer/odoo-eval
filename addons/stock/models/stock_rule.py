@@ -254,7 +254,8 @@ class StockRule(models.Model):
                 qty_needed = procurement.product_uom._compute_quantity(procurement.product_qty, procurement.product_id.uom_id)
                 if float_compare(qty_needed, 0, precision_rounding=procurement.product_id.uom_id.rounding) <= 0:
                     procure_method = 'make_to_order'
-                    for move in procurement.values.get('group_id', self.env['procurement.group']).stock_move_ids:
+                    for move in procurement.values.get('group_id', self.env['procurement.group']).stock_move_ids\
+                        .filtered(lambda move: move.sale_line_id.id == procurement.values['sale_line_id'] if procurement.values.get('sale_line_id') else move.product_id == procurement.product_id):
                         if move.rule_id == rule and float_compare(move.product_uom_qty, 0, precision_rounding=move.product_uom.rounding) > 0:
                             procure_method = move.procure_method
                             break

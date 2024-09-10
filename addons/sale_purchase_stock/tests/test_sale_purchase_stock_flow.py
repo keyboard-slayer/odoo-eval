@@ -83,3 +83,64 @@ class TestSalePurchaseStockFlow(TransactionCase):
 
         sm.move_line_ids.qty_done = 10
         self.assertEqual(so.order_line.qty_delivered, 10)
+
+    def test_decreasing_sol_qty_for_mto_product(self):
+        """
+        If we have two MTO + Buy route products: product1 and product2
+        If product1 has enough units on hand for the sales order buy product 2 does not
+        If we lower the SOL quanity for product 2 it should merge the negative move and not create a return order
+        """
+        warehouse = self.env['stock.warehouse'].search([('company_id', '=', self.env.company.id)], limit=1)
+        product1, product2 = self.env['product.product'].create([
+            {
+                'name': 'product1',
+                'uom_id': self.env.ref('uom.product_uom_unit').id,
+                'type': 'product',
+                'route_ids': [(6, 0, (self.mto_route + self.buy_route).ids)]
+            },
+            {
+                'name': 'product2',
+                'uom_id': self.env.ref('uom.product_uom_unit').id,
+                'type': 'product',
+                'route_ids': [(6, 0, (self.mto_route + self.buy_route).ids)]
+            }
+        ])
+        self.env['stock.quant']._update_available_quantity(product1, warehouse.lot_stock_id, 10)
+        self.env['stock.quant']._update_available_quantity(product2, warehouse.lot_stock_id, 0)
+        prodcut1_vendor, product2_vendor = self.env['res.partner'].create([
+            {'name': 'product1 vendor'},
+            {'name': 'product2 vendor'},
+        ])
+        self.env['product.supplierinfo'].create([
+            {
+                'product_id': product1.id,
+                'partner_id': prodcut1_vendor.id,
+                'price': 5,
+            },
+            {
+                'product_id': product2.id,
+                'partner_id': product2_vendor.id,
+                'price': 5,
+            }
+        ])
+
+        so = self.env['sale.order'].create({
+            'partner_id': self.env['res.partner'].create({'name': 'Test Partner'}).id,
+            'warehouse_id': warehouse.id,
+            'order_line': [
+                (0, 0, {
+                    'name': product1.name,
+                    'product_id': product1.id,
+                    'product_uom_qty': 1,
+                }),
+                (0, 0, {
+                    'name': product2.name,
+                    'product_id': product2.id,
+                    'product_uom_qty': 3,
+                })
+            ]
+        })
+
+        so.action_confirm()
+        so.order_line[1].product_uom_qty = 1
+        self.assertEqual(so.picking_ids.move_ids[1].product_uom_qty, 1)
