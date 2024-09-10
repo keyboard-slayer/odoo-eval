@@ -189,6 +189,9 @@ class Registry(Mapping):
         self.field_depends_context = Collector()
         self.field_inverses = Collector()
 
+        # constraint dependencies
+        self.constraint_depends = defaultdict(list)
+
         # cache of methods get_field_trigger_tree() and is_modifying_relations()
         self._field_trigger_trees = {}
         self._is_modifying_relations = {}
@@ -341,6 +344,7 @@ class Registry(Mapping):
         self.field_depends.clear()
         self.field_depends_context.clear()
         self.field_inverses.clear()
+        self.constraint_depends.clear()
 
         # do the actual setup
         for model in models:
@@ -360,6 +364,8 @@ class Registry(Mapping):
                 depends, depends_context = field.get_depends(model)
                 self.field_depends[field] = tuple(depends)
                 self.field_depends_context[field] = tuple(depends_context)
+
+            self.constraint_depends[model._name].extend(model._constraint_depends())
 
         # clean the lazy_property again in case they are cached by another ongoing registry readonly request
         lazy_property.reset_all(self)
@@ -459,6 +465,7 @@ class Registry(Mapping):
 
         triggers = self._field_triggers
 
+        # print("get_field_trigger_tree", field, field not in triggers, triggers[field])
         if field not in triggers:
             return TriggerTree()
 
@@ -501,14 +508,20 @@ class Registry(Mapping):
     def _field_triggers(self):
         """ Return the field triggers, i.e., the inverse of field dependencies,
         as a dictionary like ``{field: {path: fields}}``, where ``field`` is a
-        dependency, ``path`` is a sequence of fields to inverse and ``fields``
-        is a collection of fields that depend on ``field``.
+        dependency, ``path`` is a sequence of fields/constraints to inverse and ``fields``
+        is a collection of fields/constraints (string) that depend on ``field``.
         """
         triggers = defaultdict(lambda: defaultdict(OrderedSet))
 
         for Model in self.models.values():
             if Model._abstract:
                 continue
+
+            for method_name, dependency in self.constraint_depends[Model._name]:
+                # TODO: get something like resolve_depends(self) in order to manage error
+                *path, dep_field = dependency
+                triggers[dep_field][tuple(reversed(path))].add(method_name)
+
             for field in Model._fields.values():
                 try:
                     dependencies = list(field.resolve_depends(self))

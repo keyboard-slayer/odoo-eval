@@ -890,6 +890,23 @@ class BaseModel(metaclass=MetaModel):
             *(SQL(to_flush=field) for field in fields_to_flush),
         ])
 
+    def _constraint_depends(self):
+        """ Return list of pair of the method name and depends of it """
+        def is_constraint(func):
+            return callable(func) and hasattr(func, '_constrains')
+
+        cls = self.env.registry[self._name]
+        for attr, func in getmembers(cls, is_constraint):
+            if callable(func._constrains):
+                func._constrains = func._constrains(self)
+            yield (attr, tuple(func._constrains))
+            # for name in func._constrains:
+            #     field = cls._fields.get(name)
+            #     if not field:
+            #         _logger.warning("method %s.%s: @constrains parameter %r is not a field name", self._name, attr, name)
+            #     elif not (field.store or field.inverse or field.inherited):
+            #         _logger.warning("method %s.%s: @constrains parameter %r is not writeable", cls._name, attr, name)
+
     @property
     def _constraint_methods(self):
         """ Return a list of methods implementing Python constraints. """
@@ -6976,6 +6993,7 @@ class BaseModel(metaclass=MetaModel):
             return (field.compute and field.store) or cache.contains_field(field)
 
         tree = self.pool.get_trigger_tree(fields, select=select)
+        print(tree)
         if not tree:
             return ()
 
