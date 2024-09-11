@@ -28,6 +28,6 @@ class TestMotherUnderscore(models.Model):
 # pylint: disable=E0102
 class TestMotherUnderscore(models.Model):
     _name = 'test_mother_underscore'
-    _inherit = ['test.inherit.mother']
+    _inherit = ['test_mother_underscore']
 
     foo = fields.Char()

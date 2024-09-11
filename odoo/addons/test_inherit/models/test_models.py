@@ -28,7 +28,7 @@ class TestInheritDaughter(models.Model):
 class ResPartner(models.Model):
     _inherit = ['res.partner']
 
-    # define a one2many field based on the inherited field partner_id
+    # define a one2many field based on the inherited field partner_id (from test.inherit.mother, with template_id)
     daughter_ids = fields.One2many('test_inherit_daughter', 'partner_id', string="My daughter_ids")
 
 

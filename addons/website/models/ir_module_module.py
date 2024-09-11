@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 
 class IrModuleModule(models.Model):
     _description = 'Module'
-    _inherit = 'ir.module.module'
+    _inherit = ['ir.module.module']
 
     # The order is important because of dependencies (page need view, menu need page)
     _theme_model_names = OrderedDict([

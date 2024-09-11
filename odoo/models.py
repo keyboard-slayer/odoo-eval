@@ -244,11 +244,6 @@ class MetaModel(api.Meta):
                     f"Invalid import of {module}.{name}, it should start with 'odoo.addons'."
                 attrs['_module'] = module.split('.')[2]
 
-            # determine model '_name' and normalize '_inherit'
-            if '_inherit' in attrs:
-                if isinstance(attrs['_inherit'], str):
-                    attrs['_inherit'] = [attrs['_inherit']]
-
             if not attrs.get('_name'):
                 attrs['_name'] = class_name_to_model_name(name)
 

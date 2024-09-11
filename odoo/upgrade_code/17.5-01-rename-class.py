@@ -2,7 +2,7 @@ import re
 
 
 def upgrade(file_manager):
-    nb = len(list(1 for file in file_manager if file.path.name.endswith('.py')))
+    nb = len([1 for file in file_manager if file.path.name.endswith('.py')])
     i = 0
     file_manager.print_progress(0, nb)
 
@@ -21,6 +21,8 @@ def upgrade(file_manager):
 
 
 regex_camel_case = re.compile(r'(?<=.)([A-Z][a-z])|(?<=[a-z])([A-Z]+(?![a-z]))')
+
+
 def class_name_to_model_name(classname: str) -> str:
     return regex_camel_case.sub(r'.\1\2', classname).lower()
 
@@ -31,6 +33,7 @@ def model_name_to_class_name(model):
         for part in re.split(r'[_.]', model)
         if part
     ])
+
 
 def attribute_to_model_name(line):
     if '(' in line or ',' in line:
@@ -45,6 +48,7 @@ def attribute_to_model_name(line):
     if not line.split('=', 1)[0].strip() in ('_name', '_inherit'):
         return
     return re.sub(r'''[\]\['"\s\n]+''', '', line.split('=').pop())
+
 
 def get_class_name_models(file):
     content = file.content
@@ -74,6 +78,7 @@ def get_class_name_models(file):
 
             class_name_models[class_name] = (new_class_name, current_model_name)
     return class_name_models
+
 
 def update_class_name(content, class_name_models):
     # update class name
@@ -109,6 +114,7 @@ def update_class_name(content, class_name_models):
             except ValueError:
                 continue
     return '\n'.join(lines)
+
 
 def remove_name_and_update_inherit(content):
     lines = content.split('\n')
@@ -157,7 +163,7 @@ def remove_name_and_update_inherit(content):
                     lines[index_name] = re.sub(r'_name *= *', '', lines[index_name])
                 else:
                     lines.pop(index_name)
-                length -=1
+                length -= 1
         elif inherit_model_name and class_model_name != inherit_model_name:
             inherit_line = lines[index_inherit]
             tab = inherit_line[0:(len(inherit_line) - len(inherit_line.lstrip()))]
