@@ -378,10 +378,37 @@ const ColorPaletteWidget = Widget.extend({
         });
         weUtils.getCSSVariableValue('custom-colors', this.style).split(' ').forEach(v => {
             const color = weUtils.getCSSVariableValue(v.substring(1, v.length - 1), this.style);
-            if (ColorpickerWidget.isCSSColor(color)) {
+            if ((ColorpickerWidget.isCSSColor(color)) && (!v.match(/o-cc.-link/))) {
                 this._addCustomColor(existingColors, color);
             }
         });
+        // Dark Theme Colors & Light Theme Colors
+        const styleEl = document.getElementById('oe_snippets');
+        if (styleEl) {
+            const styleInfo = styleEl.getAttribute('style');
+            const styleInfoMatch = styleInfo.match(/--we-cp-o-color-[1-2]: #....../g);
+            if (styleInfoMatch) {
+                styleInfoMatch.forEach(
+                    (mat) => {
+                        const color = mat.substring(19);
+                        const {red, green, blue, opacity} = ColorpickerWidget.convertCSSColorToRgba(color);
+                        const dark_theme_color = ColorpickerWidget.convertRgbaToCSSColor(
+                            Math.round(red*0.8), 
+                            Math.round(green*0.8), 
+                            Math.round(blue*0.8), 
+                            opacity);
+                        const light_theme_color = ColorpickerWidget.convertRgbaToCSSColor(
+                            Math.min(Math.round(red*1.1), 255), 
+                            Math.min(Math.round(green*1.1), 255), 
+                            Math.min(Math.round(blue*1.1), 255), 
+                            opacity);
+                        this._addCustomColor(existingColors, light_theme_color);
+                        this._addCustomColor(existingColors, dark_theme_color);
+                        }
+                );
+            };
+        }
+        // Custom Colors (on the current page)
         _.each(this.options.$editable.find('[style*="color"]'), el => {
             for (const colorProp of ['color', 'backgroundColor']) {
                 this._addCustomColor(existingColors, el.style[colorProp]);

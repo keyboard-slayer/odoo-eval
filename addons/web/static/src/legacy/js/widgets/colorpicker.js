@@ -123,7 +123,36 @@ var ColorpickerWidget = Widget.extend({
      * @param {string} color rgb[a]
      */
     setSelectedColor: function (color) {
-        var rgba = ColorpickerWidget.convertCSSColorToRgba(color);
+        var rgba;
+        // transparent_grayscale or common
+        if ((color == 'black') 
+            || (color == 'white')
+            || (color.match(/^[1-9]00$/)) 
+            || (color.match(/black-\d{2}/)) 
+            || (color.match(/white-\d{2}/)) 
+        ) {
+            const exampleEl = document.querySelector('.bg-'.concat(color));
+            if (exampleEl) {
+                const exampleElStyle = getComputedStyle(exampleEl);
+                rgba = ColorpickerWidget.convertCSSColorToRgba(exampleElStyle.backgroundColor);
+            }
+            else {
+                rgba = ColorpickerWidget.convertCSSColorToRgba(color);
+            }
+        }
+        else {
+            // theme colors
+            if (color.match(/o-color-\d{1}/)) {
+                const styleInfo = document.getElementById('oe_snippets').getAttribute('style');
+                const index = styleInfo.indexOf(color);
+                const colorHex = styleInfo.substring(index+11, index+18);
+                rgba = ColorpickerWidget.convertCSSColorToRgba(colorHex);
+            }
+            // others
+            else {
+                rgba = ColorpickerWidget.convertCSSColorToRgba(color);
+            }
+        }
         if (rgba) {
             const oldPreviewActive = this.previewActive;
             this.previewActive = false;
