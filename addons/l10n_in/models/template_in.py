@@ -34,7 +34,7 @@ class AccountChartTemplate(models.AbstractModel):
                 'account_opening_date': fields.Date.context_today(self).replace(month=4, day=1),
                 'fiscalyear_last_month': '3',
                 'account_sale_tax_id': 'sgst_sale_5',
-                'account_purchase_tax_id': 'sgst_purchase_5',
+                'account_purchase_tax_id': 'sgst_purchase_consu_5',
                 'deferred_expense_account_id': 'p10084',
                 'deferred_revenue_account_id': 'p10085',
             },
@@ -90,9 +90,10 @@ class AccountChartTemplate(models.AbstractModel):
     def _get_l10n_in_fiscal_tax_vals(self, use_zero_rated_igst=False, use_sez_exp_igst=False):
         return [Command.clear()] + [
             Command.create({
-                'tax_src_id': f"sgst_{tax_type}_{rate}",
-                'tax_dest_id': f"igst_{tax_type}_{rate if not use_zero_rated_igst else 0}{'_sez_exp' if use_sez_exp_igst and tax_type == 'sale' else ''}",
+                'tax_src_id': f"sgst_{tax_type}_{tax_scope + '_' if tax_type == 'purchase' else ''}{rate}",
+                'tax_dest_id': f"igst_{tax_type}_{tax_scope + '_' if tax_type == 'purchase' else ''}{rate if not use_zero_rated_igst else 0}{'_sez_exp' if use_sez_exp_igst and tax_type == 'sale' else ''}",
             })
             for tax_type in ["sale", "purchase"]
+            for tax_scope in ([""] if tax_type == 'sale' else ["service", "consu"])
             for rate in [1, 2, 5, 12, 18, 28]  # Available existing GST Rates
         ]
