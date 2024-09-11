@@ -34,6 +34,9 @@ class TestHSNsummary(TestTaxCommon):
         cls.cess_5_plus_1591 = cls.env['account.chart.template'].ref('cess_5_plus_1591_sale')
         cls.exempt_0 = cls.env['account.chart.template'].ref('exempt_sale')
 
+        # === Activate Taxes === #
+        cls.env['res.config.settings'].create({'l10n_in_is_gst_registered': True}).execute()
+
     def _jsonify_tax(self, tax):
         values = super()._jsonify_tax(tax)
         values['l10n_in_tax_type'] = tax.l10n_in_tax_type
