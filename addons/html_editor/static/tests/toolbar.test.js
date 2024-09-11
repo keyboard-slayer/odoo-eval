@@ -1,6 +1,10 @@
 import { expect, test } from "@odoo/hoot";
 import {
     click,
+    keyDown,
+    keyUp,
+    pointerDown,
+    pointerUp,
     press,
     queryAll,
     queryAllTexts,
@@ -8,7 +12,7 @@ import {
     waitForNone,
     waitUntil,
 } from "@odoo/hoot-dom";
-import { animationFrame, tick } from "@odoo/hoot-mock";
+import { advanceTime, animationFrame, tick } from "@odoo/hoot-mock";
 import { contains, patchTranslations } from "@web/../tests/web_test_helpers";
 import { fontSizeItems } from "../src/main/font/font_plugin";
 import { Plugin } from "../src/plugin";
@@ -559,5 +563,121 @@ test.tags("desktop")(
         await tick(); // selectionChange
         await animationFrame();
         expect(".o-we-toolbar").toHaveCount(0);
+    }
+);
+
+test.tags("desktop")("toolbar should not open while mousedown (only after mouseup)", async () => {
+    const { el } = await setupEditor("<p>test</p>");
+    expect(".o-we-toolbar").toHaveCount(0);
+
+    pointerDown(el);
+    setContent(el, "<p>[]test</p>");
+    await tick(); // selectionChange
+    // Simulate extending the selection with mousedown
+    setContent(el, "<p>[test]</p>");
+    await tick(); // selectionChange
+
+    await animationFrame();
+    expect(".o-we-toolbar").toHaveCount(0);
+
+    pointerUp(el);
+    await waitFor(".o-we-toolbar");
+    expect(".o-we-toolbar").toHaveCount(1);
+});
+
+test.tags("desktop")("toolbar should close on mousedown", async () => {
+    const { el } = await setupEditor("<p>[test]</p><p>text</p>");
+    await waitFor(".o-we-toolbar");
+
+    pointerDown(el);
+    setContent(el, "<p>test</p><p>[]text</p>");
+    await tick(); // selectionChange
+    await waitForNone(".o-we-toolbar");
+    expect(".o-we-toolbar").toHaveCount(0);
+
+    pointerUp(el);
+    await tick();
+    expect(getContent(el)).toBe("<p>test</p><p>[]text</p>");
+    await animationFrame();
+    expect(".o-we-toolbar").toHaveCount(0);
+});
+
+test.tags("desktop")("toolbar should close on mousedown (2)", async () => {
+    const { el } = await setupEditor("<p>[test]</p>");
+    await waitFor(".o-we-toolbar");
+
+    // Mousedown on the selected text: it does not change the selection until mouseup
+    pointerDown(el);
+    await tick();
+    await waitForNone(".o-we-toolbar");
+    expect(".o-we-toolbar").toHaveCount(0);
+
+    pointerUp(el);
+    setContent(el, "<p>[]test</p>");
+    await tick();
+    await animationFrame();
+    expect(".o-we-toolbar").toHaveCount(0);
+});
+
+test.tags("desktop")("toolbar should not open on keydown (only after keyup)", async () => {
+    const { el } = await setupEditor("<p>[]test</p>");
+    expect(".o-we-toolbar").toHaveCount(0);
+
+    keyDown(["Shift", "ArrowRight"]);
+    setContent(el, "<p>[t]est</p>");
+    await tick(); // selectionChange
+
+    await animationFrame();
+    expect(".o-we-toolbar").toHaveCount(0);
+
+    keyUp(["Shift", "ArrowRight"]);
+
+    await advanceTime(500); // Toolbar open on keyup is debounced
+    expect(".o-we-toolbar").toHaveCount(1);
+});
+
+test.tags("desktop")("toolbar should close on keydown", async () => {
+    const { el } = await setupEditor("<p>[tes]t</p>");
+    await waitFor(".o-we-toolbar");
+
+    // Toolbar should close on keydown
+    keyDown(["Shift", "ArrowRight"]);
+    setContent(el, "<p>[test]</p>");
+    await tick(); // selectionChange
+    await waitForNone(".o-we-toolbar");
+    expect(".o-we-toolbar").toHaveCount(0);
+
+    // Toolbar should open after keyup
+    keyUp(["Shift", "ArrowRight"]);
+
+    await advanceTime(500); // toolbar open on keyup is debounced
+    expect(".o-we-toolbar").toHaveCount(1);
+});
+
+test.tags("desktop")(
+    "toolbar should not open between keystrokes separated by a short interval",
+    async () => {
+        const { el } = await setupEditor("<p>[]test</p>");
+        expect(".o-we-toolbar").toHaveCount(0);
+
+        // Keystroke # 1
+        keyDown(["Shift", "ArrowRight"]);
+        setContent(el, "<p>[t]est</p>");
+        await tick(); // selectionChange
+        keyUp(["Shift", "ArrowRight"]);
+        await advanceTime(100);
+        expect(".o-we-toolbar").toHaveCount(0);
+
+        // Keystroke # 2
+        keyDown(["Shift", "ArrowRight"]);
+        setContent(el, "<p>[te]st</p>");
+        await tick(); // selectionChange
+        keyUp(["Shift", "ArrowRight"]);
+        await advanceTime(100);
+        expect(".o-we-toolbar").toHaveCount(0);
+
+        // Toolbar opens some time after the last keyup
+        await advanceTime(500);
+        expect(".o-we-toolbar").toHaveCount(1);
     }
 );

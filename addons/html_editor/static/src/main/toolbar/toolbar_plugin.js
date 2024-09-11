@@ -4,6 +4,10 @@ import { Toolbar } from "./toolbar";
 import { hasTouch } from "@web/core/browser/feature_detection";
 import { registry } from "@web/core/registry";
 import { ToolbarMobile } from "./mobile_toolbar";
+import { debounce } from "@web/core/utils/timing";
+
+// Delay in ms for toolbar open after keyup
+const DELAY_TOOLBAR_OPEN = 300;
 
 export class ToolbarPlugin extends Plugin {
     static name = "toolbar";
@@ -60,11 +64,49 @@ export class ToolbarPlugin extends Plugin {
         for (const button of Object.values(this.buttonsDict)) {
             this.resolveButtonInheritance(button.id);
         }
+
+        this.onSelectionChangeActive = true;
+        this.debouncedUpdateToolbar = debounce(this.updateToolbar, DELAY_TOOLBAR_OPEN);
+
+        if (!this.isMobileToolbar) {
+            // Close toolbar on mousedown and prevent it from opening until mouseup.
+            this.addDomListener(this.editable, "mousedown", () => {
+                this.overlay.close();
+                this.onSelectionChangeActive = false;
+            });
+            this.addDomListener(this.editable, "mouseup", () => {
+                // Wait for a possible selection change due to mouseup.
+                setTimeout(() => {
+                    this.updateToolbar();
+                    this.onSelectionChangeActive = true;
+                });
+            });
+
+            // Close toolbar on keydown and prevent it from opening until keyup.
+            // Opening is debounced to avoid open/close between sequential keystrokes.
+            this.addDomListener(this.editable, "keydown", () => {
+                this.overlay.close();
+                this.onSelectionChangeActive = false;
+            });
+            this.addDomListener(this.editable, "keyup", () => {
+                this.onSelectionChangeActive = true;
+                this.debouncedUpdateToolbar();
+            });
+        }
     }
 
     destroy() {
-        super.destroy();
+        this.debouncedUpdateToolbar.cancel();
         this.overlay.close();
+        super.destroy();
+    }
+
+    handleCommand(command) {
+        switch (command) {
+            case "STEP_ADDED":
+                this.updateToolbar();
+                break;
+        }
     }
 
     /**
@@ -86,21 +128,6 @@ export class ToolbarPlugin extends Plugin {
         }
     }
 
-    handleCommand(command, payload) {
-        switch (command) {
-            case "CONTENT_UPDATED":
-                if (this.overlay.isOpen) {
-                    const selectionData = this.shared.getSelectionData();
-                    if (selectionData.editableSelection.isCollapsed && !this.isMobileToolbar) {
-                        this.overlay.close();
-                    } else {
-                        this.updateButtonsStates(selectionData.editableSelection);
-                    }
-                }
-                break;
-        }
-    }
-
     getToolbarInfo() {
         return {
             dispatch: this.dispatch,
@@ -111,20 +138,15 @@ export class ToolbarPlugin extends Plugin {
     }
 
     handleSelectionChange(selectionData) {
+        if (this.onSelectionChangeActive) {
+            this.updateToolbar(selectionData);
+        }
+    }
+
+    updateToolbar(selectionData = this.shared.getSelectionData()) {
         this.updateToolbarVisibility(selectionData);
         if (this.overlay.isOpen || this.config.disableFloatingToolbar) {
-            const selectedNodes = this.shared.getTraversedNodes();
-            let foundNamespace = false;
-            for (let i = 0; i < this.resources.toolbarNamespace.length && !foundNamespace; i++) {
-                const namespace = this.resources.toolbarNamespace[i];
-                if (namespace.isApplied(selectedNodes)) {
-                    this.state.namespace = namespace.id;
-                    foundNamespace = true;
-                }
-            }
-            if (!foundNamespace) {
-                this.state.namespace = undefined;
-            }
+            this.updateNamespace();
             this.updateButtonsStates(selectionData.editableSelection);
         }
     }
@@ -133,32 +155,48 @@ export class ToolbarPlugin extends Plugin {
         if (this.config.disableFloatingToolbar) {
             return;
         }
-        const props = { toolbar: this.getToolbarInfo(), class: "shadow rounded my-2" };
 
+        if (this.shouldBeVisible(selectionData)) {
+            // Open toolbar or update its position
+            const props = { toolbar: this.getToolbarInfo(), class: "shadow rounded my-2" };
+            this.overlay.open({ props });
+        } else if (this.overlay.isOpen && !this.shouldPreventClosing(selectionData)) {
+            // Close toolbar
+            this.overlay.close();
+        }
+    }
+
+    shouldBeVisible(selectionData) {
         const inEditable =
             selectionData.documentSelectionIsInEditable &&
             !selectionData.documentSelectionIsProtected &&
             !selectionData.documentSelectionIsProtecting;
-        const isCollapsed = selectionData.editableSelection.isCollapsed;
-
-        if (this.overlay.isOpen) {
-            if (
-                !inEditable ||
-                ((isCollapsed || !this.shared.getTraversedNodes().length) && !this.isMobileToolbar)
-            ) {
-                const preventClosing = selectionData.documentSelection?.anchorNode?.closest?.(
-                    "[data-prevent-closing-overlay]"
-                );
-                if (preventClosing?.dataset?.preventClosingOverlay === "true") {
-                    return;
-                }
-                this.overlay.close();
-            } else {
-                this.overlay.open({ props }); // will update position
-            }
-        } else if (inEditable && (!isCollapsed || this.isMobileToolbar)) {
-            this.overlay.open({ props });
+        if (!inEditable) {
+            return false;
         }
+        if (this.isMobileToolbar) {
+            return true;
+        }
+        const isCollapsed = selectionData.editableSelection.isCollapsed;
+        return !isCollapsed && this.shared.getTraversedNodes().length;
+    }
+
+    shouldPreventClosing(selectionData) {
+        const preventClosing = selectionData.documentSelection?.anchorNode?.closest?.(
+            "[data-prevent-closing-overlay]"
+        );
+        return preventClosing?.dataset?.preventClosingOverlay === "true";
+    }
+
+    updateNamespace() {
+        const traversedNodes = this.shared.getTraversedNodes();
+        for (const namespace of this.resources.toolbarNamespace || []) {
+            if (namespace.isApplied(traversedNodes)) {
+                this.state.namespace = namespace.id;
+                return;
+            }
+        }
+        this.state.namespace = undefined;
     }
 
     updateButtonsStates(selection) {
