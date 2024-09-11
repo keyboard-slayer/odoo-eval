@@ -12,6 +12,8 @@ from odoo.osv import expression
 from odoo.tools import is_html_empty
 from odoo.addons.mail.tools.parser import parse_res_ids
 
+_logger = logging.getLogger(__name__)
+
 
 def _reopen(self, res_id, model, context=None):
     # save original model in context, because selecting the list of available
@@ -1425,10 +1427,13 @@ class MailComposer(models.TransientModel):
             if self.composition_mode == 'comment' and not self.composition_batch:
                 res_ids = self._evaluate_res_ids()
                 rendering_res_ids = res_ids or [0]
-                self[composer_fname] = self.template_id._generate_template(
-                    rendering_res_ids,
-                    {template_fname},
-                )[rendering_res_ids[0]][template_fname]
+                try:
+                    self[composer_fname] = self.template_id._generate_template(
+                        rendering_res_ids,
+                        {template_fname},
+                    )[rendering_res_ids[0]][template_fname]
+                except UserError:
+                    self[composer_fname] = None
             else:
                 self[composer_fname] = self.template_id[template_fname]
         return self[composer_fname]

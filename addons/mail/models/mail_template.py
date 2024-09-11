@@ -11,8 +11,6 @@ from odoo.exceptions import ValidationError, UserError
 from odoo.tools import is_html_empty
 from odoo.tools.safe_eval import safe_eval, time
 
-_logger = logging.getLogger(__name__)
-
 
 class MailTemplate(models.Model):
     "Templates for sending email"
