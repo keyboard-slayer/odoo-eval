@@ -4564,6 +4564,14 @@ class TestInvisibleField(TransactionCaseWithUserDemo):
             'stock_intrastat',
             'sale_timesheet_enterprise',
             'helpdesk_repair',
+            'l10n_ch',
+            'l10n_ch_hr_payroll',
+            'l10n_hk_hr_payroll',
+            'documents_l10n_ch_hr_payroll',
+            'l10n_ke_hr_payroll',
+            'documents_l10n_hk_hr_payroll',
+            'documents_l10n_ke_hr_payroll',
+            'l10n_se',
         )
 
         modules_without_error = set(self.env['ir.module.module'].search([('state', '=', 'intalled'), ('name', 'in', only_log_modules)]).mapped('name'))
