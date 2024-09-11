@@ -43,11 +43,5 @@ class TestSaleTimesheetUi(HttpCase):
             _logger.warning("This test relies on demo data. To be rewritten independently of demo data for accurate and reliable results.")
             return
 
-        self.env['product.pricelist'].search([]).active = False
-        user_company = self.env['res.users'].search([('login', '=', 'admin')]).company_id
-        self.env['product.pricelist'].create({
-            'sequence': 1,
-            'name': "test pricelist",
-            'company_id': user_company.id,
-        })
+        self.env['product.pricelist'].with_context(active_test=False).search([]).unlink()
         self.start_tour('/odoo', 'sale_timesheet_tour', login='admin', timeout=100)
