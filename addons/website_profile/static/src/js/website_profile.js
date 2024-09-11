@@ -65,6 +65,7 @@ publicWidget.registry.websiteProfileEditor = publicWidget.Widget.extend({
                 context: this._getContext(),
                 res_model: 'res.users',
                 res_id: parseInt(this.$('input[name=user_id]').val()),
+                field_name: 'description',
             },
             resizable: true,
             userGeneratedContent: true,

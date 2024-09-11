@@ -2,6 +2,7 @@ odoo.define('web_editor.loader', function (require) {
 'use strict';
 
 const { getBundle, loadBundle } = require('@web/core/assets');
+const rpc = require('web.rpc');
 
 const exports = {};
 
@@ -44,7 +45,23 @@ exports.loadFromTextarea = async (parent, textarea, options) => {
     }
     const $textarea = $(textarea);
     const currentOptions = Object.assign({}, options);
-    currentOptions.value = currentOptions.value || $textarea.val() || '';
+    const recordInfo  = options.recordInfo;
+    let recordContent = '';
+    if (recordInfo && recordInfo.res_id && recordInfo.field_name && recordInfo.res_model) {
+        const args = [
+            [['id', '=', options.recordInfo.res_id]],
+            [options.recordInfo.field_name],
+        ];
+        const data = await rpc.query({
+            model: options.recordInfo.res_model,
+            method: 'search_read',
+            args: args,
+        });
+        if (data && data.length) {
+            recordContent = data[0][options.recordInfo.field_name];
+        }
+    }
+    currentOptions.value = currentOptions.value || recordContent || '';
     if (!currentOptions.value.trim()) {
         currentOptions.value = '<p><br></p>';
     }
@@ -71,7 +88,7 @@ exports.loadFromTextarea = async (parent, textarea, options) => {
         $form.find('.note-editable').find('img.o_we_selected_image').removeClass('o_we_selected_image');
         // float-start class messes up the post layout OPW 769721
         $form.find('.note-editable').find('img.float-start').removeClass('float-start');
-        $textarea.html(wysiwyg.getValue());
+        $textarea.val(wysiwyg.getValue());
     });
 
     return wysiwyg;

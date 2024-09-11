@@ -134,6 +134,7 @@ publicWidget.registry.websiteForum = publicWidget.Widget.extend({
                     // - /forum/name-1/post/something-5/edit
                     // TODO: Make this more robust.
                     res_id: +window.location.pathname.split('-').slice(-1)[0].split('/')[0],
+                    field_name: 'content',
                 },
                 resizable: true,
                 userGeneratedContent: true,
