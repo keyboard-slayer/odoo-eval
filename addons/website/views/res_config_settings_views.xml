@@ -203,12 +203,21 @@
                                 </div>
                             </div>
                             <div invisible="not has_plausible_shared_key">
+                                <button 
+                                    type="action"
+                                    name="%(website.backend_dashboard)d"
+                                    string="See Analytics Report"
+                                    class="btn-link fw-normal"
+                                    icon="oi-arrow-right d-inline"
+                                />
+                            </div>
+                            <div invisible="not has_plausible_shared_key">
                                 <widget
                                     class="oe_link"
                                     name="documentation_link"
                                     path="/applications/websites/website/reporting/analytics.html#analytics-plausible"
-                                    label=" How to create my Plausible Shared Link"
-                                    icon="oi oi-arrow-right"
+                                    label="How to create my Plausible Shared Link"
+                                    icon="oi oi-arrow-right me-1"
                                 />
                             </div>
                         </setting>
