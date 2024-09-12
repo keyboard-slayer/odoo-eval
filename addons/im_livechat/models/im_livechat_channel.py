@@ -337,6 +337,13 @@ class ImLivechatChannel(models.Model):
             fields = []
         store.add(self._name, self._read_format(fields))
 
+    def web_save(self, *args, **kwargs):
+        rdata = super().web_save(*args, **kwargs)
+        user_ids = [sub_array[1] for sub_array in args[0]['user_ids']]
+        for user in self.env['res.users'].browse(user_ids):
+            user._bus_send_store(self, fields=["are_you_inside", "name"])
+        return rdata
+
 
 class ImLivechatChannelRule(models.Model):
     """ Channel Rules
