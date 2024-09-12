@@ -74,6 +74,7 @@ class StockPickingBatch(models.Model):
 
     # Private buisness logic
     def _set_moves_destination_to_dock(self):
+<<<<<<< master
         for batch in self:
             if not batch.dock_id:
                 batch.picking_ids._reset_location()
@@ -81,3 +82,17 @@ class StockPickingBatch(models.Model):
                 batch.picking_ids.move_ids.write({'location_dest_id': self.dock_id.id})
             else:
                 batch.picking_ids.move_ids.write({'location_id': self.dock_id.id})
+||||||| ce73a1e19f19526b59bde9cebe2751102e2d8b27
+        if self.dock_id:
+            self.move_ids.write({'location_dest_id': self.dock_id.id})
+        else:
+            for picking in self:
+                picking.move_ids.write({'location_dest_id': picking.location_dest_id.id})
+=======
+        if self.dock_id:
+            self.move_ids.write({'location_dest_id': self.dock_id.id})
+        else:
+            for batch in self:
+                for picking in batch.picking_ids:
+                    picking.move_ids.write({'location_dest_id': picking.location_dest_id.id})
+>>>>>>> 8e304d0c523a5442cb6e13db938fdbe7b771225a
