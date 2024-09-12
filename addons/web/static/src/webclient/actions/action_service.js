@@ -351,8 +351,10 @@ export function makeActionManager(env, router = _router) {
             }
             return Object.assign({}, action);
         }
-
         // actionRequest is an object describing the action
+        if (actionRequest.help) {
+            actionRequest.help = markup(actionRequest.help);
+        }
         return actionRequest;
     }
 
@@ -1422,11 +1424,8 @@ export function makeActionManager(env, router = _router) {
             action = await keepLast.add(callProm);
             action =
                 action && typeof action === "object"
-                    ? action
-                    : { type: "ir.actions.act_window_close" };
-            if (action.help) {
-                action.help = markup(action.help);
-            }
+                ? action
+                : { type: "ir.actions.act_window_close" };
         } else if (params.type === "action") {
             // execute a given action, so load it first
             context.active_id = params.resId || null;
