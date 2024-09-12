@@ -235,6 +235,7 @@ Odoo Web Editor widget.
         ],
         'web.assets_frontend': [
             ('include', 'web_editor.assets_media_dialog'),
+            ("remove", "web_editor/static/src/components/history_dailog/*"),
 
             'web_editor/static/src/js/editor/odoo-editor/src/base_style.scss',
             'web_editor/static/src/js/common/**/*',
