@@ -2,6 +2,8 @@
 
 /* eslint-disable no-restricted-globals */
 const cacheName = "odoo-sw-cache";
+const staticCacheName = "odoo-static-cache";
+const dynamicCacheName = "odoo-dynamic-cache";
 const cachedRequests = ["/odoo/offline"];
 
 self.addEventListener("install", (event) => {
@@ -53,13 +55,83 @@ self.addEventListener("fetch", (event) => {
         return serveShareTarget(event);
     }
     if (
-        (event.request.mode === "navigate" && event.request.destination === "document") ||
-        // request.mode = navigate isn't supported in all browsers => check for http header accept:text/html
-        event.request.headers.get("accept").includes("text/html")
+        event.request.method === "GET"
     ) {
+        if (
+            (event.request.mode === "navigate" && event.request.destination === "document") ||
+            // request.mode = navigate isn't supported in all browsers => check for http header accept:text/html
+            event.request.headers.get("accept").includes("text/html")
+        ) {
+            event.respondWith(navigateOrDisplayOfflinePage(event.request));
+        } else {
+            event.respondWith(handleAssetRequest(event));
+        }
+    } else {
         event.respondWith(navigateOrDisplayOfflinePage(event.request));
     }
 });
+
+
+// Handle page request with cache-first strategy
+const handlePageRequest = async (event) => {
+    const { request } = event;
+    try {
+        const cache = await caches.open(dynamicCacheName);
+        const cachedResponse = await cache.match(request);
+
+        if (cachedResponse) {
+            // Return cached response if found
+            return cachedResponse;
+        }
+
+        // Fetch from network
+        const networkResponse = await fetch(request);
+        // Cache the fetched response if it's successful
+        if (networkResponse.ok) {
+            if(request.method === "GET"){
+                cache.put(request, networkResponse.clone());
+            }
+        }
+        return networkResponse;
+    } catch (error) {
+        // Serve offline page if network request fails
+        return caches.match("/odoo/offline");
+    }
+};
+
+// Handle asset requests
+const handleAssetRequest = async (event) => {
+    const { request } = event;
+
+    // Check if request URL is valid and supported
+    const requestURL = new URL(request.url);
+    if (requestURL.protocol === 'http:' || requestURL.protocol === 'https:') {
+        try {
+            // Try to serve from cache
+            const cachedResponse = await caches.match(request);
+            if (cachedResponse) {
+                return cachedResponse; // Serve from cache
+            }
+
+            // Fetch from network and cache dynamically
+            const networkResponse = await fetch(request);
+            if (networkResponse.ok) {
+                const cache = await caches.open(dynamicCacheName);
+                if(request.method==="GET"){
+                    cache.put(request, networkResponse.clone());
+                }
+            }
+            return networkResponse;
+        } catch (error) {
+            // Serve offline page if network request fails and no cache available
+            return caches.match("/odoo/offline");
+        }
+    } else {
+        // For unsupported request schemes, don't attempt to cache
+        return await fetch(request);
+    }
+};
+
 
 /**
  *
