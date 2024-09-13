@@ -21,7 +21,7 @@ class Stargate(models.Model):
     glyph_related = fields.Image('Glyph 128', related='glyph_attach', max_width=128, max_height=128)
     glyph_compute = fields.Image(compute='_compute_glyph_compute')
     galaxy_picture = fields.Image(related='galaxy_id.picture', attachment=True, store=False)
-
+    availability = fields.Float(default=0.99, aggregator="avg")
 
     _sql_constraints = [
         ('address_length', 'CHECK(LENGTH(address) = 6)', "Local addresses have 6 glyphs"),

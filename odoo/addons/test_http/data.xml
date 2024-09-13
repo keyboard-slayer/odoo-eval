@@ -53,12 +53,14 @@
             <field name="name">Abydos</field>
             <field name="address">r7fwcu</field>
             <field name="galaxy_id" ref="test_http.milky_way"/>
+            <field name="availability">0.9</field>
         </record>
 
         <record id="dakara" model="test_http.stargate">
             <field name="name">Dakara</field>
             <field name="address">gs38x4</field>
             <field name="galaxy_id" ref="test_http.milky_way"/>
+            <field name="availability">0.95</field>
         </record>
 
         <record id="lantea" model="test_http.stargate">
