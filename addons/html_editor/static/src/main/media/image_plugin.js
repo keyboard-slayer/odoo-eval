@@ -357,10 +357,11 @@ export class ImagePlugin extends Plugin {
             props: {
                 image,
                 document: this.document,
-                destroy: this.closeImageTransformation,
+                destroy: () => this.closeImageTransformation(),
                 onChange: () => this.dispatch("ADD_STEP"),
             },
         });
+        this.dispatch("CONTENT_UPDATED");
     }
 
     isImageTransformationOpen() {
@@ -370,6 +371,8 @@ export class ImagePlugin extends Plugin {
     closeImageTransformation() {
         if (this.isImageTransformationOpen()) {
             registry.category("main_components").remove("ImageTransformation");
+            this.dispatch("CONTENT_UPDATED");
+            this.document.activeElement.blur();
         }
     }
 }
