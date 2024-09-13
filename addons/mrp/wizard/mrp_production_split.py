@@ -73,16 +73,27 @@ class MrpProductionSplit(models.TransientModel):
             if len(self.production_id.picking_ids) > 1 or self.production_id.picking_ids.state == "done":
                 raise UserError(_("Cannot split pre-production picking: the pre-picking for this manufacturing order is already done."))
 
-        productions = self.production_id._split_productions({self.production_id: [detail.quantity for detail in self.production_detailed_vals_ids]})
+        productions = self.production_id.with_context(is_split_production=True)._split_productions({self.production_id: [detail.quantity for detail in self.production_detailed_vals_ids]})
         for production, detail in zip(productions, self.production_detailed_vals_ids):
             production.user_id = detail.user_id
             production.date_start = detail.date
 
         # Split the pre-production picking if `split_pre_production_picking` is enabled for the 2-step or 3-step MRP process
         if self.split_pre_production_picking and self.production_id.warehouse_id.manufacture_steps in ['pbm_sam', 'pbm']:
-            self.production_id.picking_ids.action_cancel()
+            # Adjust the demand(product_uom_qty) quantity of pre-picking for other manufacturing orders that share common pre-picking
+            for picking_move in self.production_id.picking_ids.move_ids:
+                related_raw_move = next((move for move in self.production_id.move_raw_ids if move.product_id == picking_move.product_id), None)
+                if related_raw_move:
+                    updated_product_uom_qty = picking_move.product_uom_qty - (related_raw_move.product_uom_qty * self.counter)
+                    picking_move.product_uom_qty = max(updated_product_uom_qty, 0)
+
+            if all(qty == 0 for qty in self.production_id.picking_ids.move_ids.mapped('product_uom_qty')):
+                self.production_id.picking_ids.action_cancel()
+            else:
+                self.production_id.picking_ids.action_assign()
+
             for production in productions:
-                production.move_raw_ids.write({'state': 'draft'})
+                production.move_raw_ids.write({'move_orig_ids': False, 'state': 'draft'})
                 production.write({'state': 'draft'})
                 production.action_confirm()
 

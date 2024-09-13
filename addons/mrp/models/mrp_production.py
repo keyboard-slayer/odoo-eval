@@ -1827,7 +1827,8 @@ class MrpProduction(models.Model):
             backorder_qtys = amounts[production][1:]
             production.with_context(skip_compute_move_raw_ids=True).product_qty = amounts[production][0]
 
-            next_seq = max(production.procurement_group_id.mrp_production_ids.mapped("backorder_sequence"), default=1)
+            next_seq = 1 if self.env.context.get('is_split_production') and production.backorder_sequence == 1 else \
+                    max(production.procurement_group_id.mrp_production_ids.mapped("backorder_sequence"), default=1)
 
             for qty_to_backorder in backorder_qtys:
                 next_seq += 1
