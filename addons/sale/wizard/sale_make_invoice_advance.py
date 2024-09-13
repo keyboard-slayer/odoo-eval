@@ -256,7 +256,7 @@ class SaleAdvancePaymentInv(models.TransientModel):
             fixed_taxes = taxes.filtered(lambda tax: tax.amount_type == 'fixed')
             down_payment_values.append([
                 taxes - fixed_taxes,
-                line['analytic_distribution'],
+                base_line_values['analytic_distribution'],
                 tax_details['total_excluded_currency'],
                 account,
             ])
@@ -275,8 +275,8 @@ class SaleAdvancePaymentInv(models.TransientModel):
                     pct_tax = self.env['account.tax']
                 down_payment_values.append([
                     pct_tax,
-                    line['analytic_distribution'],
-                    line['quantity'] * fixed_tax.amount,
+                    base_line_values['analytic_distribution'],
+                    base_line_values['quantity'] * fixed_tax.amount,
                     account
                 ])
 

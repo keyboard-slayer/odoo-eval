@@ -525,6 +525,14 @@ class AccountTax(models.Model):
                     raise ValidationError(_("Invoice and credit note distribution should match (same percentages, in the same order)."))
                 index += 1
 
+            tax_reps = invoice_repartition_line_ids.filtered(lambda tax_rep: tax_rep.repartition_type == 'tax')
+            total_pos_factor = sum(tax_reps.filtered(lambda tax_rep: tax_rep.factor > 0.0).mapped('factor'))
+            if total_pos_factor != 1.0:
+                raise ValidationError(_("Invoice and credit note distribution should have a total factor (+) equals to 100."))
+            total_neg_factor = sum(tax_reps.filtered(lambda tax_rep: tax_rep.factor < 0.0).mapped('factor'))
+            if total_neg_factor and total_neg_factor != -1.0:
+                raise ValidationError(_("Invoice and credit note distribution should have a total factor (-) equals to 100."))
+
     @api.constrains('children_tax_ids', 'type_tax_use')
     def _check_children_scope(self):
         for tax in self:
@@ -1059,7 +1067,7 @@ class AccountTax(models.Model):
                 continue
 
             total_tax_amount = sum(taxes_data[other_tax.id]['tax_amount'] for other_tax in taxes_data[tax.id]['batch'])
-            total_tax_amount -= sum(
+            total_tax_amount += sum(
                 reverse_charge_taxes_data[other_tax.id]['tax_amount']
                 for other_tax in taxes_data[tax.id]['batch']
                 if other_tax.has_negative_factor
@@ -1075,9 +1083,9 @@ class AccountTax(models.Model):
         for tax_data in taxes_data.values():
             if 'tax_amount' in tax_data:
                 taxes_data_list.append(tax_data)
-            tax = tax_data['tax']
-            if tax.has_negative_factor:
-                taxes_data_list.append(reverse_charge_taxes_data[tax.id])
+                tax = tax_data['tax']
+                if tax.has_negative_factor:
+                    taxes_data_list.append(reverse_charge_taxes_data[tax.id])
 
         if taxes_data_list:
             total_excluded = taxes_data_list[0]['base']
@@ -1261,15 +1269,26 @@ class AccountTax(models.Model):
             self._add_base_line_tax_details(base_line, company)
 
     @api.model
-    def _prepare_base_line_tax_repartition_grouping_key(self, base_line, tax_data, tax_rep_data):
+    def _prepare_base_line_grouping_key(self, base_line):
+        return {
+            'partner_id': base_line['partner_id'].id,
+            'currency_id': base_line['currency_id'].id,
+            'analytic_distribution': base_line['analytic_distribution'],
+            'account_id': base_line['account_id'].id,
+            'tax_ids': [Command.set(base_line['tax_ids'].ids)],
+        }
+
+    @api.model
+    def _prepare_base_line_tax_repartition_grouping_key(self, base_line, base_line_grouping_key, tax_data, tax_rep_data):
         tax = tax_data['tax']
         return {
+            **base_line_grouping_key,
             'tax_repartition_line_id': tax_rep_data['tax_rep'].id,
             'partner_id': base_line['partner_id'].id,
             'currency_id': base_line['currency_id'].id,
             'group_tax_id': tax_data['group'].id,
-            'analytic_distribution': base_line['analytic_distribution'] if tax.analytic else {},
-            'account_id': tax_rep_data['account'].id,
+            'analytic_distribution': base_line_grouping_key['analytic_distribution'] if tax.analytic else {},
+            'account_id': tax_rep_data['account'].id or base_line_grouping_key['account_id'],
             'tax_ids': [Command.set(tax_rep_data['taxes'].ids)],
             'tax_tag_ids': [Command.set(tax_rep_data['tax_tags'].ids)],
         }
@@ -1309,7 +1328,7 @@ class AccountTax(models.Model):
             tax = tax_data['tax']
 
             # Tags on the base line.
-            if not tax_data['is_reverse_charge'] and (include_caba_tags or tax.tax_exigibility != 'on_payment'):
+            if not tax_data['is_reverse_charge'] and (include_caba_tags or tax.tax_exigibility == 'on_invoice'):
                 base_line['tax_tag_ids'] |= tax[repartition_lines_field]\
                     .filtered(lambda x: x.repartition_type == 'base' and x.factor >= 0.0)\
                     .tag_ids
@@ -1366,7 +1385,13 @@ class AccountTax(models.Model):
                         tax_rep_data['tax_tags'] = self.env['account.account.tag']
 
                 # Add the accounting grouping_key to create the tax lines.
-                tax_rep_data['grouping_key'] = self._prepare_base_line_tax_repartition_grouping_key(base_line, tax_data, tax_rep_data)
+                base_line_grouping_key = self._prepare_base_line_grouping_key(base_line)
+                tax_rep_data['grouping_key'] = self._prepare_base_line_tax_repartition_grouping_key(
+                    base_line,
+                    base_line_grouping_key,
+                    tax_data,
+                    tax_rep_data,
+                )
 
             subsequent_taxes |= tax
             if include_caba_tags or tax.tax_exigibility == 'on_invoice':
@@ -1681,36 +1706,47 @@ class AccountTax(models.Model):
             'balance': 0.0,
         })
 
-        base_lines_to_update = {}
+        base_lines_to_update = []
         for base_line in base_lines:
             sign = base_line['sign']
+            tax_tag_invert = base_line['tax_tag_invert']
             tax_details = base_line['tax_details']
-            base_lines_to_update[base_line['id']] = (
+            base_lines_to_update.append((
                 base_line,
                 {
                     'tax_tag_ids': [Command.set(base_line['tax_tag_ids'].ids)],
                     'amount_currency': sign * (tax_details['total_excluded_currency'] + tax_details.get('delta_base_amount_currency', 0.0)),
                     'balance': sign * (tax_details['total_excluded'] + tax_details.get('delta_base_amount', 0.0)),
                 },
-            )
+            ))
             for tax_data in tax_details['taxes_data']:
                 tax = tax_data['tax']
                 for tax_rep_data in tax_data['tax_reps_data']:
                     grouping_key = frozendict(tax_rep_data['grouping_key'])
                     tax_line = tax_lines_mapping[grouping_key]
                     tax_line['name'] = tax.name
-                    tax_line['tax_base_amount'] = tax_data['base_amount']
-                    tax_line['amount_currency'] += tax_rep_data['tax_amount_currency']
-                    tax_line['balance'] += tax_rep_data['tax_amount']
+                    tax_line['tax_base_amount'] += sign * tax_data['base_amount'] * (-1 if tax_tag_invert else 1)
+                    tax_line['amount_currency'] += sign * tax_rep_data['tax_amount_currency']
+                    tax_line['balance'] += sign * tax_rep_data['tax_amount']
+
+        # Remove tax lines having a zero amount.
+        tax_lines_mapping = {
+            k: v
+            for k, v in tax_lines_mapping.items()
+            if (
+                not self.env['res.currency'].browse(k['currency_id']).is_zero(v['amount_currency'])
+                or not company.currency_id.is_zero(v['balance'])
+            )
+        }
 
         # Compute 'tax_lines_to_update' / 'tax_lines_to_delete' / 'tax_lines_to_add'.
-        tax_lines_to_update = {}
+        tax_lines_to_update = []
         tax_lines_to_delete = []
         for tax_line in tax_lines or []:
             grouping_key = frozendict(self._prepare_tax_line_repartition_grouping_key(tax_line))
             if grouping_key in tax_lines_mapping and grouping_key not in tax_lines_to_update:
                 amounts = tax_lines_mapping.pop(grouping_key)
-                tax_lines_to_update[tax_line['id']] = (grouping_key, amounts)
+                tax_lines_to_update.append((tax_line, grouping_key, amounts))
             else:
                 tax_lines_to_delete.append(tax_line)
         tax_lines_to_add = [{**grouping_key, **values} for grouping_key, values in tax_lines_mapping.items()]

@@ -614,7 +614,7 @@ class TestAccountMoveInInvoiceOnchanges(AccountTestInvoicingCommon):
         })
 
         # Remove lines and recreate them to apply the fiscal position.
-        move_form = Form(self.invoice)
+        move_form = Form(self.invoice.with_context(blue=True))
         move_form.invoice_line_ids.remove(0)
         move_form.invoice_line_ids.remove(0)
         with move_form.invoice_line_ids.new() as line_form:

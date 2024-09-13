@@ -51,6 +51,7 @@ class AccountTestInvoicingCommon(ProductCommon):
     def setUpClass(cls):
         super().setUpClass()
 
+        cls.maxDiff = None
         cls.company_data = cls.collect_company_accounting_data(cls.env.company)
 
         # ==== Taxes ====

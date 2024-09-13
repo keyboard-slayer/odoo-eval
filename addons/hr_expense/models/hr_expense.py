@@ -905,7 +905,7 @@ class HrExpense(models.Model):
 
         # Base line.
         move_lines = []
-        for base_line, to_update in tax_results['base_lines_to_update'].values():
+        for base_line, to_update in tax_results['base_lines_to_update']:
             base_move_line = {
                 'name': self._get_move_line_name(),
                 'account_id': base_line['account_id'].id,

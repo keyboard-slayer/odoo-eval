@@ -654,34 +654,6 @@ class TestTaxesComputation(TestTaxCommon):
         )
         self._run_js_tests()
 
-    def test_division_taxes_for_l10n_au_differed_gst(self):
-        tax = self.division_tax(
-            amount=100,
-            price_include=True,
-            invoice_repartition_line_ids=[
-                Command.create({'repartition_type': 'base', 'factor_percent': 100.0}),
-                Command.create({'repartition_type': 'tax', 'factor_percent': 100.0}),
-                Command.create({'repartition_type': 'tax', 'factor_percent': -100.0}),
-            ],
-            refund_repartition_line_ids=[
-                Command.create({'repartition_type': 'base', 'factor_percent': 100.0}),
-                Command.create({'repartition_type': 'tax', 'factor_percent': 100.0}),
-                Command.create({'repartition_type': 'tax', 'factor_percent': -100.0}),
-            ],
-        )
-        self.assert_taxes_computation(
-            tax,
-            100.0,
-            {
-                'total_included': 100.0,
-                'total_excluded': 0.0,
-                'taxes_data': (
-                    (0.0, 100.0),
-                ),
-            },
-        )
-        self._run_js_tests()
-
     def test_fixed_taxes_for_l10n_be(self):
         tax1 = self.fixed_tax(1)
         tax2 = self.percent_tax(21)

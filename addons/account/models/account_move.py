@@ -17,7 +17,6 @@ from textwrap import shorten
 from odoo import api, fields, models, _, Command, SUPERUSER_ID, modules, tools
 from odoo.tools.sql import column_exists, create_column
 from odoo.addons.account.tools import format_structured_reference_iso
-from odoo.addons.base_import.models.base_import import FILE_TYPE_DICT
 from odoo.exceptions import UserError, ValidationError, AccessError, RedirectWarning
 from odoo.osv import expression
 from odoo.tools import (
@@ -1169,6 +1168,7 @@ class AccountMove(models.Model):
 
     @api.depends('invoice_payment_term_id', 'invoice_date', 'currency_id', 'amount_total_in_currency_signed', 'invoice_date_due')
     def _compute_needed_terms(self):
+        AccountTax = self.env['account.tax']
         for invoice in self.with_context(bin_size=False):
             is_draft = invoice.id != invoice._origin.id
             invoice.needed_terms = {}
@@ -1178,13 +1178,19 @@ class AccountMove(models.Model):
                 if invoice.invoice_payment_term_id:
                     if is_draft:
                         tax_amount_currency = 0.0
-                        untaxed_amount_currency = 0.0
-                        for line in invoice.invoice_line_ids:
-                            untaxed_amount_currency += line.price_subtotal
-                            for tax_result in (line.compute_all_tax or {}).values():
-                                tax_amount_currency += -sign * tax_result.get('amount_currency', 0.0)
-                        untaxed_amount = untaxed_amount_currency
                         tax_amount = tax_amount_currency
+                        untaxed_amount_currency = 0.0
+                        untaxed_amount = untaxed_amount_currency
+                        sign = invoice.direction_sign
+                        base_lines, _tax_lines = invoice._get_rounded_base_lines(round_from_tax_lines=False)
+                        AccountTax._add_base_lines_accounting_tax_details(base_lines, invoice.company_id, include_caba_tags=invoice.always_tax_exigible)
+                        tax_results = AccountTax._prepare_tax_lines(base_lines, invoice.company_id)
+                        for base_line, to_update in tax_results['base_lines_to_update']:
+                            untaxed_amount_currency += sign * to_update['amount_currency']
+                            untaxed_amount += sign * to_update['balance']
+                        for tax_line_vals in tax_results['tax_lines_to_add']:
+                            tax_amount_currency += sign * tax_line_vals['amount_currency']
+                            tax_amount += sign * tax_line_vals['balance']
                     else:
                         tax_amount_currency = invoice.amount_tax * sign
                         tax_amount = invoice.amount_tax_signed
@@ -1452,10 +1458,9 @@ class AccountMove(models.Model):
                 .filtered(lambda line: line.display_type == 'rounding' and not line.tax_repartition_line_id)
             base_lines += [self._prepare_cash_rounding_base_line_for_taxes_computation(line) for line in cash_rounding_amls]
             AccountTax._add_base_lines_tax_details(base_lines, self.company_id)
-            if round_from_tax_lines:
-                tax_amls = self.line_ids.filtered('tax_repartition_line_id')
-                tax_lines = [self._prepare_tax_line_for_taxes_computation(tax_line) for tax_line in tax_amls]
-            AccountTax._round_base_lines_tax_details(base_lines, self.company_id, tax_lines=tax_lines)
+            tax_amls = self.line_ids.filtered('tax_repartition_line_id')
+            tax_lines = [self._prepare_tax_line_for_taxes_computation(tax_line) for tax_line in tax_amls]
+            AccountTax._round_base_lines_tax_details(base_lines, self.company_id, tax_lines=tax_lines if round_from_tax_lines else [])
         else:
             # The invoice is not stored yet so the only thing we have is the invoice lines.
             base_lines += self._prepare_epd_base_lines_for_taxes_computation_from_base_lines(base_amls)
@@ -1652,7 +1657,7 @@ class AccountMove(models.Model):
                            move.move_type == 'out_invoice' and \
                            move.company_id.account_use_credit_limit
             if show_warning:
-                total_field = 'amount_total' if move.currency_id == move.company_currency_id else 'amount_total_company_currency'
+                total_field = 'total_amount_currency' if move.currency_id == move.company_currency_id else 'total_amount'
                 current_amount = move.tax_totals[total_field]
                 move.partner_credit_warning = self._build_credit_warning_message(
                     move,
@@ -2598,45 +2603,6 @@ class AccountMove(models.Model):
             if invoice.state != 'posted':
                 invoice._recompute_cash_rounding_lines()
 
-    @contextmanager
-    def _sync_round_globally_tax_amounts(self, container):
-        yield
-        AccountTax = self.env['account.tax']
-        for move in container['records']:
-            base_lines, tax_lines = move._get_rounded_base_lines()
-            AccountTax._add_base_lines_accounting_tax_details(base_lines, move.company_id, include_caba_tags=move.always_tax_exigible)
-            tax_results = AccountTax._prepare_tax_lines(base_lines, move.company_id, tax_lines=tax_lines)
-
-            # Base line.
-            for base_line, to_update in tax_results['base_lines_to_update'].values():
-                line = base_line['record']
-                to_write = {}
-                if not line.currency_id.is_zero(line.amount_currency - to_update['amount_currency']):
-                    to_write['amount_currency'] = to_update['amount_currency']
-                if not line.company_currency_id.is_zero(line.balance - to_update['balance']):
-                    to_write['balance'] = to_update['balance']
-                if to_write:
-                    line.write(to_write)
-
-            # # Fix the base amounts.
-            # for base_line in base_lines:
-            #     line = base_line['record']
-            #     sign = base_line['sign']
-            #     tax_details = base_line['tax_details']
-            #     taxes_data = tax_details['taxes_data']
-            #     if not taxes_data:
-            #         continue
-            #
-            #     to_write = {}
-            #     if not line.currency_id.is_zero(tax_details['delta_base_amount_currency']):
-            #         to_write['amount_currency'] = line.amount_currency + sign * tax_details['delta_base_amount_currency']
-            #     if not line.company_currency_id.is_zero(tax_details['delta_base_amount']):
-            #         to_write['balance'] = line.balance + sign * tax_details['delta_base_amount']
-            #     if to_write:
-            #         line.write(to_write)
-            #
-            # # TODO: Fix tax amounts.
-
     @api.model
     def _sync_dynamic_line_needed_values(self, values_list):
         res = {}
@@ -2671,6 +2637,143 @@ class AccountMove(models.Model):
         return res
 
     @contextmanager
+    def _sync_tax_lines(self, container):
+        AccountTax = self.env['account.tax']
+        fake_base_line = AccountTax._prepare_base_line_for_taxes_computation(None)
+
+        def get_base_lines(move):
+            return move.line_ids.filtered(lambda line: line.display_type in ('product', 'epd', 'rounding', 'cogs'))
+
+        def get_tax_lines(move):
+            return move.line_ids.filtered('tax_repartition_line_id')
+
+        def get_value(record, field):
+            return self.env['account.move.line']._fields[field].convert_to_write(record[field], record)
+
+        def get_tax_line_tracked_fields(line):
+            return ('amount_currency', 'balance')
+
+        def get_base_line_tracked_fields(line):
+            grouping_key = AccountTax._prepare_base_line_grouping_key(fake_base_line)
+            if line.move_id.is_invoice(include_receipts=True):
+                extra_fields = ['price_unit', 'quantity', 'discount']
+            else:
+                extra_fields = ['amount_currency']
+            return list(grouping_key.keys()) + extra_fields
+
+        def field_has_changed(values, record, field):
+            return get_value(record, field) != values.get(record, {}).get(field)
+
+        def any_field_has_changed(values, records, excluded_field=None):
+            excluded_field = excluded_field or set()
+            return any(
+                record not in values
+                or any(field_has_changed(values, record, field) for field in values[record] if field not in excluded_field)
+                for record in records
+            )
+
+        def is_write_needed(line, values):
+            return any(
+                self.env['account.move.line']._fields[fname].convert_to_write(line[fname], self) != values[fname]
+                for fname in values
+            )
+
+        moves_values_before = {
+            move: {
+                field: get_value(move, field)
+                for field in ('currency_id', 'partner_id', 'move_type')
+            }
+            for move in container['records']
+            if move.state == 'draft'
+        }
+        base_lines_values_before = {
+            move: {
+                line: {
+                    field: get_value(line, field)
+                    for field in get_base_line_tracked_fields(line)
+                }
+                for line in get_base_lines(move)
+            }
+            for move in container['records']
+        }
+        tax_lines_values_before = {
+            move: {
+                line: {
+                    field: get_value(line, field)
+                    for field in get_tax_line_tracked_fields(line)
+                }
+                for line in get_tax_lines(move)
+            }
+            for move in container['records']
+        }
+        yield
+
+        to_delete = []
+        to_create = []
+        for move in container['records']:
+            tax_lines = get_tax_lines(move)
+            base_lines = get_base_lines(move)
+            move_tax_lines_values_before = tax_lines_values_before.get(move, {})
+            move_base_lines_values_before = base_lines_values_before.get(move, {})
+            base_line_has_been_modified = any_field_has_changed(move_base_lines_values_before, base_lines)
+            need_recompute = (
+                move.state == 'draft'
+                and (
+                    (
+                        # Keep the user manual tax lines.
+                        not any_field_has_changed(move_tax_lines_values_before, tax_lines)
+                        and any([
+                            # A base line has been modified.
+                            any_field_has_changed(move_base_lines_values_before, base_lines),
+                            # The move has been modified.
+                            field_has_changed(moves_values_before, move, 'partner_id'),
+                        ])
+                    )
+                    or (
+                        move.is_invoice(include_receipts=True)
+                        and (
+                            field_has_changed(moves_values_before, move, 'currency_id')
+                            or field_has_changed(moves_values_before, move, 'move_type')
+                        )
+                    )
+                    # A base line has been removed.
+                    or not base_lines
+                    or any(line not in base_lines for line in move_base_lines_values_before)
+                )
+            )
+            if not need_recompute:
+                continue
+
+            base_lines_values, tax_lines_values = move._get_rounded_base_lines(round_from_tax_lines=False)
+            AccountTax._add_base_lines_accounting_tax_details(base_lines_values, move.company_id, include_caba_tags=move.always_tax_exigible)
+            tax_results = AccountTax._prepare_tax_lines(base_lines_values, move.company_id, tax_lines=tax_lines_values)
+
+            for base_line, to_update in tax_results['base_lines_to_update']:
+                line = base_line['record']
+                if is_write_needed(line, to_update):
+                    line.write(to_update)
+
+            for tax_line_vals in tax_results['tax_lines_to_delete']:
+                to_delete.append(tax_line_vals['record'].id)
+
+            for tax_line_vals in tax_results['tax_lines_to_add']:
+                to_create.append({
+                    **tax_line_vals,
+                    'display_type': 'tax',
+                    'move_id': move.id,
+                })
+
+            for tax_line_vals, grouping_key, to_update in tax_results['tax_lines_to_update']:
+                line = tax_line_vals['record']
+                if is_write_needed(line, to_update):
+                    line.write(to_update)
+
+        if to_delete:
+            self.env['account.move.line'].browse(to_delete).with_context(dynamic_unlink=True).unlink()
+        if to_create:
+            self.env['account.move.line'].create(to_create)
+
+    @contextmanager
     def _sync_dynamic_line(self, existing_key_fname, needed_vals_fname, needed_dirty_fname, line_type, container):
         def existing():
             return {
@@ -2680,36 +2783,7 @@ class AccountMove(models.Model):
             }
 
         def needed():
-            res = {}
-            for computed_needed in container['records'].mapped(needed_vals_fname):
-                if computed_needed is False:
-                    continue  # there was an invalidation, let's hope nothing needed to be changed...
-                for key, values in computed_needed.items():
-                    if key not in res:
-                        res[key] = dict(values)
-                    else:
-                        ignore = True
-                        for fname in res[key]:
-                            if self.env['account.move.line']._fields[fname].type == 'monetary':
-                                res[key][fname] += values[fname]
-                                if res[key][fname]:
-                                    ignore = False
-                        if ignore:
-                            del res[key]
-
-            # Convert float values to their "ORM cache" one to prevent different rounding calculations
-            for dict_key in res:
-                move_id = dict_key.get('move_id')
-                if not move_id:
-                    continue
-                record = self.env['account.move'].browse(move_id)
-                for fname, current_value in res[dict_key].items():
-                    field = self.env['account.move.line']._fields[fname]
-                    if isinstance(current_value, float):
-                        new_value = field.convert_to_cache(current_value, record)
-                        res[dict_key][fname] = new_value
-
-            return res
+            return self._sync_dynamic_line_needed_values(container['records'].mapped(needed_vals_fname))
 
         def dirty():
             *path, dirty_fname = needed_dirty_fname.split('.')
@@ -2826,7 +2900,7 @@ class AccountMove(models.Model):
                 return
             def update_containers():
                 # Only invoice-like and journal entries in "auto tax mode" are synced
-                tax_container['records'] = container['records'].filtered(lambda m: (m.is_invoice(True) or m.line_ids.tax_ids and not m.tax_cash_basis_origin_move_id))
+                tax_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True) or m.line_ids.tax_ids or m.line_ids.tax_repartition_line_id)
                 invoice_container['records'] = container['records'].filtered(lambda m: m.is_invoice(True))
                 misc_container['records'] = container['records'].filtered(lambda m: m.is_entry() and not m.tax_cash_basis_origin_move_id)
 
@@ -2849,14 +2923,7 @@ class AccountMove(models.Model):
                     line_type='discount',
                     container=invoice_container,
                 ))
-                stack.enter_context(self._sync_round_globally_tax_amounts(tax_container))
-                stack.enter_context(self._sync_dynamic_line(
-                    existing_key_fname='tax_key',
-                    needed_vals_fname='line_ids.compute_all_tax',
-                    needed_dirty_fname='line_ids.compute_all_tax_dirty',
-                    line_type='tax',
-                    container=tax_container,
-                ))
+                stack.enter_context(self._sync_tax_lines(tax_container))
                 stack.enter_context(self._sync_dynamic_line(
                     existing_key_fname='epd_key',
                     needed_vals_fname='line_ids.epd_needed',
@@ -3037,7 +3104,6 @@ class AccountMove(models.Model):
                 res = super(AccountMove, self.with_context(
                     skip_account_move_synchronization=True,
                 )).write(vals)
-
 
                 # Reset the name of draft moves when changing the journal.
                 # Protected against holes in the pre-validation checks.

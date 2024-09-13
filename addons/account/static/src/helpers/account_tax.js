@@ -109,7 +109,7 @@ export const accountTaxHelpers = {
 
         if (tax.price_include) {
             // Case: special mode is False or 'total_included'
-            if (special_mode === null || special_mode === "total_included") {
+            if (!special_mode || special_mode === "total_included") {
                 if (!tax.include_base_amount) {
                     for (const other_tax of get_tax_after()) {
                         if (other_tax.price_include) {
@@ -341,7 +341,7 @@ export const accountTaxHelpers = {
                 (sum, other_tax) => sum + taxes_data[other_tax.id].tax_amount,
                 0
             );
-            total_tax_amount -= Object.values(taxes_data[tax.id].batch)
+            total_tax_amount += Object.values(taxes_data[tax.id].batch)
                 .filter(other_tax => other_tax.has_negative_factor)
                 .reduce((sum, other_tax) => sum + reverse_charge_taxes_data[other_tax.id].tax_amount, 0);
 
@@ -363,9 +363,9 @@ export const accountTaxHelpers = {
             const tax_data = taxes_data[tax.id];
             if ("tax_amount" in tax_data){
                 taxes_data_list.push(tax_data);
-            }
-            if (tax.has_negative_factor) {
-                taxes_data_list.push(reverse_charge_taxes_data[tax.id]);
+                if (tax.has_negative_factor) {
+                    taxes_data_list.push(reverse_charge_taxes_data[tax.id]);
+                }
             }
         }
 

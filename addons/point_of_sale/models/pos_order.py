@@ -806,14 +806,14 @@ class PosOrder(models.Model):
         # Create the aml values for order lines.
         for base_line_vals, update_base_line_vals in tax_results['base_lines_to_update']:
             order_line = base_line_vals['record']
-            amount_currency = update_base_line_vals['price_subtotal']
+            amount_currency = update_base_line_vals['amount_currency']
             balance = company_currency.round(amount_currency * rate)
             aml_vals_list_per_nature['product'].append({
                 'name': order_line.full_product_name,
-                'account_id': base_line_vals['account'].id,
-                'partner_id': base_line_vals['partner'].id,
-                'currency_id': base_line_vals['currency'].id,
-                'tax_ids': [(6, 0, base_line_vals['taxes'].ids)],
+                'account_id': base_line_vals['account_id'].id,
+                'partner_id': base_line_vals['partner_id'].id,
+                'currency_id': base_line_vals['currency_id'].id,
+                'tax_ids': [(6, 0, base_line_vals['tax_ids'].ids)],
                 'tax_tag_ids': update_base_line_vals['tax_tag_ids'],
                 'amount_currency': amount_currency,
                 'balance': balance,

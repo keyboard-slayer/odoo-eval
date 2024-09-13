@@ -41,9 +41,9 @@ class AccountTax(models.Model):
         results['expense_id'] = self._get_base_line_field_value_from_record(record, 'expense_id', kwargs, self.env['hr.expense'])
         return results
 
-    def _prepare_base_line_tax_repartition_grouping_key(self, base_line, tax_data, tax_rep_data):
+    def _prepare_base_line_grouping_key(self, base_line):
         # EXTENDS 'account'
-        results = super()._prepare_base_line_tax_repartition_grouping_key(base_line, tax_data, tax_rep_data)
+        results = super()._prepare_base_line_grouping_key(base_line)
         results['expense_id'] = base_line['expense_id'].id
         return results
 

@@ -881,7 +881,7 @@ class PosSession(models.Model):
                 AccountTax._round_base_lines_tax_details(base_lines, order.company_id)
                 AccountTax._add_base_lines_accounting_tax_details(base_lines, order.company_id)
                 tax_results = AccountTax._prepare_tax_lines(base_lines, order.company_id)
-                for base_line, to_update in tax_results['base_lines_to_update'].values():
+                for base_line, to_update in tax_results['base_lines_to_update']:
                     # Combine sales/refund lines
                     sale_key = (
                         # account

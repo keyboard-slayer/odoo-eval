@@ -363,8 +363,6 @@ class AccountMoveLine(models.Model):
         string='Tax calculation rounding method', readonly=True)
     # === Invoice sync fields === #
     term_key = fields.Binary(compute='_compute_term_key', exportable=False)
-    tax_key = fields.Binary(compute='_compute_tax_key', exportable=False)
-    compute_all_tax = fields.Binary(compute='_compute_all_tax', exportable=False)
     compute_all_tax_dirty = fields.Boolean(compute='_compute_all_tax')
     epd_key = fields.Binary(compute='_compute_epd_key', exportable=False)
     epd_needed = fields.Binary(compute='_compute_epd_needed', exportable=False)
@@ -850,7 +848,7 @@ class AccountMoveLine(models.Model):
     def _compute_totals(self):
         AccountTax = self.env['account.tax']
         for line in self:
-            if line.display_type != 'product':
+            if line.display_type not in ('product', 'cogs'):
                 line.price_total = line.price_subtotal = False
                 continue
 
@@ -912,61 +910,6 @@ class AccountMoveLine(models.Model):
             tax_ids = self.move_id.fiscal_position_id.map_tax(tax_ids)
 
         return tax_ids
-
-    @api.depends('tax_ids', 'currency_id', 'partner_id', 'account_id', 'group_tax_id', 'analytic_distribution')
-    def _compute_tax_key(self):
-        for line in self:
-            if line.tax_repartition_line_id:
-                tax_line = line.move_id._prepare_tax_line_for_taxes_computation(line)
-                grouping_key = self.env['account.tax']._prepare_tax_line_repartition_grouping_key(tax_line)
-                line.tax_key = frozendict({
-                    **grouping_key,
-                    'move_id': line.move_id.id,
-                    'display_type': line.display_type,
-                })
-            else:
-                line.tax_key = frozendict({'id': line.id})
-
-    @api.depends('tax_ids', 'currency_id', 'partner_id', 'analytic_distribution', 'balance', 'partner_id', 'move_id.partner_id', 'price_unit', 'quantity')
-    def _compute_all_tax(self):
-        AccountTax = self.env['account.tax']
-        amls_per_move = self.grouped('move_id')
-        for line in self:
-            if line.display_type == 'tax':
-                line.compute_all_tax = {}
-                line.compute_all_tax_dirty = False
-            else:
-                line.compute_all_tax_dirty = True
-                line.compute_all_tax = {frozendict({'id': line.id}): {'tax_tag_ids': [Command.set([])]}}
-        for move in self.move_id:
-            base_lines, _tax_lines = move._get_rounded_base_lines(round_from_tax_lines=False)
-            AccountTax._add_base_lines_accounting_tax_details(base_lines, move.company_id, include_caba_tags=move.always_tax_exigible)
-
-            for base_line in base_lines:
-                line = base_line['record']
-                if line not in amls_per_move[move]:
-                    continue
-
-                line.compute_all_tax_dirty = True
-                line.compute_all_tax = {
-                    frozendict({
-                        **tax_rep_data['grouping_key'],
-                        'move_id': line.move_id.id,
-                        'display_type': line.display_type,
-                    }): {
-                        'name': _('%(tax_name)s (Discount)', tax_name=tax_data['tax'].name) if line.display_type == 'epd' else tax_data['tax'].name,
-                        'balance': base_line['sign'] * tax_rep_data['tax_amount'],
-                        'amount_currency': base_line['sign'] * tax_rep_data['tax_amount_currency'],
-                        'tax_base_amount': base_line['sign'] * tax_data['base_amount'] * (-1 if line.tax_tag_invert else 1),
-                    }
-                    for tax_data in base_line['tax_details']['taxes_data']
-                    for tax_rep_data in tax_data['tax_reps_data']
-                    if not line.currency_id.is_zero(tax_data['tax_amount_currency']) or not line.company_currency_id.is_zero(tax_data['tax_amount'])
-                }
-                if not line.tax_repartition_line_id:
-                    line.compute_all_tax[frozendict({'id': line.id})] = {
-                        'tax_tag_ids': [Command.set(base_line['tax_tag_ids'].ids)],
-                    }
 
     @api.depends('account_id', 'company_id')
     def _compute_discount_allocation_key(self):
@@ -1056,7 +999,6 @@ class AccountMoveLine(models.Model):
                     'account_id': line.account_id.id,
                     'analytic_distribution': line.analytic_distribution,
                     'tax_ids': [Command.set(taxes.ids)],
-                    'tax_tag_ids': line.compute_all_tax[frozendict({'id': line.id})]['tax_tag_ids'],
                     'display_type': 'epd',
                 }),
                 {
@@ -1400,7 +1342,7 @@ class AccountMoveLine(models.Model):
     def check_field_access_rights(self, operation, field_names):
         result = super().check_field_access_rights(operation, field_names)
         if not fields:
-            weirdos = ['term_key', 'tax_key', 'compute_all_tax', 'epd_key', 'epd_needed', 'discount_allocation_key', 'discount_allocation_needed']
+            weirdos = ['term_key', 'epd_key', 'epd_needed', 'discount_allocation_key', 'discount_allocation_needed']
             result = [fname for fname in result if fname not in weirdos]
         return result
 
