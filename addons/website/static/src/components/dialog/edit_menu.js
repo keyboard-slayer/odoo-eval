@@ -109,7 +109,7 @@ export class EditMenuDialog extends Component {
 
         this.menuEditor = useRef('menu-editor');
 
-        this.state = useState({ rootMenu: {} });
+        this.state = useState({ rootMenu: {}, map: new Map() });
 
         onWillStart(async () => {
             const menu = await this.orm.call(
@@ -119,8 +119,7 @@ export class EditMenuDialog extends Component {
                 { context: { lang: this.website.currentWebsite.metadata.lang } }
             );
             this.state.rootMenu = menu;
-            this.map = new Map();
-            this.populate(this.map, this.state.rootMenu);
+            this.populate(this.state.map, this.state.rootMenu);
             this.toDelete = [];
         });
 
@@ -159,21 +158,21 @@ export class EditMenuDialog extends Component {
 
     _moveMenu({ element, parent, previous }) {
         const menuId = this._getMenuIdForElement(element);
-        const menu = this.map.get(menuId);
+        const menu = this.state.map.get(menuId);
 
         // Remove element from parent's children (since we are moving it, this is the mandatory first step)
         const parentId = menu.fields['parent_id'] || this.state.rootMenu.fields['id'];
-        let parentMenu = this.map.get(parentId);
+        let parentMenu = this.state.map.get(parentId);
         parentMenu.children = parentMenu.children.filter((m) => m.fields['id'] !== menuId);
 
         // Determine next parent
         const menuParentId = parent ? this._getMenuIdForElement(parent.closest("li")) : this.state.rootMenu.fields['id'];
-        parentMenu = this.map.get(menuParentId);
+        parentMenu = this.state.map.get(menuParentId);
         menu.fields['parent_id'] = parentMenu.fields['id'];
 
         // Determine at which position we should place the element
         if (previous) {
-            const previousMenu = this.map.get(this._getMenuIdForElement(previous));
+            const previousMenu = this.state.map.get(this._getMenuIdForElement(previous));
             const index = parentMenu.children.findIndex((menu) => menu === previousMenu);
             parentMenu.children.splice(index + 1, 0, menu);
         } else {
@@ -197,14 +196,14 @@ export class EditMenuDialog extends Component {
                     },
                     'children': [],
                 };
-                this.map.set(newMenu.fields['id'], newMenu);
+                this.state.map.set(newMenu.fields['id'], newMenu);
                 this.state.rootMenu.children.push(newMenu);
             },
         });
     }
 
     editMenu(id) {
-        const menuToEdit = this.map.get(id);
+        const menuToEdit = this.state.map.get(id);
         this.dialogs.add(MenuDialog, {
             name: menuToEdit.fields['name'],
             url: menuToEdit.fields['url'],
@@ -217,7 +216,7 @@ export class EditMenuDialog extends Component {
     }
 
     deleteMenu(id) {
-        const menuToDelete = this.map.get(id);
+        const menuToDelete = this.state.map.get(id);
 
         // Delete children first
         for (const child of menuToDelete.children) {
@@ -225,9 +224,9 @@ export class EditMenuDialog extends Component {
         }
 
         const parentId = menuToDelete.fields['parent_id'] || this.state.rootMenu.fields['id'];
-        const parent = this.map.get(parentId);
+        const parent = this.state.map.get(parentId);
         parent.children = parent.children.filter(menu => menu.fields['id'] !== id);
-        this.map.delete(id);
+        this.state.map.delete(id);
         if (parseInt(id)) {
             this.toDelete.push(id);
         }
@@ -235,11 +234,11 @@ export class EditMenuDialog extends Component {
 
     async onClickSave() {
         const data = [];
-        this.map.forEach((menu, id) => {
+        this.state.map.forEach((menu, id) => {
             if (this.state.rootMenu.fields['id'] !== id) {
                 const menuFields = menu.fields;
                 const parentId = menuFields.parent_id || this.state.rootMenu.fields['id'];
-                const parentMenu = this.map.get(parentId);
+                const parentMenu = this.state.map.get(parentId);
                 menuFields['sequence'] = parentMenu.children.findIndex(m => m.fields['id'] === id);
                 menuFields['parent_id'] = parentId;
                 data.push(menuFields);
