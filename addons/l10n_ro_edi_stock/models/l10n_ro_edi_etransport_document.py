@@ -261,8 +261,7 @@ class L10nRoEdiETransportDocument(models.Model):
     l10n_ro_edi_etransport_company_id = fields.Many2one(comodel_name='res.company', compute='_compute_l10n_ro_edi_etransport_company_id', recursive=True)
     l10n_ro_edi_etransport_carrier_id = fields.Many2one(comodel_name='delivery.carrier', compute='_compute_l10n_ro_edi_etransport_carrier_id', recursive=True)
 
-    l10n_ro_edi_etransport_operation_type_id = fields.Many2one(comodel_name='l10n_ro.edi.etransport.operation.type', string="Operation Type")
-    l10n_ro_edi_etransport_operation_type_code = fields.Char(related='l10n_ro_edi_etransport_operation_type_id.code')
+    l10n_ro_edi_stock_operation_type = fields.Selection(selection=OPERATION_TYPES, string="Operation Type")
 
     l10n_ro_edi_etransport_operation_allowed_scope_ids = fields.Many2many(comodel_name='l10n_ro.edi.etransport.operation.scope', compute='_compute_scope_ids')
     l10n_ro_edi_etransport_operation_scope_id = fields.Many2one(comodel_name='l10n_ro.edi.etransport.operation.scope',
@@ -326,13 +325,13 @@ class L10nRoEdiETransportDocument(models.Model):
             setattr(doc, f'l10n_ro_edi_etransport_{location}_street', None)
             setattr(doc, f'l10n_ro_edi_etransport_{location}_other_info', None)
 
-    @api.depends('l10n_ro_edi_etransport_operation_type_id')
+    @api.depends('l10n_ro_edi_stock_operation_type')
     def _compute_scope_ids(self):
         for doc in self:
             scope_domain = []
 
-            if doc.l10n_ro_edi_etransport_operation_type_id:
-                allowed_scope_codes = OPERATION_TYPE_TO_ALLOWED_SCOPE_CODES.get(doc.l10n_ro_edi_etransport_operation_type_id.code, ("9999",))
+            if doc.l10n_ro_edi_stock_operation_type:
+                allowed_scope_codes = OPERATION_TYPE_TO_ALLOWED_SCOPE_CODES.get(doc.l10n_ro_edi_stock_operation_type, ("9999",))
                 scope_domain = [('code', 'in', allowed_scope_codes)]
 
                 if doc.l10n_ro_edi_etransport_operation_scope_id and doc.l10n_ro_edi_etransport_operation_scope_id.code not in allowed_scope_codes:
@@ -357,22 +356,22 @@ class L10nRoEdiETransportDocument(models.Model):
         for doc in self:
             doc.l10n_ro_edi_etransport_carrier_id = doc.picking_id.carrier_id
 
-    @api.depends('l10n_ro_edi_etransport_operation_type_id', 'l10n_ro_edi_etransport_start_loc_type_1', 'l10n_ro_edi_etransport_start_loc_type_2')
+    @api.depends('l10n_ro_edi_stock_operation_type', 'l10n_ro_edi_etransport_start_loc_type_1', 'l10n_ro_edi_etransport_start_loc_type_2')
     def _compute_start_loc_value(self):
         for doc in self:
             doc.l10n_ro_edi_etransport_start_loc_value = doc._get_chosen_location_type('start')
 
-    @api.depends('l10n_ro_edi_etransport_operation_type_id', 'l10n_ro_edi_etransport_end_loc_type_1', 'l10n_ro_edi_etransport_end_loc_type_2')
+    @api.depends('l10n_ro_edi_stock_operation_type', 'l10n_ro_edi_etransport_end_loc_type_1', 'l10n_ro_edi_etransport_end_loc_type_2')
     def _compute_end_loc_value(self):
         for doc in self:
             doc.l10n_ro_edi_etransport_end_loc_value = doc._get_chosen_location_type('end')
 
-    @api.depends('l10n_ro_edi_etransport_operation_type_code')
+    @api.depends('l10n_ro_edi_stock_operation_type')
     def _compute_start_loc_type_index(self):
         for doc in self:
             doc.l10n_ro_edi_etransport_start_loc_type_index = doc._get_location_type_field_index('start')
 
-    @api.depends('l10n_ro_edi_etransport_operation_type_code')
+    @api.depends('l10n_ro_edi_stock_operation_type')
     def _compute_end_loc_type_index(self):
         for doc in self:
             doc.l10n_ro_edi_etransport_end_loc_type_index = doc._get_location_type_field_index('end')
@@ -382,7 +381,7 @@ class L10nRoEdiETransportDocument(models.Model):
         errors = []
 
         # operation type
-        if not self.l10n_ro_edi_etransport_operation_type_id:
+        if not self.l10n_ro_edi_stock_operation_type:
             errors.append(_("Operation type is missing."))
             return errors  # return prematurely because a lot of fields depend on the operation type
 
@@ -400,7 +399,7 @@ class L10nRoEdiETransportDocument(models.Model):
             errors.append(_("Vehicle number and trailer number fields must be unique."))
 
         # rate codes
-        if self.l10n_ro_edi_etransport_operation_type_code not in ('60', '70'):
+        if self.l10n_ro_edi_stock_operation_type not in ('60', '70'):
             product_without_code_names = {move_line.product_id.name for move in self.l10n_ro_edi_etransport_move_ids
                                           for move_line in move.move_line_ids
                                           if not move_line.product_id.intrastat_code_id.code}
@@ -497,9 +496,9 @@ class L10nRoEdiETransportDocument(models.Model):
         :param location: 'start' | 'end'
         :return the index of the location type field (ex. for index = 2 => 'l10n_ro_edi_etransport_{location}_loc_type_2'
         """
-        if self.l10n_ro_edi_etransport_operation_type_code == LOCATION_TYPE_MAP[location]['customs_code']:
+        if self.l10n_ro_edi_stock_operation_type == LOCATION_TYPE_MAP[location]['customs_code']:
             return 2
-        elif self.l10n_ro_edi_etransport_operation_type_code in LOCATION_TYPE_MAP[location]['bcp_codes']:
+        elif self.l10n_ro_edi_stock_operation_type in LOCATION_TYPE_MAP[location]['bcp_codes']:
             return 1
         else:
             # Only 'location' is possible (this possibility has no dedicated field, so we return -1)

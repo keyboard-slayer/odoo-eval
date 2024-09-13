@@ -32,14 +32,13 @@
 
                 <page name="etransport" string="eTransport" invisible="not l10n_ro_edi_etransport_should_show">
                     <field name="l10n_ro_edi_etransport_operation_allowed_scope_ids" invisible="1"/>
-                    <field name="l10n_ro_edi_etransport_operation_type_code" invisible="1"/>
                     <field name="l10n_ro_edi_etransport_document_id" invisible="1"/>
                     <field name="l10n_ro_edi_etransport_state" invisible="1"/>
                     <field name="l10n_ro_edi_etransport_fields_readonly" invisible="1"/>
 
                     <group>
                         <group string="General">
-                            <field name="l10n_ro_edi_etransport_operation_type_id" string="Operation Type" readonly="l10n_ro_edi_etransport_fields_readonly"/>
+                            <field name="l10n_ro_edi_stock_operation_type" string="Operation Type" readonly="l10n_ro_edi_etransport_fields_readonly"/>
                             <field name="l10n_ro_edi_etransport_operation_scope_id" string="Operation Scope" readonly="l10n_ro_edi_etransport_fields_readonly"/>
                             <field name="l10n_ro_edi_etransport_remarks" readonly="l10n_ro_edi_etransport_fields_readonly"/>
                         </group>

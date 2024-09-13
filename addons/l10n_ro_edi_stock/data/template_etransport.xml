@@ -8,7 +8,7 @@
             t-att-codDeclarant="document.l10n_ro_edi_etransport_company_id.vat.upper().replace('RO', '')"
             t-att-refDeclarant="declarant_ref">
 
-            <notificare t-att-codTipOperatiune="document.l10n_ro_edi_etransport_operation_type_id.code">
+            <notificare t-att-codTipOperatiune="document.l10n_ro_edi_stock_operation_type">
                 <corectie t-if="send_type == 'amend'" t-att-uit="document.l10n_ro_edi_etransport_uit"/>
 
                 <t t-foreach="document.l10n_ro_edi_etransport_move_ids" t-as="move">
@@ -28,7 +28,7 @@
                 <partenerComercial
                         t-att-codTara="partner.country_code"
                         t-att-denumire="partner.name"
-                        t-att-cod="partner.vat.upper().replace('RO', '') if partner.vat else 'PF' if document.l10n_ro_edi_etransport_operation_type_id.code == '30' else None"/>
+                        t-att-cod="partner.vat.upper().replace('RO', '') if partner.vat else 'PF' if document.l10n_ro_edi_stock_operation_type == '30' else None"/>
 
                 <dateTransport
                         t-att-nrVehicul="vehicle_number"

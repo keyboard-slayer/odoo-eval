@@ -9,7 +9,7 @@ E-Transport implementation for Romania
     'depends': ['stock_delivery', 'sale_management', 'account_intrastat', 'l10n_ro_efactura'],
     'assets': {
         'web.assets_backend': [
-            'l10n_ro_edi_etransport/static/src/components/**/*',
+            'l10n_ro_edi_stock/static/src/components/**/*',
         ],
     },
     'data': [
