@@ -5,17 +5,17 @@
             xmlns="mfp:anaf:dgti:eTransport:declaratie:v2"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="mfp:anaf:dgti:eTransport:declaratie:v2"
-            t-att-codDeclarant="document.l10n_ro_edi_etransport_company_id.vat.upper().replace('RO', '')"
+            t-att-codDeclarant="document.l10n_ro_edi_stock_company_id.vat.upper().replace('RO', '')"
             t-att-refDeclarant="declarant_ref">
 
             <notificare t-att-codTipOperatiune="document.l10n_ro_edi_stock_operation_type">
                 <corectie t-if="send_type == 'amend'" t-att-uit="document.l10n_ro_edi_etransport_uit"/>
 
-                <t t-foreach="document.l10n_ro_edi_etransport_move_ids" t-as="move">
+                <t t-foreach="document.l10n_ro_edi_stock_move_ids" t-as="move">
                     <t t-set="product" t-value="move.product_id"/>
 
                     <bunuriTransportate
-                            t-att-codScopOperatiune="document.l10n_ro_edi_etransport_operation_scope_id.code"
+                            t-att-codScopOperatiune="document.l10n_ro_edi_stock_operation_scope"
                             t-att-codTarifar="product.intrastat_code_id.code or '00000000'"
                             t-att-denumireMarfa="product.name"
                             t-att-cantitate="move.product_qty"
@@ -39,7 +39,7 @@
                         t-att-denumireOrgTransport="transport_partner.name"
                         t-att-dataTransport="scheduled_date"/>
 
-                <t t-if="document.l10n_ro_edi_etransport_start_loc_value == 'location'">
+                <t t-if="document.l10n_ro_edi_stock_start_loc_type == 'location'">
                     <locStartTraseuRutier>
                         <locatie
                                 t-att-codJudet="STATE_CODES[document.l10n_ro_edi_etransport_start_state_id.code]"
@@ -49,14 +49,14 @@
                                 t-att-alteInfo="document.l10n_ro_edi_etransport_start_other_info"/>
                     </locStartTraseuRutier>
                 </t>
-                <t t-elif="document.l10n_ro_edi_etransport_start_loc_value == 'bcp'">
+                <t t-elif="document.l10n_ro_edi_stock_start_loc_type == 'bcp'">
                     <locStartTraseuRutier t-att-codPtf="document.l10n_ro_edi_etransport_start_bcp"/>
                 </t>
-                <t t-elif="document.l10n_ro_edi_etransport_start_loc_value == 'customs'">
+                <t t-elif="document.l10n_ro_edi_stock_start_loc_type == 'customs'">
                     <locStartTraseuRutier t-att-codBirouVamal="document.l10n_ro_edi_etransport_start_customs_office.code"/>
                 </t>
 
-                <t t-if="document.l10n_ro_edi_etransport_end_loc_value == 'location'">
+                <t t-if="document.l10n_ro_edi_stock_end_loc_type == 'location'">
                     <locFinalTraseuRutier>
                         <locatie
                                 t-att-codJudet="STATE_CODES[document.l10n_ro_edi_etransport_end_state_id.code]"
@@ -66,10 +66,10 @@
                                 t-att-alteInfo="document.l10n_ro_edi_etransport_end_other_info"/>
                     </locFinalTraseuRutier>
                 </t>
-                <t t-elif="document.l10n_ro_edi_etransport_end_loc_value == 'bcp'">
+                <t t-elif="document.l10n_ro_edi_stock_end_loc_type == 'bcp'">
                     <locFinalTraseuRutier t-att-codPtf="document.l10n_ro_edi_etransport_end_bcp"/>
                 </t>
-                <t t-elif="document.l10n_ro_edi_etransport_end_loc_value == 'customs'">
+                <t t-elif="document.l10n_ro_edi_stock_end_loc_type == 'customs'">
                     <locFinalTraseuRutier t-att-codBirouVamal="document.l10n_ro_edi_etransport_end_customs_office.code"/>
                 </t>
 

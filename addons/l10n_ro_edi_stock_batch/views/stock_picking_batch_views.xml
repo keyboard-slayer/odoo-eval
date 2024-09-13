@@ -31,7 +31,7 @@
              <field name="l10n_ro_edi_etransport_should_show" invisible="1"/>
 
              <page name="etransport" string="eTransport" invisible="not l10n_ro_edi_etransport_should_show">
-                 <field name="l10n_ro_edi_etransport_operation_allowed_scope_ids" invisible="1"/>
+                 <field name="l10n_ro_edi_stock_available_operation_scopes" invisible="1"/>
                  <field name="l10n_ro_edi_etransport_document_id" invisible="1"/>
                  <field name="l10n_ro_edi_etransport_state" invisible="1"/>
                  <field name="l10n_ro_edi_etransport_fields_readonly" invisible="1"/>
@@ -39,48 +39,44 @@
                  <group>
                      <group string="General">
                          <field name="l10n_ro_edi_stock_operation_type" string="Operation Type" readonly="l10n_ro_edi_etransport_fields_readonly"/>
-                         <field name="l10n_ro_edi_etransport_operation_scope_id" string="Operation Scope" readonly="l10n_ro_edi_etransport_fields_readonly"/>
+                         <field name="l10n_ro_edi_stock_operation_scope" string="Operation Scope" widget="dynamic_selection" options="{'available_field': 'l10n_ro_edi_stock_available_operation_scopes'}" readonly="l10n_ro_edi_etransport_fields_readonly"/>
                          <field name="l10n_ro_edi_etransport_remarks" readonly="l10n_ro_edi_etransport_fields_readonly"/>
                      </group>
 
                      <group string="Transport">
-                         <field name="l10n_ro_edi_etransport_vehicle_number" readonly="l10n_ro_edi_etransport_fields_readonly"/>
-                         <field name="l10n_ro_edi_etransport_trailer_1_number" readonly="l10n_ro_edi_etransport_fields_readonly"/>
-                         <field name="l10n_ro_edi_etransport_trailer_2_number" readonly="l10n_ro_edi_etransport_fields_readonly"/>
+                         <field name="l10n_ro_edi_stock_vehicle_number" readonly="l10n_ro_edi_etransport_fields_readonly"/>
+                         <field name="l10n_ro_edi_stock_trailer_1_number" readonly="l10n_ro_edi_etransport_fields_readonly"/>
+                         <field name="l10n_ro_edi_stock_trailer_2_number" readonly="l10n_ro_edi_etransport_fields_readonly"/>
                      </group>
 
                      <group string="Start Location">
-                         <field name="l10n_ro_edi_etransport_start_loc_value" invisible="1"/>
-                         <field name="l10n_ro_edi_etransport_start_loc_type_index" invisible="1"/>
+                         <field name="l10n_ro_edi_stock_available_start_loc_types" invisible="1"/>
 
-                         <field name="l10n_ro_edi_etransport_start_loc_type_1" invisible="l10n_ro_edi_etransport_start_loc_type_index != 1" readonly="l10n_ro_edi_etransport_fields_readonly"/>
-                         <field name="l10n_ro_edi_etransport_start_loc_type_2" invisible="l10n_ro_edi_etransport_start_loc_type_index != 2" readonly="l10n_ro_edi_etransport_fields_readonly"/>
+                         <field name="l10n_ro_edi_stock_start_loc_type" widget="dynamic_selection" options="{'available_field': 'l10n_ro_edi_stock_available_start_loc_types'}" readonly="l10n_ro_edi_etransport_fields_readonly"/>
 
-                         <field name="l10n_ro_edi_etransport_start_bcp" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_start_loc_value != 'bcp'" />
-                         <field name="l10n_ro_edi_etransport_start_customs_office" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_start_loc_value != 'customs'"/>
+                         <field name="l10n_ro_edi_etransport_start_bcp" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_start_loc_type != 'bcp'" />
+                         <field name="l10n_ro_edi_etransport_start_customs_office" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_start_loc_type != 'customs'"/>
 
-                         <field name="l10n_ro_edi_etransport_start_state_id" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_start_loc_value != 'location'" />
-                         <field name="l10n_ro_edi_etransport_start_zip" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_start_loc_value != 'location'" />
-                         <field name="l10n_ro_edi_etransport_start_city" string="City" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_start_loc_value != 'location'" />
-                         <field name="l10n_ro_edi_etransport_start_street" string="Street" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_start_loc_value != 'location'" />
-                         <field name="l10n_ro_edi_etransport_start_other_info" string="Other Info" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_start_loc_value != 'location'" />
+                         <field name="l10n_ro_edi_etransport_start_state_id" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_start_loc_type != 'location'" />
+                         <field name="l10n_ro_edi_etransport_start_zip" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_start_loc_type != 'location'" />
+                         <field name="l10n_ro_edi_etransport_start_city" string="City" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_start_loc_type != 'location'" />
+                         <field name="l10n_ro_edi_etransport_start_street" string="Street" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_start_loc_type != 'location'" />
+                         <field name="l10n_ro_edi_etransport_start_other_info" string="Other Info" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_start_loc_type != 'location'" />
                      </group>
 
                      <group string="End Location">
-                         <field name="l10n_ro_edi_etransport_end_loc_type_index" invisible="1"/>
-                         <field name="l10n_ro_edi_etransport_end_loc_value" invisible="1"/>
+                         <field name="l10n_ro_edi_stock_available_end_loc_types" invisible="1"/>
 
-                         <field name="l10n_ro_edi_etransport_end_loc_type_1" invisible="l10n_ro_edi_etransport_end_loc_type_index != 1" readonly="l10n_ro_edi_etransport_fields_readonly"/>
-                         <field name="l10n_ro_edi_etransport_end_loc_type_2" invisible="l10n_ro_edi_etransport_end_loc_type_index != 2" readonly="l10n_ro_edi_etransport_fields_readonly"/>
+                         <field name="l10n_ro_edi_stock_end_loc_type" widget="dynamic_selection" options="{'available_field': 'l10n_ro_edi_stock_available_end_loc_types'}" readonly="l10n_ro_edi_etransport_fields_readonly"/>
 
-                         <field name="l10n_ro_edi_etransport_end_bcp" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_end_loc_value != 'bcp'"/>
-                         <field name="l10n_ro_edi_etransport_end_customs_office" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_end_loc_value != 'customs'"/>
+                         <field name="l10n_ro_edi_etransport_end_bcp" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_end_loc_type != 'bcp'"/>
+                         <field name="l10n_ro_edi_etransport_end_customs_office" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_end_loc_type != 'customs'"/>
 
-                         <field name="l10n_ro_edi_etransport_end_state_id" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_end_loc_value != 'location'" />
-                         <field name="l10n_ro_edi_etransport_end_zip" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_end_loc_value != 'location'" />
-                         <field name="l10n_ro_edi_etransport_end_city" string="City" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_end_loc_value != 'location'" />
-                         <field name="l10n_ro_edi_etransport_end_street" string="Street" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_end_loc_value != 'location'" />
-                         <field name="l10n_ro_edi_etransport_end_other_info" string="Other Info" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_etransport_end_loc_value != 'location'" />
+                         <field name="l10n_ro_edi_etransport_end_state_id" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_end_loc_type != 'location'" />
+                         <field name="l10n_ro_edi_etransport_end_zip" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_end_loc_type != 'location'" />
+                         <field name="l10n_ro_edi_etransport_end_city" string="City" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_end_loc_type != 'location'" />
+                         <field name="l10n_ro_edi_etransport_end_street" string="Street" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_end_loc_type != 'location'" />
+                         <field name="l10n_ro_edi_etransport_end_other_info" string="Other Info" readonly="l10n_ro_edi_etransport_fields_readonly" invisible="l10n_ro_edi_stock_end_loc_type != 'location'" />
                      </group>
                  </group>
              </page>

@@ -247,8 +247,7 @@ STATE_CODES = {
     'GR': '52',
 }
 
-SELECTION_LOC_TYPE_1 = [('location', "Location"), ('bcp', "Border Crossing Point")]
-SELECTION_LOC_TYPE_2 = [('location', "Location"), ('bcp', "Border Crossing Point"), ('customs', "Customs Office")]
+LOCATION_TYPES = [('location', "Location"), ('bcp', "Border Crossing Point"), ('customs', "Customs Office")]
 
 
 class L10nRoEdiETransportDocument(models.Model):
@@ -257,32 +256,23 @@ class L10nRoEdiETransportDocument(models.Model):
     _order = 'create_date DESC, id DESC'
 
     picking_id = fields.Many2one(comodel_name='stock.picking', default=None)
-    l10n_ro_edi_etransport_move_ids = fields.One2many(comodel_name='stock.move', compute='_compute_l10n_ro_edi_etransport_move_ids', recursive=True)
-    l10n_ro_edi_etransport_company_id = fields.Many2one(comodel_name='res.company', compute='_compute_l10n_ro_edi_etransport_company_id', recursive=True)
-    l10n_ro_edi_etransport_carrier_id = fields.Many2one(comodel_name='delivery.carrier', compute='_compute_l10n_ro_edi_etransport_carrier_id', recursive=True)
+    l10n_ro_edi_stock_move_ids = fields.One2many(comodel_name='stock.move', compute='_compute_l10n_ro_edi_stock_move_ids', recursive=True)
+    l10n_ro_edi_stock_company_id = fields.Many2one(comodel_name='res.company', compute='_compute_l10n_ro_edi_stock_company_id', recursive=True)
+    l10n_ro_edi_stock_carrier_id = fields.Many2one(comodel_name='delivery.carrier', compute='_compute_l10n_ro_edi_stock_carrier_id', recursive=True)
 
     l10n_ro_edi_stock_operation_type = fields.Selection(selection=OPERATION_TYPES, string="Operation Type")
+    l10n_ro_edi_stock_available_operation_scopes = fields.Char(compute='_compute_l10n_ro_edi_stock_available_operation_scopes')
+    l10n_ro_edi_stock_operation_scope = fields.Selection(selection=OPERATION_SCOPES, string="Operation Scope")
 
-    l10n_ro_edi_etransport_operation_allowed_scope_ids = fields.Many2many(comodel_name='l10n_ro.edi.etransport.operation.scope', compute='_compute_scope_ids')
-    l10n_ro_edi_etransport_operation_scope_id = fields.Many2one(comodel_name='l10n_ro.edi.etransport.operation.scope',
-                                                                string="Operation Scope",
-                                                                domain="[('id', 'in', l10n_ro_edi_etransport_operation_allowed_scope_ids)]")
+    l10n_ro_edi_stock_vehicle_number = fields.Char(string="Vehicle Number", size=20)
+    l10n_ro_edi_stock_trailer_1_number = fields.Char(string="Trailer 1 Number", size=20)
+    l10n_ro_edi_stock_trailer_2_number = fields.Char(string="Trailer 2 Number", size=20)
 
-    l10n_ro_edi_etransport_vehicle_number = fields.Char(string="Vehicle Number", size=20)
-    l10n_ro_edi_etransport_trailer_1_number = fields.Char(string="Trailer 1 Number", size=20)
-    l10n_ro_edi_etransport_trailer_2_number = fields.Char(string="Trailer 2 Number", size=20)
+    l10n_ro_edi_stock_available_start_loc_types = fields.Char(compute='_compute_available_location_types')
+    l10n_ro_edi_stock_start_loc_type = fields.Selection(selection=LOCATION_TYPES, string="Location Type", default='location')
 
-    l10n_ro_edi_etransport_start_loc_type_1 = fields.Selection(selection=SELECTION_LOC_TYPE_1, string="Location Type", default='location')
-    l10n_ro_edi_etransport_start_loc_type_2 = fields.Selection(selection=SELECTION_LOC_TYPE_2, string="Location Type", default='location')
-
-    l10n_ro_edi_etransport_end_loc_type_1 = fields.Selection(selection=SELECTION_LOC_TYPE_1, string="Location Type", default='location')
-    l10n_ro_edi_etransport_end_loc_type_2 = fields.Selection(selection=SELECTION_LOC_TYPE_2, string="Location Type", default='location')
-
-    l10n_ro_edi_etransport_start_loc_value = fields.Char(compute='_compute_start_loc_value')
-    l10n_ro_edi_etransport_end_loc_value = fields.Char(compute='_compute_end_loc_value')
-
-    l10n_ro_edi_etransport_start_loc_type_index = fields.Integer(compute='_compute_start_loc_type_index')
-    l10n_ro_edi_etransport_end_loc_type_index = fields.Integer(compute='_compute_end_loc_type_index')
+    l10n_ro_edi_stock_available_end_loc_types = fields.Char(compute='_compute_available_location_types')
+    l10n_ro_edi_stock_end_loc_type = fields.Selection(selection=LOCATION_TYPES, string="Location Type", default='location')
 
     # Data fields for every location type
     l10n_ro_edi_etransport_start_bcp = fields.Selection(selection=BORDER_CROSSING_POINTS, string="Border Crossing Point")
@@ -310,10 +300,8 @@ class L10nRoEdiETransportDocument(models.Model):
 
     def _reset_location_type(self):
         for doc in self:
-            doc.l10n_ro_edi_etransport_start_loc_type_1 = 'location'
-            doc.l10n_ro_edi_etransport_start_loc_type_2 = 'location'
-            doc.l10n_ro_edi_etransport_end_loc_type_1 = 'location'
-            doc.l10n_ro_edi_etransport_end_loc_type_2 = 'location'
+            doc.l10n_ro_edi_stock_start_loc_type = 'location'
+            doc.l10n_ro_edi_stock_end_loc_type = 'location'
 
     def _reset_location_data(self, location: str):
         for doc in self:
@@ -326,55 +314,40 @@ class L10nRoEdiETransportDocument(models.Model):
             setattr(doc, f'l10n_ro_edi_etransport_{location}_other_info', None)
 
     @api.depends('l10n_ro_edi_stock_operation_type')
-    def _compute_scope_ids(self):
+    def _compute_l10n_ro_edi_stock_available_operation_scopes(self):
         for doc in self:
-            scope_domain = []
+            allowed_scopes = [c for c, dummy in OPERATION_SCOPES]
 
             if doc.l10n_ro_edi_stock_operation_type:
-                allowed_scope_codes = OPERATION_TYPE_TO_ALLOWED_SCOPE_CODES.get(doc.l10n_ro_edi_stock_operation_type, ("9999",))
-                scope_domain = [('code', 'in', allowed_scope_codes)]
+                allowed_scopes = OPERATION_TYPE_TO_ALLOWED_SCOPE_CODES.get(doc.l10n_ro_edi_stock_operation_type, ("9999",))
 
-                if doc.l10n_ro_edi_etransport_operation_scope_id and doc.l10n_ro_edi_etransport_operation_scope_id.code not in allowed_scope_codes:
-                    doc.l10n_ro_edi_etransport_operation_scope_id = None
-            elif doc.l10n_ro_edi_etransport_operation_scope_id:
-                doc.l10n_ro_edi_etransport_operation_scope_id = None
+                if doc.l10n_ro_edi_stock_operation_scope not in allowed_scopes:
+                    doc.l10n_ro_edi_stock_operation_scope = None
+            elif doc.l10n_ro_edi_stock_operation_scope:
+                doc.l10n_ro_edi_stock_operation_scope = None
 
-            doc.l10n_ro_edi_etransport_operation_allowed_scope_ids = doc.env['l10n_ro.edi.etransport.operation.scope'].search(scope_domain)
+            doc.l10n_ro_edi_stock_available_operation_scopes = ','.join(allowed_scopes)
 
     @api.depends('picking_id.move_ids')
-    def _compute_l10n_ro_edi_etransport_move_ids(self):
+    def _compute_l10n_ro_edi_stock_move_ids(self):
         for doc in self:
-            doc.l10n_ro_edi_etransport_move_ids = doc.picking_id.move_ids
+            doc.l10n_ro_edi_stock_move_ids = doc.picking_id.move_ids
 
     @api.depends('picking_id.company_id')
-    def _compute_l10n_ro_edi_etransport_company_id(self):
+    def _compute_l10n_ro_edi_stock_company_id(self):
         for doc in self:
-            doc.l10n_ro_edi_etransport_company_id = doc.picking_id.company_id
+            doc.l10n_ro_edi_stock_company_id = doc.picking_id.company_id
 
     @api.depends('picking_id.carrier_id')
-    def _compute_l10n_ro_edi_etransport_carrier_id(self):
+    def _compute_l10n_ro_edi_stock_carrier_id(self):
         for doc in self:
-            doc.l10n_ro_edi_etransport_carrier_id = doc.picking_id.carrier_id
-
-    @api.depends('l10n_ro_edi_stock_operation_type', 'l10n_ro_edi_etransport_start_loc_type_1', 'l10n_ro_edi_etransport_start_loc_type_2')
-    def _compute_start_loc_value(self):
-        for doc in self:
-            doc.l10n_ro_edi_etransport_start_loc_value = doc._get_chosen_location_type('start')
-
-    @api.depends('l10n_ro_edi_stock_operation_type', 'l10n_ro_edi_etransport_end_loc_type_1', 'l10n_ro_edi_etransport_end_loc_type_2')
-    def _compute_end_loc_value(self):
-        for doc in self:
-            doc.l10n_ro_edi_etransport_end_loc_value = doc._get_chosen_location_type('end')
+            doc.l10n_ro_edi_stock_carrier_id = doc.picking_id.carrier_id
 
     @api.depends('l10n_ro_edi_stock_operation_type')
-    def _compute_start_loc_type_index(self):
+    def _compute_available_location_types(self):
         for doc in self:
-            doc.l10n_ro_edi_etransport_start_loc_type_index = doc._get_location_type_field_index('start')
-
-    @api.depends('l10n_ro_edi_stock_operation_type')
-    def _compute_end_loc_type_index(self):
-        for doc in self:
-            doc.l10n_ro_edi_etransport_end_loc_type_index = doc._get_location_type_field_index('end')
+            doc.l10n_ro_edi_stock_available_start_loc_types = doc._get_available_location_types('start')
+            doc.l10n_ro_edi_stock_available_end_loc_types = doc._get_available_location_types('end')
 
     def _check_values(self):
         self.ensure_one()
@@ -386,21 +359,21 @@ class L10nRoEdiETransportDocument(models.Model):
             return errors  # return prematurely because a lot of fields depend on the operation type
 
         # operation scope
-        if not self.l10n_ro_edi_etransport_operation_scope_id:
+        if not self.l10n_ro_edi_stock_operation_scope:
             errors.append(_("Operation scope is missing."))
 
         # vehicle & trailer numbers
-        if not self.l10n_ro_edi_etransport_vehicle_number:
+        if not self.l10n_ro_edi_stock_vehicle_number:
             errors.append(_("Vehicle number is missing."))
 
         # All filled-in vehicle and trailer numbers must be unique
-        license_plates = [num for num in (self.l10n_ro_edi_etransport_vehicle_number, self.l10n_ro_edi_etransport_trailer_1_number, self.l10n_ro_edi_etransport_trailer_2_number) if num]
+        license_plates = [num for num in (self.l10n_ro_edi_stock_vehicle_number, self.l10n_ro_edi_stock_trailer_1_number, self.l10n_ro_edi_stock_trailer_2_number) if num]
         if len(license_plates) != len(set(license_plates)):
             errors.append(_("Vehicle number and trailer number fields must be unique."))
 
         # rate codes
         if self.l10n_ro_edi_stock_operation_type not in ('60', '70'):
-            product_without_code_names = {move_line.product_id.name for move in self.l10n_ro_edi_etransport_move_ids
+            product_without_code_names = {move_line.product_id.name for move in self.l10n_ro_edi_stock_move_ids
                                           for move_line in move.move_line_ids
                                           if not move_line.product_id.intrastat_code_id.code}
 
@@ -412,26 +385,17 @@ class L10nRoEdiETransportDocument(models.Model):
                     errors.append(_("Products %(names)s are missing the intrastat code value.", names=", ".join(product_without_code_names)))
 
         # Location types
-        def check_location_type(location: str) -> str | None:
-            loc_type_idx = getattr(self, f'l10n_ro_edi_etransport_{location}_loc_type_index')
-            if loc_type_idx not in (1, 2):
-                return
+        if not self.l10n_ro_edi_stock_start_loc_type:
+            errors.append(_("'Start Location Type' is missing"))
+            return errors  # return prematurely because all the start location fields depend on this field
 
-            if not getattr(self, f'l10n_ro_edi_etransport_{location}_loc_type_{loc_type_idx}'):
-                match location:
-                    case 'start':
-                        return _("'Start Location Type' is missing")
-                    case 'end':
-                        return _("'End Location Type' is missing")
-
-        for loc in ('start', 'end'):
-            if loc_error := check_location_type(loc):
-                errors.append(loc_error)
-                return errors  # return prematurely because all the location fields depend on these fields
+        if not self.l10n_ro_edi_stock_end_loc_type:
+            errors.append(_("'End Location Type' is missing"))
+            return errors  # return prematurely because all the end location fields depend on this field
 
         # location fields
         def check_location_fields(location: str):
-            loc_value = getattr(self, f'l10n_ro_edi_etransport_{location}_loc_value')
+            loc_value = getattr(self, f'l10n_ro_edi_stock_{location}_loc_type')
             loc_group = _("'Start Location'") if location == 'start' else _("'End Location'")
 
             if loc_value == 'bcp' and not getattr(self, f'l10n_ro_edi_etransport_{location}_bcp'):
@@ -458,11 +422,11 @@ class L10nRoEdiETransportDocument(models.Model):
         check_location_fields('end')
 
         # carrier partner fields
-        if self.l10n_ro_edi_etransport_carrier_id.l10n_ro_edi_etransport_partner_id.country_id.code != 'RO':
+        if self.l10n_ro_edi_stock_carrier_id.l10n_ro_edi_etransport_partner_id.country_id.code != 'RO':
             errors.append(_("The delivery carrier partner has to be located in Romania."))
         else:
             missing_carrier_partner_fields = []
-            partner = self.l10n_ro_edi_etransport_carrier_id.l10n_ro_edi_etransport_partner_id
+            partner = self.l10n_ro_edi_stock_carrier_id.l10n_ro_edi_etransport_partner_id
 
             if not partner.city:
                 missing_carrier_partner_fields.append(_("City"))
@@ -475,34 +439,22 @@ class L10nRoEdiETransportDocument(models.Model):
             elif len(missing_carrier_partner_fields) > 1:
                 errors.append(_("The delivery carrier partner is missing following fields: %(field_names)s", field_names=', '.join(missing_carrier_partner_fields)))
 
-        if not self.l10n_ro_edi_etransport_company_id.l10n_ro_edi_access_token:
+        if not self.l10n_ro_edi_stock_company_id.l10n_ro_edi_access_token:
             errors.append(_('Romanian access token not found. Please generate or fill it in the settings.'))
 
         return errors
 
-    def _get_chosen_location_type(self, location: str) -> str:
-        """ Calculates the location type based on the allowed location fields (which depend on the operation type) and which of these fields have been filled in.
-        :param location: 'start' | 'end'
-        :return the chosen location type, by default this is 'location'.
-        """
-        field_idx = self._get_location_type_field_index(location)
-        if field_idx == -1:
-            return 'location'
-        else:
-            return getattr(self, f'l10n_ro_edi_etransport_{location}_loc_type_{field_idx}')
-
-    def _get_location_type_field_index(self, location: str) -> int:
+    def _get_available_location_types(self, location: str) -> str:
         """
         :param location: 'start' | 'end'
-        :return the index of the location type field (ex. for index = 2 => 'l10n_ro_edi_etransport_{location}_loc_type_2'
+        :return comma separated list of available location types
         """
         if self.l10n_ro_edi_stock_operation_type == LOCATION_TYPE_MAP[location]['customs_code']:
-            return 2
+            return 'location,bcp,customs'
         elif self.l10n_ro_edi_stock_operation_type in LOCATION_TYPE_MAP[location]['bcp_codes']:
-            return 1
+            return 'location,bcp'
         else:
-            # Only 'location' is possible (this possibility has no dedicated field, so we return -1)
-            return -1
+            return 'location'
 
     def _get_declarant_ref(self) -> str:
         self.ensure_one()
@@ -606,15 +558,15 @@ class L10nRoEdiETransportDocument(models.Model):
             'partner': self._get_commercial_partner(),
             'transport_partner': self._get_transport_partner(),
             'scheduled_date': self._get_scheduled_date(),
-            'vehicle_number': self.l10n_ro_edi_etransport_vehicle_number.upper(),
-            'trailer1': (self.l10n_ro_edi_etransport_trailer_1_number or '').upper() or None,
-            'trailer2': (self.l10n_ro_edi_etransport_trailer_2_number or '').upper() or None,
+            'vehicle_number': self.l10n_ro_edi_stock_vehicle_number.upper(),
+            'trailer1': (self.l10n_ro_edi_stock_trailer_1_number or '').upper() or None,
+            'trailer2': (self.l10n_ro_edi_stock_trailer_2_number or '').upper() or None,
         })
 
-        cif = self.l10n_ro_edi_etransport_company_id.vat.replace('RO', '')
+        cif = self.l10n_ro_edi_stock_company_id.vat.replace('RO', '')
 
         result = self.env['l10n_ro.edi.etransport.document']._make_etransport_request(
-            company=self.l10n_ro_edi_etransport_company_id,
+            company=self.l10n_ro_edi_stock_company_id,
             endpoint=f'upload/ETRANSP/{cif}/2',
             method='post',
             data=markupsafe.Markup("<?xml version='1.0' encoding='UTF-8'?>\n") + template
@@ -636,7 +588,7 @@ class L10nRoEdiETransportDocument(models.Model):
         for document in documents:
             send_type = 'send' if document.l10n_ro_edi_etransport_state == 'sending' else 'amend'
 
-            if not document.l10n_ro_edi_etransport_company_id.l10n_ro_edi_access_token:
+            if not document.l10n_ro_edi_stock_company_id.l10n_ro_edi_access_token:
                 document._sending_failed(message=_('Romanian access token not found. Please generate or fill it in the settings.'), send_type=send_type)
                 continue
 
@@ -645,7 +597,7 @@ class L10nRoEdiETransportDocument(models.Model):
                 continue
 
             result = self.env['l10n_ro.edi.etransport.document']._make_etransport_request(
-                company=document.l10n_ro_edi_etransport_company_id,
+                company=document.l10n_ro_edi_stock_company_id,
                 endpoint=f'stareMesaj/{document.l10n_ro_edi_etransport_load_id}',
                 method='get',
                 session=session,

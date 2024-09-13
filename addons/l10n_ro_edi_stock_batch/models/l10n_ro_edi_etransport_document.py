@@ -7,25 +7,25 @@ class L10nRoEdiETransportDocument(models.Model):
     batch_id = fields.Many2one(comodel_name='stock.picking.batch', default=None)
 
     @api.depends('picking_id.company_id', 'batch_id.company_id')
-    def _compute_l10n_ro_edi_etransport_company_id(self):
-        # Extends l10n_ro_edi_etransport
+    def _compute_l10n_ro_edi_stock_company_id(self):
+        # Extends l10n_ro_edi_stock
         for doc in self:
-            doc.l10n_ro_edi_etransport_company_id = (doc.batch_id or doc.picking_id).company_id
+            doc.l10n_ro_edi_stock_company_id = (doc.batch_id or doc.picking_id).company_id
 
     @api.depends('picking_id.move_ids', 'batch_id.move_ids')
-    def _compute_l10n_ro_edi_etransport_move_ids(self):
-        # Extends l10n_ro_edi_etransport
+    def _compute_l10n_ro_edi_stock_move_ids(self):
+        # Extends l10n_ro_edi_stock
         for doc in self:
-            doc.l10n_ro_edi_etransport_move_ids = (doc.batch_id or doc.picking_id).move_ids
+            doc.l10n_ro_edi_stock_move_ids = (doc.batch_id or doc.picking_id).move_ids
 
     @api.depends('picking_id.carrier_id', 'batch_id.picking_ids')
-    def _compute_l10n_ro_edi_etransport_carrier_id(self):
-        # Extends l10n_ro_edi_etransport
+    def _compute_l10n_ro_edi_stock_carrier_id(self):
+        # Extends l10n_ro_edi_stock
         for doc in self:
             if doc.batch_id:
-                doc.l10n_ro_edi_etransport_carrier_id = doc.batch_id.picking_ids[0].carrier_id if doc.batch_id.picking_ids else None
+                doc.l10n_ro_edi_stock_carrier_id = doc.batch_id.picking_ids[0].carrier_id if doc.batch_id.picking_ids else None
             else:
-                doc.l10n_ro_edi_etransport_carrier_id = doc.picking_id.carrier_id
+                doc.l10n_ro_edi_stock_carrier_id = doc.picking_id.carrier_id
 
     def _get_declarant_ref(self) -> str:
         # Extends l10n_ro_edi_etransport

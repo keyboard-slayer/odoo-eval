@@ -44,11 +44,11 @@ class Picking(models.Model):
     def _reset_location_type(self):
         self.l10n_ro_edi_etransport_document_id._reset_location_type()
 
-    @api.onchange('l10n_ro_edi_stock_operation_type', 'l10n_ro_edi_etransport_start_loc_type_1', 'l10n_ro_edi_etransport_start_loc_type_2')
+    @api.onchange('l10n_ro_edi_stock_operation_type', 'l10n_ro_edi_stock_start_loc_type')
     def _reset_start_location_data(self):
         self.l10n_ro_edi_etransport_document_id._reset_location_data('start')
 
-    @api.onchange('l10n_ro_edi_stock_operation_type', 'l10n_ro_edi_etransport_end_loc_type_1', 'l10n_ro_edi_etransport_end_loc_type_2')
+    @api.onchange('l10n_ro_edi_stock_operation_type', 'l10n_ro_edi_stock_end_loc_type')
     def _reset_end_location_data(self):
         self.l10n_ro_edi_etransport_document_id._reset_location_data('end')
 
