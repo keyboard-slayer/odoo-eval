@@ -26,8 +26,11 @@ inclusion of rating directly within the customer portal discuss widget.
             'portal_rating/static/src/xml/portal_chatter.xml',
             'portal_rating/static/src/js/portal_composer.js',
             'portal_rating/static/src/js/portal_rating_composer.js',
-            'portal_rating/static/src/xml/portal_rating_composer.xml',
             'portal_rating/static/src/xml/portal_tools.xml',
+        ],
+        'portal_rating.assets_portal_rating_xml': [
+            'portal_rating/static/src/xml/portal_rating_composer.xml',
+            '''TODO portal_chatter.xml and portal_tools.xml as templates are inherited'''
         ],
     },
     'license': 'LGPL-3',
