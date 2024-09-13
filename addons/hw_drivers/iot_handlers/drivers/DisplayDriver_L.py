@@ -82,8 +82,31 @@ class DisplayDriver(Driver):
             or 'http://localhost:8069/point_of_sale/display/' + self.device_identifier
         )
 
+<<<<<<< master
         browser_state = BrowserState.KIOSK if "/pos-self/" in self.url else BrowserState.FULLSCREEN
         self.browser.open_browser(self.url, browser_state)
+||||||| 54edf00c6ad81f8143983820ecb43501199998fe
+        # Kill browser instance (can't `instance.pkill()` as we can't keep the instance after Odoo service restarts)
+        # We need to terminate it because Odoo will create a new instance each time it is restarted.
+        subprocess.run(['pkill', self.browser.split('-')[0]], check=False)
+        # --log-level=3 to avoid useless log messages
+        subprocess.Popen([self.browser, self.url, '--start-fullscreen', '--log-level=3'], env=browser_env)
+
+        # To remove when everyone is on version >= 24.08: chromium has '--start-fullscreen' option
+        if self.browser == 'firefox':
+            self.call_xdotools('F11')
+=======
+        # Kill browser instance (can't `instance.pkill()` as we can't keep the instance after Odoo service restarts)
+        # We need to terminate it because Odoo will create a new instance each time it is restarted.
+        subprocess.run(['pkill', self.browser.split('-')[0]], check=False)
+        # --log-level=3 to avoid useless log messages, --bwsi to use chromium without signing in
+        browser_args = ['--start-fullscreen', '--log-level=3', '--bwsi']
+        subprocess.Popen([self.browser, self.url, *browser_args], env=browser_env)
+
+        # To remove when everyone is on version >= 24.08: chromium has '--start-fullscreen' option
+        if self.browser == 'firefox':
+            self.call_xdotools('F11')
+>>>>>>> 39c8b9a302fedd753eff63e6a38e566617c96a23
 
     def load_url(self):
         url = None
