@@ -32,6 +32,9 @@
             <field name="journal_id" position="before">
                 <field name="project_id" groups="project.group_project_user"/>
             </field>
+            <field name="product_template_id" position="attributes">
+                <attribute name="context">{'hide_product_type': context.get('hide_product_type')}</attribute>
+            </field>
         </field>
     </record>
 

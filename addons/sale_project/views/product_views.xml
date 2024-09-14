@@ -9,6 +9,9 @@
             <field name="invoice_policy" position="attributes">
                 <attribute name="invisible" separator="or" add="type == 'service'"/>
             </field>
+            <field name="type" position="attributes">
+                <attribute name="invisible">context.get('hide_product_type')</attribute>
+            </field>
             <field name="service_tracking" position="attributes">
                 <attribute name="invisible" remove="1" separator="or"/>
             </field>

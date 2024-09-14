@@ -149,7 +149,7 @@ class ProjectTask(models.Model):
             "res_model": "sale.order",
             "name": _("Sales Order"),
             "views": [[False, "list"], [False, "kanban"], [False, "form"]],
-            "context": {"create": False, "show_sale": True},
+            "context": {"create": False, "show_sale": True, "hide_product_type": True},
             "domain": [["id", "in", so_ids]],
         }
         if len(so_ids) == 1:
