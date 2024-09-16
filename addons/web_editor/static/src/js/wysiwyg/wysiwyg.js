@@ -17,7 +17,7 @@ import { ImageCrop } from '@web_editor/js/wysiwyg/widgets/image_crop';
 
 import * as wysiwygUtils from "@web_editor/js/common/wysiwyg_utils";
 import weUtils from "@web_editor/js/common/utils";
-import { isSelectionInSelectors, peek } from '@web_editor/js/editor/odoo-editor/src/utils/utils';
+import { peek } from '@web_editor/js/editor/odoo-editor/src/utils/utils';
 import { PeerToPeer, RequestError } from "@web_editor/js/wysiwyg/PeerToPeer";
 import { uniqueId } from "@web/core/utils/functions";
 import { groupBy } from "@web/core/utils/arrays";
@@ -2350,29 +2350,6 @@ export class Wysiwyg extends Component {
 
         return finalOptions;
     }
-    _getBannerCommand(title, alertClass, iconClass, description, priority) {
-        return {
-            category: _t('Banners'),
-            name: title,
-            priority: priority,
-            description: description,
-            fontawesome: iconClass,
-            isDisabled: () => isSelectionInSelectors('.o_editor_banner') || !this.odooEditor.isSelectionInBlockRoot(),
-            callback: () => {
-                const bannerElement = parseHTML(this.odooEditor.document, `
-                    <div class="o_editor_banner o_not_editable lh-1 d-flex align-items-center alert alert-${alertClass} pb-0 pt-3" role="status" data-oe-protected="true">
-                        <i class="fs-4 fa ${iconClass} mb-3" aria-label="${_t(title)}"></i>
-                        <div class="w-100 px-3" data-oe-protected="false">
-                            <p><br></p>
-                        </div>
-                    </div>
-                `).childNodes[0];
-                this.odooEditor.execCommand('insert', bannerElement);
-                this.odooEditor.activateContenteditable();
-                setSelection(bannerElement.querySelector('.o_editor_banner > div > p'), 0);
-            },
-        }
-    }
     _insertSnippetMenu() {
         return this.snippetsMenu.insertBefore(this.$el);
     }
@@ -2418,12 +2395,8 @@ export class Wysiwyg extends Component {
     }
     _getPowerboxOptions() {
         const editorOptions = this.options;
-        const categories = [{ name: _t('Banners'), priority: 65 },];
+        const categories = [];
         const commands = [
-            this._getBannerCommand(_t('Banner Info'), 'info', 'fa-info-circle', _t('Insert an info banner'), 24),
-            this._getBannerCommand(_t('Banner Success'), 'success', 'fa-check-circle', _t('Insert a success banner'), 23),
-            this._getBannerCommand(_t('Banner Warning'), 'warning', 'fa-exclamation-triangle', _t('Insert a warning banner'), 22),
-            this._getBannerCommand(_t('Banner Danger'), 'danger', 'fa-exclamation-circle', _t('Insert a danger banner'), 21),
             {
                 category: _t('Structure'),
                 name: _t('Quote'),
