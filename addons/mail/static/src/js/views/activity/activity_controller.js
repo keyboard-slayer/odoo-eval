@@ -80,7 +80,11 @@ var ActivityController = BasicController.extend({
                 await messaging.openActivityForm({ thread });
                 this.trigger_up('reload');
             },
-        });
+        },
+        {
+                onClose: () => this.trigger_up("reload"),
+            }
+        );
     },
     /**
      * @private
