@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="True">
+
+        <record model='res.partner' id='par_cfa'>
+            <field name='name'>IHSAR DIŞ TİCARET ANONİM ŞİRKETİ</field>
+            <field name='vat'>4700076806</field>
+            <field name="country_id" ref="base.tr"/>
+            <field name="is_company">True</field>
+        </record>
+
+    </data>
+</odoo>
