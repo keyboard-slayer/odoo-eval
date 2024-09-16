@@ -64,7 +64,6 @@
         <record id="route_warehouse0_mto" model='stock.route'>
             <field name="name">Replenish on Order (MTO)</field>
             <field name="company_id"></field>
-            <field name="active">False</field>
             <field name="sequence">5</field>
         </record>
 
