@@ -680,6 +680,10 @@ def route(route=None, **routing):
 
         * ``'user'``: The user must be authenticated and the current
           request will be executed using the rights of the user.
+        * ``'bearer'``: The user is authenticated using "Authorization"
+          header in the request and the request will be executed using
+          their's permissions. If no header is given for an authenticated
+          user, a confirmation form will be displayed (to avoid CSRF).
         * ``'public'``: The user may or may not be authenticated. If he
           isn't, the current request will be executed using the shared
           Public user.
