@@ -52,6 +52,12 @@ _monkeypatches.patch_all()
 # ----------------------------------------------------------
 # Imports
 # ----------------------------------------------------------
+# To avoid cycles: here are the imports between modules
+# modules (registry) -> sql_db
+# api -> modules
+# fields -> api
+# models -> api, fields, domains/osv
+# ----------------------------------------------------------
 from . import upgrade  # this namespace must be imported first
 from . import addons
 from . import conf

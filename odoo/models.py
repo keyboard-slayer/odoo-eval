@@ -49,10 +49,10 @@ import psycopg2.extensions
 from psycopg2.extras import Json
 
 import odoo
-from . import SUPERUSER_ID
 from . import api
+from . import fields
 from . import tools
-from .api import NewId
+from .api import NewId, SUPERUSER_ID
 from .exceptions import AccessError, MissingError, ValidationError, UserError
 from .tools import (
     clean_context, config, date_utils, discardattr,
@@ -68,8 +68,12 @@ from .tools.translate import _, LazyTranslate
 import typing
 if typing.TYPE_CHECKING:
     from collections.abc import Reversible
+    from .api import Self, ValuesType, IdType
     from .modules.registry import Registry
-    from odoo.api import Self, ValuesType, IdType
+
+    # XXX real import
+    from .osv import expression
+    from .fields import Field, Datetime, Command
 
 
 _lt = LazyTranslate('base')
@@ -7438,9 +7442,3 @@ PGERROR_TO_OE = defaultdict(
         '23514': convert_pgerror_constraint,
     },
 )
-
-# keep those imports here to avoid dependency cycle errors
-# pylint: disable=wrong-import-position
-from . import fields
-from .osv import expression
-from .fields import Field, Datetime, Command

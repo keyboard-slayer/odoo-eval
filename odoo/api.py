@@ -30,15 +30,16 @@ except ImportError:
     from decorator import decorator
 
 from .exceptions import AccessError, UserError, CacheMiss
+from .modules.registry import Registry
+from .sql_db import BaseCursor
 from .tools import clean_context, frozendict, lazy_property, OrderedSet, Query, SQL
 from .tools.translate import get_translation, get_translated_module, LazyGettext
-from odoo.tools.misc import StackMap
+from .tools.misc import StackMap
 
 import typing
 if typing.TYPE_CHECKING:
     from collections.abc import Callable
-    from odoo.sql_db import BaseCursor
-    from odoo.models import BaseModel
+    from .models import BaseModel
     try:
         from typing_extensions import Self  # noqa: F401
     except ImportError:
@@ -54,6 +55,7 @@ ValuesType = dict[str, typing.Any]
 T = typing.TypeVar('T')
 
 _logger = logging.getLogger(__name__)
+SUPERUSER_ID = 1  # hard-coded super-user id (a.k.a. administrator, or root user).
 
 
 class NewId:
@@ -1507,9 +1509,3 @@ class Starred:
 
     def __repr__(self):
         return f"{self.value!r}*"
-
-
-# keep those imports here in order to handle cyclic dependencies correctly
-from odoo import SUPERUSER_ID
-from odoo.modules.registry import Registry
-from .sql_db import BaseCursor

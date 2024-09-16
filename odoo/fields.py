@@ -27,6 +27,7 @@ from psycopg2.extras import Json as PsycopgJson
 from difflib import get_close_matches, unified_diff
 from hashlib import sha256
 
+from .exceptions import AccessError, MissingError, UserError
 from .models import check_property_field_value_name
 from .netsvc import ColoredFormatter, GREEN, RED, DEFAULT, COLOR_PATTERN
 from .tools import (
@@ -47,6 +48,13 @@ from odoo.osv import expression
 
 import typing
 from odoo.api import ContextType, DomainType, IdType, NewId, M, T
+
+if typing.TYPE_CHECKING:
+    # XXX real import
+    from .models import (
+        check_pg_name, expand_ids, is_definition_class,
+        BaseModel, PREFETCH_MAX,
+    )
 
 
 DATE_LENGTH = len(date.today().strftime(DATE_FORMAT))
@@ -5300,12 +5308,3 @@ def apply_required(model, field_name):
     field = model._fields[field_name]
     if field.store and field.required:
         sql.set_not_null(model.env.cr, model._table, field_name)
-
-
-# imported here to avoid dependency cycle issues
-# pylint: disable=wrong-import-position
-from .exceptions import AccessError, MissingError, UserError
-from .models import (
-    check_pg_name, expand_ids, is_definition_class,
-    BaseModel, PREFETCH_MAX,
-)
