@@ -7,6 +7,10 @@ RELEASE_LEVELS_DISPLAY = {ALPHA: ALPHA,
                           RELEASE_CANDIDATE: 'rc',
                           FINAL: ''}
 
+# supported python versions
+MIN_PY_VERSION = (3, 10)
+MAX_PY_VERSION = (3, 12)
+
 # version_info format: (MAJOR, MINOR, MICRO, RELEASE_LEVEL, SERIAL)
 # inspired by Python's own sys.version_info, in order to be
 # properly comparable using normal operators, for example:

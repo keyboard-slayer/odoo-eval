@@ -49,7 +49,6 @@ import psycopg2.extensions
 from psycopg2.extras import Json
 
 import odoo
-from . import SUPERUSER_ID
 from . import api
 from . import tools
 from .api import NewId
@@ -4514,7 +4513,7 @@ class BaseModel(metaclass=MetaModel):
         bad_names = {'id', 'parent_path'}
         if self._log_access:
             # the superuser can set log_access fields while loading registry
-            if not(self.env.uid == SUPERUSER_ID and not self.pool.ready):
+            if not (self.env.uid == api.SUPERUSER_ID and not self.pool.ready):
                 bad_names.update(LOG_ACCESS_COLUMNS)
 
         # set magic fields
@@ -4899,7 +4898,7 @@ class BaseModel(metaclass=MetaModel):
         bad_names = ['id', 'parent_path']
         if self._log_access:
             # the superuser can set log_access fields while loading registry
-            if not(self.env.uid == SUPERUSER_ID and not self.pool.ready):
+            if not (self.env.uid == api.SUPERUSER_ID and not self.pool.ready):
                 bad_names.extend(LOG_ACCESS_COLUMNS)
 
         # also discard precomputed readonly fields (to force their computation)

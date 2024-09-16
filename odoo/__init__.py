@@ -16,15 +16,46 @@ __path__ = [
 ]
 
 import sys
-MIN_PY_VERSION = (3, 10)
-MAX_PY_VERSION = (3, 12)
+from odoo.release import MIN_PY_VERSION
+# XXX here for the runbot:
+# MIN_PY_VERSION = (3, 10)
 assert sys.version_info > MIN_PY_VERSION, f"Outdated python version detected, Odoo requires Python >= {'.'.join(map(str, MIN_PY_VERSION))} to run."
 
 # ----------------------------------------------------------
 # Shortcuts
 # ----------------------------------------------------------
-# The hard-coded super-user id (a.k.a. administrator, or root user).
-SUPERUSER_ID = 1
+_GLOBAL_VARIABLES_LOCATION = {
+    # XXX future locations of variables
+    "SUPERUSER_ID": "odoo.api",
+    "Command": "odoo.fields",
+    "_": "odoo.tools",
+    "_lt": "odoo.tools.translate",
+    "MIN_PY_VERSION": "odoo.release",
+    "MAX_PY_VERSION": "odoo.release",
+}
+# store file names from which the warning was raised
+# used to stop raising warnings after X times
+_GLOBAL_VARIABLE_WARNING = set()
+
+
+def __getattr__(name: str):
+    """Get variables from the odoo module and show warnings"""
+    module_name = _GLOBAL_VARIABLES_LOCATION.get(name)
+    if not module_name:
+        raise AttributeError(f"Module {__name__!r} has not attribute {name!r}.")
+
+    module = __import__(module_name)
+
+    import inspect  # noqa: PLC0415
+    import warnings  # noqa: PLC0415
+
+    frame = inspect.currentframe().f_back
+    _GLOBAL_VARIABLE_WARNING.add(frame.f_code.co_filename)
+
+    if len(_GLOBAL_VARIABLE_WARNING) < 10:
+        # cannot import odoo.tools.lazy here (results in circular dependency)
+        warnings.warn(f"You'll find {name!r} at {module.__name__!r}", DeprecationWarning)
+    return getattr(module, name)
 
 
 def registry(database_name=None):
@@ -70,8 +101,6 @@ from . import tools
 from . import models
 from . import fields
 from . import api
-from odoo.tools.translate import _, _lt
-from odoo.fields import Command
 
 # ----------------------------------------------------------
 # Other imports, which may require stuff from above

@@ -13,6 +13,7 @@ __all__ = [
     'model',
     'constrains', 'depends', 'onchange', 'returns',
     'call_kw',
+    'SUPERUSER_ID',
 ]
 
 import logging
@@ -32,7 +33,7 @@ except ImportError:
 from .exceptions import AccessError, UserError, CacheMiss
 from .tools import clean_context, frozendict, lazy_property, OrderedSet, Query, SQL
 from .tools.translate import get_translation, get_translated_module, LazyGettext
-from odoo.tools.misc import StackMap
+from .tools.misc import StackMap
 
 import typing
 if typing.TYPE_CHECKING:
@@ -54,6 +55,8 @@ ValuesType = dict[str, typing.Any]
 T = typing.TypeVar('T')
 
 _logger = logging.getLogger(__name__)
+
+SUPERUSER_ID = 1  # the administrative user ID
 
 
 class NewId:
@@ -1510,6 +1513,5 @@ class Starred:
 
 
 # keep those imports here in order to handle cyclic dependencies correctly
-from odoo import SUPERUSER_ID
-from odoo.modules.registry import Registry
+from .modules.registry import Registry
 from .sql_db import BaseCursor

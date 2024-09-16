@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+import logging
 from contextlib import suppress
 
-import odoo
-import logging
+from odoo.tools import file_open
 
 _logger = logging.getLogger(__name__)
 
@@ -21,7 +20,7 @@ def get_neutralization_queries(modules):
     for module in modules:
         filename = f'{module}/data/neutralize.sql'
         with suppress(FileNotFoundError):
-            with odoo.tools.misc.file_open(filename) as file:
+            with file_open(filename) as file:
                 yield file.read().strip()
 
 def neutralize_database(cursor):
