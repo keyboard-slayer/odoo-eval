@@ -173,6 +173,8 @@ export class PosStore extends Reactive {
         // FIXME POSREF: the hardwareProxy needs the pos and the pos needs the hardwareProxy. Maybe
         // the hardware proxy should just be part of the pos service?
         this.hardwareProxy.pos = this;
+
+        this.syncingOrders = new Set();
         await this.load_server_data();
         if (this.config.use_proxy) {
             await this.connectToProxy();
@@ -1239,6 +1241,17 @@ export class PosStore extends Reactive {
         if (!orders || !orders.length) {
             return Promise.resolve([]);
         }
+
+        // Filter out orders that are already being synced
+        const ordersToSync = orders.filter(order => !this.syncingOrders.has(order.id));
+
+        if (!ordersToSync.length) {
+            return Promise.resolve([]);
+        }
+
+        // Add these order IDs to the syncing set
+        ordersToSync.forEach(order => this.syncingOrders.add(order.id));
+
         this.set_synch("connecting", orders.length);
         options = options || {};
 
@@ -1296,6 +1309,8 @@ export class PosStore extends Reactive {
             }
             this.set_synch("disconnected");
             throw error;
+        } finally {
+            order_ids_to_sync.forEach(order_id => this.syncingOrders.delete(order_id));
         }
     }
 
