@@ -14,20 +14,21 @@ class WebsiteSale(main.WebsiteSale):
     @http.route()
     def pricelist(self, promo, **post):
         order = request.website.sale_get_order()
-        coupon_status = order._try_apply_code(promo)
-        if coupon_status.get('not_found'):
-            return super(WebsiteSale, self).pricelist(promo, **post)
-        elif coupon_status.get('error'):
-            request.session['error_promo_code'] = coupon_status['error']
-        elif 'error' not in coupon_status:
-            reward_successfully_applied = True
-            if len(coupon_status) == 1:
-                coupon, rewards = next(iter(coupon_status.items()))
-                if request.env.context.get('product_id') or (len(rewards) == 1 and not rewards.multi_product):
-                    reward_successfully_applied = self._apply_reward(order, rewards, coupon)
+        if order:
+            coupon_status = order._try_apply_code(promo)
+            if coupon_status.get('not_found'):
+                return super().pricelist(promo, **post)
+            elif coupon_status.get('error'):
+                request.session['error_promo_code'] = coupon_status['error']
+            elif 'error' not in coupon_status:
+                reward_successfully_applied = True
+                if len(coupon_status) == 1:
+                    coupon, rewards = next(iter(coupon_status.items()))
+                    if request.env.context.get('product_id') or (len(rewards) == 1 and not rewards.multi_product):
+                        reward_successfully_applied = self._apply_reward(order, rewards, coupon)
 
-            if reward_successfully_applied:
-                request.session['successful_code'] = promo
+                if reward_successfully_applied:
+                    request.session['successful_code'] = promo
         return request.redirect(post.get('r', '/shop/cart'))
 
     @http.route()
