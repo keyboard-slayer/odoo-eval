@@ -5,7 +5,7 @@
         <field name="model">resource.calendar</field>
         <field name="inherit_id" ref="resource.view_resource_calendar_tree"/>
         <field name="arch" type="xml">
-            <field name="company_id" position="after">
+            <field name="full_time_required_hours" position="before">
                 <field name="contracts_count"/>
             </field>
         </field>

@@ -18,7 +18,7 @@ from odoo.exceptions import ValidationError
 from odoo.osv import expression
 from odoo.tools.float_utils import float_round
 
-from odoo.tools import date_utils, ormcache
+from odoo.tools import date_utils, float_compare, ormcache
 from .utils import Intervals, float_to_time, make_aware, datetime_to_string, string_to_datetime
 
 
@@ -74,6 +74,10 @@ class ResourceCalendar(models.Model):
                     (0, 0, {'name': _('Friday Lunch'), 'dayofweek': '4', 'hour_from': 12, 'hour_to': 13, 'day_period': 'lunch'}),
                     (0, 0, {'name': _('Friday Afternoon'), 'dayofweek': '4', 'hour_from': 13, 'hour_to': 17, 'day_period': 'afternoon'})
                 ]
+        if 'full_time_required_hours' in fields and not res.get('full_time_required_hours'):
+            company_id = res.get('company_id', self.env.company.id)
+            company = self.env['res.company'].browse(company_id)
+            res['full_time_required_hours'] = company.resource_calendar_id.full_time_required_hours
         return res
 
     name = fields.Char(required=True)
@@ -101,12 +105,38 @@ class ResourceCalendar(models.Model):
     tz_offset = fields.Char(compute='_compute_tz_offset', string='Timezone offset')
     two_weeks_calendar = fields.Boolean(string="Calendar in 2 weeks mode")
     two_weeks_explanation = fields.Char('Explanation', compute="_compute_two_weeks_explanation")
+    hours_per_week = fields.Float(compute="_compute_hours_per_week", string="Hours per Week", store=True)
+    full_time_required_hours = fields.Float(string="Company Full Time", help="Number of hours to work on the company schedule to be considered as fulltime.")
+    is_fulltime = fields.Boolean(compute='_compute_is_fulltime', string="Is Full Time")
+    work_time_rate = fields.Float(string='Work Time Rate', compute='_compute_work_time_rate', help='Work time rate versus full time working schedule, should be between 0 and 100 %.')
 
     @api.depends('attendance_ids', 'attendance_ids.hour_from', 'attendance_ids.hour_to', 'two_weeks_calendar')
     def _compute_hours_per_day(self):
         for calendar in self:
             attendances = calendar._get_global_attendances()
             calendar.hours_per_day = calendar._get_hours_per_day(attendances)
+
+    @api.depends('attendance_ids.hour_from', 'attendance_ids.hour_to')
+    def _compute_hours_per_week(self):
+        for calendar in self:
+            sum_hours = sum(
+                (a.hour_to - a.hour_from) for a in calendar.attendance_ids if a._is_work_period())
+            calendar.hours_per_week = sum_hours / 2 if calendar.two_weeks_calendar else sum_hours
+
+    def _compute_is_fulltime(self):
+        for calendar in self:
+            calendar.is_fulltime = not float_compare(calendar.full_time_required_hours, calendar.hours_per_week, 3)
+
+    @api.depends('hours_per_week', 'full_time_required_hours')
+    def _compute_work_time_rate(self):
+        for calendar in self:
+            if not calendar.hours_per_week:
+                calendar.work_time_rate = calendar.hours_per_week
+            else:
+                if calendar.full_time_required_hours:
+                    calendar.work_time_rate = calendar.hours_per_week / calendar.full_time_required_hours * 100
+                else:
+                    calendar.work_time_rate = calendar.hours_per_week / calendar.hours_per_week * 100
 
     @api.depends('company_id')
     def _compute_attendance_ids(self):
@@ -185,6 +215,18 @@ class ResourceCalendar(models.Model):
             return 0
 
         return float_round(hour_count / float(number_of_days), precision_digits=2)
+
+    def _get_days_per_week(self):
+        # Returns the number of days per week during which the employee is working
+        # For examples
+        # 38h / weeks -> 5 days
+        # 19h / weeks (M/T/Wam) -> 3 days
+        # 19h / weeks (Mam/Tam/Wam/Tam/Fam) -> 5 days
+        self.ensure_one()
+        if self.two_weeks_calendar:
+            return 5 * self.work_time_rate / 100
+        return len(set(self.attendance_ids.filtered(
+            lambda a: a._is_work_period()).mapped('dayofweek')))
 
     def switch_calendar_type(self):
         if not self.two_weeks_calendar:

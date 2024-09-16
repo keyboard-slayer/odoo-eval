@@ -9,6 +9,9 @@
                <field name="company_id" groups="base.group_multi_company"/>
                <separator/>
                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+               <group expand='0'>
+                    <filter name="groupby_company" context="{'group_by': 'company_id'}"/>
+                </group>
            </search>
         </field>
     </record>
@@ -58,11 +61,31 @@
                             <field name="tz" widget="timezone_mismatch" options="{'tz_offset_field': 'tz_offset', 'mismatch_title': 'Timezone Mismatch : This timezone is different from that of your browser.\nPlease, be mindful of this when setting the working hours or the time off.'}" />
                             <field name="tz_offset" invisible="1"/>
                         </group>
+                        <group>
+                            <label for="full_time_required_hours"/>
+                            <div>
+                                <field name="full_time_required_hours" nolabel="1" style="width: 10%" widget="float_time"/>
+                                <span> hours/week</span>
+                            </div>
+                            <label for="work_time_rate" string="Work Time Rate"/>
+                            <div>
+                                <field name="work_time_rate" nolabel="1"  style="width: 10%"/>
+                                <span> %</span>
+                            </div>
+                            <field name="is_fulltime" invisible="1"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="Working Hours" name="working_hours">
                             <field name="two_weeks_explanation" invisible="not two_weeks_calendar"/>
                             <field name="attendance_ids" widget="section_one2many"/>
+                            <group class="oe_subtotal_footer">
+                                <label for="hours_per_week" string="Total"/>
+                                <div class="d-flex">
+                                    <field name="hours_per_week" nolabel="1" widget="float_time"/>
+                                    <span class="ms-2"> hours/week</span>
+                                </div>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
@@ -76,7 +99,9 @@
         <field name="arch" type="xml">
             <list string="Working Time">
                 <field name="name" string="Working Time"/>
+                <field name="work_time_rate"/>
                 <field name="company_id" groups="base.group_multi_company"/>
+                <field name="full_time_required_hours" widget="float_time" optional="hide"/>
             </list>
         </field>
     </record>
