@@ -1,8 +1,18 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+<<<<<<< saas-17.2
 import datetime
 from odoo.fields import Command
 from odoo.tests import Form, tagged
+||||||| 4fab9428ede61d2219bf5365d49de164b3054b87
+from odoo import Command
+from odoo.tests import common, Form
+=======
+from freezegun import freeze_time
+
+from odoo import Command
+from odoo.tests import common, Form
+>>>>>>> 9e00768c6db0af2977b591f22845025a8f99309f
 from odoo.tools import float_compare
 
 from odoo.addons.delivery.tests.common import DeliveryCommon
@@ -509,12 +519,27 @@ class TestDeliveryCost(DeliveryCommon, SaleCommon):
             'currency_id': currency_bells.id,
         })
 
+<<<<<<< saas-17.2
         self.env['res.currency.rate'].with_company(nook_inc).create({
             'name': datetime.date(2000, 1, 1),
             'currency_id': currency_bells.id,
             'company_rate': 0.5,
             'inverse_company_rate': 2,
         })
+||||||| 4fab9428ede61d2219bf5365d49de164b3054b87
+        self.env['res.currency.rate'].with_company(nook_inc).create({
+            'currency_id': currency_bells.id,
+            'company_rate': 0.5,
+            'inverse_company_rate': 2,
+        })
+=======
+        with freeze_time('2000-01-01'):  # Make sure the rate is in the past
+            self.env['res.currency.rate'].with_company(nook_inc).create({
+                'currency_id': currency_bells.id,
+                'company_rate': 0.5,
+                'inverse_company_rate': 2,
+            })
+>>>>>>> 9e00768c6db0af2977b591f22845025a8f99309f
 
         # Company less shipping method
         product_delivery_rule = self.env['product.product'].with_company(nook_inc).create({
