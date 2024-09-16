@@ -376,12 +376,6 @@ export class ColorPalette extends Component {
         for (const color of this.props.getCustomColors()) {
             this._addCustomColor(existingColors, color);
         }
-        weUtils.getCSSVariableValue('custom-colors', this.style).split(' ').forEach(v => {
-            const color = weUtils.getCSSVariableValue(v.substring(1, v.length - 1), this.style);
-            if (isCSSColor(color)) {
-                this._addCustomColor(existingColors, color);
-            }
-        });
         for (const color of this.props.getEditableCustomColors()) {
             this._addCustomColor(existingColors, color);
         }
