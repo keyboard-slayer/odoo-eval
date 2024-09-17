@@ -677,9 +677,9 @@ class TestAccountEarlyPaymentDiscount(AccountTestInvoicingCommon):
             ],
             'invoice_payment_term_id': self.early_pay_10_percents_10_days.id,
         })
-        self.assertEqual(len(inv.line_ids), 5) # 1 prod, 1 tax, 1 epd, 1 epd tax discount, 1 payment terms
+        self.assertEqual(len(inv.line_ids), 5)  # 1 prod, 1 tax, 1 epd, 1 epd tax discount, 1 payment terms
         inv.write({'invoice_payment_term_id': self.pay_terms_a.id})
-        self.assertEqual(len(inv.line_ids), 3) # 1 prod, 1 tax, 1 payment terms
+        self.assertEqual(len(inv.line_ids), 3)  # 1 prod, 1 tax, 1 payment terms
         inv.write({'invoice_payment_term_id': self.early_pay_10_percents_10_days.id})
         self.assertEqual(len(inv.line_ids), 5)
 
@@ -705,10 +705,10 @@ class TestAccountEarlyPaymentDiscount(AccountTestInvoicingCommon):
             ],
             'invoice_payment_term_id': self.early_pay_10_percents_10_days.id,
         })
-        self.assertEqual(len(inv.line_ids), 8) # 2 prod, 2 tax, 1 epd, 2 epd tax discount, 1 payment terms
+        self.assertEqual(len(inv.line_ids), 8)  # 2 prod, 2 tax, 1 epd, 2 epd tax discount, 1 payment terms
         inv.invoice_line_ids[1].unlink()
-        self.assertEqual(len(inv.line_ids), 5) # 1 prod, 1 tax, 1 epd, 1 epd tax discount, 1 payment terms
-        self.assertEqual(inv.amount_tax, 9.00) # $100.0 @ 10% tax (-10% epd)
+        self.assertEqual(len(inv.line_ids), 5)  # 1 prod, 1 tax, 1 epd, 1 epd tax discount, 1 payment terms
+        self.assertEqual(inv.amount_tax, 9.00)  # $100.0 @ 10% tax (-10% epd)
 
     def test_mixed_epd_with_rounding_issue(self):
         """

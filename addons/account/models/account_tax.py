@@ -2042,7 +2042,7 @@ class AccountTax(models.Model):
             'nulled_candidate_lines': [],
         }
         for line in base_lines:
-            line['discount_amount'] = line['discount_amount_before_dispatching']
+            line.setdefault('discount_amount', line['discount_amount_before_dispatching'])
 
             if line['currency_id'].compare_amounts(line['gross_price_subtotal'], 0) < 0.0:
                 results['orphan_negative_lines'].append(line)
@@ -2068,6 +2068,8 @@ class AccountTax(models.Model):
                 net_price_subtotal = neg_base_line['gross_price_subtotal'] - neg_base_line['discount_amount']
                 other_net_price_subtotal = candidate['gross_price_subtotal'] - candidate['discount_amount']
                 discount_to_distribute = min(other_net_price_subtotal, -net_price_subtotal)
+                if candidate['currency_id'].is_zero(discount_to_distribute):
+                    continue
 
                 candidate['discount_amount'] += discount_to_distribute
                 neg_base_line['discount_amount'] -= discount_to_distribute
