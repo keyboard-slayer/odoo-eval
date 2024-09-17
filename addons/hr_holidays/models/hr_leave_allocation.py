@@ -489,6 +489,14 @@ class HolidaysAllocation(models.Model):
             # all subsequent runs, at every loop:
             # get current level and normal period boundaries, then set nextcall, adjusted for level transition and carryover
             # add days, trimmed if there is a maximum_leave
+            at_period_start = allocation.accrual_plan_id.accrued_gain_time == 'start'
+
+            def carryover(alloction, current_level):
+                if current_level.action_with_unused_accruals in ['lost', 'maximum']:
+                    allocation_days = allocation.number_of_days + leaves_taken
+                    allocation_max_days = current_level.postpone_max_days + leaves_taken
+                    allocation.number_of_days = min(allocation_days, allocation_max_days)
+
             while allocation.nextcall <= date_to:
                 (current_level, current_level_idx) = allocation._get_current_accrual_plan_level_id(allocation.nextcall)
                 if not current_level:
@@ -510,16 +518,13 @@ class HolidaysAllocation(models.Model):
                         nextcall = min(nextcall, current_level_last_date)
                 # 2. On carry-over date
                 carryover_date = allocation._get_carryover_date(allocation.nextcall)
-                if allocation.nextcall < carryover_date < nextcall:
+                if not at_period_start and allocation.nextcall < carryover_date < nextcall:
                     nextcall = min(nextcall, carryover_date)
                 if not allocation.already_accrued:
                     allocation._add_days_to_allocation(current_level, current_level_maximum_leave, leaves_taken, period_start, period_end)
                 # if it's the carry-over date, adjust days using current level's carry-over policy, then continue
-                if allocation.nextcall == carryover_date:
-                    if current_level.action_with_unused_accruals in ['lost', 'maximum']:
-                        allocation_days = allocation.number_of_days + leaves_taken
-                        allocation_max_days = current_level.postpone_max_days + leaves_taken
-                        allocation.number_of_days = min(allocation_days, allocation_max_days)
+                if allocation.nextcall <= carryover_date < nextcall:
+                    carryover(allocation, current_level)
 
                 allocation.lastcall = allocation.nextcall
                 allocation.nextcall = nextcall
@@ -530,7 +535,7 @@ class HolidaysAllocation(models.Model):
 
             # if plan.accrued_gain_time == 'start', process next period and set flag 'already_accrued', this will skip adding days
             # once, preventing double allocation.
-            if allocation.accrual_plan_id.accrued_gain_time == 'start':
+            if at_period_start:
                 # check that we are at the start of a period, not on a carry-over or level transition date
                 current_level = current_level or allocation.accrual_plan_id.level_ids[0]
                 period_start = current_level._get_previous_date(allocation.lastcall)
@@ -539,6 +544,9 @@ class HolidaysAllocation(models.Model):
                 if current_level.cap_accrued_time:
                     current_level_maximum_leave = current_level.maximum_leave if current_level.added_value_type == "day" else current_level.maximum_leave / (allocation.employee_id.sudo().resource_id.calendar_id.hours_per_day or HOURS_PER_DAY)
                 allocation._add_days_to_allocation(current_level, current_level_maximum_leave, leaves_taken, allocation.lastcall, allocation.nextcall)
+                carryover_date = allocation._get_carryover_date(allocation.lastcall)
+                if allocation.lastcall < carryover_date <= date_to:
+                    carryover(allocation, current_level)
                 allocation.already_accrued = True
 
     @api.model

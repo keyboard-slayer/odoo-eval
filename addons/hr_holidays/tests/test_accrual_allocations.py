@@ -1355,7 +1355,7 @@ class TestAccrualAllocations(TestHrHolidaysCommon):
 
         with freeze_time("2024-04-27"):
             allocation._update_accrual()
-        self.assertAlmostEqual(allocation.number_of_days, 1.03, 2, "Allocations lost, then 1 accrued.")
+        self.assertAlmostEqual(allocation.number_of_days, 1.0, 2, "Allocations lost, then 1 accrued.")
 
     def test_accrual_carryover_at_other(self):
         accrual_plan = self.env['hr.leave.accrual.plan'].with_context(tracking_disable=True).create({
@@ -1391,6 +1391,44 @@ class TestAccrualAllocations(TestHrHolidaysCommon):
         with freeze_time("2024-04-20"):
             allocation._update_accrual()
         self.assertEqual(allocation.number_of_days, 69, "Carryover at other date, level's maximum leave is 69.")
+
+    def test_accrual_carryover_all_at_other(self):
+        accrual_plan = self.env['hr.leave.accrual.plan'].with_context(tracking_disable=True).create({
+            'name': 'Accrual Plan For Test',
+            'accrued_gain_time': 'start',
+            'carryover_date': 'other',
+            'carryover_day': 1,
+            'carryover_month': 'jul',
+            'level_ids': [(0, 0, {
+                'added_value_type': 'day',
+                'start_count': 1,
+                'start_type': 'day',
+                'added_value': 12,
+                'first_day': 1,
+                'yearly_day': 1,
+                'yearly_month': 'jan',
+                'frequency': 'yearly',
+                'cap_accrued_time': 100,
+                'action_with_unused_accruals': 'all',
+            })],
+        })
+        with freeze_time("2023-12-01"):
+            allocation = self.env['hr.leave.allocation'].with_user(self.user_hrmanager_id).with_context(tracking_disable=True).create({
+                'name': 'Accrual allocation for employee',
+                'accrual_plan_id': accrual_plan.id,
+                'employee_id': self.employee_emp.id,
+                'holiday_status_id': self.leave_type.id,
+                'number_of_days': 0,
+                'allocation_type': 'accrual',
+                'date_from': '2023-12-01',
+            })
+            allocation.action_validate()
+
+        alloc_december = 30 / 365 * 12
+
+        with freeze_time("2024-07-02"):
+            allocation._update_accrual()
+        self.assertAlmostEqual(allocation.number_of_days, 12 + alloc_december, 3, "carryover all should not affect allocated amount")
 
     def test_accrual_carrover_other_period_end_multi_level(self):
         accrual_plan = self.env['hr.leave.accrual.plan'].with_context(tracking_disable=True).create({
