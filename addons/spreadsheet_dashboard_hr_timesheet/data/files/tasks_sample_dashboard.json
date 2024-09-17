@@ -1,0 +1,847 @@
+{
+  "version": 21,
+  "sheets": [
+      {
+          "id": "sheet1",
+          "name": "Dashboard",
+          "colNumber": 7,
+          "rowNumber": 49,
+          "rows": {
+              "6": {
+                  "size": 40
+              },
+              "22": {
+                  "size": 40
+              },
+              "23": {
+                  "size": 40
+              },
+              "24": {
+                  "size": 30
+              },
+              "25": {
+                  "size": 30
+              },
+              "26": {
+                  "size": 30
+              },
+              "27": {
+                  "size": 30
+              },
+              "28": {
+                  "size": 30
+              },
+              "29": {
+                  "size": 30
+              },
+              "30": {
+                  "size": 30
+              },
+              "31": {
+                  "size": 30
+              },
+              "32": {
+                  "size": 30
+              },
+              "33": {
+                  "size": 30
+              },
+              "34": {
+                  "size": 30
+              },
+              "35": {
+                  "size": 40
+              },
+              "36": {
+                  "size": 40
+              },
+              "37": {
+                  "size": 30
+              },
+              "38": {
+                  "size": 30
+              },
+              "39": {
+                  "size": 30
+              },
+              "40": {
+                  "size": 30
+              },
+              "41": {
+                  "size": 30
+              },
+              "42": {
+                  "size": 30
+              },
+              "43": {
+                  "size": 30
+              },
+              "44": {
+                  "size": 30
+              },
+              "45": {
+                  "size": 30
+              },
+              "46": {
+                  "size": 30
+              },
+              "47": {
+                  "size": 30
+              }
+          },
+          "cols": {
+              "0": {
+                  "size": 275
+              },
+              "1": {
+                  "size": 103
+              },
+              "2": {
+                  "size": 100
+              },
+              "3": {
+                  "size": 50
+              },
+              "4": {
+                  "size": 275
+              },
+              "5": {
+                  "size": 103
+              },
+              "6": {
+                  "size": 100
+              }
+          },
+          "merges": [],
+          "cells": {
+              "A7": {
+                  "content": "[Tasks by Stage](odoo://view/{\"viewType\":\"graph\",\"action\":{\"domain\":[],\"context\":{\"group_by\":[\"stage_id\",\"state\"],\"graph_measure\":\"__count\",\"graph_mode\":\"bar\",\"graph_groupbys\":[\"stage_id\",\"state\"]},\"modelName\":\"report.project.task.user\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"list\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Tasks Analysis\"})"
+              },
+              "A23": {
+                  "content": "[Top Assignees](odoo://view/{\"viewType\":\"pivot\",\"action\":{\"domain\":[[\"user_ids\",\"!=\",false]],\"context\":{\"group_by\":[],\"pivot_measures\":[\"effective_hours\",\"nbr\"],\"pivot_column_groupby\":[],\"pivot_row_groupby\":[\"user_ids\"]},\"modelName\":\"report.project.task.user\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"list\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Tasks Analysis\"})"
+              },
+              "A24": {
+                  "content": "=_t(\"Assignee\")"
+              },
+              "A36": {
+                  "content": "[Top Tags](odoo://view/{\"viewType\":\"pivot\",\"action\":{\"domain\":[[\"tag_ids\",\"!=\",false]],\"context\":{\"group_by\":[\"tag_ids\"],\"pivot_measures\":[\"effective_hours\",\"nbr\"],\"pivot_column_groupby\":[],\"pivot_row_groupby\":[\"tag_ids\"]},\"modelName\":\"report.project.task.user\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"list\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Tasks Analysis\"})"
+              },
+              "A37": {
+                  "content": "=_t(\"Tag\")"
+              },
+              "B24": {
+                  "content": "=_t(\"Hours Logged\")"
+              },
+              "B37": {
+                  "content": "=_t(\"Hours Logged\")"
+              },
+              "C24": {
+                  "content": "=_t(\"Tasks\")"
+              },
+              "C37": {
+                  "content": "=_t(\"Tasks\")"
+              },
+              "E7": {
+                  "content": "[Tasks by State](odoo://view/{\"viewType\":\"graph\",\"action\":{\"domain\":[],\"context\":{\"group_by\":[\"state\"],\"graph_measure\":\"__count\",\"graph_mode\":\"pie\",\"graph_groupbys\":[\"state\"]},\"modelName\":\"report.project.task.user\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"list\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Tasks Analysis\"})"
+              },
+              "E23": {
+                  "content": "[Top Projects](odoo://view/{\"viewType\":\"pivot\",\"action\":{\"domain\":[[\"project_id\",\"!=\",false]],\"context\":{\"group_by\":[\"project_id\"],\"pivot_measures\":[\"effective_hours\",\"nbr\"],\"pivot_column_groupby\":[],\"pivot_row_groupby\":[\"project_id\"]},\"modelName\":\"report.project.task.user\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"list\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Tasks Analysis\"})"
+              },
+              "E24": {
+                  "content": "=_t(\"Project\")"
+              },
+              "E36": {
+                  "content": "[Top Customers](odoo://view/{\"viewType\":\"pivot\",\"action\":{\"domain\":[[\"partner_id\",\"!=\",false]],\"context\":{\"group_by\":[\"partner_id\"],\"pivot_measures\":[\"effective_hours\",\"nbr\"],\"pivot_column_groupby\":[],\"pivot_row_groupby\":[\"partner_id\"]},\"modelName\":\"report.project.task.user\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"list\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Tasks Analysis\"})"
+              },
+              "E37": {
+                  "content": "=_t(\"Customer\")"
+              },
+              "F24": {
+                  "content": "=_t(\"Hours Logged\")"
+              },
+              "F37": {
+                  "content": "=_t(\"Hours Logged\")"
+              },
+              "G24": {
+                  "content": "=_t(\"Tasks\")"
+              },
+              "G37": {
+                  "content": "=_t(\"Tasks\")"
+              }
+          },
+          "styles": {
+              "A7": 1,
+              "A23": 1,
+              "A36": 1,
+              "E7": 1,
+              "E23": 1,
+              "E36": 1,
+              "A24": 2,
+              "A37": 2,
+              "E24": 2,
+              "E37": 2,
+              "B24:C24": 3,
+              "B37:C37": 3,
+              "F24:G24": 3,
+              "F37:G37": 3
+          },
+          "formats": {},
+          "borders": {
+              "A7:C7": 1,
+              "A23:C23": 1,
+              "A36:C36": 1,
+              "E7:G7": 1,
+              "E23:G23": 1,
+              "E36:G36": 1,
+              "A8:C8": 2,
+              "A24:C24": 2,
+              "A37:C37": 2,
+              "E8:G8": 2,
+              "E24:G24": 2,
+              "E37:G37": 2,
+              "A25": 3,
+              "A38": 3,
+              "E25": 3,
+              "E38": 3,
+              "A26:A33": 4,
+              "A39:A44": 4,
+              "A46": 4,
+              "E26:E33": 4,
+              "E39:E44": 4,
+              "E46": 4,
+              "A34": 5,
+              "A47": 5,
+              "E34": 5,
+              "E47": 5,
+              "A35:C35": 6,
+              "A48:C48": 6,
+              "E35:G35": 6,
+              "E48:G48": 6,
+              "A45:C45": 7,
+              "E45:G45": 7,
+              "B25": 8,
+              "B38": 8,
+              "F25": 8,
+              "F38": 8,
+              "B26:B33": 9,
+              "B39:B44": 9,
+              "B46": 9,
+              "F26:F33": 9,
+              "F39:F44": 9,
+              "F46": 9,
+              "B34": 10,
+              "B47": 10,
+              "F34": 10,
+              "F47": 10,
+              "C25": 11,
+              "C38": 11,
+              "G25": 11,
+              "G38": 11,
+              "C26:C33": 12,
+              "C39:C44": 12,
+              "C46": 12,
+              "G26:G33": 12,
+              "G39:G44": 12,
+              "G46": 12,
+              "C34": 13,
+              "C47": 13,
+              "G34": 13,
+              "G47": 13
+          },
+          "conditionalFormats": [],
+          "figures": [
+              {
+                  "id": "8eae55ae-5435-49ee-ad58-dae822bbd9dd",
+                  "x": 0,
+                  "y": 10,
+                  "width": 200,
+                  "height": 108,
+                  "tag": "chart",
+                  "data": {
+                      "baselineColorDown": "#DC6965",
+                      "baselineColorUp": "#00A04A",
+                      "baselineMode": "difference",
+                      "title": {
+                          "text": "Tasks",
+                          "bold": true,
+                          "color": "#434343"
+                      },
+                      "type": "scorecard",
+                      "background": "#EFF6FF",
+                      "keyValue": "Data!D2",
+                      "humanize": false
+                  }
+              },
+              {
+                  "id": "746a2799-0dc9-4bce-b309-4cedffa67a3a",
+                  "x": 210,
+                  "y": 10,
+                  "width": 200,
+                  "height": 108,
+                  "tag": "chart",
+                  "data": {
+                      "baselineColorDown": "#DC6965",
+                      "baselineColorUp": "#00A04A",
+                      "baselineMode": "percentage",
+                      "title": {
+                          "text": "Hours Logged",
+                          "bold": true,
+                          "color": "#434343"
+                      },
+                      "type": "scorecard",
+                      "background": "#FEF2F2",
+                      "baseline": "Data!E3",
+                      "baselineDescr": "since last period",
+                      "keyValue": "Data!D3",
+                      "humanize": false
+                  }
+              },
+              {
+                  "id": "488da38e-01db-46a0-b4b0-e2fafc4ad390",
+                  "x": 420,
+                  "y": 10,
+                  "width": 200,
+                  "height": 108,
+                  "tag": "chart",
+                  "data": {
+                      "baselineColorDown": "#DC6965",
+                      "baselineColorUp": "#00A04A",
+                      "baselineMode": "difference",
+                      "title": {
+                          "text": "Time to Assign",
+                          "bold": true,
+                          "color": "#434343"
+                      },
+                      "type": "scorecard",
+                      "background": "#FEF2F2",
+                      "baseline": "Data!E4",
+                      "baselineDescr": "last period",
+                      "keyValue": "Data!D4",
+                      "humanize": false
+                  }
+              },
+              {
+                  "id": "ce7e17ea-eed0-493e-9968-5905c0969ca9",
+                  "x": 629,
+                  "y": 10,
+                  "width": 200,
+                  "height": 108,
+                  "tag": "chart",
+                  "data": {
+                      "baselineColorDown": "#DC6965",
+                      "baselineColorUp": "#00A04A",
+                      "baselineMode": "difference",
+                      "title": {
+                          "text": "Time to Close",
+                          "color": "#434343",
+                          "bold": true
+                      },
+                      "type": "scorecard",
+                      "background": "#FEF2F2",
+                      "baseline": "Data!E5",
+                      "baselineDescr": "last period",
+                      "keyValue": "Data!D5",
+                      "humanize": false
+                  }
+              },
+              {
+                  "id": "855be575-e6f3-4bb2-9e58-2b20edfacb84",
+                  "x": 527,
+                  "y": 178,
+                  "width": 483,
+                  "height": 344,
+                  "tag": "chart",
+                  "data": {
+                      "type": "pie",
+                      "dataSetsHaveTitle": false,
+                      "dataSets": [
+                          {
+                              "dataRange": "Data!B8:B11"
+                          }
+                      ],
+                      "legendPosition": "top",
+                      "labelRange": "Data!A8:A11",
+                      "title": {},
+                      "aggregated": false,
+                      "isDoughnut": false
+                  }
+              },
+              {
+                  "id": "aa6c212a-4f69-4db8-9673-7d606cf2d36d",
+                  "x": 0,
+                  "y": 178,
+                  "width": 478,
+                  "height": 344,
+                  "tag": "chart",
+                  "data": {
+                      "type": "bar",
+                      "dataSetsHaveTitle": true,
+                      "dataSets": [
+                          {
+                              "dataRange": "Data!B14:B18",
+                              "yAxisId": "y",
+                              "backgroundColor": "#93C47D"
+                          },
+                          {
+                              "dataRange": "Data!C14:C18"
+                          },
+                          {
+                              "dataRange": "Data!D14:D18"
+                          },
+                          {
+                              "dataRange": "Data!E14:E18"
+                          }
+                      ],
+                      "legendPosition": "top",
+                      "labelRange": "Data!A14:A18",
+                      "title": {},
+                      "stacked": true,
+                      "aggregated": false,
+                      "horizontal": false
+                  }
+              }
+          ],
+          "tables": [],
+          "areGridLinesVisible": true,
+          "isVisible": true,
+          "headerGroups": {
+              "ROW": [],
+              "COL": []
+          },
+          "dataValidationRules": [],
+          "comments": {}
+      },
+      {
+          "id": "add7aca3-0196-4975-a083-1a0ad034c57d",
+          "name": "Data",
+          "colNumber": 26,
+          "rowNumber": 90,
+          "rows": {},
+          "cols": {
+              "0": {
+                  "size": 150
+              },
+              "1": {
+                  "size": 119
+              },
+              "2": {
+                  "size": 97
+              },
+              "3": {
+                  "size": 144
+              },
+              "4": {
+                  "size": 138
+              }
+          },
+          "merges": [],
+          "cells": {
+              "A1": {
+                  "content": "=_t(\"KPI\")"
+              },
+              "A2": {
+                  "content": "=_t(\"Tasks\")"
+              },
+              "A3": {
+                  "content": "=_t(\"Hours logged\")"
+              },
+              "A4": {
+                  "content": "=_t(\"Days to assign\")"
+              },
+              "A5": {
+                  "content": "=_t(\"Days to close\")"
+              },
+              "A8": {
+                  "content": "=_t(\"In Progress\")"
+              },
+              "A9": {
+                  "content": "=_t(\"Changes Requested\")"
+              },
+              "A10": {
+                  "content": "=_t(\"Approved\")"
+              },
+              "A11": {
+                  "content": "=_t(\"Done\")"
+              },
+              "A15": {
+                  "content": "=_t(\"In Progress\")"
+              },
+              "A16": {
+                  "content": "=_t(\"Changes Requested\")"
+              },
+              "A17": {
+                  "content": "=_t(\"Approved\")"
+              },
+              "A18": {
+                  "content": "=_t(\"Done\")"
+              },
+              "B1": {
+                  "content": "=_t(\"Current\")"
+              },
+              "B2": {
+                  "content": "77"
+              },
+              "B3": {
+                  "content": "585.75"
+              },
+              "B4": {
+                  "content": "4"
+              },
+              "B5": {
+                  "content": "2"
+              },
+              "B8": {
+                  "content": "0.35"
+              },
+              "B9": {
+                  "content": "0.15"
+              },
+              "B10": {
+                  "content": "0.2"
+              },
+              "B11": {
+                  "content": "0.3"
+              },
+              "B14": {
+                  "content": "=_t(\"Specification\")"
+              },
+              "B15": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "B16": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "B17": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "B18": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "C1": {
+                  "content": "=_t(\"Previous\")"
+              },
+              "C3": {
+                  "content": "456"
+              },
+              "C4": {
+                  "content": "7"
+              },
+              "C5": {
+                  "content": "4"
+              },
+              "C14": {
+                  "content": "=_t(\"Implementation\")"
+              },
+              "C15": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "C16": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "C17": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "C18": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "D1": {
+                  "content": "=_t(\"Current\")"
+              },
+              "D2": {
+                  "content": "=FORMAT.LARGE.NUMBER(B2)"
+              },
+              "D3": {
+                  "content": "=FORMAT.LARGE.NUMBER(B3)"
+              },
+              "D4": {
+                  "content": "=_t(\"4 days\")"
+              },
+              "D5": {
+                  "content": "=_t(\"2 days\")"
+              },
+              "D14": {
+                  "content": "=_t(\"Testing\")"
+              },
+              "D15": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "D16": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "D17": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "D18": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "E1": {
+                  "content": "=_t(\"Previous\")"
+              },
+              "E2": {
+                  "content": "=FORMAT.LARGE.NUMBER(C2)"
+              },
+              "E3": {
+                  "content": "=FORMAT.LARGE.NUMBER(C3)"
+              },
+              "E4": {
+                  "content": "=ROUND(C4)"
+              },
+              "E5": {
+                  "content": "=ROUND(C5)"
+              },
+              "E14": {
+                  "content": "=_t(\"Deployed\")"
+              },
+              "E15": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "E16": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "E17": {
+                  "content": "=RANDBETWEEN(30,100)"
+              },
+              "E18": {
+                  "content": "=RANDBETWEEN(30,100)"
+              }
+          },
+          "styles": {
+              "A1:C1": 4,
+              "D1:E1": 5,
+              "D2:E3": 6,
+              "D4:E5": 7
+          },
+          "formats": {
+              "B2": 1,
+              "B3:C5": 2,
+              "E4:E5": 3
+          },
+          "borders": {},
+          "conditionalFormats": [],
+          "figures": [],
+          "tables": [],
+          "areGridLinesVisible": true,
+          "isVisible": true,
+          "headerGroups": {
+              "ROW": [],
+              "COL": []
+          },
+          "dataValidationRules": [],
+          "comments": {}
+      }
+  ],
+  "styles": {
+      "1": {
+          "textColor": "#01666b",
+          "fontSize": 16,
+          "bold": true
+      },
+      "2": {
+          "textColor": "#434343",
+          "bold": true,
+          "fontSize": 11
+      },
+      "3": {
+          "textColor": "#434343",
+          "bold": true,
+          "fontSize": 11,
+          "align": "center"
+      },
+      "4": {
+          "bold": true
+      },
+      "5": {
+          "bold": true,
+          "fillColor": "#f2f2f2"
+      },
+      "6": {
+          "fillColor": "#f2f2f2"
+      },
+      "7": {
+          "align": "right",
+          "fillColor": "#f2f2f2"
+      }
+  },
+  "formats": {
+      "1": "0",
+      "2": "#,##0.00",
+      "3": "#,##0"
+  },
+  "borders": {
+      "1": {
+          "bottom": {
+              "style": "thin",
+              "color": "#CCCCCC"
+          }
+      },
+      "2": {
+          "top": {
+              "style": "thin",
+              "color": "#CCCCCC"
+          }
+      },
+      "3": {
+          "bottom": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "right": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "4": {
+          "top": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "bottom": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "right": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "5": {
+          "top": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "bottom": {
+              "style": "thin",
+              "color": "#FFFFFF"
+          },
+          "right": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "6": {
+          "top": {
+              "style": "thin",
+              "color": "#FFFFFF"
+          }
+      },
+      "7": {
+          "top": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "bottom": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "8": {
+          "bottom": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "left": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "right": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "9": {
+          "top": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "bottom": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "left": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "right": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "10": {
+          "top": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "bottom": {
+              "style": "thin",
+              "color": "#FFFFFF"
+          },
+          "left": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "right": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "11": {
+          "bottom": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "left": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "12": {
+          "top": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "bottom": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "left": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      },
+      "13": {
+          "top": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          },
+          "bottom": {
+              "style": "thin",
+              "color": "#FFFFFF"
+          },
+          "left": {
+              "style": "thick",
+              "color": "#FFFFFF"
+          }
+      }
+  },
+  "revisionId": "START_REVISION",
+  "uniqueFigureIds": true,
+  "settings": {
+      "locale": {
+          "name": "English (US)",
+          "code": "en_US",
+          "thousandsSeparator": ",",
+          "decimalSeparator": ".",
+          "dateFormat": "mm/dd/yyyy",
+          "timeFormat": "hh:mm:ss",
+          "formulaArgSeparator": ",",
+          "weekStart": 7
+      }
+  },
+  "pivots": {},
+  "pivotNextId": 7,
+  "customTableStyles": {},
+  "odooVersion": 12,
+  "globalFilters": [],
+  "lists": {},
+  "listNextId": 1
+}
