@@ -30,10 +30,16 @@ export function callWithUnloadCheck(func, ...args) {
  * @returns {HTMLElement | null}
  */
 export function getScrollParent(element) {
-    if (!element) {
+    if (!element || element.nodeType === 9) {
         return null;
     }
-    if (element.scrollHeight > element.clientHeight) {
+    const overflowY = window.getComputedStyle(element).overflowY;
+    const isScrollable = overflowY === "auto" || overflowY === "scroll" ||
+        (overflowY === "visible" && element === element.ownerDocument.scrollingElement);
+    // getBoundingClientRect() is used to get the dimensions considering any CSS
+    // transformations. (e.g. CSS scale on building blocks in the building
+    // blocks modal)
+    if (element.scrollHeight > element.getBoundingClientRect().height && isScrollable) {
         return element;
     } else {
         return getScrollParent(element.parentNode);
