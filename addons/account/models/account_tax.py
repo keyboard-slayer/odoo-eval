@@ -1281,13 +1281,18 @@ class AccountTax(models.Model):
     @api.model
     def _prepare_base_line_tax_repartition_grouping_key(self, base_line, base_line_grouping_key, tax_data, tax_rep_data):
         tax = tax_data['tax']
+        tax_rep = tax_rep_data['tax_rep']
         return {
             **base_line_grouping_key,
-            'tax_repartition_line_id': tax_rep_data['tax_rep'].id,
+            'tax_repartition_line_id': tax_rep.id,
             'partner_id': base_line['partner_id'].id,
             'currency_id': base_line['currency_id'].id,
             'group_tax_id': tax_data['group'].id,
-            'analytic_distribution': base_line_grouping_key['analytic_distribution'] if tax.analytic else {},
+            'analytic_distribution': (
+                base_line_grouping_key['analytic_distribution']
+                if tax.analytic or not tax_rep.use_in_tax_closing
+                else {}
+            ),
             'account_id': tax_rep_data['account'].id or base_line_grouping_key['account_id'],
             'tax_ids': [Command.set(tax_rep_data['taxes'].ids)],
             'tax_tag_ids': [Command.set(tax_rep_data['tax_tags'].ids)],
@@ -1374,15 +1379,13 @@ class AccountTax(models.Model):
                 tax_rep = tax_rep_data['tax_rep']
 
                 # Compute subsequent taxes/tags.
+                tax_rep_data['taxes'] = self.env['account.tax']
+                tax_rep_data['tax_tags'] = self.env['account.account.tag']
+                if include_caba_tags or tax.tax_exigibility == 'on_invoice':
+                    tax_rep_data['tax_tags'] = tax_rep.tag_ids
                 if tax.include_base_amount:
-                    tax_rep_data['taxes'] = subsequent_taxes
-                    tax_rep_data['tax_tags'] = tax_rep.tag_ids + subsequent_tags
-                else:
-                    tax_rep_data['taxes'] = self.env['account.tax']
-                    if include_caba_tags or tax.tax_exigibility == 'on_invoice':
-                        tax_rep_data['tax_tags'] = tax_rep.tag_ids
-                    else:
-                        tax_rep_data['tax_tags'] = self.env['account.account.tag']
+                    tax_rep_data['taxes'] |= subsequent_taxes
+                    tax_rep_data['tax_tags'] |= subsequent_tags
 
                 # Add the accounting grouping_key to create the tax lines.
                 base_line_grouping_key = self._prepare_base_line_grouping_key(base_line)
@@ -1393,9 +1396,10 @@ class AccountTax(models.Model):
                     tax_rep_data,
                 )
 
-            subsequent_taxes |= tax
-            if include_caba_tags or tax.tax_exigibility == 'on_invoice':
-                subsequent_tags |= tax[repartition_lines_field].filtered(lambda x: x.repartition_type == 'base').tag_ids
+            if tax.is_base_affected:
+                subsequent_taxes |= tax
+                if include_caba_tags or tax.tax_exigibility == 'on_invoice':
+                    subsequent_tags |= tax[repartition_lines_field].filtered(lambda x: x.repartition_type == 'base').tag_ids
 
     @api.model
     def _add_base_lines_accounting_tax_details(self, base_lines, company, include_caba_tags=False):

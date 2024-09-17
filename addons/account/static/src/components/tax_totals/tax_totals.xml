@@ -57,6 +57,7 @@
                     <t t-foreach="subtotal.tax_groups" t-as="taxGroup" t-key="taxGroup_index">
                         <TaxGroupComponent
                             totals="totals"
+                            subtotal="subtotal"
                             taxGroup="taxGroup"
                             isReadonly="readonly"
                             onChangeTaxGroup.bind="_onChangeTaxValueByTaxGroup"

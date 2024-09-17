@@ -204,14 +204,14 @@ class PosOrder(models.Model):
             }
             order.add_payment(return_payment_vals)
 
-    def _prepare_tax_base_line_values(self, sign=1):
+    def _prepare_tax_base_line_values(self):
         """ Convert pos order lines into dictionaries that would be used to compute taxes later.
 
         :param sign: An optional parameter to force the sign of amounts.
         :return: A list of python dictionaries (see '_prepare_base_line_for_taxes_computation' in account.tax).
         """
         self.ensure_one()
-        return self.lines._prepare_tax_base_line_values(sign=sign)
+        return self.lines._prepare_tax_base_line_values()
 
     @api.model
     def _get_invoice_lines_values(self, line_values, pos_order_line):
@@ -231,8 +231,7 @@ class PosOrder(models.Model):
 
         :return: A list of Command.create to fill 'invoice_line_ids' when calling account.move.create.
         """
-        sign = 1 if self.amount_total >= 0 else -1
-        line_values_list = self._prepare_tax_base_line_values(sign=sign)
+        line_values_list = self._prepare_tax_base_line_values()
         invoice_lines = []
         for line_values in line_values_list:
             line = line_values['record']
@@ -783,7 +782,7 @@ class PosOrder(models.Model):
         rate = self.currency_id._get_conversion_rate(self.currency_id, company_currency, self.company_id, self.date_order)
 
         # Concert each order line to a dictionary containing business values. Also, prepare for taxes computation.
-        base_lines = self._prepare_tax_base_line_values(sign=-1)
+        base_lines = self._prepare_tax_base_line_values()
         AccountTax._add_base_lines_tax_details(base_lines, self.company_id)
         AccountTax._round_base_lines_tax_details(base_lines, self.company_id)
         AccountTax._add_base_lines_accounting_tax_details(base_lines, self.company_id)
@@ -929,7 +928,7 @@ class PosOrder(models.Model):
             'journal_id': self.config_id.journal_id.id,
             'date': fields.Date.context_today(self),
             'ref': _('Reversal of POS closing entry %(entry)s for order %(order)s from session %(session)s', entry=self.session_move_id.name, order=self.name, session=self.session_id.name),
-            'invoice_line_ids': [(0, 0, aml_value) for aml_value in move_lines],
+            'line_ids': [(0, 0, aml_value) for aml_value in move_lines],
             'reversed_pos_order_id': self.id
         })
         reversal_entry.action_post()
@@ -1428,8 +1427,9 @@ class PosOrderLine(models.Model):
         for line in self:
             base_line = line._prepare_tax_base_line_values()[0]
             self.env['account.tax']._add_base_line_tax_details(base_line, line.company_id)
-            line.price_subtotal_incl = base_line['tax_details']['total_included_currency']
-            line.price_subtotal = base_line['tax_details']['total_excluded_currency']
+            sign = -1 if line.price_unit * line.qty < 0.0 else 1
+            line.price_subtotal_incl = sign * base_line['tax_details']['total_included_currency']
+            line.price_subtotal = sign * base_line['tax_details']['total_excluded_currency']
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
@@ -1573,7 +1573,7 @@ class PosOrderLine(models.Model):
             line.margin = line.price_subtotal - line.total_cost
             line.margin_percent = not float_is_zero(line.price_subtotal, precision_rounding=line.currency_id.rounding) and line.margin / line.price_subtotal or 0
 
-    def _prepare_tax_base_line_values(self, sign=1):
+    def _prepare_tax_base_line_values(self):
         """ Convert pos order lines into dictionaries that would be used to compute taxes later.
 
         :param sign: An optional parameter to force the sign of amounts.
@@ -1609,10 +1609,11 @@ class PosOrderLine(models.Model):
                         product_id=line.product_id,
                         tax_ids=line.tax_ids_after_fiscal_position,
                         price_unit=line.price_unit,
-                        quantity=sign * line.qty,
+                        quantity=line.qty * (-1 if is_refund else 1),
                         discount=line.discount,
                         account_id=account,
                         is_refund=is_refund,
+                        sign=1 if is_refund else -1,
                     ),
                     'uom_id': line.product_uom_id,
                     'name': product_name,

@@ -21,6 +21,7 @@ import {
 class TaxGroupComponent extends Component {
     static props = {
         totals: { optional: true },
+        subtotal: { optional: true },
         taxGroup: { optional: true },
         onChangeTaxGroup: { optional: true },
         isReadonly: Boolean,
@@ -98,7 +99,11 @@ class TaxGroupComponent extends Component {
             this.setState("readonly");
             return;
         }
-        this.props.taxGroup.tax_amount_currency = newValue;
+        const deltaValue = newValue - oldValue;
+        this.props.taxGroup.tax_amount_currency += deltaValue;
+        this.props.subtotal.tax_amount_currency += deltaValue;
+        this.props.totals.tax_amount_currency += deltaValue;
+        this.props.totals.total_amount_currency += deltaValue;
 
         this.props.onChangeTaxGroup({
             oldValue,

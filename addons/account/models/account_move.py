@@ -2715,13 +2715,13 @@ class AccountMove(models.Model):
             base_lines = get_base_lines(move)
             move_tax_lines_values_before = tax_lines_values_before.get(move, {})
             move_base_lines_values_before = base_lines_values_before.get(move, {})
-            base_line_has_been_modified = any_field_has_changed(move_base_lines_values_before, base_lines)
+            tax_line_manually_changed = any_field_has_changed(move_tax_lines_values_before, tax_lines)
             need_recompute = (
                 move.state == 'draft'
                 and (
                     (
                         # Keep the user manual tax lines.
-                        not any_field_has_changed(move_tax_lines_values_before, tax_lines)
+                        not tax_line_manually_changed
                         and any([
                             # A base line has been modified.
                             any_field_has_changed(move_base_lines_values_before, base_lines),
@@ -2736,9 +2736,11 @@ class AccountMove(models.Model):
                             or field_has_changed(moves_values_before, move, 'move_type')
                         )
                     )
-                    # A base line has been removed.
-                    or not base_lines
-                    or any(line not in base_lines for line in move_base_lines_values_before)
+                    or (
+                        # A base line has been removed.
+                        (not base_lines or any(line not in base_lines for line in move_base_lines_values_before))
+                        and not tax_line_manually_changed
+                    )
                 )
             )
             if not need_recompute:
