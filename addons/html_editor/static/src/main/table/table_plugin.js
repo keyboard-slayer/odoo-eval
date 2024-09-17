@@ -475,7 +475,7 @@ export class TablePlugin extends Plugin {
         const selection = this.shared.getEditableSelection();
         const startTable = closestElement(selection.anchorNode, "table");
         const endTable = closestElement(selection.focusNode, "table");
-        if (!(startTable && endTable) || startTable !== endTable) {
+        if (!(startTable || endTable)) {
             return;
         }
         const [startTd, endTd] = [
@@ -526,6 +526,42 @@ export class TablePlugin extends Plugin {
             if (shouldSelectCell) {
                 ev.preventDefault();
                 this.selectTableCells(this.shared.getEditableSelection());
+            }
+            return;
+        }
+        if (startTable !== endTable) {
+            // Deselect the table at once if it is fully selected.
+            if (endTable) {
+                const deselectingBackward =
+                    ["ArrowLeft", "ArrowUp"].includes(ev.key) &&
+                    selection.direction === DIRECTIONS.RIGHT;
+                const deselectingForward =
+                    ["ArrowRight", "ArrowDown"].includes(ev.key) &&
+                    selection.direction === DIRECTIONS.LEFT;
+                if (deselectingBackward) {
+                    const prevElement = endTable.previousElementSibling;
+                    if (prevElement) {
+                        this.shared.setSelection({
+                            anchorNode: selection.anchorNode,
+                            anchorOffset: selection.anchorOffset,
+                            focusNode: prevElement,
+                            focusOffset: nodeSize(prevElement),
+                        });
+                        ev.preventDefault();
+                    }
+                }
+                if (deselectingForward) {
+                    const nextElement = endTable.nextElementSibling;
+                    if (nextElement) {
+                        this.shared.setSelection({
+                            anchorNode: selection.anchorNode,
+                            anchorOffset: selection.anchorOffset,
+                            focusNode: nextElement,
+                            focusOffset: 0,
+                        });
+                        ev.preventDefault();
+                    }
+                }
             }
             return;
         }
