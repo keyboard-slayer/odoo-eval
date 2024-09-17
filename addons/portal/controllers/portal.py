@@ -12,7 +12,6 @@ from odoo.exceptions import AccessDenied, AccessError, MissingError, UserError, 
 from odoo.http import content_disposition, Controller, request, route
 from odoo.tools import consteq
 
-
 # --------------------------------------------------
 # Misc tools
 # --------------------------------------------------
@@ -231,7 +230,6 @@ class CustomerPortal(Controller):
     def on_account_update(self, values, partner):
         pass
 
-    # ------------------------------------------------------------------
     @route(['/my/addresses'], type='http', auth='user', website=True)
     def my_addresses(self, **kwargs):
         values = {
@@ -254,9 +252,7 @@ class CustomerPortal(Controller):
         :rtype: str
         """
         partner_id = partner_id and int(partner_id)
-        print("/portal/address", partner_id, query_params)
         partner_sudo = self._check_partner_edit_rights(partner_id=partner_id, address_type=address_type, **query_params)
-        print("PORTAL RESULT CHECK_EDIT", partner_sudo, partner_id)
         address_form_values = self._prepare_address_form_values(partner_sudo, address_type, **query_params)
         return request.render(template, address_form_values)
 
@@ -421,15 +417,13 @@ class CustomerPortal(Controller):
                 'invalid_fields': list(invalid_fields | missing_fields),
                 'messages': error_messages,
             }
-        if  address_type == 'billing' or address_type == 'invoice':
+        if address_type == 'billing' or address_type == 'invoice':
             address_values['type'] = 'invoice'
         elif address_type == 'delivery':
             address_values['type'] = 'delivery'
         if not partner_sudo:  # Creation of a new address.
             # arj todo: NOT WORKING WITH anonymous cart !!! we should override it in website_sale to avoid adding the partner to the public user
-            address_values['parent_id'] = address_values.get('parent_id')
-            print("NEW ADDRESSE VALUES: ", address_values)
-            print("FORM DATA ", form_data)
+            address_values['parent_id'] = address_values.get('parent_id') or request.env.user.partner_id.id
             create_context = tools.clean_context(request.env.context)
             create_context.update({
                 'tracking_disable': True,

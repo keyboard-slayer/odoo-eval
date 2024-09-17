@@ -1053,7 +1053,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
             return not use_location
         return True
 
-    @route()
+    @route('/portal/address')
     def portal_address(self, partner_id=None, address_type='other', template='portal.portal_my_details', **query_params):
         """ Display the address form.
 
@@ -1077,7 +1077,6 @@ class WebsiteSale(payment_portal.PaymentPortal):
             use_delivery_as_billing = (
                 order_sudo.partner_shipping_id == order_sudo.partner_invoice_id
             )
-        address_template = 'portal.portal_my_details'
         if not query_params.get('portal_address'):
             # ecommerce flow
             if redirection := self._check_cart(order_sudo):
@@ -1088,15 +1087,16 @@ class WebsiteSale(payment_portal.PaymentPortal):
             partner_id=partner_id, address_type=address_type, template=template, order_sudo=order_sudo, **query_params
         )
 
-    def _check_partner_edit_rights(self, partner_id=None, address_type=None, **_kwargs):
-        order_sudo = _kwargs.get('order_sudo')
-        is_anonymous_cart = order_sudo and order_sudo._is_anonymous_cart()
-        print("CHECK EDIT FROM website_Sale", partner_id)
-        if is_anonymous_cart:
-            print("ANONYMOUNS CART !!")
-        res = super()._check_partner_edit_rights(partner_id=partner_id, address_type=address_type, **_kwargs)
-        print("SUPER CHECK from website_sale", res)
-        return res
+    # duplicate line:1238
+    # def _check_partner_edit_rights(self, partner_id=None, address_type=None, **_kwargs):
+    #     order_sudo = _kwargs.get('order_sudo')
+    #     is_anonymous_cart = order_sudo and order_sudo._is_anonymous_cart()
+    #     print("CHECK EDIT FROM website_Sale", partner_id)
+    #     if is_anonymous_cart:
+    #         print("ANONYMOUNS CART !!")
+    #     res = super()._check_partner_edit_rights(partner_id=partner_id, address_type=address_type, **_kwargs)
+    #     print("SUPER CHECK from website_sale", res)
+    #     return res
 
     def _prepare_address_form_values(self, partner_sudo, address_type, **_kwargs):
         """ Prepare and return the values to use to render the address form.
@@ -1198,7 +1198,6 @@ class WebsiteSale(payment_portal.PaymentPortal):
         :rtype: str
         """
         order_sudo = request.website.sale_get_order()
-        print("PARTNER_ID AT SUBMIT: ", partner_id, use_same, callback, address_type, form_data)
         if redirection := self._check_cart(order_sudo):
             return redirection
         is_anonymous_cart = order_sudo._is_anonymous_cart()
@@ -1211,12 +1210,13 @@ class WebsiteSale(payment_portal.PaymentPortal):
             address_type=address_type,
             **form_data)
         is_new_address = False
-        self._complete_address_values(partner_sudo, address_values, address_type, use_same, order_sudo)
+        self._complete_address_values(partner_sudo, address_values, address_type, use_delivery_as_billing, order_sudo)
         # arj todo: crap... when we write on the public user...
         if partner_sudo != request.website.user_id.sudo().partner_id:
             partner_sudo.write(address_values)
         # else:
         #     breakpoint()
+        is_anonymous_cart = order_sudo._is_anonymous_cart()
         if is_anonymous_cart:
             is_new_address = True
         partner_id = partner_sudo.id
@@ -1508,7 +1508,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
         ):
             partner_fnames.add('partner_shipping_id')
 
-        partner_sudo._update_default_address(address_type, **kw)
+        partner_sudo._update_default_address(address_type=address_type)
         order_sudo._update_address(partner_id, partner_fnames)
 
     @route(['/shop/confirm_order'], type='http', auth="public", website=True, sitemap=False)
@@ -1731,7 +1731,6 @@ class WebsiteSale(payment_portal.PaymentPortal):
         :return: None if both the cart and its addresses are valid; otherwise, a redirection to the
                  appropriate page.
         """
-        print("CHECKS.....")
         if redirection := self._check_cart(order_sudo):
             return redirection
 
@@ -1783,9 +1782,9 @@ class WebsiteSale(payment_portal.PaymentPortal):
             return request.redirect('/portal/address?address_type=billing')
         # Check that the billing address is complete.
         invoice_partner_sudo = order_sudo.partner_invoice_id
-        if not invoice_partner_sudo:
-            print("NO invoice_partner_sudo")
-        print("BILLING OK", self._check_billing_address(invoice_partner_sudo))
+        # if not invoice_partner_sudo:
+        #     print("NO invoice_partner_sudo")
+        # print("BILLING OK", self._check_billing_address(invoice_partner_sudo))
         if not self._check_billing_address(invoice_partner_sudo):
             # breakpoint()
             return request.redirect(

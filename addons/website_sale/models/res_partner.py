@@ -57,15 +57,8 @@ class ResPartner(models.Model):
                 ('id', 'child_of', sale_order.partner_id.commercial_partner_id.id),
                 ('type', 'in', ('invoice', 'delivery', 'other')),
             ])
-            if (
-                self == sale_order.partner_id
-                or self.id in children_partner_ids
-            ):
-                # address belongs to the customer
-                if address_type == 'billing':
-                    # All addresses are editable as billing
-                    return True
-                if address_type == 'delivery' and self.type == 'delivery':
-                    # Only delivery addresses are editable as delivery
+            if self == sale_order.partner_id or self.id in children_partner_ids:
+                if address_type == 'billing' or (address_type == 'delivery' and self.type == 'delivery'):
+                    # Billing addresses and delivery addresses are editable.
                     return True
         return super()._can_be_edited_by_current_partner(**kwargs)
