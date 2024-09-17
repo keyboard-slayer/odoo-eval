@@ -723,7 +723,7 @@ class SaleOrderLine(models.Model):
                 'tax_ids': self.tax_id,
                 'quantity': self.product_uom_qty,
                 'partner_id': self.order_id.partner_id,
-                'currency_id': self.order_id.currency_id,
+                'currency_id': self.order_id.currency_id or self.order_id.company_id.currency_id,
                 'rate': self.order_id.currency_rate,
                 **kwargs,
             },

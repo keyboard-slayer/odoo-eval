@@ -887,7 +887,7 @@ class PosSession(models.Model):
                         # account
                         base_line['account_id'].id,
                         # sign
-                        1,
+                        -1 if base_line['is_refund'] else 1,
                         # for taxes
                         tuple(base_line['record'].tax_ids_after_fiscal_position.flatten_taxes_hierarchy().ids),
                         tuple(base_line['tax_tag_ids'].ids),
@@ -1386,7 +1386,7 @@ class PosSession(models.Model):
             'name': tax.name,
             'account_id': account_id,
             'move_id': self.move_id.id,
-            'tax_base_amount': base_amount_converted,
+            'tax_base_amount': abs(base_amount_converted),
             'tax_repartition_line_id': repartition_line_id,
             'tax_tag_ids': [(6, 0, tag_ids)],
             'currency_id': self.currency_id.id,
