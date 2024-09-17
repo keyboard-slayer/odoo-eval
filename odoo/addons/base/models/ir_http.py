@@ -219,17 +219,23 @@ class IrHttp(models.AbstractModel):
     @classmethod
     def _authenticate(cls, endpoint):
         auth = 'none' if http.is_cors_preflight(request, endpoint) else endpoint.routing['auth']
-        cls._authenticate_explicit(auth)
+        cls._authenticate_explicit(auth, endpoint.routing)
 
     @classmethod
-    def _authenticate_explicit(cls, auth):
+    def _authenticate_explicit(cls, auth, routing):
         try:
             if request.session.uid is not None:
                 if not security.check_session(request.session, request.env, request):
                     request.session.logout(keep_db=True)
                     request.env = api.Environment(request.env.cr, None, request.session.context)
+                if (
+                    auth == 'user'
+                    and routing.get('check_identity', True) and request.session.must_check_identity()
+                ):
+                    raise http.CheckIdentityException("Identity must be checked", request.env.user._get_auth_methods())
+
             getattr(cls, f'_auth_method_{auth}')()
-        except (AccessDenied, http.SessionExpiredException, werkzeug.exceptions.HTTPException):
+        except (AccessDenied, http.SessionExpiredException, http.CheckIdentityException, werkzeug.exceptions.HTTPException):
             raise
         except Exception:
             _logger.info("Exception during request Authentication.", exc_info=True)

@@ -180,6 +180,17 @@
         </t>
     </template>
 
+    <template id="check_identity" name="Check Identity">
+        <t t-call="web.login_layout">
+            <div class="oe_check_identity_form">
+                <owl-component name="web.check_identity_form" t-att-props="json.dumps({
+                    'authMethods': auth_methods,
+                    'redirect': redirect,
+                })"/>
+            </div>
+        </t>
+    </template>
+
     <template id="web.login_successful" name="Login successful">
         <t t-call="web.login_layout">
             <div class="oe_login_form">

@@ -173,7 +173,7 @@ class TestAPIKeys(common.HttpCase):
             }),
             'cookies': {},
             # bypass check_identity flow
-            'session': {'identity-check-last': time.time()},
+            'session': {'must_check_identity': lambda *args: False},
             'geoip': {},
         })
         _request_stack.push(fake_req)

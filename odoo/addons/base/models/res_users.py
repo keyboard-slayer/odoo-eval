@@ -140,8 +140,7 @@ def check_identity(fn):
         if not request:
             raise UserError(_("This method can only be accessed over HTTP"))
 
-        if request.session.get('identity-check-last', 0) > time.time() - 10 * 60:
-            # update identity-check-last like github?
+        if not request.session.must_check_identity(0.25):
             return fn(self, *args, **kwargs)
 
         w = self.sudo().env['res.users.identitycheck'].create({
@@ -1019,6 +1018,10 @@ class Users(models.Model):
         h = hmac.new(key, data, sha256)
         # keep in the cache the token
         return h.hexdigest()
+
+    def _get_auth_methods(self):
+        self.ensure_one()
+        return ['password']
 
     @api.model
     def change_password(self, old_passwd, new_passwd):
@@ -2135,7 +2138,7 @@ class CheckIdentity(models.TransientModel):
                 'password': self.password,
                 'type': 'password',
             }
-            self.create_uid._check_credentials(credential, {'interactive': True})
+            request.session.check_identity(credential)
         except AccessDenied:
             raise UserError(_("Incorrect Password, try again or click on Forgot Password to reset your password."))
 
@@ -2144,7 +2147,6 @@ class CheckIdentity(models.TransientModel):
         self._check_identity()
         self.password = False
 
-        request.session['identity-check-last'] = time.time()
         ctx, model, ids, method, args, kwargs = json.loads(self.sudo().request)
         method = getattr(self.env(context=ctx)[model].browse(ids), method)
         assert getattr(method, '__has_check_identity', False)

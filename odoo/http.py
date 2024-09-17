@@ -312,6 +312,10 @@ class SessionExpiredException(Exception):
     pass
 
 
+class CheckIdentityException(Exception):
+    pass
+
+
 def content_disposition(filename):
     return "attachment; filename*=UTF-8''{}".format(
         url_quote(filename, safe='', unsafe='()<>@,;:"/[]?={}\\*\'%') # RFC6266
@@ -687,6 +691,9 @@ def route(route=None, **routing):
           database. Mainly used by the framework and authentication
           modules. The request code will not have any facilities to
           access the current user.
+    :param bool check_identity: For ``'user'`` auth, whether the identity
+        should be checked regularly or not. Interval based on
+        the system parameter ``'base.check_identity_interval'``. Default: True.
     :param Iterable[str] methods: A list of http methods (verbs) this
         route applies to. If not specified, all methods are allowed.
     :param str cors: The Access-Control-Allow-Origin cors directive value.
@@ -1076,6 +1083,7 @@ class Session(collections.abc.MutableMapping):
             'uid': uid,
             'context': user_context,
             'session_token': env.user._compute_session_token(self.sid),
+            'identity-check-last': time.time(),
         })
 
     def logout(self, keep_db=False):
@@ -1119,6 +1127,20 @@ class Session(collections.abc.MutableMapping):
         self._trace.append(new_trace)
         self.is_dirty = True
         return new_trace
+
+    def check_identity(self, credential):
+        request.env.user._check_credentials(credential, {'interactive': True})
+        request.session['identity-check-last'] = time.time()
+
+    def must_check_identity(self, hour_interval=None):
+        if not hour_interval:
+            hour_interval = request.env['ir.config_parameter'].sudo().get_param('base.check_identity_interval')
+        try:
+            delta = float(hour_interval) * 60 * 60
+        except ValueError:
+            _logger.exception("The system parameter 'base.check_identity_interval' must be a float")
+            delta = False
+        return request.session.get('identity-check-last', 0) < time.time() - delta if delta else False
 
 
 # =========================================================
@@ -2087,6 +2109,10 @@ class HttpDispatcher(Dispatcher):
                 response.set_cookie('session_id', session.sid, max_age=get_session_max_inactivity(self.env), httponly=True)
             return response
 
+        if isinstance(exc, CheckIdentityException):
+            response = self.request.redirect_query('/web/check-identity', {'redirect': self.request.httprequest.full_path})
+            return response
+
         return (exc if isinstance(exc, HTTPException)
            else Forbidden(exc.args[0]) if isinstance(exc, (AccessDenied, AccessError))
            else BadRequest(exc.args[0]) if isinstance(exc, UserError)
@@ -2373,7 +2399,7 @@ class Application:
                 # Logs the error here so the traceback starts with ``__call__``.
                 if hasattr(exc, 'loglevel'):
                     _logger.log(exc.loglevel, exc, exc_info=getattr(exc, 'exc_info', None))
-                elif isinstance(exc, HTTPException):
+                elif isinstance(exc, (HTTPException, CheckIdentityException)):
                     pass
                 elif isinstance(exc, SessionExpiredException):
                     _logger.info(exc)

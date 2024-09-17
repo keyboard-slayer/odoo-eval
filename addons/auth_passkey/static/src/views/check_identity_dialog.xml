@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="auth_passkey.CheckIdentityForm" t-inherit="web.CheckIdentityForm" t-inherit-mode="extension">
+        <xpath expr="//form" position="after">
+            <form id="passkey" t-if="state.authMethod === 'webauthn'">
+                <input type="hidden" name="type" value="webauthn"/>
+                <input type="hidden" name="webauthn_response"/>
+                <div class="text-center gap-1 d-grid mb-1 pt-3">
+                    <button type="button" class="btn btn-primary" t-on-click="onClick">Use passkey</button>
+                </div>
+            </form>
+        </xpath>
+        <xpath expr="//ul" position="inside">
+            <li t-if="props.authMethods.indexOf('webauthn') !== -1 &amp;&amp; state.authMethod !== 'webauthn'">
+                <a href="#" t-on-click="onChangeAuthMethod" data-auth-method="webauthn">Use your passkey</a>
+            </li>
+        </xpath>
+    </t>
+</templates>

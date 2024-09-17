@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="web.CheckIdentityForm">
+        <div role="alert">
+            <form id="password" t-if="state.authMethod === 'password'">
+                <input type="hidden" name="type" value="password"/>
+                <input type="password" name="password" placeholder="Password"/>
+                <div class="text-center gap-1 d-grid mb-1 pt-3">
+                    <button type="button" class="btn btn-primary" t-on-click="onClick">Confirm</button>
+                </div>
+            </form>
+        </div>
+        <p role="alert" class="alert alert-danger" t-if="state.error" t-esc="state.error"/>
+        <ul>
+            <li t-if="state.authMethod !== 'password'">
+                <a href="#" t-on-click="onChangeAuthMethod" data-auth-method="password">Use your password</a>
+            </li>
+        </ul>
+    </t>
+    <t t-name="web.CheckIdentityDialog">
+        <Dialog title.translate="Confirm access" size="'sm'" contentClass="'o_error_dialog'" footer="false">
+            <t t-call="web.CheckIdentityForm"/>
+        </Dialog>
+    </t>
+
+</templates>

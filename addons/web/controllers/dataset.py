@@ -29,7 +29,7 @@ class DataSet(http.Controller):
                 return method._readonly
         return False
 
-    @http.route(['/web/dataset/call_kw', '/web/dataset/call_kw/<path:path>'], type='json', auth="user", readonly=_call_kw_readonly)
+    @http.route(['/web/dataset/call_kw', '/web/dataset/call_kw/<path:path>'], type='json', auth="user", readonly=_call_kw_readonly, check_identity=True)
     def call_kw(self, model, method, args, kwargs, path=None):
         check_method_name(method)
         return call_kw(request.env[model], method, args, kwargs)

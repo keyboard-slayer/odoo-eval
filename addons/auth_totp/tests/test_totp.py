@@ -56,6 +56,15 @@ class TestTOTP(HttpCaseWithUserDemo, TestTOTPMixin):
         if not loaded_demo_data(self.env):
             _logger.warning("This test relies on demo data. To be rewritten independently of demo data for accurate and reliable results.")
             return
+
+        origin_finalize = http.Session.finalize
+
+        def finalize(self, env):
+            origin_finalize(self, env)
+            # Drop the identity last check to force a check identity wizard.
+            self.pop('identity-check-last')
+        self.patch(http.Session, 'finalize', finalize)
+
         # 1. Enable 2FA
         self.start_tour('/odoo', 'totp_tour_setup', login='demo')
 

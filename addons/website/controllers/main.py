@@ -195,6 +195,11 @@ class Website(Home):
     def web_login(self, *args, **kw):
         return super().web_login(*args, **kw)
 
+    @http.route(website=True, sitemap=False)
+    def check_identity(self, *args, **kw):
+        return super().check_identity(*args, **kw)
+
+
     # ------------------------------------------------------
     # Business
     # ------------------------------------------------------

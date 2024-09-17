@@ -73,7 +73,7 @@ class Home(http.Controller):
         except AccessError:
             return request.redirect('/web/login?error=access')
 
-    @http.route('/web/webclient/load_menus/<string:unique>', type='http', auth='user', methods=['GET'], readonly=True)
+    @http.route('/web/webclient/load_menus/<string:unique>', type='http', auth='user', check_identity=False, methods=['GET'], readonly=True)
     def web_load_menus(self, unique, lang=None):
         """
         Loads the menus for the webclient
@@ -146,6 +146,14 @@ class Home(http.Controller):
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
         return response
+
+    @http.route('/web/check-identity', type='http', auth='user', check_identity=False)
+    def check_identity(self, redirect=None):
+        values = {
+            'auth_methods': request.env.user._get_auth_methods(),
+            'redirect': redirect,
+        }
+        return request.render('web.check_identity', values)
 
     @http.route('/web/login_successful', type='http', auth='user', website=True, sitemap=False)
     def login_successful_external_user(self, **kwargs):

@@ -90,3 +90,7 @@ class Session(http.Controller):
     def logout(self, redirect='/odoo'):
         request.session.logout(keep_db=True)
         return request.redirect(redirect, 303)
+
+    @http.route('/web/session/check-identity', type='json', auth='user', check_identity=False, readonly=True)
+    def check_identity(self, **kwargs):
+        request.session.check_identity(kwargs)

@@ -46,6 +46,14 @@ class TestTOTPortal(HttpCaseWithUserPortal):
             del Home.totp_hook
             self.env.registry.clear_cache('routing')
 
+        origin_finalize = http.Session.finalize
+
+        def finalize(self, env):
+            origin_finalize(self, env)
+            # Drop the identity last check to force a check identity wizard.
+            self.pop('identity-check-last')
+        self.patch(http.Session, 'finalize', finalize)
+
         self.start_tour('/my/security', 'totportal_tour_setup', login='portal')
         # also disables totp otherwise we can't re-login
         self.start_tour('/', 'totportal_login_enabled', login=None)

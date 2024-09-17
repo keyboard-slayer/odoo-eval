@@ -83,3 +83,9 @@ class UsersPasskey(models.Model):
         params['select'] = SQL("%s, ARRAY_AGG(key.id ORDER BY key.id DESC)", params['select'])
         params['joins'] = SQL("%s LEFT JOIN auth_passkey_key key ON res_users.id = key.create_uid", params['joins'])
         return params
+
+    def _get_auth_methods(self):
+        methods = super()._get_auth_methods()
+        if self.auth_passkey_key_ids:
+            methods.insert(0, 'webauthn')
+        return methods
