@@ -468,6 +468,9 @@ class ProductTemplate(models.Model):
         )
 
         price_before_discount = pricelist_price
+        pricelist_item = self.env['product.pricelist.item'].browse(pricelist_rule_id)
+        pricelist_compute_price = pricelist_item.compute_price
+
         if pricelist_rule_id:  # If a rule was applied, there might be a discount
             # For ecommerce flows, the base price is always the product sales price
             # which can be computed by calling `_compute_base_price` without a pricelist rule
@@ -479,7 +482,7 @@ class ProductTemplate(models.Model):
                 currency=currency,
             )
 
-        has_discounted_price = price_before_discount > pricelist_price
+        has_discounted_price = price_before_discount > pricelist_price and pricelist_compute_price != "fixed"
         combination_info = {
             'list_price': max(pricelist_price, price_before_discount),
             'price': pricelist_price,
