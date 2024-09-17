@@ -43,6 +43,7 @@ class AccountMoveLine(models.Model):
                 sale_line = map_sale_line_per_move.get(values.get('move_line_id'))
                 if sale_line:
                     values['so_line'] = sale_line.id
+                values['amount'] = abs(values['amount'])
 
         return values_list
 
