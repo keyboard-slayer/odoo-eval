@@ -319,7 +319,10 @@ export class Thread extends Record {
     access_token;
     /** @type {String|undefined} */
     hash;
-    /** @type {integer|undefined} */
+    /**
+     * Partner id for non channel threads
+     *  @type {integer|undefined}
+     */
     pid;
 
     get accessRestrictedToGroupText() {

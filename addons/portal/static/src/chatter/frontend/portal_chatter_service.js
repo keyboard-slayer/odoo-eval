@@ -60,6 +60,7 @@ export class PortalChatterService {
                 dev: env.debug,
             }).mount(shadow);
         });
+        odoo.portalChatterReady.resolve(true);
         const thread = this.store.Thread.insert({ model: props.resModel, id: props.resId });
         Object.assign(thread, {
             access_token: chatterEl.getAttribute("data-token"),

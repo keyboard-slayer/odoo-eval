@@ -139,10 +139,4 @@ registry.category("web_tour.tours").add('course_member', {
     trigger: 'a[id="review-tab"]',
     run: "click",
 },
-        // The popup composer still works with public widget and till the user refreshes the page, the comment's change is not visible.
-        // Todo: Uncomment it when the popup composer would be converted to a component
-        //{
-        // check review is correctly added
-        // trigger: '#chatterRoot:shadow .o-mail-Message-content:contains("This is a great course. Top !")',
-        //}
 ]});

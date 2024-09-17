@@ -151,7 +151,7 @@ class ThreadController(http.Controller):
         guest = request.env["mail.guest"]._get_guest_from_context()
         guest.env["ir.attachment"].browse(attachment_ids)._check_attachments_access(attachment_tokens)
         message = request.env["mail.message"]._get_with_access(message_id, "create", **kwargs)
-        if not message or not self._is_message_editable(message, guest, **kwargs):
+        if not message or not self._is_message_editable(message, **kwargs):
             raise NotFound()
         # sudo: mail.message - access is checked in _get_with_access and _is_message_editable
         message = message.sudo()
@@ -161,5 +161,5 @@ class ThreadController(http.Controller):
         )
         return Store(message, for_current_user=True).get_result()
 
-    def _is_message_editable(self, message, guest, **kwargs):
-        return message.sudo().is_current_user_or_guest_author or guest.env.user._is_admin()
+    def _is_message_editable(self, message, **kwargs):
+        return message.sudo().is_current_user_or_guest_author or request.env.user._is_admin()

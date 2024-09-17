@@ -15,6 +15,7 @@ export class PortalChatter extends Component {
     setup() {
         useSubEnv({
             displayRating: this.props.displayRating,
+            inPortalChatter: true,
         });
         this.overlayService = useService("overlay");
     }

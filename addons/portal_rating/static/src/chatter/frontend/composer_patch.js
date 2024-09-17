@@ -35,7 +35,7 @@ patch(Composer.prototype, {
     },
 
     onMoveStar(ev) {
-        var index = parseInt(ev.currentTarget.getAttribute("index"));
+        const index = parseInt(ev.currentTarget.getAttribute("index"));
         this.portalState.starValue = index + 1;
     },
 

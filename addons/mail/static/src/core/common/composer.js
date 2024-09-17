@@ -286,6 +286,10 @@ export class Composer extends Component {
         return this.props.mode === "extended" ? _t("CTRL-Enter") : _t("Enter");
     }
 
+    get showComposerAvatar() {
+        return !this.compact && this.props.sidebar;
+    }
+
     get thread() {
         return this.props.messageToReplyTo?.message?.thread ?? this.props.composer.thread ?? null;
     }

@@ -4,7 +4,7 @@ import { patch } from "@web/core/utils/patch";
 
 patch(Composer.prototype, {
     get placeholder() {
-        if (this.thread && this.thread.model !== "discuss.channel") {
+        if (this.env.inPortalChatter) {
             return _t("Write a message…");
         }
         return super.placeholder;

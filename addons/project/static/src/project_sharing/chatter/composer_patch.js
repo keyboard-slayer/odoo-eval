@@ -12,7 +12,7 @@ patch(Composer.prototype, {
     },
 
     get isSendButtonDisabled() {
-        return !this.thread.id || super.isSendButtonDisabled;
+        return !this.thread?.id || super.isSendButtonDisabled;
     },
 
     get allowUpload() {
