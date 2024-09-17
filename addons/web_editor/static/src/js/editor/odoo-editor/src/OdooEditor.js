@@ -1971,8 +1971,22 @@ export class OdooEditor extends EventTarget {
         // Let the DOM split and delete the range.
         const contents = range.extractContents();
 
-        setSelection(start, nodeSize(start));
         const startLi = closestElement(start, 'li');
+        const endLi = closestElement(end, 'li');
+        if (
+            startLi &&
+            endLi &&
+            (!startLi.textContent || isZWS(startLi)) &&
+            getListMode(startLi.parentElement) !== getListMode(endLi.parentElement)
+        ) {
+            const isNested = closestElement(startLi, '.oe-nested')
+            const nodeToRemove = isNested ? isNested : startLi.parentNode;
+            endLi.parentElement.prepend(startLi);
+            isEmptyBlock(nodeToRemove) && nodeToRemove.remove();
+            setSelection(startLi, nodeSize(startLi));
+        } else {
+            setSelection(start, nodeSize(start));
+        }
         // Uncheck a list item with empty text in multi-list selection.
         if (startLi && startLi.classList.contains('o_checked') &&
             ['\u200B', ''].includes(startLi.textContent) && closestElement(end, 'li') !== startLi) {
