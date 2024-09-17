@@ -8,7 +8,6 @@ publicWidget.registry.portalAddress = publicWidget.Widget.extend({
     events: {
         'click .js_set_default': '_changePortalAddress',
         'click .js_archive': '_archivePortalAddress',
-
     },
 
     /**
