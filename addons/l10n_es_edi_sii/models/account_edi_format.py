@@ -76,11 +76,13 @@ class AccountEdiFormat(models.Model):
                 'l10n_es_bien_inversion': tax.l10n_es_bien_inversion,
             }
 
-        def filter_to_apply(base_line, tax_values):
+        def filter_to_apply(base_line, tax_data):
             # For intra-community, we do not take into account the negative repartition line
-            return (tax_values['tax_repartition_line'].factor_percent > 0.0
-                    and tax_values['tax_repartition_line'].tax_id.amount != -100.0
-                    and tax_values['tax_repartition_line'].tax_id.l10n_es_type != 'ignore')
+            return (
+                not tax_data['is_reverse_charge']
+                and tax_data['tax'].amount != -100.0
+                and tax_data['tax'].l10n_es_type != 'ignore'
+            )
 
         def full_filter_invl_to_apply(invoice_line):
             if all(t == 'ignore' for t in invoice_line.tax_ids.flatten_taxes_hierarchy().mapped('l10n_es_type')):

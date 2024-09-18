@@ -603,15 +603,12 @@ class L10nEsEdiTbaiDocument(models.Model):
 
     def get_tax_details(self, base_lines, filter_invl_to_apply=None):
 
-        def filter_tax_values_to_apply(base_line, tax_values):
+        def filter_tax_values_to_apply(base_line, tax_data):
             # For intra-community, we do not take into account the negative repartition line
-            return (
-                tax_values['tax_repartition_line'].factor_percent > 0.0
-                and tax_values['tax_repartition_line'].tax_id.amount != -100.0
-            )
+            return not tax_data['is_reverse_charge'] and tax_data['tax'].amount != -100.0
 
-        def grouping_key_generator(base_line, tax_values):
-            tax = tax_values['tax_repartition_line'].tax_id
+        def grouping_key_generator(base_line, tax_data):
+            tax = tax_data['tax']
             return {
                 'applied_tax_amount': tax.amount,
                 'l10n_es_type': tax.l10n_es_type,
