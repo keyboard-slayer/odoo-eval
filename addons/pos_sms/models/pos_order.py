@@ -1,4 +1,5 @@
 from odoo import models
+from odoo.exceptions import UserError
 
 
 class PosOrder(models.Model):
@@ -8,6 +9,17 @@ class PosOrder(models.Model):
         if not (self and self.config_id.module_pos_sms and self.config_id.sms_receipt_template_id and phone):
             return
         self.ensure_one()
+
+        sms_logs = self.env['sms.composer'].search([
+            ('res_id', '=', self.id),
+            ('res_model', '=', 'pos.order'),
+            ('numbers', '=', phone),
+            ('template_id', '=', self.config_id.sms_receipt_template_id.id),
+        ])
+
+        if sms_logs:
+            raise UserError(_('A receipt has already been sent to this number: %s', phone))
+
         sms_composer = self.env['sms.composer'].with_context(active_id=self.id).create(
             {
                 'composition_mode': 'comment',
