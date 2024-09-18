@@ -9,7 +9,12 @@ from collections import defaultdict
 from datetime import date, datetime, time
 
 from odoo import api, fields, models
+<<<<<<< saas-17.4
 from odoo.exceptions import ValidationError
+||||||| d8a20717c830a7cddaad4889bec182f0fa5f786a
+=======
+from odoo.exceptions import UserError
+>>>>>>> ed3ebc7126ee74260d43640dbe823eeffb8f4ca4
 from odoo.tools import format_date, frozendict
 from odoo.tools.translate import _
 from odoo.tools.float_utils import float_round
@@ -209,6 +214,11 @@ class HolidaysType(models.Model):
                 leave_type.has_valid_allocation = bool(allocations)
             else:
                 leave_type.has_valid_allocation = True
+
+    @api.constrains('requires_allocation')
+    def check_allocation_requirement_edit_validity(self):
+        if self.env['hr.leave'].search_count([('holiday_status_id', 'in', self.ids)], limit=1):
+            raise UserError(_("The allocation requirement of a time off type cannot be changed once leaves of that type have been taken. You should create a new time off type instead."))
 
     def _search_max_leaves(self, operator, value):
         value = float(value)
