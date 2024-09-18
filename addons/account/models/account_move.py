@@ -4050,12 +4050,12 @@ class AccountMove(models.Model):
             'base_amount': 0.0,
             'tax_amount_currency': 0.0,
             'tax_amount': 0.0,
-            'tax_details_per_record': defaultdict(lambda: {
+            'tax_details_per_record': defaultdict(lambda: defaultdict(lambda: {
                 'base_amount_currency': 0.0,
                 'base_amount': 0.0,
                 'tax_amount_currency': 0.0,
                 'tax_amount': 0.0,
-            }),
+            })),
             'base_lines': base_lines,
         }
 
