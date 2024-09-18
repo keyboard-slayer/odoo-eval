@@ -188,6 +188,9 @@ export class FormatPlugin extends Plugin {
     }
 
     formatSelection(...args) {
+        for (const cb of this.resources.formatSelection || []) {
+            cb(...args);
+        }
         if (this._formatSelection(...args)) {
             this.dispatch("ADD_STEP");
         }
@@ -222,12 +225,17 @@ export class FormatPlugin extends Plugin {
             (node) => node.querySelector("br")
         );
         const selectedNodes = /** @type { Text[] } **/ (
-            this.shared
-                .getSelectedNodes()
-                .filter(
-                    (n) =>
-                        isTextNode(n) && isContentEditable(n) && (isVisibleTextNode(n) || isZWS(n))
-                )
+            this.shared.getSelectedNodes().filter((n) => {
+                const isInList = closestElement(n, "UL, OL");
+                const isNotFullySelectedList =
+                    isInList && !this.shared.isNodeContentsFullySelected(isInList);
+                return (
+                    isTextNode(n) &&
+                    (isNotFullySelectedList || !isInList) &&
+                    isContentEditable(n) &&
+                    (isVisibleTextNode(n) || isZWS(n))
+                );
+            })
         );
         const selectedTextNodes = selectedNodes.length ? selectedNodes : selectedNodesInTds;
 

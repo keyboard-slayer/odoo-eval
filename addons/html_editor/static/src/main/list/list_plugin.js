@@ -18,6 +18,7 @@ import { childNodeIndex, nodeSize } from "@html_editor/utils/position";
 import { _t } from "@web/core/l10n/translation";
 import { compareListTypes, createList, insertListAfter, isListItem } from "./utils";
 import { callbacksForCursorUpdate } from "@html_editor/utils/selection";
+import { fontSizeItems } from "../font/font_plugin";
 import { getListMode, switchListMode } from "@html_editor/utils/list";
 
 function isListActive(listMode) {
@@ -38,6 +39,7 @@ export class ListPlugin extends Plugin {
         handle_shift_tab: { callback: p.handleShiftTab.bind(p), sequence: 10 },
         split_element_block: { callback: p.handleSplitBlock.bind(p) },
         colorApply: p.applyListColor.bind(p),
+        formatSelection: p.applyListFormat.bind(p),
         toolbarCategory: {
             id: "list",
             sequence: 30,
@@ -520,6 +522,8 @@ export class ListPlugin extends Plugin {
         let p;
         let toMove = li.lastChild;
         const listColor = li.style.color;
+        const ulFontSizeClass = fontSizeItems.find((n) => ul.classList.contains(n.className));
+        const ulFontSize = ul.style.fontSize;
         while (toMove) {
             if (isBlock(toMove)) {
                 if (p && isVisible(p)) {
@@ -558,6 +562,11 @@ export class ListPlugin extends Plugin {
         }
         if (listColor) {
             this.dispatch("APPLY_COLOR", { color: listColor, mode: "color" });
+        }
+        if (ulFontSize) {
+            this.dispatch("FORMAT_FONT_SIZE", { size: ulFontSize });
+        } else if (ulFontSizeClass) {
+            this.dispatch("FORMAT_FONT_SIZE_CLASSNAME", ulFontSizeClass);
         }
         cursors.restore();
     }
@@ -755,6 +764,39 @@ export class ListPlugin extends Plugin {
                     }
                 });
                 this.shared.colorElement(closestLi, color, mode);
+            }
+        }
+    }
+
+    applyListFormat(formatName, { formatProps } = {}) {
+        const selectedNodes = this.shared.getSelectedNodes();
+        if (!selectedNodes.length) {
+            return;
+        }
+        for (const node of selectedNodes) {
+            const closestList = closestElement(node, "ul, ol");
+            if (closestList && this.shared.isNodeContentsFullySelected(closestList)) {
+                [...descendants(closestList)].map((n) => {
+                    if (n.nodeType === Node.ELEMENT_NODE) {
+                        fontSizeItems.forEach((className) => {
+                            if (n.classList.contains(className.className)) {
+                                n.classList.remove(className.className);
+                            }
+                        });
+                    }
+                });
+                fontSizeItems.forEach((className) => {
+                    if (closestList.classList.contains(className.className)) {
+                        closestList.classList.remove(className.className);
+                    }
+                });
+                if (formatName === "setFontSizeClassName") {
+                    closestList.classList.add(formatProps.className);
+                } else if (formatName === "fontSize") {
+                    closestList.style["font-size"] = formatProps.size;
+                }
+                closestList.style.listStylePosition = "inside";
+                this.dispatch("ADD_STEP");
             }
         }
     }
