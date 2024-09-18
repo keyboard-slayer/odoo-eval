@@ -17,6 +17,7 @@ import { convertNumericToUnit, getCSSVariableValue, getHtmlStyle } from "../src/
 import { setupEditor } from "./_helpers/editor";
 import { unformat } from "./_helpers/format";
 import { getContent, moveSelectionOutsideEditor, setContent } from "./_helpers/selection";
+import { strong } from "./_helpers/tags";
 
 test.tags("desktop")(
     "toolbar is only visible when selection is not collapsed in desktop",
@@ -561,3 +562,18 @@ test.tags("desktop")(
         expect(".o-we-toolbar").toHaveCount(0);
     }
 );
+
+test("close the toolbar if the selection contains any nodes (traverseNode = [], ignore zws)", async () => {
+    const { el } = await setupEditor(`<p>ab${strong("\u200B", "first")}cd</p>`);
+    expect(".o-we-toolbar").toHaveCount(0);
+
+    setContent(el, `<p>a[b${strong("\u200B", "first")}c]d</p>`);
+    await tick(); // selectionChange
+    await animationFrame();
+    expect(".o-we-toolbar").toHaveCount(1);
+
+    setContent(el, `<p>ab${strong("[\u200B]", "first")}cd</p>`);
+    await tick(); // selectionChange
+    await animationFrame();
+    expect(".o-we-toolbar").toHaveCount(0);
+});
