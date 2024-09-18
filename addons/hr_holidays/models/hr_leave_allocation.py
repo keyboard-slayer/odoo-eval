@@ -136,11 +136,7 @@ class HolidaysAllocation(models.Model):
             return _(
                 '%(name)s (%(duration)s hour(s))',
                 name=self.holiday_status_id.name,
-                duration=self.number_of_days * (
-                    self.employee_id.sudo().resource_calendar_id.hours_per_day
-                    or self.holiday_status_id.company_id.resource_calendar_id.hours_per_day
-                    or HOURS_PER_DAY
-                ),
+                duration=self.number_of_hours_display,
             )
         return _(
             '%(name)s (%(duration)s day(s))',
@@ -247,10 +243,7 @@ class HolidaysAllocation(models.Model):
             if allocation_unit != 'hour':
                 allocation.number_of_days = allocation.number_of_days_display
             else:
-                hours_per_day = allocation.employee_id.sudo().resource_calendar_id.hours_per_day\
-                    or allocation.holiday_status_id.company_id.resource_calendar_id.hours_per_day\
-                    or HOURS_PER_DAY
-                allocation.number_of_days = allocation.number_of_hours_display / hours_per_day
+                allocation.number_of_days = allocation.number_of_hours_display / HOURS_PER_DAY
 
     @api.depends('holiday_status_id', 'allocation_type')
     def _compute_accrual_plan_id(self):
