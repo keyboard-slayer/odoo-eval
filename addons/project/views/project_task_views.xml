@@ -680,9 +680,9 @@
                             <div class="text-muted">
                                 <field t-if="record.parent_id.raw_value" invisible="context.get('default_parent_id', False)" name="parent_id"/>
                                 <field invisible="context.get('default_project_id', False)" name="project_id" options="{'no_open': True}"/>
-                                <field t-if="record.partner_id.value" t-att-title="record.partner_id.value" name="partner_id" class="text-truncate d-block"/>
+                                <field t-if="record.partner_id.value" t-att-title="record.partner_id.value" name="partner_id" class="text-truncate"/>
                                 <span t-if="record.allow_milestones.raw_value and record.milestone_id.raw_value" t-att-class="record.has_late_and_unreached_milestone.raw_value and !record.state.raw_value.startsWith('1_') ? 'text-danger' : ''">
-                                    <field name="milestone_id" options="{'no_open': True}" />
+                                    <field name="milestone_id" options="{'no_open': True}" class="d-block"/>
                                 </span>
                             </div>
                         </div>
