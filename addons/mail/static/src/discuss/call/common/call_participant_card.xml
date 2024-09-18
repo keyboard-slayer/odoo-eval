@@ -41,13 +41,13 @@
                     </small>
                 </span>
                 <div class="o-discuss-CallParticipantCard-overlay position-absolute top-0 end-0 d-flex flex-row-reverse" t-att-class="{ 'o-isCollapsed': env.discussCall.collapsed }">
-                    <span t-if="hasRaisingHand" class="d-flex flex-column justify-content-center me-1 rounded-circle bg-500" t-att-class="{'o-minimized p-1': props.minimized or env.discussCall.collapsed, 'p-2': !props.minimized }" title="raising hand" aria-label="raising hand">
+                    <span t-if="hasRaisingHand" class="d-flex flex-column justify-content-center me-1 rounded-circle bg-500" t-att-class="{'o-minimized p-1': props.minimized or env.discussCall.collapsed, 'p-2': !props.minimized and !env.discussCall.collapsed }" title="raising hand" aria-label="raising hand">
                         <i class="fa fa-hand-paper-o"/>
                     </span>
-                    <span t-if="rtcSession.isSelfMuted and !rtcSession.isDeaf" class="d-flex flex-column justify-content-center me-1 rounded-circle o-discuss-CallParticipantCard-iconBlackBg" t-att-class="{'o-minimized p-1': props.minimized or env.discussCall.collapsed, 'p-2': !props.minimized }" title="muted" aria-label="muted">
+                    <span t-if="rtcSession.isSelfMuted and !rtcSession.isDeaf" class="d-flex flex-column justify-content-center me-1 rounded-circle o-discuss-CallParticipantCard-iconBlackBg" t-att-class="{'o-minimized p-1': props.minimized or env.discussCall.collapsed, 'p-2': !props.minimized and !env.discussCall.collapsed }" title="muted" aria-label="muted">
                         <i class="fa fa-microphone-slash"/>
                     </span>
-                    <span t-if="rtcSession.isDeaf" class="d-flex flex-column justify-content-center me-1 rounded-circle o-discuss-CallParticipantCard-iconBlackBg" t-att-class="{'o-minimized p-1': props.minimized or env.discussCall.collapsed, 'p-2': !props.minimized }" title="deaf" aria-label="deaf">
+                    <span t-if="rtcSession.isDeaf" class="d-flex flex-column justify-content-center me-1 rounded-circle o-discuss-CallParticipantCard-iconBlackBg" t-att-class="{'o-minimized p-1': props.minimized or env.discussCall.collapsed, 'p-2': !props.minimized and !env.discussCall.collapsed }" title="deaf" aria-label="deaf">
                         <i class="fa fa-deaf"/>
                     </span>
                     <span t-if="hasMediaError" class="o-discuss-CallParticipantCard-overlay-replayButton d-flex flex-column justify-content-center me-1 p-2 rounded-circle" title="media player Error" t-on-click.stop="onClickReplay">
