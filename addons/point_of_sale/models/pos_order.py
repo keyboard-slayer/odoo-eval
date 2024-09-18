@@ -1594,7 +1594,8 @@ class PosOrderLine(models.Model):
             if fiscal_position:
                 account = fiscal_position.map_account(account)
 
-            is_refund = line.qty * line.price_unit < 0
+            is_refund_order = line.order_id.amount_total < 0.0
+            is_refund_line = line.qty * line.price_unit < 0
 
             product_name = line.product_id\
                 .with_context(lang=line.order_id.partner_id.lang or self.env.user.lang)\
@@ -1609,11 +1610,11 @@ class PosOrderLine(models.Model):
                         product_id=line.product_id,
                         tax_ids=line.tax_ids_after_fiscal_position,
                         price_unit=line.price_unit,
-                        quantity=line.qty * (-1 if is_refund else 1),
+                        quantity=line.qty * (-1 if is_refund_order else 1),
                         discount=line.discount,
                         account_id=account,
-                        is_refund=is_refund,
-                        sign=1 if is_refund else -1,
+                        is_refund=is_refund_line,
+                        sign=1 if is_refund_order else -1,
                     ),
                     'uom_id': line.product_uom_id,
                     'name': product_name,
