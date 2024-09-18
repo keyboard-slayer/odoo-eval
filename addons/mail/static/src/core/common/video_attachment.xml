@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="mail.VideoAttachment">
+        <div
+            t-att-aria-label="props.attachment.filename"
+            class="o-mail-VideoAttachment d-flex position-relative flex-shrink-0 mw-100 mb-1 me-1"
+            t-att-title="props.attachment.name"
+            t-att-class="{ 'o-isUploading': props.attachment.uploading }"
+            tabindex="0"
+            t-att-data-mimetype="props.attachment.mimetype"
+            role="menuitem"
+        >
+            <video
+                t-ref="videoRef"
+                class="my-0 mx-auto cursor-pointer rounded"
+                t-att-src="props.attachment.defaultSource"
+                t-on-pause="onPause"
+                t-attf-style="max-width: min(100%, {{ props.maxWidth }}px); max-height: {{ props.maxHeight }}px;"
+            />
+            <div t-if="props.attachment.uploading" class="position-absolute top-0 bottom-0 start-0 end-0 d-flex align-items-center justify-content-center" title="Uploading">
+                <i class="fa fa-spin fa-spinner"/>
+            </div>
+            <div t-if="state.paused" class="position-absolute flex-grow-1 cursor-pointer top-0 bottom-0 start-0 end-0 p-2 text-white d-flex flex-wrap align-content-center justify-content-center" t-on-click="onClickPlay">
+                <div t-if="canPlay" class="o-mail-VideoAttachment-play btn btn-lg rounded opacity-75 bg-black">
+                    <i class="fa fa-play text-white"/>
+                </div>
+                <div class="position-absolute top-0 bottom-0 start-0 end-0 p-2 text-white d-flex flax-wrap o-opacity-hoverable opacity-0 opacity-100-hover flex-column align-items-end">
+                    <button t-if="props.showDelete"
+                    class="btn btn-sm btn-dark rounded opacity-75 opacity-100-hover"
+                    tabindex="0" aria-label="Remove" role="menuitem" t-on-click.stop="() => this.onClickUnlink(props.attachment)" title="Remove">
+                        <i class="fa fa-trash"/>
+                    </button>
+                    <button t-if="canDownload(props.attachment)" class="btn btn-sm btn-dark rounded opacity-75 opacity-100-hover mt-auto" t-on-click.stop="() => this.onClickDownload(props.attachment)" title="Download">
+                        <i class="fa fa-download"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

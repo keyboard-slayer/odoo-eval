@@ -29,7 +29,7 @@
                         t-att-src="getImageUrl(attachment)"
                         t-att-alt="attachment.name"
                         t-attf-style="max-width: min(100%, {{ imagesWidth }}px); max-height: {{ props.imagesHeight }}px;"
-                        t-on-load="onImageLoaded"
+                        t-on-load="this.onImageLoaded"
                     />
                     <div t-if="attachment.uploading" class="position-absolute top-0 bottom-0 start-0 end-0 d-flex align-items-center justify-content-center" title="Uploading">
                         <i class="fa fa-spin fa-spinner"/>
@@ -45,6 +45,17 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            <div class="d-flex flex-grow-1 flex-wrap mx-1 align-items-center" t-att-class="{
+                'justify-content-end': isInChatWindowAndIsAlignedRight and !env.inComposer,
+            }" role="menu" >
+                <VideoAttachment
+                    t-foreach="videos" t-as="attachment" t-key="attachment.id"
+                    attachment="attachment"
+                    showDelete="showDelete"
+                    maxWidth="imagesWidth"
+                    maxHeight="props.imagesHeight"
+                />
             </div>
             <div class="grid row-gap-0 column-gap-0">
                 <!-- t-attf-class overridden in extensions -->
