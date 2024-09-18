@@ -192,9 +192,8 @@ class Groups(models.Model):
     full_name = fields.Char(compute='_compute_full_name', string='Group Name', search='_search_full_name')
     share = fields.Boolean(string='Share Group', help="Group created to set access rights for sharing data with some users.")
 
-    _sql_constraints = [
-        ('name_uniq', 'unique (category_id, name)', 'The name of the group must be unique within an application!')
-    ]
+    _name_uniq = models.Constraint("UNIQUE (category_id, name)",
+        lambda env: env._('The name of the group must be unique within an application!'))
 
     @api.constrains('users')
     def _check_one_user_type(self):
@@ -407,9 +406,8 @@ class Users(models.Model):
     groups_count = fields.Integer('# Groups', help='Number of groups that apply to the current user',
                                   compute='_compute_accesses_count', compute_sudo=True)
 
-    _sql_constraints = [
-        ('login_key', 'UNIQUE (login)', 'You can not have two users with the same login!')
-    ]
+    _login_key = models.Constraint("UNIQUE (login)",
+        lambda env: env._('You can not have two users with the same login!'))
 
     def init(self):
         cr = self.env.cr

@@ -237,6 +237,8 @@ class MetaModel(api.Meta):
         attrs.setdefault('__slots__', ())
         # this collects the fields defined on the class (via Field.__set_name__())
         attrs.setdefault('_field_definitions', [])
+        # this collects the SQL object definition on the class (via SQLObject.__set_name__())
+        attrs.setdefault('_local_sql_objects', {})
 
         if attrs.get('_register', True):
             # determine '_module'
@@ -610,7 +612,7 @@ class BaseModel(metaclass=MetaModel):
     """
     _table = None                   #: SQL table name used by model if :attr:`_auto`
     _table_query = None             #: SQL expression of the table's content (optional)
-    _sql_constraints: list[tuple[str, str, str]] = []   #: SQL constraints [(name, sql_def, message)]
+    _sql_objects: dict[str, SQLObject] = frozendict()  #: SQL constraints and indexes
 
     _rec_name = None                #: field to use for labeling records, default: ``name``
     _rec_names_search: list[str] | None = None    #: fields to consider in ``name_search``
@@ -724,10 +726,6 @@ class BaseModel(metaclass=MetaModel):
             _logger.warning("Model attribute '_constraints' is no longer supported, "
                             "please use @api.constrains on methods instead.")
 
-        # Keep links to non-inherited constraints in cls; this is useful for
-        # instance when exporting translations
-        cls._local_sql_constraints = cls.__dict__.get('_sql_constraints', [])
-
         # all models except 'base' implicitly inherit from 'base'
         name = cls._name
         parents = list(cls._inherit)
@@ -750,6 +748,7 @@ class BaseModel(metaclass=MetaModel):
                 '_inherit_children': OrderedSet(),      # names of children models
                 '_inherits_children': set(),            # names of children models
                 '_fields': {},                          # populated in _setup_base()
+                '_sql_objects': {},                     # populated in _setup_base()
             })
             check_parent = cls._build_model_check_parent
 
@@ -818,9 +817,9 @@ class BaseModel(metaclass=MetaModel):
         cls._description = cls._name
         cls._table = cls._name.replace('.', '_')
         cls._log_access = cls._auto
+        sql_objects = {}
         inherits = {}
         depends = {}
-        _sql_constraints = {}
 
         for base in reversed(cls.__base_classes):
             if is_definition_class(base):
@@ -836,21 +835,9 @@ class BaseModel(metaclass=MetaModel):
             for mname, fnames in base._depends.items():
                 depends.setdefault(mname, []).extend(fnames)
 
-            for cons in base._sql_constraints:
-                if not isinstance(cons, SQLObject):
-                    # XXX this will be removed before merging
-                    cons_name, definition, *cons_message = cons
-                    match definition.strip().lower().split():
-                        case ["index", *_]:
-                            cons = Index(definition[5:].strip())
-                        case ["unique", "index", *_]:
-                            cons = UniqueIndex(definition[13:].strip(), *cons_message)
-                        case _:
-                            cons = Constraint(definition, *cons_message)
-                    cons.__set_name__(cls, cons_name)
-                _sql_constraints[cons.key] = cons
-
-        cls._sql_constraints = list(_sql_constraints.values())
+            sql_objects.update(base._sql_objects or base._local_sql_objects)
+        sql_objects.update(cls._local_sql_objects)
+        # XXX cls._sql_objects = sql_objects
 
         # avoid assigning an empty dict to save memory
         if inherits:
@@ -1308,7 +1295,7 @@ class BaseModel(metaclass=MetaModel):
                     info = rec_data['info']
                     pg_error_info = {'message': self._sql_error_to_message(e)}
                     if e.diag.table_name == self._table:
-                        e_fields = self._get_columns_from_sql_diagnostics(e.diag, self.pool)
+                        e_fields = self.__get_columns_from_sql_diagnostics(e.diag, check_registry=True)
                         if len(e_fields) == 1:
                             pg_error_info['field'] = e_fields[0]
                     messages.append(dict(info, type='error', **pg_error_info))
@@ -3372,24 +3359,23 @@ class BaseModel(metaclass=MetaModel):
             _logger.error('parent_path field on model %r should be indexed! Add index=True to the field definition.', self._name)
 
     def _add_sql_constraints(self):
-        """ Modify this model's database table constraints so they match the one
-        in _sql_constraints.
-
+        """ Modify this model's database table constraints and indexes
+        so they match the ones in _sql_objects.
         """
-        for cons in self._sql_constraints:
+        for cons in self._sql_objects.values():
             cons.sync_database_object(self)
 
     @api.model
-    def _get_columns_from_sql_diagnostics(diagnostics, registry=None) -> list[str]:
+    def __get_columns_from_sql_diagnostics(self, diagnostics, *, check_registry=False) -> list[str]:
         """Given the diagnostics of an error, return the affected column names by the constraint.
         Return an empty list if we cannot determine the columns.
         """
         if column := diagnostics.column_name:
             return [column]
-        if registry is None:
+        if not check_registry:
             return []
         # start a new transaction because the current transaction is probably already failing
-        with registry.cursor() as cr_tmp:
+        with self.pool.cursor() as cr_tmp:
             cr_tmp.execute(SQL("""
                 SELECT
                     conname,
@@ -3410,16 +3396,28 @@ class BaseModel(metaclass=MetaModel):
 
     @api.model
     def _sql_error_to_message(self, exc: psycopg2.Error) -> str:
-        """ Convert a database exception to a user error message. """
+        """ Convert a database exception to a user error message depending on the model. """
         # NOTE: do not use cr because the transaction may be in a failed status
-        diag = exc.diag
-
-        if diag.constraint_name:
-            for cons in self._sql_constraints:
-                if diag.constraint_name == cons.full_name(self):
-                    if message := cons.get_error_message(self, diag):
+        if constraint_name := exc.diag.constraint_name:
+            for cons in self._sql_objects.values():
+                if constraint_name == cons.full_name(self):
+                    # find the message in ir.model.constraint
+                    with self.pool.cursor() as cr_tmp:
+                        cons_rec = self.env(cr=cr_tmp)['ir.model.constraint'].search([
+                            ('name', '=', constraint_name),
+                            ('model.model', '=', self._name),
+                        ])
+                        if message := cons_rec[:1].message:
+                            return message
+                    # get the message from the object
+                    if message := cons.get_error_message(self, exc.diag):
                         return message
+        return self._sql_error_to_message_generic(exc)
 
+    @api.model
+    def _sql_error_to_message_generic(self, exc: psycopg2.Error) -> str:
+        """ Convert a database exception to a generic user error message. """
+        diag = exc.diag
         unknown = self.env._('Unknown')
         info = {
             'model_display': f"'{self._description}' ({self._name})",
@@ -3427,9 +3425,9 @@ class BaseModel(metaclass=MetaModel):
             'constraint_name': diag.constraint_name,
         }
         if self._table == diag.table_name:
-            columns = self._get_columns_from_sql_diagnostics(diag, self.pool)
+            columns = self.__get_columns_from_sql_diagnostics(diag, check_registry=True)
         else:
-            columns = self._get_columns_from_sql_diagnostics(diag)
+            columns = self.__get_columns_from_sql_diagnostics(diag)
             info['model_display'] = unknown
         if not columns:
             info['field_display'] = unknown
@@ -3624,6 +3622,15 @@ class BaseModel(metaclass=MetaModel):
             cls._active_name = 'active'
         elif 'x_active' in cls._fields:
             cls._active_name = 'x_active'
+
+        # 7. determine sql_objects
+        sql_objects = {}
+        for klass in reversed(cls._model_classes):
+            # this condition is an optimization of is_definition_class(klass)
+            if isinstance(klass, MetaModel):
+                sql_objects.update(klass._local_sql_objects)
+        sql_objects.update(cls._local_sql_objects)
+        cls._sql_objects = sql_objects
 
     @api.model
     def _setup_fields(self):
@@ -7450,7 +7457,10 @@ class SQLObject:
         self.key = ''
 
     def __set_name__(self, owner, name):
-        self.key = name
+        assert isinstance(owner, MetaModel)
+        assert name.startswith('_'), "Names of SQL objects in a model must start with '_'"
+        self.key = name[1:]
+        owner._local_sql_objects[self.key] = self
 
     @property
     def definition(self) -> str:
@@ -7516,12 +7526,11 @@ class Constraint(SQLObject):
         super().__init__()
         self._definition = definition
         self._set_message(message)
+        # see 'ir.model.constraint'.type
         if self._FOREIGN_KEY_RE.match(definition):
-            self._type = 'FK'
-        elif not definition:
-            self._type = 'VIRTUAL'
+            self._type = 'f'
         else:
-            self._type = 'CONSTRAINT'
+            self._type = 'u'
 
     @property
     def definition(self):
@@ -7539,11 +7548,7 @@ class Constraint(SQLObject):
             # constraint exists but its definition may have changed
             sql.drop_constraint(cr, model._table, conname)
 
-        if self._type == 'VIRTUAL':
-            # virtual constraint (e.g. implemented by a custom index)
-            warnings.warn(f"Since 18.0, stop using virtual constraints, give a proper defintion like INDEX for '{conname}'", DeprecationWarning)
-            model.pool.post_init(sql.check_index_exist, cr, conname)
-        elif self._type == "FK":
+        if self._type == "f":
             model.pool.post_init(sql.add_constraint, cr, model._table, conname, definition)
         else:
             model.pool.post_constraint(sql.add_constraint, cr, model._table, conname, definition)
