@@ -5,6 +5,7 @@ from . import test_mail_performance
 from . import test_mail_thread_internals
 from . import test_mass_mailing
 from . import test_message_reaction_controller_portal
+from . import test_message_update_controller_portal
 from . import test_portal
 from . import test_portal_thread_controller
 from . import test_rating

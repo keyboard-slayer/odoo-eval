@@ -12,6 +12,7 @@ from . import test_mail_render
 from . import test_mail_template
 from . import test_mail_tools
 from . import test_message_reaction_controller
+from . import test_message_update_controller
 from . import test_res_company
 from . import test_res_partner
 from . import test_res_users
