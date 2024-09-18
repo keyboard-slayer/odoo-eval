@@ -675,8 +675,98 @@ class Website(models.Model):
         IrQweb = self.env['ir.qweb'].with_context(website_id=website.id, lang=website.default_lang_id.code)
         snippets_cache = {}
         translated_content = {}
+        fonts_attributes = {}
+        html_storage = {}
+
+        def _replace_tags_with_placeholders(html_string):
+            parser = html.HTMLParser()
+            tree = html.fromstring(f'<div>{html_string}</div>', parser=parser)
+
+            def _construct_html(elements):
+                opening_tags = []
+                closing_tags = []
+
+                for element in elements[1:]:
+                    tag = element['tag']
+                    attr = element['attr']
+
+                    if attr:
+                        attr_string = ' '.join([f'{key}="{value}"' for key, value in attr.items()])
+                        opening_tag = f'<{tag} {attr_string}>'
+                    else:
+                        opening_tag = f'<{tag}>'
+
+                    closing_tag = f'</{tag}>'
+
+                    opening_tags.append(opening_tag)
+                    closing_tags.append(closing_tag)
+
+                # Combine all opening tags, add placeholder $0, and close all tags
+                html_string = ''.join(opening_tags) + '$0' + ''.join(closing_tags[::-1])
+
+                return html_string
+
+            def _generate_unique_hash(element_text, element_tag, element_attrib):
+                attrib_string = ','.join(f'{key}={value}' for key, value in sorted(element_attrib.items()))
+                combined_string = f'{element_text}|{element_tag}|{attrib_string}'
+                hash_object = hashlib.sha256(combined_string.encode('utf-8'))
+                return hash_object.hexdigest()
+
+            # Function to replace specific tags with placeholders
+            def _process_element(element):
+                # Handle highlights SVG.
+                if element.tag == 'span' and len(element) == 1 and element[0].tag == 'span' and len(element[0]) == 1 and element[0][0].tag == 'svg':
+                    # Extract the text from the inner <span>
+                    inner_text = element[0].text or ''
+                    element[0].text = '$0'
+                    # Store the outer HTML of the current element to reapply after chatGPT.
+                    outer_html_to_reapply = html.tostring(element, encoding='unicode', method='html')
+                    hash_value = _generate_unique_hash(inner_text, element.tag, element.attrib)
+                    html_storage[hash_value] = outer_html_to_reapply
+                    # Replace the content with the placeholder
+                    placeholder = f' ![{inner_text}](svg_{hash_value}) '
+                    element[0].text = ''
+                    element.text = placeholder
+                # Handle the maximum of inline tags (no nested tags for markdown syntax)
+                elif element.tag in {'u', 'em', 'strong', 's', 'br', 'font', 'b', 'small'} and len(element) == 0:
+                    if element.tag == 'br':
+                        placeholder = ' ![br](br) '
+                        element.tag = 'text'
+                    elif element.tag == 'font':
+                        hash_value = _generate_unique_hash(element.text, element.tag, element.attrib)
+                        placeholder = f'![{element.text}]({element.tag}_{hash_value})'
+                        fonts_attributes[hash_value] = element.attrib
+                    else:
+                        placeholder = f'![{element.text}]({element.tag})'
+                    element.text = placeholder
+
+            # Looking for one or several wrapping tags for all the HTML
+            # e.g. <strong><em>text ...</em><strong>
+            # keep in memory the wrapping tags to reapply after chatGPT.
+            wrapping_html = []
+            for element in tree.iter():
+                wrapping_html.append({"tag": element.tag, "attr": element.attrib})
+                if len(element) != 1 or element.text is not None:
+                    break
+
+            # Traverse the tree and process each element
+            for element in tree.iter():
+                _process_element(element)
+
+            # Return the modified HTML as a string, removing the wrapping div
+            ret = html.tostring(tree, encoding='unicode', method='html')[5:-6]
+            # If there is at least one wrapping tag, create a placeholder at the
+            # begining of the text with a unique hash.
+            if len(wrapping_html) > 1:
+                wrapping_html = _construct_html(wrapping_html)
+                hash_object = hashlib.sha256(ret.encode('utf-8'))
+                hash_id = hash_object.hexdigest()
+                html_storage[hash_id] = wrapping_html
+                ret = f"![wrap](wrap_{hash_id}) {ret}"
+            return ret
 
         def _compute_placeholder(term):
+            term = _replace_tags_with_placeholders(term)
             return xml_translate.get_text_content(term).strip()
 
         def _render_snippet(key):
@@ -745,6 +835,49 @@ class Website(models.Model):
         else:
             logger.info("Skip AI text generation because translation coverage is too low (%s%%)", translated_ratio * 100)
 
+        def _reapply_formatting(text):
+            # Replace ![br](br) with <br/>
+            text = text.replace('![br](br)', '<br/>')
+            # Handle a possible wrapping tag.
+            pattern = r'!\[wrap\]\(wrap_([a-f0-9]+)\)'
+
+            # Search for the hash and remove the placeholder
+            match = re.search(pattern, text)
+
+            if match:
+                text = re.sub(pattern, '', text)
+                hash_value = match.group(1)
+                if hash_value in html_storage:
+                    text = html_storage[hash_value].replace('$0', text)
+
+            # Replace ![string](tag) with <tag>string</tag>
+            def _replace_tag(match):
+                content = match.group(1)  # The string inside the square brackets
+                tag = match.group(2)      # The tag inside the parentheses
+                # Handle SVG
+                if tag.startswith('svg_'):
+                    try:
+                        hash_value = tag.split('_')[1]
+                    except (IndexError, ValueError):
+                        return text
+                    if html_storage[hash_value]:
+                        return html_storage[hash_value].replace('$0', content)
+                # Handle font tag for gradient colors
+                elif tag.startswith('font_'):
+                    try:
+                        font_id = tag.split('_')[1]
+                    except (IndexError, ValueError):
+                        return text
+                    if fonts_attributes[font_id]:
+                        attributes_string = ' '.join(f'{key}="{value}"' for key, value in fonts_attributes[font_id].items())
+                        return f'<font {attributes_string}>{content}</font>'
+                return f'<{tag}>{content}</{tag}>'
+
+            # Use regular expression to match the placeholder pattern ![string](tag)
+            tag_pattern = r'!\[([^\]]+)\]\(([^)]+)\)'
+            text = re.sub(tag_pattern, _replace_tag, text)
+            return text
+
         # Configure the pages
         for page_code in requested_pages:
             snippet_list = configurator_snippets.get(page_code, [])
@@ -760,7 +893,7 @@ class Website(models.Model):
 
                     # Fill rendered block with AI text
                     render = xml_translate(
-                        lambda x: generated_content.get(_compute_placeholder(x), x),
+                        lambda x: _reapply_formatting(generated_content.get(_compute_placeholder(x), x)),
                         render
                     )
 
