@@ -141,17 +141,7 @@ var ColorpickerWidget = Widget.extend({
             }
         }
         else {
-            // theme colors
-            if (color.match(/o-color-\d{1}/)) {
-                const styleInfo = document.getElementById('oe_snippets').getAttribute('style');
-                const index = styleInfo.indexOf(color);
-                const colorHex = styleInfo.substring(index+11, index+18);
-                rgba = ColorpickerWidget.convertCSSColorToRgba(colorHex);
-            }
-            // others
-            else {
-                rgba = ColorpickerWidget.convertCSSColorToRgba(color);
-            }
+            rgba = ColorpickerWidget.convertCSSColorToRgba(color);
         }
         if (rgba) {
             const oldPreviewActive = this.previewActive;

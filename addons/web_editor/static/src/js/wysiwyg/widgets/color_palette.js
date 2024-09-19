@@ -376,12 +376,6 @@ const ColorPaletteWidget = Widget.extend({
                 });
             },
         });
-        weUtils.getCSSVariableValue('custom-colors', this.style).split(' ').forEach(v => {
-            const color = weUtils.getCSSVariableValue(v.substring(1, v.length - 1), this.style);
-            if ((ColorpickerWidget.isCSSColor(color)) && (!v.match(/o-cc.-link/))) {
-                this._addCustomColor(existingColors, color);
-            }
-        });
         // Dark Theme Colors & Light Theme Colors
         const styleEl = document.getElementById('oe_snippets');
         if (styleEl) {
