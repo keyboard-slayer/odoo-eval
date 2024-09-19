@@ -1,3 +1,4 @@
+// import { onChange } from "@mail/utils/common/misc";
 import { reactive, toRaw } from "@odoo/owl";
 import { uuidv4 } from "@point_of_sale/utils";
 
@@ -302,7 +303,7 @@ export class Base {
     }
 }
 
-export function createRelatedModels(modelDefs, modelClasses = {}, opts = {}) {
+export function createRelatedModels(modelDefs, modelClasses = {}, opts = {}, callback = () => {}) {
     const indexes = opts.databaseIndex || {};
     const database = opts.databaseTable || {};
     const [inverseMap, processedModelDefs] = processModelDefs(modelDefs);
@@ -445,6 +446,41 @@ export function createRelatedModels(modelDefs, modelClasses = {}, opts = {}) {
         const Model = modelClasses[model] || Base;
         const record = reactive(new Model({ models, records, model: models[model] }));
         const id = vals["id"];
+        const onChange = (target, key, callback) => {
+            let proxy;
+            function _observe() {
+                // access proxy[key] only once to avoid triggering reactive get() many times
+                const val = proxy[key];
+                if (typeof val === "object" && val !== null) {
+                    void Object.keys(val);
+                }
+                if (Array.isArray(val)) {
+                    void val.length;
+                    void val.forEach((i) => i);
+                }
+            }
+            if (Array.isArray(key)) {
+                for (const k of key) {
+                    onChange(target, k, callback);
+                }
+                return;
+            }
+            proxy = reactive(target, () => {
+                _observe();
+                callback();
+            });
+            _observe();
+            return proxy;
+        };
+        // onChange(record, Object.keys(vals), () => {
+        //     callback(record);
+        // });
+        Object.keys(vals).forEach((key) => {
+            onChange(record, key, () => {
+                callback(record, key);
+            });
+        });
+
         record.id = id;
         if (!vals.uuid && database[model]?.key === "uuid") {
             record.uuid = uuidv4();

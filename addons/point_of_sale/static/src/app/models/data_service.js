@@ -220,7 +220,9 @@ export class PosData extends Reactive {
         const { models, records, indexedRecords } = createRelatedModels(
             relations,
             modelClasses,
-            this.opts
+            this.opts,
+            (record, key) =>
+                console.log(record, record.model.modelName, record.id, key, record[key])
         );
 
         this.records = records;
@@ -240,6 +242,8 @@ export class PosData extends Reactive {
         const dbData = await this.loadIndexedDBData();
         this.loadedIndexedDBProducts = dbData ? dbData["product.product"] : [];
         this.network.loading = false;
+
+        // this.models = this.models.map
     }
 
     async execute({
