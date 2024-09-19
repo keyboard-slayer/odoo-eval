@@ -36,7 +36,7 @@
                     <SearchBar t-if="searchBarToggler.state.showSearchBar" autofocus="firstLoad"/>
                 </t>
                 <t t-set-slot="control-panel-navigation-additional">
-                    <t t-component="searchBarToggler.component" t-props="searchBarToggler.props"/>
+                    <t t-if="!hasSelectedRecords" t-component="searchBarToggler.component" t-props="searchBarToggler.props"/>
                 </t>
 
                 <t t-set-slot="control-panel-additional-actions">
@@ -61,7 +61,7 @@
                     </CogMenu>
                 </t>
                 <t t-set-slot="control-panel-selection-actions">
-                    <div t-if="hasSelectedRecords" class="d-flex gap-1 w-100 w-md-auto">
+                    <div t-if="hasSelectedRecords" class="o_list_selection_container d-flex gap-1 w-100 w-md-auto">
                         <t t-call="web.ListView.Selection"/>
                         <t t-if="!env.isSmall">
                             <t t-foreach="archInfo.headerButtons" t-as="button" t-key="button.id" t-if="!evalViewModifier(button.invisible)">
@@ -115,7 +115,7 @@
     </t>
 
     <t t-name="web.ListView.Selection">
-        <div class="o_list_selection_box list-group flex-row w-100 w-md-auto" role="alert">
+        <div class="o_list_selection_box list-group flex-row w-auto" role="alert">
             <span class="list-group-item active d-flex align-items-center pe-0 py-0 rounded-1 gap-1 flex-grow-1">
                 <span t-if="isDomainSelected">All <b t-esc="nbTotal"/> selected</span>
                 <t t-else="">
