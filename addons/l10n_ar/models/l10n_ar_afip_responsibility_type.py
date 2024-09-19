@@ -14,5 +14,11 @@ class L10nArAfipResponsibilityType(models.Model):
     code = fields.Char(required=True, index=True)
     active = fields.Boolean(default=True)
 
-    _sql_constraints = [('name', 'unique(name)', 'Name must be unique!'),
-                        ('code', 'unique(code)', 'Code must be unique!')]
+    _name_uniq = models.Constraint(
+        'unique(name)',
+        lambda env: env._('Name must be unique!'),
+    )
+    _code_uniq = models.Constraint(
+        'unique(code)',
+        lambda env: env._('Code must be unique!'),
+    )

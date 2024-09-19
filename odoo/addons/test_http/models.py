@@ -22,10 +22,10 @@ class Stargate(models.Model):
     glyph_compute = fields.Image(compute='_compute_glyph_compute')
     galaxy_picture = fields.Image(related='galaxy_id.picture', attachment=True, store=False)
 
-
-    _sql_constraints = [
-        ('address_length', 'CHECK(LENGTH(address) = 6)', "Local addresses have 6 glyphs"),
-    ]
+    _address_length = models.Constraint(
+        'CHECK(LENGTH(address) = 6)',
+        lambda env: env._("Local addresses have 6 glyphs"),
+    )
 
     @api.depends('galaxy_id')
     def _compute_has_galaxy_crystal(self):
