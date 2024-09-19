@@ -91,7 +91,7 @@ class Message(models.Model):
         'Preview', compute='_compute_preview',
         help='The text-only beginning of the body used as email preview.')
     link_preview_ids = fields.One2many(
-        'mail.link.preview', 'message_id', string='Link Previews',
+        'mail.link.preview', 'message_ids', string='Link Previews',
         groups="base.group_erp_manager")
     reaction_ids = fields.One2many(
         'mail.message.reaction', 'message_id', string="Reactions",

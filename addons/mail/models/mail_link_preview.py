@@ -17,7 +17,7 @@ class LinkPreview(models.Model):
     _inherit = "bus.listener.mixin"
     _description = "Store link preview data"
 
-    message_id = fields.Many2one('mail.message', string='Message', index=True, ondelete='cascade')
+    message_ids = fields.Many2many('mail.message', string='Message', index=True, ondelete='cascade')
     is_hidden = fields.Boolean()
     source_url = fields.Char('URL', required=True)
     og_type = fields.Char('Type')
@@ -34,6 +34,9 @@ class LinkPreview(models.Model):
 
     @api.model
     def _create_from_message_and_notify(self, message, request_url=None):
+        print("========messsage")
+        print(message)
+        print("========messsage")
         if tools.is_html_empty(message.body):
             return self
         urls = OrderedSet(html.fromstring(message.body).xpath('//a[not(@data-oe-model)]/@href'))
@@ -43,6 +46,9 @@ class LinkPreview(models.Model):
         link_previews_by_url = {
             preview.source_url: preview for preview in message.sudo().link_preview_ids
         }
+        print("=====by url======")
+        print(link_previews_by_url)
+        print("===========")
         ignore_pattern = (
             re.compile(f"{re.escape(request_url)}(odoo|web)(/|$|#|\\?)") if request_url else None
         )
@@ -55,10 +61,16 @@ class LinkPreview(models.Model):
                     link_previews += preview
                 continue
             if preview := get_link_preview_from_url(url, requests_session):
-                preview['message_id'] = message.id
+                print("=====preview======")
+                print(preview)
+                print("===========")
+                preview['message_ids'] = [message.id]
                 link_preview_values.append(preview)
             if len(link_preview_values) + len(link_previews) > 5:
                 break
+        print("=====value======")
+        print(link_preview_values)
+        print("===========")
         for unused_preview in link_previews_by_url.values():
             unused_preview._unlink_and_notify()
         if link_preview_values:
@@ -121,7 +133,7 @@ class LinkPreview(models.Model):
                 ],
                 load=False,
             )[0]
-            data["message"] = Store.one(preview.message_id, only_id=True)
+            data["message"] = Store.one(preview.message_ids[0], only_id=True)
             store.add(preview, data)
 
     @api.autovacuum
