@@ -2664,11 +2664,10 @@ class AccountMove(models.Model):
         def field_has_changed(values, record, field):
             return get_value(record, field) != values.get(record, {}).get(field)
 
-        def any_field_has_changed(values, records, excluded_field=None):
-            excluded_field = excluded_field or set()
+        def any_field_has_changed(values, records, fields=None):
             return any(
                 record not in values
-                or any(field_has_changed(values, record, field) for field in values[record] if field not in excluded_field)
+                or any(field_has_changed(values, record, field) for field in values[record] if not fields or field in fields)
                 for record in records
             )
 
@@ -2746,7 +2745,17 @@ class AccountMove(models.Model):
             if not need_recompute:
                 continue
 
-            base_lines_values, tax_lines_values = move._get_rounded_base_lines(round_from_tax_lines=False)
+            round_from_tax_lines = (
+                # No tax changed on the lines that was there before.
+                not any_field_has_changed(
+                    move_base_lines_values_before,
+                    base_lines.filtered(lambda line: line in move_base_lines_values_before),
+                    fields={'tax_ids'},
+                )
+                # The added lines (like cogs) don't impact any tax line.
+                and not base_lines.filtered(lambda line: line not in move_base_lines_values_before).tax_ids
+            )
+            base_lines_values, tax_lines_values = move._get_rounded_base_lines(round_from_tax_lines=round_from_tax_lines)
             AccountTax._add_base_lines_accounting_tax_details(base_lines_values, move.company_id, include_caba_tags=move.always_tax_exigible)
             tax_results = AccountTax._prepare_tax_lines(base_lines_values, move.company_id, tax_lines=tax_lines_values)
 
@@ -4050,12 +4059,12 @@ class AccountMove(models.Model):
             'base_amount': 0.0,
             'tax_amount_currency': 0.0,
             'tax_amount': 0.0,
-            'tax_details_per_record': defaultdict(lambda: defaultdict(lambda: {
+            'tax_details_per_record': defaultdict(lambda: {
                 'base_amount_currency': 0.0,
                 'base_amount': 0.0,
                 'tax_amount_currency': 0.0,
                 'tax_amount': 0.0,
-            })),
+            }),
             'base_lines': base_lines,
         }
 
