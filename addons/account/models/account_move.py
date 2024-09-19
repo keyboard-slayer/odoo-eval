@@ -2750,7 +2750,7 @@ class AccountMove(models.Model):
                 not any_field_has_changed(
                     move_base_lines_values_before,
                     base_lines.filtered(lambda line: line in move_base_lines_values_before),
-                    fields={'tax_ids'},
+                    fields={'tax_ids', 'currency_id'},
                 )
                 # The added lines (like cogs) don't impact any tax line.
                 and not base_lines.filtered(lambda line: line not in move_base_lines_values_before).tax_ids
