@@ -68,7 +68,7 @@ class Certificate(models.Model):
         """
         self.ensure_one()
         if not (self.date_start < fields.Datetime.now() < self.date_end):
-            raise UserError('Facturae certificate date is not valid, its validity has probably expired')
+            raise UserError(self.env._('Facturae certificate date is not valid, its validity has probably expired'))
         root = deepcopy(edi_data)
         cert_private, cert_public = self._decode_certificate()
         public_key_numbers = cert_public.public_key().public_numbers()

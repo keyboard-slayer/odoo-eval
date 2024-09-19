@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from lxml import etree
 
+from odoo import _
 from odoo.exceptions import UserError
 
 NS_MAP = {'ds': "http://www.w3.org/2000/09/xmldsig#"}
@@ -52,9 +53,9 @@ def _get_uri(uri, reference, base_uri=""):
         if len(results) == 1:
             return _canonicalize_node(results[0])
         if len(results) > 1:
-            raise UserError(f"Ambiguous reference URI {uri} resolved to {len(results)} nodes")
+            raise UserError(f"Ambiguous reference URI {uri} resolved to {len(results)} nodes")  # pylint: disable=missing-gettext
 
-    raise UserError(f'URI {uri} not found')
+    raise UserError(_("URI %(uri)s not found", uri=uri))
 
 
 def _reference_digests(node, base_uri=""):

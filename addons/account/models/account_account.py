@@ -265,8 +265,10 @@ class AccountAccount(models.Model):
     def _check_company_consistency(self):
         if accounts_without_company := self.filtered(lambda a: not a.sudo().company_ids):
             raise ValidationError(
-                _("The following accounts must be assigned to at least one company:")
-                + "\n" + "\n".join(f"- {account.display_name}" for account in accounts_without_company)
+                self.env._(
+                    "The following accounts must be assigned to at least one company:\n%(accounts)s",
+                    accounts="\n".join(f"- {account.display_name}" for account in accounts_without_company),
+                ),
             )
         for companies, accounts in self.grouped(lambda a: a.company_ids).items():
             if self.env['account.move.line'].sudo().search_count([
