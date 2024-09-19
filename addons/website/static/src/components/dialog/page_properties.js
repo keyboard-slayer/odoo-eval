@@ -57,17 +57,18 @@ export class PageDependencies extends Component {
     }
 
     showDependencies() {
-        $(this.action.el).popover({
+        const popover = Popover.getOrCreateInstance(this.action.el, {
             title: _t("Dependencies"),
-            boundary: 'viewport',
-            placement: 'right',
-            trigger: 'focus',
+            boundary: "viewport",
+            placement: "right",
+            trigger: "focus",
             content: () => {
                 return renderToFragment("website.PageDependencies.Tooltip", {
                     dependencies: this.state.dependencies,
                 });
             },
-        }).popover('toggle');
+        });
+        popover.toggle();
     }
 }
 
