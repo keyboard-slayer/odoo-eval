@@ -148,6 +148,15 @@ export class LocationSelectorDialog extends Component {
     }
 
     /**
+     * Find the selected location based on its id.
+     *
+     * @return {Object} The selected location.
+     */
+    get selectedLocation() {
+        return this.state.locations.find(l => String(l.id) === this.state.selectedLocationId)
+    }
+
+    /**
      *
      * @return {void}
      */

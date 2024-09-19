@@ -10,6 +10,14 @@ from odoo.http import request
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    def set_delivery_line(self, carrier, amount):
+        dm_before = self.carrier_id
+        res = super().set_delivery_line(carrier, amount)
+        dm_after = self.carrier_id
+        if dm_before.delivery_type == 'in_store' and dm_after.delivery_type != 'in_store':
+            self._compute_warehouse_id()
+        return res
+
     def _set_pickup_location(self, pickup_location_data):
         """ Override `website_sale` to set the pickup location for in-store delivery methods. """
         res = super()._set_pickup_location(pickup_location_data)
@@ -17,6 +25,7 @@ class SaleOrder(models.Model):
             return res
 
         self.pickup_location_data = json.loads(pickup_location_data)
+        self.warehouse_id = self.pickup_location_data['warehouse_id']
 
     def _get_pickup_locations(self, zip_code=None, country=None, **kwargs):
         """ Override of `website_sale` to ensure that a country is provided when there is a zip
@@ -70,3 +79,9 @@ class SaleOrder(models.Model):
             and l.product_uom_qty > l.product_id.with_context(warehouse_id=wh_id).free_qty
         ).product_id
         return out_of_stock_products
+
+    def _verify_updated_quantity(self, order_line, product_id, new_qty, **kwargs):
+        product = self.env['product.product'].browse(product_id)
+        if product.is_storable and self.website_id.in_store_dm_id:
+            return new_qty, ''
+        return super()._verify_updated_quantity(order_line, product_id, new_qty, **kwargs)
