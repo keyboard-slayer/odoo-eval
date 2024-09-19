@@ -77,6 +77,13 @@ export class LinkDialog extends Link {
         this.props.close();
     }
 
+    onKeyDown(ev) {
+        const isAutoCompleteDropdownOpen = document.querySelector(".o-autocomplete--dropdown-menu");
+        if (ev.key === "Enter" && !isAutoCompleteDropdownOpen) {
+            this.onSave(ev);
+        }
+    }
+
     //--------------------------------------------------------------------------
     // Private
     //--------------------------------------------------------------------------
