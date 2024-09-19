@@ -17,7 +17,7 @@ class ImLivechatChannel(models.Model):
     """
 
     _name = 'im_livechat.channel'
-    _inherit = ['rating.parent.mixin']
+    _inherit = ['rating.parent.mixin', 'bus.listener.mixin']
     _description = 'Livechat Channel'
     _rating_satisfaction_days = 14  # include only last 14 days to compute satisfaction
 
@@ -97,6 +97,11 @@ class ImLivechatChannel(models.Model):
         channel_count = {livechat_channel.id: count for livechat_channel, count in data}
         for record in self:
             record.nbr_channel = channel_count.get(record.id, 0)
+
+    @api.ondelete(at_uninstall=False)
+    def _unlink_channel(self):
+        for channel in self:
+            channel._bus_send("im_livechat.channel/delete", {"id": channel.id})
 
     # --------------------------
     # Action Methods
@@ -339,10 +344,32 @@ class ImLivechatChannel(models.Model):
 
     def web_save(self, *args, **kwargs):
         rdata = super().web_save(*args, **kwargs)
-        user_ids = [sub_array[1] for sub_array in args[0]['user_ids']]
-        for user in self.env['res.users'].browse(user_ids):
-            user._bus_send_store(self, fields=["are_you_inside", "name"])
+        add_user_ids = [user[1] for user in args[0]['user_ids'] if user[0] == 4]
+        remove_user_ids = [user[1] for user in args[0]['user_ids'] if user[0] == 3]
+        self.update_members(add_user_ids, remove_user_ids, rdata)
         return rdata
+
+    def update_members(self, add_user_ids=None, remove_user_ids=None, rdata=None):
+        if add_user_ids and rdata:
+            for user in self.env['res.users'].browse(add_user_ids):
+                payload = {
+                    "channel": {
+                        "name": rdata[0]['name'],
+                        "id": rdata[0]['id'],
+                    },
+                }
+                payload["invited_by_user_id"] = self.env.user.id
+                user._bus_send("im_livechat.channel/joined", payload)
+        if remove_user_ids:
+            for user in self.env['res.users'].browse(remove_user_ids):
+                payload = {
+                    "channel": {
+                        "name": self.name,
+                        "id": self.id,
+                    },
+                }
+                payload["removed_by_user_id"] = self.env.user.id
+                user._bus_send("im_livechat.channel/leave", payload)
 
 
 class ImLivechatChannelRule(models.Model):
