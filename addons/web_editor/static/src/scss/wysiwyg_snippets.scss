@@ -2806,6 +2806,7 @@ we-select.o_grid we-toggler {
 // Add snippets dialog.
 .o_add_snippet_dialog {
     max-height: $modal-lg !important;
+    direction: ltr;
 
     .modal-body {
         display: flex;
@@ -2846,6 +2847,11 @@ we-select.o_grid we-toggler {
 }
 
 // Add snippets dialog iframe.
+.o_snippets_preview_row {
+    // Needed for RTL language
+    @include o-position-absolute($left: 0);
+}
+
 .o_add_snippets_preview {
     overflow: hidden;
 
