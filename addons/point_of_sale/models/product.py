@@ -83,6 +83,12 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
+    def _check_edi_move(self):
+        self.ensure_one()
+        if self.type == 'combo':
+            return False
+        return super()._check_edi_move()
+
     @api.onchange('detailed_type')
     def _onchange_detailed_type(self):
         if self.detailed_type == 'combo':

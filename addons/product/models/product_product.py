@@ -242,6 +242,10 @@ class ProductProduct(models.Model):
             self._check_duplicated_product_barcodes(barcodes_within_company, company_id)
             self._check_duplicated_packaging_barcodes(barcodes_within_company, company_id)
 
+    def _check_edi_move(self):
+        self.ensure_one()
+        return True
+
     def _get_invoice_policy(self):
         return False
 
