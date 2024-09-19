@@ -21,6 +21,13 @@ class MailTemplate(models.Model):
             domain = expression.AND([[('model', '=', 'event.registration')], domain])
         return super()._name_search(name, domain, operator, limit, order)
 
+    @api.model
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
+        """ Same as _name_search """
+        if self.env.context.get('filter_template_on_event'):
+            domain = expression.AND([[('model', '=', 'event.registration')], domain])
+        return super()._search(domain, offset, limit, order, access_rights_uid)
+
     def unlink(self):
         res = super().unlink()
         domain = ('template_ref', 'in', [f"{template._name},{template.id}" for template in self])
