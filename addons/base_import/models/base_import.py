@@ -1402,6 +1402,8 @@ class Import(models.TransientModel):
                 self.pool.clear_all_caches()
                 # don't propagate to other workers since it was rollbacked
                 self.pool.reset_changes()
+                # if anything is marked dirty, changes will actually get written later
+                self.env.cache._dirty.clear()
             else:
                 self._cr.execute('RELEASE SAVEPOINT import')
         except psycopg2.InternalError:
