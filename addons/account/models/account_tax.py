@@ -1446,7 +1446,7 @@ class AccountTax(models.Model):
                 tax_data['raw_base_amount'] = tax_data['base_amount']
                 tax_data['base_amount'] = company.currency_id.round(tax_data['base_amount'])
 
-                key = (tax, currency)
+                key = (tax, currency, base_line['is_refund'])
                 amounts = total_per_tax[key]
                 amounts['tax_amount_currency'] += tax_data['tax_amount_currency']
                 amounts['raw_tax_amount_currency'] += tax_data['raw_tax_amount_currency']
@@ -1460,7 +1460,7 @@ class AccountTax(models.Model):
                     amounts['base_lines'].append(base_line)
 
         # Round 'total_per_tax'.
-        for (tax, currency), amounts in total_per_tax.items():
+        for (tax, currency, _is_refund), amounts in total_per_tax.items():
             amounts['raw_tax_amount_currency'] = currency.round(amounts['raw_tax_amount_currency'])
             amounts['raw_tax_amount'] = company.currency_id.round(amounts['raw_tax_amount'])
             amounts['raw_base_amount_currency'] = currency.round(amounts['raw_base_amount_currency'])
@@ -1474,7 +1474,7 @@ class AccountTax(models.Model):
                 sign = tax_line['sign']
                 tax = tax_rep.tax_id
                 currency = tax_line['currency_id']
-                key = (tax, currency)
+                key = (tax, currency, tax_rep.document_type == 'refund')
 
                 if key not in manually_edited_tax_key:
                     total_per_tax[key]['raw_tax_amount_currency'] = 0.0
@@ -1484,7 +1484,7 @@ class AccountTax(models.Model):
                 total_per_tax[key]['raw_tax_amount'] += sign * tax_line['balance']
 
         # Dispatch the delta accross the base lines.
-        for (tax, _currency), amounts in total_per_tax.items():
+        for (tax, _currency, _is_refund), amounts in total_per_tax.items():
             if not amounts['base_lines']:
                 continue
 
