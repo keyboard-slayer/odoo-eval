@@ -16,6 +16,7 @@ export class DiscussCoreWeb {
         this.ui = services.ui;
         this.discussCoreCommonService = services["discuss.core.common"];
         this.store = services["mail.store"];
+        this.multiTab = services.multi_tab;
         try {
             this.sidebarCategoriesBroadcast = new browser.BroadcastChannel(
                 "discuss_core_web.sidebar_categories"
@@ -51,6 +52,9 @@ export class DiscussCoreWeb {
                 "%(user)s connected. This is their first connection. Wish them luck.",
                 { user: username }
             );
+            if (!this.multiTab.isOnMainTab()) {
+                return;
+            }
             this.notificationService.add(notification, { type: "info" });
             const chat = await this.store.getChat({ partnerId });
             if (chat && !this.ui.isSmall) {
@@ -88,7 +92,7 @@ export class DiscussCoreWeb {
 }
 
 export const discussCoreWeb = {
-    dependencies: ["bus_service", "discuss.core.common", "mail.store", "notification", "ui"],
+    dependencies: ["bus_service", "discuss.core.common", "mail.store", "notification", "ui", "multi_tab"],
     /**
      * @param {import("@web/env").OdooEnv} env
      * @param {Partial<import("services").Services>} services
