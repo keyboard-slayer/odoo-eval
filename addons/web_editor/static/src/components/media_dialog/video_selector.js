@@ -218,6 +218,10 @@ export class VideoSelector extends Component {
         return selectedMedia.map(video => {
             const div = document.createElement('div');
             div.dataset.oeExpression = video.src;
+            // Instagram videos are generally vertical
+            if (video.platform == "instagram") {
+                div.style = "height: 100; width: 100%; aspect-ratio: 0.7;"
+            } 
             div.innerHTML = `
                 <div class="css_editable_mode_display"></div>
                 <div class="media_iframe_video_size" contenteditable="false"></div>
