@@ -9,7 +9,8 @@ import re
 import socket
 import threading
 import time
-from email.utils import getaddresses
+import email.utils
+from email.utils import getaddresses as legacy_getaddresses
 from urllib.parse import urlparse
 
 import idna
@@ -23,6 +24,14 @@ from odoo.loglevels import ustr
 from odoo.tools import misc
 
 _logger = logging.getLogger(__name__)
+
+
+if hasattr(email.utils, 'supports_strict_parsing'):
+    def getaddresses(fieldvalues):
+        return legacy_getaddresses(fieldvalues, strict=False)
+else:
+    getaddresses = legacy_getaddresses
+
 
 #----------------------------------------------------------
 # HTML Sanitizer
