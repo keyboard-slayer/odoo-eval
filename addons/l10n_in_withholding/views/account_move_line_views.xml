@@ -11,4 +11,14 @@
             </xpath>
         </field>
     </record>
+    <record id="account_move__line_view_search_inherit_l10n_in" model="ir.ui.view">
+        <field name="name">account.move.line.search.inherit.l10n_in</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='group_by_matching']" position="after">
+                <filter string="TDS/TCS" name="group_by_tds_tcs_section" context="{'group_by': 'section_id'}"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>
