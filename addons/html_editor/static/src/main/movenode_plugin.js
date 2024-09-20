@@ -384,11 +384,13 @@ export class MoveNodePlugin extends Plugin {
                 p.append(br);
                 previousParent.append(p);
             }
-            const selectionPosition = endPos(movableElement);
-            this.shared.setSelection({
-                anchorNode: selectionPosition[0],
-                anchorOffset: selectionPosition[1],
-            });
+            if (movableElement.isContentEditable) {
+                const selectionPosition = endPos(movableElement);
+                this.shared.setSelection({
+                    anchorNode: selectionPosition[0],
+                    anchorOffset: selectionPosition[1],
+                });
+            }
             this.dispatch("ADD_STEP");
         }
     }
