@@ -11,6 +11,11 @@ import { ProjectTaskStateSelection } from "../project_task_state_selection";
 export class TaskStageWithStateSelection extends Component {
     static template = "project.TaskStageWithStateSelection";
 
+    setup() {
+        this.props.record.activeFields.state.readonly = this.props.stateReadonly;
+        super.setup();
+    }
+
     static props = {
         ...standardFieldProps,
         stateReadonly: { type: Boolean, optional: true },
@@ -31,6 +36,7 @@ export class TaskStageWithStateSelection extends Component {
             ...this.stageProps,
             name: "state",
             readonly: this.props.stateReadonly,
+            autosave: !this.props.stateReadonly,
             viewType: this.props.viewType,
             showLabel: false,
         };
