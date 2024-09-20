@@ -1,10 +1,12 @@
 import datetime
 from freezegun import freeze_time
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from odoo import Command
 from odoo.exceptions import UserError
 from odoo.tests import tagged, Form
+from odoo.tools.float_utils import float_compare
 from odoo.exceptions import ValidationError
 
 from odoo.addons.hr_holidays.tests.common import TestHrHolidaysCommon
@@ -2048,3 +2050,50 @@ class TestAccrualAllocations(TestHrHolidaysCommon):
 
             self.assertNotEqual(updated_allocation.number_of_days, allocation_days)
             self.assertEqual(updated_allocation.number_of_days, 3.0)
+
+    def test_start_accrual_gain_time_immediately(self):
+        accrual_plan = self.env['hr.leave.accrual.plan'].with_context(tracking_disable=True).create({
+            'name': '1.25 days each 1st of the month',
+            'transition_mode': 'immediately',
+            'carryover_date': 'year_start',
+            'accrued_gain_time': 'start',
+            'level_ids':
+                [(0, 0, {
+                    'start_type': 'day',
+                    'start_count': 0,
+                    'added_value_type': 'day',
+                    'added_value': 1.25,
+                    'frequency': 'monthly',
+                    'cap_accrued_time': False,
+                    'action_with_unused_accruals': 'all',
+                }),
+             ],
+        })
+
+        with freeze_time('2024-09-02'):
+            allocation = self.env['hr.leave.allocation'].with_user(self.user_hrmanager_id).with_context(tracking_disable=True).create({
+                'name': 'Accrual allocation',
+                'accrual_plan_id': accrual_plan.id,
+                'employee_id': self.employee_emp.id,
+                'holiday_status_id': self.leave_type.id,
+                'number_of_days': 0,
+                'allocation_type': 'accrual',
+            })
+
+            allocation.action_validate()
+            days_accrued_start = allocation._get_future_leaves_on(date(2024, 9, 2))
+            days_accrued_month_end = allocation._get_future_leaves_on(date(2024, 10, 1))
+
+            self.assertEqual(days_accrued_start, 1.21, 'Days for the current month should be granted immediately')
+            self.assertEqual(days_accrued_month_end, 2.46, 'Days for the upcoming month should be granted on the 1st')
+
+            leave = self.env['hr.leave'].create({
+                'employee_id': self.employee_emp.id,
+                'holiday_status_id': self.leave_type.id,
+                'request_date_from': '2024-09-13 08:00:00',
+                'request_date_to': '2024-09-13 17:00:00',
+            })
+
+            leave.action_validate()
+            remaining_leaves = self.leave_type.get_allocation_data(self.employee_emp, date(2024, 9, 14))[self.employee_emp][0][1]['remaining_leaves']
+            self.assertEqual(float_compare(remaining_leaves, 0.21, precision_digits=2), 0, 'Leave should be deducted from accrued days')

@@ -534,10 +534,11 @@ class HolidaysAllocation(models.Model):
                 # check that we are at the start of a period, not on a carry-over or level transition date
                 current_level = current_level or allocation.accrual_plan_id.level_ids[0]
                 period_start = current_level._get_previous_date(allocation.lastcall)
-                if allocation.lastcall != period_start:
-                    continue
                 if current_level.cap_accrued_time:
                     current_level_maximum_leave = current_level.maximum_leave if current_level.added_value_type == "day" else current_level.maximum_leave / (allocation.employee_id.sudo().resource_id.calendar_id.hours_per_day or HOURS_PER_DAY)
+                if allocation.lastcall != period_start:
+                    allocation._add_days_to_allocation(current_level, current_level_maximum_leave, leaves_taken, period_start, allocation.nextcall)
+                    continue
                 allocation._add_days_to_allocation(current_level, current_level_maximum_leave, leaves_taken, allocation.lastcall, allocation.nextcall)
                 allocation.already_accrued = True
 
@@ -560,7 +561,7 @@ class HolidaysAllocation(models.Model):
         # We need to create a temporary copy of that allocation to return the difference in number of days
         # to see how much more days will be allocated from now until that date.
         self.ensure_one()
-        if not accrual_date or accrual_date <= date.today():
+        if not accrual_date or accrual_date < date.today():
             return 0
 
         if not (self.accrual_plan_id
