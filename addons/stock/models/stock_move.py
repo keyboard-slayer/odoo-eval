@@ -60,7 +60,7 @@ class StockMove(models.Model):
     product_uom_qty = fields.Float(
         'Demand',
         digits='Product Unit of Measure',
-        default=0, required=True,
+        default=1, required=True,
         help="This is the quantity of product that is planned to be moved."
              "Lowering this quantity does not generate a backorder."
              "Changing this quantity on assigned moves affects "
