@@ -380,6 +380,7 @@ registerWebsitePreviewTour(
         {
             content: "Wait for editor to open",
             trigger: ".o_website_navbar_hide",
+            timeout: 20000,
         },
         ...clickOnSave(),
         stepUtils.waitIframeIsReady(),

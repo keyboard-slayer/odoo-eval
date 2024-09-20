@@ -6,7 +6,7 @@
 
     registry.category("web_tour.tours").add('website_sale_tour_1', {
         test: true,
-        checkDelay: 250,
+        checkDelay: 150,
         url: '/shop?search=Storage Box Test',
         steps: () => [
     // Testing b2c with Tax-Excluded Prices
@@ -456,6 +456,7 @@
     registry.category("web_tour.tours").add('website_sale_tour_2', {
         test: true,
         url: '/shop/cart',
+        checkDelay: 150,
         steps: () => [
     {
         isActive: ["auto"],

@@ -144,6 +144,7 @@ export const tourService = {
                 keepWatchBrowser: false,
                 mode: "auto",
                 showPointerDuration: 0,
+                check: 0,
                 debug: false,
                 redirect: true,
             };
@@ -152,11 +153,6 @@ export const tourService = {
             tourState.setCurrentConfig(tourConfig);
             tourState.setCurrentTour(tour.name);
             tourState.setCurrentIndex(0);
-            if (tourConfig.debug !== false) {
-                // Starts the tour with a debugger to allow you to choose devtools configuration.
-                // eslint-disable-next-line no-debugger
-                debugger;
-            }
 
             const willUnload = callWithUnloadCheck(() => {
                 if (tour.url && tourConfig.startUrl != tour.url && tourConfig.redirect) {

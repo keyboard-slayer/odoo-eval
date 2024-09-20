@@ -12,49 +12,67 @@ registry.category("web_tour.tours").add('event_buy_last_ticket', {
         run: "click",
     },
     {
-        content: "Open Registration Page",
-        trigger: '.btn-primary:contains("Register")',
+        content: "Open Registration Modal",
+        trigger: ".btn-primary:contains(Register)",
         run: "click",
     },
     {
-        content: "Open the register modal",
-        trigger: 'button:contains("Register")',
-        run: "click",
+        content: "Check the modal Tickets is opened",
+        trigger: "body:has(.modal:contains(Tickets))",
     },
     {
         trigger: '#wrap:not(:has(a[href*="/event"]:contains("Last ticket test")))',
     },
     {
         content: "Select 2 units of `VIP` ticket type",
-        trigger: 'select:eq(0)',
+        trigger: ".modal select:eq(0)",
         run: "select 2",
     },
     {
-        trigger: "select:eq(0):has(option:contains(2):selected)",
+        trigger: ".modal select:eq(0):has(option:contains(2):selected)",
     },
     {
         content: "Click on `Order Now` button",
-        trigger: '.a-submit:contains("Register")',
+        trigger: ".modal .modal-footer button.btn-primary.a-submit:contains(Register)",
         run: "click",
     },
     {
-        content: "Fill attendees details",
-        trigger: 'form[id="attendee_registration"] .btn[type=submit]',
-        run: function () {
-            document.querySelector("input[name*='1-name']").value = "Att1";
-            document.querySelector("input[name*='1-phone']").value = "111 111";
-            document.querySelector("input[name*='1-email']").value = "att1@example.com";
-            document.querySelector("input[name*='2-name']").value = "Att2";
-            document.querySelector("input[name*='2-phone']").value = "222 222";
-            document.querySelector("input[name*='2-email']").value = "att2@example.com";
-        },
+        content: "Check the modal Attendees is opened",
+        trigger: "body:has(.modal:contains(Attendees):contains(Ticket #1):contains(Ticket #2))",
     },
     {
-        trigger: "input[name*='1-name'], input[name*='2-name']",
+        content: "Fill name of attendee 1",
+        trigger: ".modal input[name*='1-name']",
+        run: "edit Att1",
+    },
+    {
+        content: "Fill phone of attendee 1",
+        trigger: ".modal input[name*='1-phone']",
+        run: "edit 111-111",
+    },
+    {
+        content: "Fill email of attendee 1",
+        trigger: ".modal input[name*='1-email']",
+        run: "edit att1@example.com",
+    },
+    {
+        content: "Fill name of attendee 2",
+        trigger: ".modal input[name*='2-name']",
+        run: "edit Att2",
+    },
+    {
+        content: "Fill phone of attendee 2",
+        trigger: ".modal input[name*='2-phone']",
+        run: "edit 222-222",
+    },
+    {
+        content: "Fill email of attendee 2",
+        trigger: ".modal input[name*='2-email']",
+        run: "edit att2@example.com",
     },
     {
         content: "Validate attendees details",
-        trigger: "button[type=submit]:contains(Go to Payment)",
+        trigger: ".modal button[type=submit]:contains(Go to Payment)",
         run: "click",
     },
     ...wsTourUtils.fillAdressForm({

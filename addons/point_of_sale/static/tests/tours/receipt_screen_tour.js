@@ -10,6 +10,7 @@ import { inLeftSide } from "@point_of_sale/../tests/tours/utils/common";
 
 registry.category("web_tour.tours").add("ReceiptScreenTour", {
     test: true,
+    checkDelay: 50,
     steps: () =>
         [
             // press close button in receipt screen

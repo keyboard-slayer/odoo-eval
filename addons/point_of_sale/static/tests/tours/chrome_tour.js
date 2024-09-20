@@ -8,6 +8,7 @@ import { registry } from "@web/core/registry";
 
 registry.category("web_tour.tours").add("ChromeTour", {
     test: true,
+    checkDelay: 50,
     steps: () =>
         [
             Chrome.startPoS(),

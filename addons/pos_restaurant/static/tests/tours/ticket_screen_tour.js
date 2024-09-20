@@ -9,6 +9,7 @@ import { registry } from "@web/core/registry";
 
 registry.category("web_tour.tours").add("PosResTicketScreenTour", {
     test: true,
+    checkDelay: 50,
     steps: () =>
         [
             Chrome.startPoS(),

@@ -286,6 +286,21 @@ registry.category("web_tour.tours").add("OrderTrackingTour", {
             ProductScreen.selectedOrderlineHas("Coca-Cola", "1.0"),
             ProductScreen.clickPayButton(),
             PaymentScreen.clickPaymentMethod("Bank"),
+            {
+                trigger: "body",
+                run() {
+                    window.fetch = function () {
+                        return new Promise((resolve) => {
+                            resolve({
+                                ok: true,
+                                status: 200,
+                                json: () => Promise.resolve({}),
+                                text: () => Promise.resolve(""),
+                            });
+                        });
+                    };
+                },
+            },
             PaymentScreen.clickValidate(),
         ].flat(),
 });

@@ -12,6 +12,7 @@ import * as ProductConfiguratorPopup from "@point_of_sale/../tests/tours/utils/p
 
 registry.category("web_tour.tours").add("ProductScreenTour", {
     test: true,
+    checkDelay: 50,
     steps: () =>
         [
             // Go by default to home category

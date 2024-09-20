@@ -145,6 +145,7 @@ registerWebsitePreviewTour("website_form_editor_tour", {
     url: '/',
     edition: true,
     test: true,
+    checkDelay: 200,
 }, () => [
     // Drop a form builder snippet and configure it
     {

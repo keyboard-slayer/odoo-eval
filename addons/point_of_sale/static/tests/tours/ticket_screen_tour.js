@@ -12,6 +12,7 @@ import { registry } from "@web/core/registry";
 
 registry.category("web_tour.tours").add("TicketScreenTour", {
     test: true,
+    checkDelay: 50,
     steps: () =>
         [
             Chrome.startPoS(),
