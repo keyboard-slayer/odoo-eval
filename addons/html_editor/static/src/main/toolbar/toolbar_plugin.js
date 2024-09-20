@@ -141,10 +141,20 @@ export class ToolbarPlugin extends Plugin {
             !selectionData.documentSelectionIsProtecting;
         const isCollapsed = selectionData.editableSelection.isCollapsed;
 
+        let isEditableException = false;
+        const selectedNodes = this.shared.getSelectedNodes();
+        const isnotEditable = selectedNodes.some((node) => node.isContentEditable === false);
+        for (let i = 0; i < this.resources.toolbarEditable.length && !isEditableException; i++) {
+            const toolbarEditable = this.resources.toolbarEditable[i];
+            isEditableException = isEditableException || toolbarEditable(selectedNodes);
+        }
+
         if (this.overlay.isOpen) {
             if (
                 !inEditable ||
-                ((isCollapsed || !this.shared.getTraversedNodes().length) && !this.isMobileToolbar)
+                ((isCollapsed || !this.shared.getTraversedNodes().length) &&
+                    !this.isMobileToolbar) ||
+                (isnotEditable && !isEditableException)
             ) {
                 const preventClosing = selectionData.documentSelection?.anchorNode?.closest?.(
                     "[data-prevent-closing-overlay]"
@@ -157,7 +167,9 @@ export class ToolbarPlugin extends Plugin {
                 this.overlay.open({ props }); // will update position
             }
         } else if (inEditable && (!isCollapsed || this.isMobileToolbar)) {
-            this.overlay.open({ props });
+            if (!isnotEditable || isEditableException) {
+                this.overlay.open({ props });
+            }
         }
     }
 

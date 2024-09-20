@@ -28,10 +28,10 @@ test("icon toolbar is not displayed on rating stars", async () => {
     expect(".btn-group[name='icon_size']").toHaveCount(1);
     setContent(
         el,
-        `<p>\u200B<span contenteditable="false" class="o_stars"><i class="fa fa-star-o" contenteditable="false">\u200B</i><i class="fa fa-star-o" contenteditable="false">\u200B</i>[<i class="fa fa-star-o" contenteditable="false">\u200B</i></span>]\u200B</p>`
+        `<p>\u200B<span contenteditable="false" class="o_stars"><i class="fa fa-star-o" contenteditable="false">\u200B</i><i class="fa fa-star-o" contenteditable="false">\u200B</i><i class="fa fa-star-o" contenteditable="false">\u200B</i>]</span>[\u200B</p>`
     );
     await animationFrame();
-    expect(".btn-group[name='icon_size']").toHaveCount(0);
+    expect(".o-we-toolbar").toHaveCount(0);
 });
 
 test("toolbar should not be namespaced for icon", async () => {

@@ -6,20 +6,22 @@ export class IconPlugin extends Plugin {
     static dependencies = ["history", "link", "selection", "color"];
     /** @type { (p: IconPlugin) => Record<string, any> } */
     static resources(p) {
+        const isIcon = (nodes) =>
+            nodes.every(
+                (node) =>
+                    // All nodes should be icons, its ZWS child or its ancestors
+                    node.classList?.contains("fa") ||
+                    node.parentElement.classList.contains("fa") ||
+                    (node.querySelector?.(".fa") && node.isContentEditable !== false)
+            );
         return {
             toolbarNamespace: [
                 {
                     id: "icon",
-                    isApplied: (traversedNodes) =>
-                        traversedNodes.every(
-                            (node) =>
-                                // All nodes should be icons, its ZWS child or its ancestors
-                                node.classList?.contains("fa") ||
-                                node.parentElement.classList.contains("fa") ||
-                                (node.querySelector?.(".fa") && node.isContentEditable !== false)
-                        ),
+                    isApplied: (traversedNodes) => isIcon(traversedNodes),
                 },
             ],
+            toolbarEditable: (selectedNodes) => isIcon(selectedNodes),
             toolbarCategory: [
                 {
                     id: "icon_color",

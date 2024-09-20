@@ -50,6 +50,19 @@ test.tags("mobile")("toolbar is also visible when selection is collapsed in mobi
     expect(".o-we-toolbar").toHaveCount(1);
 });
 
+test("toolbar should be closed when selection includes contenteditable false", async () => {
+    const { el } = await setupEditor(
+        `<p>test <strong contenteditable="false">not editable</strong> t[ex]t</p>`
+    );
+
+    await waitFor(".o-we-toolbar");
+    expect(".o-we-toolbar").toHaveCount(1);
+
+    setContent(el, `<p>te[st <strong contenteditable="false">not editable</strong> tex]t</p>`);
+    await waitUntil(() => !document.querySelector(".o-we-toolbar"));
+    expect(".o-we-toolbar").toHaveCount(0);
+});
+
 test("toolbar closes when selection leaves editor", async () => {
     const { el } = await setupEditor("<p>test</p>");
     setContent(el, "<p>[test]</p>");
