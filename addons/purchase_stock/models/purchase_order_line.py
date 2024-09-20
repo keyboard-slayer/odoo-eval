@@ -30,6 +30,7 @@ class PurchaseOrderLine(models.Model):
     propagate_cancel = fields.Boolean('Propagate cancellation', default=True)
     forecasted_issue = fields.Boolean(compute='_compute_forecasted_issue')
     location_final_id = fields.Many2one('stock.location', 'Location from procurement')
+    group_id = fields.Many2one('procurement.group', 'Procurement group that generated this line')
 
     def _compute_qty_received_method(self):
         super(PurchaseOrderLine, self)._compute_qty_received_method()
@@ -136,6 +137,7 @@ class PurchaseOrderLine(models.Model):
             moves_to_unlink = line.move_dest_ids.filtered(lambda m: len(m.created_purchase_line_ids.ids) > 1)
             if moves_to_unlink:
                 moves_to_unlink.created_purchase_line_ids = [Command.unlink(line.id)]
+            line.group_id = False
 
         ppg_cancel_lines = self.filtered(lambda line: line.propagate_cancel)
         ppg_cancel_lines.move_dest_ids._action_cancel()
@@ -328,6 +330,11 @@ class PurchaseOrderLine(models.Model):
         res['propagate_cancel'] = values.get('propagate_cancel')
         res['product_description_variants'] = values.get('product_description_variants')
         res['product_no_variant_attribute_value_ids'] = values.get('never_product_template_attribute_value_ids')
+
+        # Need to attach purchase order to procurement group for mtso
+        group = values.get('group_id')
+        if group and not res['move_dest_ids']:
+            res['group_id'] = values['group_id'].id
         return res
 
     def _create_stock_moves(self, picking):
