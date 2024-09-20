@@ -41,7 +41,10 @@ export class ToolbarPlugin extends Plugin {
         if (this.isMobileToolbar) {
             this.overlay = new MobileToolbarOverlay(this.editable);
         } else {
-            this.overlay = this.shared.createOverlay(Toolbar, { position: "top-start" });
+            this.overlay = this.shared.createOverlay(Toolbar, {
+                position: "top-start",
+                closeOnPointerdown: false,
+            });
         }
         this.state = reactive({
             buttonsActiveState: this.buttonGroups.flatMap((g) =>

@@ -1,22 +1,9 @@
 import { Plugin } from "@html_editor/plugin";
 import { MentionList } from "@mail/core/web/mention_list";
-import { Component, xml } from "@odoo/owl";
+import { stateToUrl } from "@web/core/browser/router";
 import { getActiveHotkey } from "@web/core/hotkeys/hotkey_service";
 import { renderToElement } from "@web/core/utils/render";
 import { url } from "@web/core/utils/urls";
-import { stateToUrl } from "@web/core/browser/router";
-
-class EditorMentionList extends Component {
-    static template = xml`<div class="popover" t-on-pointerdown.stop="() => {}">
-            <MentionList t-props="props"/>
-        </div>`;
-    static components = { MentionList };
-    static props = {
-        onSelect: Function,
-        type: String,
-        close: Function,
-    };
-}
 
 export class MentionPlugin extends Plugin {
     static name = "mention";
@@ -27,8 +14,9 @@ export class MentionPlugin extends Plugin {
     });
 
     setup() {
-        this.mentionList = this.shared.createOverlay(EditorMentionList, {
+        this.mentionList = this.shared.createOverlay(MentionList, {
             hasAutofocus: true,
+            className: "popover",
         });
         this.addDomListener(this.document, "pointerdown", () => {
             this.mentionList.close();
@@ -44,10 +32,12 @@ export class MentionPlugin extends Plugin {
         this.mentionList.close();
         const mentionBlock = renderToElement("mail.Wysiwyg.mentionLink", {
             option,
-            href: url(stateToUrl({
-                model: option.partner ? "res.partner" : "discuss.channel",
-                resId: option.partner ? option.partner.id : option.channel.id,
-            })),
+            href: url(
+                stateToUrl({
+                    model: option.partner ? "res.partner" : "discuss.channel",
+                    resId: option.partner ? option.partner.id : option.channel.id,
+                })
+            ),
         });
         const nameNode = this.document.createTextNode(
             `${option.partner ? "@" : "#"}${option.label}`

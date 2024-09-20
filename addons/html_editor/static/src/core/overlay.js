@@ -5,7 +5,7 @@ import { omit } from "@web/core/utils/objects";
 
 export class EditorOverlay extends Component {
     static template = xml`
-        <div t-ref="root" class="overlay">
+        <div t-ref="root" class="overlay" t-on-pointerdown.stop="() => {}"  t-att-class="className">
             <t t-component="props.Component" t-props="props.props"/>
         </div>`;
 
@@ -19,6 +19,7 @@ export class EditorOverlay extends Component {
         bus: Object,
         getContainer: Function,
         history: Object,
+        close: Function,
     };
 
     setup() {
@@ -53,6 +54,10 @@ export class EditorOverlay extends Component {
             () => [rootRef.el]
         );
 
+        if (this.props.config.closeOnPointerdown !== false) {
+            useExternalListener(this.props.editable.ownerDocument, "pointerdown", this.props.close);
+        }
+
         if (this.props.config.hasAutofocus) {
             useActiveElement("root");
         }
@@ -66,6 +71,10 @@ export class EditorOverlay extends Component {
             },
         };
         position = usePosition("root", getTarget, positionConfig);
+    }
+
+    get className() {
+        return this.props.config.className || "";
     }
 
     getSelectionTarget() {

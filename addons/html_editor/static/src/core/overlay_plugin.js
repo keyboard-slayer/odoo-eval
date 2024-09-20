@@ -100,6 +100,7 @@ export class Overlay {
                     initialSelection,
                     bus: this.bus,
                     getContainer: this.getContainer,
+                    close: this.close.bind(this),
                     history: {
                         enableObserver: this.plugin.shared.enableObserver,
                         disableObserver: this.plugin.shared.disableObserver,

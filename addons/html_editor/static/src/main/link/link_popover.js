@@ -1,5 +1,5 @@
 import { _t } from "@web/core/l10n/translation";
-import { Component, useState, onMounted, useExternalListener, useRef } from "@odoo/owl";
+import { Component, useState, onMounted, useRef } from "@odoo/owl";
 import { useAutofocus, useService } from "@web/core/utils/hooks";
 import { browser } from "@web/core/browser/browser";
 import { cleanZWChars, deduceURLfromText } from "./utils";
@@ -75,7 +75,6 @@ export class LinkPopover extends Component {
                 this.loadAsyncLinkPreview();
             }
         });
-        useExternalListener(document, "mousedown", this.onClickAway, { capture: true });
     }
     initButtonStyle(className) {
         const styleArray = [
