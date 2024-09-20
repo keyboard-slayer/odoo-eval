@@ -41,7 +41,7 @@ class MailComposer(models.TransientModel):
     _inherit = 'mail.composer.mixin'
     _description = 'Email composition wizard'
     _log_access = True
-    _batch_size = 500
+    _batch_size = 50
 
     @api.model
     def default_get(self, fields_list):
