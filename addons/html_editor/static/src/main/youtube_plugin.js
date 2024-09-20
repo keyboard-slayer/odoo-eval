@@ -29,7 +29,6 @@ export class YoutubePlugin extends Plugin {
             // Open powerbox with commands to embed media or paste as link.
             // Insert URL as text, revert it later if a command is triggered.
             this.shared.domInsert(text);
-            this.dispatch("ADD_STEP");
             // URL is a YouTube video.
             const embedVideoCommand = {
                 name: _t("Embed Youtube Video"),
@@ -38,7 +37,6 @@ export class YoutubePlugin extends Plugin {
                 action: async () => {
                     const videoElement = await this.getYoutubeVideoElement(youtubeUrl[0]);
                     this.shared.domInsert(videoElement);
-                    this.dispatch("ADD_STEP");
                 },
             };
             const commands = [embedVideoCommand, this.shared.getPathAsUrlCommand(text, url)];

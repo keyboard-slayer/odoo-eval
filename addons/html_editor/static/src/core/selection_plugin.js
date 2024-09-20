@@ -414,6 +414,7 @@ export class SelectionPlugin extends Plugin {
         { anchorNode, anchorOffset, focusNode = anchorNode, focusOffset = anchorOffset },
         { normalize = true } = {}
     ) {
+        console.warn("setSelection");
         if (!this.isSelectionInEditable({ anchorNode, focusNode })) {
             throw new Error("Selection is not in editor");
         }

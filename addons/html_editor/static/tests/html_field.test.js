@@ -1709,8 +1709,7 @@ describe("save image", () => {
         // Simulate an urgent save without any image in the content.
         sendBeaconDef = new Deferred();
         setSelectionInHtmlField(".test_target");
-        insertText(htmlEditor, "a");
-        htmlEditor.dispatch("ADD_STEP");
+        htmlEditor.record(() => insertText(htmlEditor, "a"));
         await formController.beforeUnload();
         await sendBeaconDef;
 
@@ -1718,8 +1717,7 @@ describe("save image", () => {
         // modified image
         const imageContainerElement = parseHTML(htmlEditor.document, imageContainerHTML).firstChild;
         const paragraph = htmlEditor.editable.querySelector(".test_target");
-        htmlEditor.editable.replaceChild(imageContainerElement, paragraph);
-        htmlEditor.dispatch("ADD_STEP");
+        htmlEditor.record(() => htmlEditor.editable.replaceChild(imageContainerElement, paragraph));
 
         // Simulate an urgent save before the end of the RPC roundtrip for the
         // image.

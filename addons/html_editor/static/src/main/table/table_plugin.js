@@ -84,9 +84,10 @@ export class TablePlugin extends Plugin {
             // Move cursor to next cell.
             const shouldAddNewRow = !this.shiftCursorToTableCell(1);
             if (shouldAddNewRow) {
-                this.addRow({ position: "after", reference: findInSelection(selection, "tr") });
-                this.shiftCursorToTableCell(1);
-                this.dispatch("ADD_STEP");
+                this.record(() => {
+                    this.addRow({ position: "after", reference: findInSelection(selection, "tr") });
+                    this.shiftCursorToTableCell(1);
+                });
             }
             return true;
         }
@@ -132,9 +133,10 @@ export class TablePlugin extends Plugin {
         return table;
     }
     insertTable({ rows = 2, cols = 2 } = {}) {
-        const table = this._insertTable({ rows, cols });
-        this.dispatch("ADD_STEP");
-        this.shared.setCursorStart(table.querySelector("p"));
+        this.record(() => {
+            const table = this._insertTable({ rows, cols });
+            this.shared.setCursorStart(table.querySelector("p"));
+        });
     }
     addColumn({ position, reference } = {}) {
         const columnIndex = getColumnIndex(reference);

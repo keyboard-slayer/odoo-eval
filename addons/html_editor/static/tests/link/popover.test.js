@@ -449,11 +449,15 @@ describe("Link creation", () => {
         test("create a link and undo it", async () => {
             const { el, editor } = await setupEditor("<p>[Hello]</p>");
             await waitFor(".o-we-toolbar");
+            console.log("will click");
             click(".o-we-toolbar .fa-link");
+            console.log("did click");
             await contains(".o-we-linkpopover input.o_we_href_input_link").edit("#");
             expect(cleanLinkArtifacts(getContent(el))).toBe('<p><a href="#">Hello[]</a></p>');
 
+            console.log("will undo");
             undo(editor);
+            console.log("did undo");
             expect(cleanLinkArtifacts(getContent(el))).toBe("<p>[]Hello</p>");
         });
         test("extend a link on selection and undo it", async () => {

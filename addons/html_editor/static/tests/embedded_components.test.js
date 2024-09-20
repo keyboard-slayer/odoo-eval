@@ -72,7 +72,6 @@ describe("Mount and Destroy embedded components", () => {
         editor.shared.domInsert(
             parseHTML(editor.document, `<span data-embedded="counter"></span>`)
         );
-        editor.dispatch("ADD_STEP");
         expect(getContent(el)).toBe(
             `<div>a<span data-embedded="counter" data-oe-protected="true" contenteditable="false"></span>[]b</div>`
         );
@@ -167,7 +166,6 @@ describe("Mount and Destroy embedded components", () => {
         editor.shared.domInsert(
             parseHTML(editor.document, `<span data-embedded="counter"></span>`)
         );
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         expect.verifySteps(["mounted"]);
         expect(getContent(el)).toBe(
@@ -266,7 +264,6 @@ describe("Mount and Destroy embedded components", () => {
         editor.shared.domInsert(
             parseHTML(editor.document, `<span data-embedded="counter"></span>`)
         );
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         expect.verifySteps(["mounted"]);
         expect(getContent(el)).toBe(
@@ -530,7 +527,6 @@ describe("Selection after embedded component insertion", () => {
         editor.shared.domInsert(
             parseHTML(editor.document, `<span data-embedded="counter">a</span>`)
         );
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         expect(getContent(el)).toBe(
             `<p><span data-embedded="counter" data-oe-protected="true" contenteditable="false"><span class="counter">Counter:0</span></span>[]</p>`
@@ -543,7 +539,6 @@ describe("Selection after embedded component insertion", () => {
         editor.shared.domInsert(
             parseHTML(editor.document, `<span data-embedded="counter"></span>`)
         );
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         expect(getContent(el)).toBe(
             `<p>a<span data-embedded="counter" data-oe-protected="true" contenteditable="false"><span class="counter">Counter:0</span></span>[]</p>`
@@ -556,7 +551,6 @@ describe("Selection after embedded component insertion", () => {
         editor.shared.domInsert(
             parseHTML(editor.document, `<span data-embedded="counter"></span>`)
         );
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         expect(getContent(el)).toBe(
             `<p><span data-embedded="counter" data-oe-protected="true" contenteditable="false"><span class="counter">Counter:0</span></span>[]a</p>`
@@ -569,7 +563,6 @@ describe("Selection after embedded component insertion", () => {
         editor.shared.domInsert(
             parseHTML(editor.document, `<span data-embedded="counter"></span>`)
         );
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         expect(getContent(el)).toBe(
             `<p>a<span data-embedded="counter" data-oe-protected="true" contenteditable="false"><span class="counter">Counter:0</span></span>[]b</p>`
@@ -580,7 +573,6 @@ describe("Selection after embedded component insertion", () => {
             config: getConfig([embedding("counter", Counter)]),
         });
         editor.shared.domInsert(parseHTML(editor.document, `<div data-embedded="counter"></div>`));
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         editor.dispatch("CLEAN", { root: editor.editable });
         expect(getContent(el)).toBe(
@@ -594,7 +586,6 @@ describe("Selection after embedded component insertion", () => {
             config: getConfig([embedding("counter", Counter)]),
         });
         editor.shared.domInsert(parseHTML(editor.document, `<div data-embedded="counter"></div>`));
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         editor.dispatch("CLEAN", { root: editor.editable });
         expect(getContent(el)).toBe(
@@ -609,7 +600,6 @@ describe("Selection after embedded component insertion", () => {
             config: getConfig([embedding("counter", Counter)]),
         });
         editor.shared.domInsert(parseHTML(editor.document, `<div data-embedded="counter"></div>`));
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         editor.dispatch("CLEAN", { root: editor.editable });
         expect(getContent(el)).toBe(
@@ -623,7 +613,6 @@ describe("Selection after embedded component insertion", () => {
             config: getConfig([embedding("counter", Counter)]),
         });
         editor.shared.domInsert(parseHTML(editor.document, `<div data-embedded="counter"></div>`));
-        editor.dispatch("ADD_STEP");
         await animationFrame();
         editor.dispatch("CLEAN", { root: editor.editable });
         expect(getContent(el)).toBe(

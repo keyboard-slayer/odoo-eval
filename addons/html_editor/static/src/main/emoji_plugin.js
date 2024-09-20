@@ -56,8 +56,7 @@ export class EmojiPlugin extends Plugin {
                 },
                 onSelect: (str) => {
                     if (!onSelect) {
-                        this.shared.domInsert(str);
-                        this.dispatch("ADD_STEP");
+                        this.record(() => this.shared.domInsert(str));
                         return;
                     }
                     onSelect(str);

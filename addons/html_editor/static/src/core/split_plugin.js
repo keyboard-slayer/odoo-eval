@@ -38,7 +38,7 @@ export class SplitPlugin extends Plugin {
     handleCommand(command, payload) {
         switch (command) {
             case "SPLIT_BLOCK":
-                this._splitBlock();
+                this.record(() => this.splitBlock());
                 break;
             case "SPLIT_BLOCK_NODE":
                 this.splitBlockNode(payload);
@@ -62,10 +62,6 @@ export class SplitPlugin extends Plugin {
             targetNode: selection.anchorNode,
             targetOffset: selection.anchorOffset,
         });
-    }
-    _splitBlock() {
-        this.splitBlock();
-        this.dispatch("ADD_STEP");
     }
 
     /**
@@ -318,7 +314,7 @@ export class SplitPlugin extends Plugin {
     onBeforeInput(e) {
         if (e.inputType === "insertParagraph") {
             e.preventDefault();
-            this._splitBlock();
+            this.record(() => this.splitBlock());
         }
     }
 }

@@ -120,8 +120,7 @@ export class ListPlugin extends Plugin {
     handleCommand(command, payload) {
         switch (command) {
             case "TOGGLE_LIST":
-                this.toggleList(payload.mode);
-                this.dispatch("ADD_STEP");
+                this.record(() => this.toggleList(payload.mode));
                 break;
             case "NORMALIZE": {
                 this.normalize(payload.node);
@@ -141,24 +140,25 @@ export class ListPlugin extends Plugin {
             (shouldCreateNumberList || shouldCreateBulletList || shouldCreateCheckList) &&
             !closestElement(selection.anchorNode, "li")
         ) {
-            this.shared.setSelection({
-                anchorNode: blockEl.firstChild,
-                anchorOffset: 0,
-                focusNode: selection.focusNode,
-                focusOffset: selection.focusOffset,
+            this.record(() => {
+                this.shared.setSelection({
+                    anchorNode: blockEl.firstChild,
+                    anchorOffset: 0,
+                    focusNode: selection.focusNode,
+                    focusOffset: selection.focusOffset,
+                });
+                this.dispatch("DELETE_SELECTION");
+                if (shouldCreateNumberList) {
+                    const listStyle = { a: "lower-alpha", A: "upper-alpha", 1: null }[
+                        stringToConvert.substring(0, 1)
+                    ];
+                    this.toggleList("OL", listStyle);
+                } else if (shouldCreateBulletList) {
+                    this.toggleList("UL");
+                } else if (shouldCreateCheckList) {
+                    this.toggleList("CL");
+                }
             });
-            this.dispatch("DELETE_SELECTION");
-            if (shouldCreateNumberList) {
-                const listStyle = { a: "lower-alpha", A: "upper-alpha", 1: null }[
-                    stringToConvert.substring(0, 1)
-                ];
-                this.toggleList("OL", listStyle);
-            } else if (shouldCreateBulletList) {
-                this.toggleList("UL");
-            } else if (shouldCreateCheckList) {
-                this.toggleList("CL");
-            }
-            this.dispatch("ADD_STEP");
         }
     }
 
@@ -600,10 +600,11 @@ export class ListPlugin extends Plugin {
     handleTab() {
         const { listItems, navListItems, nonListItems } = this.separateListItems();
         if (listItems.length || navListItems.length) {
-            this.indentListNodes(listItems);
-            this.shared.indentBlocks(nonListItems);
             // Do nothing to nav-items.
-            this.dispatch("ADD_STEP");
+            this.record(() => {
+                this.indentListNodes(listItems);
+                this.shared.indentBlocks(nonListItems);
+            });
             return true;
         }
     }
@@ -611,10 +612,11 @@ export class ListPlugin extends Plugin {
     handleShiftTab() {
         const { listItems, navListItems, nonListItems } = this.separateListItems();
         if (listItems.length || navListItems.length) {
-            this.outdentListNodes(listItems);
-            this.shared.outdentBlocks(nonListItems);
             // Do nothing to nav-items.
-            this.dispatch("ADD_STEP");
+            this.record(() => {
+                this.outdentListNodes(listItems);
+                this.shared.outdentBlocks(nonListItems);
+            });
             return true;
         }
     }
@@ -713,9 +715,10 @@ export class ListPlugin extends Plugin {
         }
 
         if (isChecklistItem && this.isPointerInsideCheckbox(node, offsetX, offsetY)) {
-            toggleClass(node, "o_checked");
-            ev.preventDefault();
-            this.dispatch("ADD_STEP");
+            this.record(() => {
+                ev.preventDefault();
+                toggleClass(node, "o_checked");
+            });
         }
     }
 

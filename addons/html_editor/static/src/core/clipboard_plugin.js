@@ -95,9 +95,10 @@ export class ClipboardPlugin extends Plugin {
 
     onCut(ev) {
         this.onCopy(ev);
-        this.dispatch("HISTORY_STAGE_SELECTION");
-        this.dispatch("DELETE_SELECTION");
-        this.dispatch("ADD_STEP");
+        this.record(() => {
+            this.dispatch("HISTORY_STAGE_SELECTION");
+            this.dispatch("DELETE_SELECTION");
+        });
     }
 
     /**
@@ -211,18 +212,18 @@ export class ClipboardPlugin extends Plugin {
 
         ev.preventDefault();
 
-        this.dispatch("HISTORY_STAGE_SELECTION");
+        this.record(() => {
+            this.dispatch("HISTORY_STAGE_SELECTION");
 
-        this.resources["before_paste"].forEach((handler) => handler(selection));
-        // refresh selection after potential changes from `before_paste` handlers
-        selection = this.shared.getEditableSelection();
+            this.resources["before_paste"].forEach((handler) => handler(selection));
+            // refresh selection after potential changes from `before_paste` handlers
+            selection = this.shared.getEditableSelection();
 
-        this.handlePasteUnsupportedHtml(selection, ev.clipboardData) ||
-            this.handlePasteOdooEditorHtml(ev.clipboardData) ||
-            this.handlePasteHtml(selection, ev.clipboardData) ||
-            this.handlePasteText(selection, ev.clipboardData);
-
-        this.dispatch("ADD_STEP");
+            this.handlePasteUnsupportedHtml(selection, ev.clipboardData) ||
+                this.handlePasteOdooEditorHtml(ev.clipboardData) ||
+                this.handlePasteHtml(selection, ev.clipboardData) ||
+                this.handlePasteText(selection, ev.clipboardData);
+        });
     }
     /**
      * @param {EditorSelection} selection
@@ -268,7 +269,6 @@ export class ClipboardPlugin extends Plugin {
                 // @phoenix @todo: should it be handled in image plugin?
                 return this.addImagesFiles(files).then((html) => {
                     this.shared.domInsert(html);
-                    this.dispatch("ADD_STEP");
                 });
             } else {
                 if (closestElement(selection.anchorNode, "a")) {
@@ -575,15 +575,12 @@ export class ClipboardPlugin extends Plugin {
             const fragment = this.document.createDocumentFragment();
             fragment.append(image);
             this.shared.domInsert(fragment);
-            this.dispatch("ADD_STEP");
         } else if (fileTransferItems.length) {
             const html = await this.addImagesFiles(fileTransferItems);
             this.shared.domInsert(html);
-            this.dispatch("ADD_STEP");
         } else if (htmlTransferItem) {
             htmlTransferItem.getAsString((pastedText) => {
                 this.shared.domInsert(this.prepareClipboardData(pastedText));
-                this.dispatch("ADD_STEP");
             });
         }
     }

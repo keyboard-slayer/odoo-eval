@@ -86,8 +86,7 @@ export class MediaPlugin extends Plugin {
                 const selectedNodes = this.shared.getSelectedNodes();
                 const node = selectedNodes.find((node) => node.tagName === "IMG");
                 if (node) {
-                    this.openMediaDialog({ node });
-                    this.dispatch("ADD_STEP");
+                    this.record(() => this.openMediaDialog({ node }));
                 }
                 break;
             }
@@ -138,25 +137,25 @@ export class MediaPlugin extends Plugin {
             // return;
         }
 
-        if (node) {
-            const changedIcon = isIconElement(node) && isIconElement(element);
-            if (changedIcon) {
-                // Preserve tag name when changing an icon and not recreate the
-                // editors unnecessarily.
-                for (const attribute of element.attributes) {
-                    node.setAttribute(attribute.nodeName, attribute.nodeValue);
+        this.record(() => {
+            if (node) {
+                const changedIcon = isIconElement(node) && isIconElement(element);
+                if (changedIcon) {
+                    // Preserve tag name when changing an icon and not recreate the
+                    // editors unnecessarily.
+                    for (const attribute of element.attributes) {
+                        node.setAttribute(attribute.nodeName, attribute.nodeValue);
+                    }
+                } else {
+                    node.replaceWith(element);
                 }
             } else {
-                node.replaceWith(element);
+                this.shared.domInsert(element);
             }
-        } else {
-            this.shared.domInsert(element);
-        }
-        // Collapse selection after the inserted/replaced element.
-        const [anchorNode, anchorOffset] = rightPos(element);
-        this.shared.setSelection({ anchorNode, anchorOffset });
-
-        this.dispatch("ADD_STEP");
+            // Collapse selection after the inserted/replaced element.
+            const [anchorNode, anchorOffset] = rightPos(element);
+            this.shared.setSelection({ anchorNode, anchorOffset });
+        });
     }
 
     openMediaDialog(params = {}) {

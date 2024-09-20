@@ -146,16 +146,17 @@ export class FormatPlugin extends Plugin {
     }
 
     removeFormat() {
-        for (const format of Object.keys(formatsSpecs)) {
-            if (!formatsSpecs[format].removeStyle || !this.hasSelectionFormat(format)) {
-                continue;
+        this.record(() => {
+            for (const format of Object.keys(formatsSpecs)) {
+                if (!formatsSpecs[format].removeStyle || !this.hasSelectionFormat(format)) {
+                    continue;
+                }
+                this._formatSelection(format, { applyStyle: false });
             }
-            this._formatSelection(format, { applyStyle: false });
-        }
-        for (const callback of this.resources["removeFormat"] || []) {
-            callback();
-        }
-        this.dispatch("ADD_STEP");
+            for (const callback of this.resources["removeFormat"] || []) {
+                callback();
+            }
+        });
     }
 
     /**
@@ -189,7 +190,7 @@ export class FormatPlugin extends Plugin {
 
     formatSelection(...args) {
         if (this._formatSelection(...args)) {
-            this.dispatch("ADD_STEP");
+            this.dispatch("ADD_STEP"); //@todo: SGE this.action()
         }
     }
 

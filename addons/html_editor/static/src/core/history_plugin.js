@@ -499,6 +499,7 @@ export class HistoryPlugin extends Plugin {
         // @todo @phoenix sanitize plugin
         // this.sanitize();
 
+        console.warn("[HOOT] addStep");
         this.handleObserverRecords();
         const currentStep = this.currentStep;
         if (!currentStep.mutations.length) {

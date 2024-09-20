@@ -77,6 +77,7 @@ export class Overlay {
      * @param {any} [options.props] overlay component props
      */
     open({ target, props }) {
+        console.warn("overlay:: open");
         if (this.isOpen) {
             this.updatePosition();
         } else {
@@ -88,6 +89,7 @@ export class Overlay {
                     range: selection.getRangeAt(0),
                 };
             }
+            console.log("overlay :: service.add()");
             this._remove = this.plugin.services.overlay.add(
                 EditorOverlay,
                 markRaw({
@@ -108,6 +110,7 @@ export class Overlay {
     }
 
     close() {
+        console.warn("overlay:: close");
         this.isOpen = false;
         if (this._remove) {
             this._remove();

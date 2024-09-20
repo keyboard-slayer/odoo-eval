@@ -83,6 +83,7 @@ export class Editor {
         this.document = null;
         /** @ts-ignore  @type { SharedMethods } **/
         this.shared = {};
+        this.recordingsCount = 0;
     }
 
     attachTo(editable) {
@@ -118,6 +119,7 @@ export class Editor {
     preparePlugins() {
         const Plugins = sortPlugins(this.config.Plugins || MAIN_PLUGINS);
         const plugins = new Map();
+        const record = this.record.bind(this);
         const dispatch = this.dispatch.bind(this);
         for (const P of Plugins) {
             if (P.name === "") {
@@ -141,6 +143,7 @@ export class Editor {
                 this.document,
                 this.editable,
                 _shared,
+                record,
                 dispatch,
                 this.config,
                 this.services
@@ -196,6 +199,25 @@ export class Editor {
         }
 
         return resources;
+    }
+
+    /**
+     * record an editor action and automaticaly mannage the history step at the
+     * end of the actions chain.
+     *
+     * @param { Function } action The action to record
+     * @return { any } return the action() result
+     */
+    record(action) {
+        this.recordingsCount++;
+        console.warn("[HOOT] record > inception #", this.recordingsCount);
+        const actionResult = action();
+        console.log(" * end of inception #", this.recordingsCount);
+        this.recordingsCount--;
+        if (this.recordingsCount === 0) {
+            this.dispatch("ADD_STEP");
+        }
+        return actionResult;
     }
 
     dispatch(command, payload = {}) {

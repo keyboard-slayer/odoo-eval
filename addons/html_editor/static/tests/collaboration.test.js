@@ -39,7 +39,6 @@ import { onMounted, onWillDestroy } from "@odoo/owl";
  */
 function insert(editor, value) {
     editor.shared.domInsert(value);
-    editor.dispatch("ADD_STEP");
 }
 
 describe("Conflict resolution", () => {

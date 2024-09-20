@@ -60,7 +60,6 @@ describe("undo", () => {
         const { el, editor } = await setupEditor(`<p>[]c</p>`);
         const p = el.querySelector("p");
         editor.shared.domInsert("a");
-        editor.dispatch("ADD_STEP");
         p.prepend(document.createTextNode("b"));
         undo(editor);
         expect(getContent(el)).toBe(`<p>[]c</p>`);
@@ -183,7 +182,6 @@ describe("redo", () => {
         const { el, editor } = await setupEditor(`<p>[]c</p>`);
         const p = el.querySelector("p");
         editor.shared.domInsert("a");
-        editor.dispatch("ADD_STEP");
         undo(editor);
         expect(getContent(el)).toBe(`<p>[]c</p>`);
         p.prepend(document.createTextNode("b"));
@@ -225,9 +223,10 @@ describe("step", () => {
         await testEditor({
             contentBefore: `<div contenteditable="false"></div>`,
             stepFunction: async (editor) => {
-                const editable = '<div contenteditable="true">abc</div>';
-                editor.editable.querySelector("div").innerHTML = editable;
-                editor.dispatch("ADD_STEP");
+                editor.record(() => {
+                    const editable = '<div contenteditable="true">abc</div>';
+                    editor.editable.querySelector("div").innerHTML = editable;
+                });
             },
             contentAfter: `<div contenteditable="false"><div contenteditable="true">abc</div></div>`,
         });
@@ -246,9 +245,10 @@ describe("prevent mutationFilteredClasses to be set from history", () => {
         await testEditor({
             contentBefore: `<p>a</p>`,
             stepFunction: async (editor) => {
-                const p = editor.editable.querySelector("p");
-                p.className = "x";
-                editor.dispatch("ADD_STEP");
+                editor.record(() => {
+                    const p = editor.editable.querySelector("p");
+                    p.className = "x";
+                });
                 const history = editor.plugins.find((p) => p.constructor.name === "history");
                 expect(history.steps.length).toBe(1);
             },
@@ -348,7 +348,6 @@ describe("makeSavePoint", () => {
         const savepoint = editor.shared.makeSavePoint();
         // step to consume
         editor.shared.domInsert("z");
-        editor.dispatch("ADD_STEP");
         let steps = editor.shared.getHistorySteps();
         expect(steps.length).toBe(2);
         const zStep = steps.at(-1);
