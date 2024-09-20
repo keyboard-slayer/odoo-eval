@@ -42,7 +42,9 @@ export class ToolbarPlugin extends Plugin {
             this.overlay = new MobileToolbarOverlay(this.editable);
         } else {
             this.overlay = this.shared.createOverlay(Toolbar, {
-                position: "top-start",
+                positionOptions: {
+                    position: "top-start",
+                },
                 closeOnPointerdown: false,
             });
         }
