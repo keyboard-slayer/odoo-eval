@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="mail.AvatarStack">
+        <div class="d-flex">
+            <t t-foreach="props.personas.slice(0, props.max)" t-as="persona" t-key="persona.localId">
+                <img t-att-src="persona.avatarUrl" t-att-title="persona.nameOrDisplayName" class="o-mail-AvatarStack-avatar position-relative rounded-circle" t-att-class="{'o-mail-AvatarStack-collapsed': persona_index !== 0}"/>
+            </t>
+            <span t-if="total > props.max" class="o-mail-AvatarStack-avatar o-mail-AvatarStack-collapsed rounded-circle position-relative bg-secondary d-flex justify-content-center align-items-center">+<t t-esc="total - props.max"/></span>
+        </div>
+    </t>
+</templates>

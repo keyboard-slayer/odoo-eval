@@ -19,10 +19,14 @@
             <t t-if="store.discuss.isSidebarCompact" t-call="mail.DiscussSidebarCallParticipants.participant">
                 <t t-set="session" t-value="lastActiveSession"/>
             </t>
-            <t t-else="">
-                <t t-foreach="sessions" t-as="session" t-key="session.id" t-call="mail.DiscussSidebarCallParticipants.participant">
-                    <t t-set="session" t-value="session"/>
+            <t t-elif="rtc.selfSession?.in(sessions)">
+                <t t-call="mail.DiscussSidebarCallParticipants.participant">
+                    <t t-set="session" t-value="lastActiveSession"/>
                 </t>
+                <AvatarStack personas="sessions.filter((s) => s.notEq(lastActiveSession)).map((s) => s.channelMember.persona)"/>
+            </t>
+            <t t-else="">
+                <AvatarStack personas="sessions.map((s) => s.channelMember.persona)"/>
             </t>
         </div>
     </t>

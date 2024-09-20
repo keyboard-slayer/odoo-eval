@@ -5,6 +5,7 @@ import { callActionsRegistry } from "../common/call_actions";
 import { useHover } from "@mail/utils/common/hooks";
 import { useDropdownState } from "@web/core/dropdown/dropdown_hooks";
 import { Dropdown } from "@web/core/dropdown/dropdown";
+import { AvatarStack } from "@mail/discuss/core/common/avatar_stack";
 /**
  * @typedef {Object} Props
  * @property {import("models").Thread} thread
@@ -13,7 +14,7 @@ import { Dropdown } from "@web/core/dropdown/dropdown";
 export class DiscussSidebarCallParticipants extends Component {
     static template = "mail.DiscussSidebarCallParticipants";
     static props = { thread: { type: Thread }, compact: { type: Boolean, optional: true } };
-    static components = { DiscussSidebarCallParticipants, Dropdown };
+    static components = { AvatarStack, DiscussSidebarCallParticipants, Dropdown };
 
     setup() {
         super.setup();

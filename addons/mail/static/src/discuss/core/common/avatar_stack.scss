@@ -1,0 +1,10 @@
+$o-mail-avatar-stack-size: 24px;
+
+.o-mail-AvatarStack-avatar {
+    width: $o-mail-avatar-stack-size;
+    height: $o-mail-avatar-stack-size;
+}
+
+.o-mail-AvatarStack-collapsed {
+    margin-left: -#{$o-mail-avatar-stack-size / 3};
+}
