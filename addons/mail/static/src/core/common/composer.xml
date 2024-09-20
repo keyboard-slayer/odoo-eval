@@ -136,20 +136,20 @@
     <t t-name="mail.Composer.suggestionPartner">
         <t t-set="partner" t-value="option.partner"/>
         <ImStatus t-if="partner" persona="partner"/>
-        <strong class="px-2 py-1 align-self-center flex-shrink-0 text-truncate">
+        <strong class="px-1 py-0 align-self-center flex-shrink-0 text-truncate">
             <t t-esc="partner.name"/>
         </strong>
         <em t-if="partner.email" class="text-600 text-truncate align-self-center">(<t t-esc="partner.email"/>)</em>
     </t>
 
     <t t-name="mail.Composer.suggestionThread">
-        <strong class="px-2 py-1 align-self-center flex-shrink-0 text-truncate">
+        <strong class="px-1 py-0 align-self-center flex-shrink-0 text-truncate">
             #<t t-esc="option.label"/>
         </strong>
     </t>
 
     <t t-name="mail.Composer.suggestionChannelCommand">
-        <strong class="px-2 py-1 align-self-center flex-shrink-0 text-truncate">
+        <strong class="px-1 py-0 align-self-center flex-shrink-0 text-truncate">
             <t t-esc="option.label"/>
         </strong>
         <em class="text-600 text-truncate align-self-center">
@@ -158,7 +158,7 @@
     </t>
 
     <t t-name="mail.Composer.suggestionCannedResponse">
-        <strong class="px-2 py-1 align-self-center flex-shrink-1 text-truncate">
+        <strong class="px-1 py-0 align-self-center flex-shrink-1 text-truncate">
             <t t-esc="option.source"/>
         </strong>
         <em class="text-600 text-truncate align-self-center">
