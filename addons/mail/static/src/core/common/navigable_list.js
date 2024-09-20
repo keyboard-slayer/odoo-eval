@@ -139,6 +139,8 @@ export class NavigableList extends Component {
             return;
         }
         const hotkey = getActiveHotkey(ev);
+        const hasSomeOptions = this.props.options.length !== 0;
+        let handled = false;
         switch (hotkey) {
             case "enter":
                 markEventHandled(ev, "NavigableList.select");
@@ -147,22 +149,30 @@ export class NavigableList extends Component {
                     return;
                 }
                 this.selectOption(ev, this.state.activeIndex);
+                handled = true;
                 break;
             case "escape":
                 markEventHandled(ev, "NavigableList.close");
                 this.close();
+                handled = true;
                 break;
             case "tab":
                 this.navigate(this.state.activeIndex === null ? "first" : "next");
+                handled = true;
                 break;
             case "arrowup":
                 this.navigate(this.state.activeIndex === null ? "first" : "previous");
+                handled = true;
                 break;
             case "arrowdown":
                 this.navigate(this.state.activeIndex === null ? "first" : "next");
+                handled = true;
                 break;
             default:
                 return;
+        }
+        if (handled && hasSomeOptions) {
+            ev.stopPropagation();
         }
         ev.preventDefault();
     }
