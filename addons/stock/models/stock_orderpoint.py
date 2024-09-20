@@ -287,7 +287,7 @@ class StockWarehouseOrderpoint(models.Model):
     @api.depends('qty_to_order_manual', 'qty_to_order_computed')
     def _compute_qty_to_order(self):
         for orderpoint in self:
-            orderpoint.qty_to_order = orderpoint.qty_to_order_manual if orderpoint.qty_to_order_manual else orderpoint.qty_to_order_computed
+            orderpoint.qty_to_order = orderpoint.qty_to_order_manual if orderpoint.trigger == 'manual' else orderpoint.qty_to_order_computed
 
     def _inverse_qty_to_order(self):
         for orderpoint in self:
