@@ -49,6 +49,7 @@
                         or (product_variant_count == 0
                         and valid_product_template_attribute_line_ids)
                         or type in ['service', 'combo']"/>
+                <field name="customs_codes_ids" class="oe_inline"/>
             </field>
 
             <button name="action_open_documents" position="before">

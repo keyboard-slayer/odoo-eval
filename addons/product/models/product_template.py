@@ -125,6 +125,9 @@ class ProductTemplate(models.Model):
     packaging_ids = fields.One2many(
         'product.packaging', string="Product Packages", compute="_compute_packaging_ids", inverse="_set_packaging_ids",
         help="Gives the different ways to package the same product.")
+    customs_codes_ids = fields.Many2many(
+        'product.customs_code', compute='_compute_customs_codes_ids', inverse='_set_customs_codes_ids',
+    )
     seller_ids = fields.One2many('product.supplierinfo', 'product_tmpl_id', 'Vendors', depends_context=('company',))
     variant_seller_ids = fields.One2many('product.supplierinfo', 'product_tmpl_id')
 
@@ -434,6 +437,19 @@ class ProductTemplate(models.Model):
         for p in self:
             if len(p.product_variant_ids) == 1:
                 p.product_variant_ids.packaging_ids = p.packaging_ids
+
+    @api.depends('product_variant_ids', 'product_variant_ids.customs_codes_ids')
+    def _compute_customs_codes_ids(self):
+        for p in self:
+            if len(p.product_variant_ids) == 1:
+                p.customs_codes_ids = p.product_variant_ids.customs_codes_ids
+            else:
+                p.customs_codes_ids = False
+
+    def _set_customs_codes_ids(self):
+        for p in self:
+            if len(p.product_variant_ids) == 1:
+                p.product_variant_ids.customs_codes_ids = p.customs_codes_ids
 
     @api.depends('type')
     def _compute_product_tooltip(self):

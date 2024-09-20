@@ -104,6 +104,8 @@ class ProductProduct(models.Model):
     can_image_1024_be_zoomed = fields.Boolean("Can Image 1024 be zoomed", compute='_compute_can_image_1024_be_zoomed')
     write_date = fields.Datetime(compute='_compute_write_date', store=True)
 
+    customs_codes_ids = fields.Many2many('product.customs_code', 'product_customs_code_rel', 'product_id', 'customs_code_id')
+
     @api.depends('image_variant_1920', 'image_variant_1024')
     def _compute_can_image_variant_1024_be_zoomed(self):
         for record in self:
