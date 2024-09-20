@@ -256,9 +256,10 @@ class HrWorkEntryType(models.Model):
         'Active', default=True,
         help="If the active field is set to false, it will allow you to hide the work entry type without removing it.")
 
-    _sql_constraints = [
-        ('unique_work_entry_code', 'UNIQUE(code)', 'The same code cannot be associated to multiple work entry types.'),
-    ]
+    _unique_work_entry_code = models.Constraint(
+        'UNIQUE(code)',
+        lambda env: env._('The same code cannot be associated to multiple work entry types.'),
+    )
 
 
 class Contacts(models.Model):
@@ -271,6 +272,7 @@ class Contacts(models.Model):
     employee_id = fields.Many2one('hr.employee', 'Employee', required=True)
     active = fields.Boolean('Active', default=True)
 
-    _sql_constraints = [
-        ('user_id_employee_id_unique', 'UNIQUE(user_id,employee_id)', 'You cannot have the same employee twice.')
-    ]
+    _user_id_employee_id_unique = models.Constraint(
+        'UNIQUE(user_id,employee_id)',
+        lambda env: env._('You cannot have the same employee twice.'),
+    )

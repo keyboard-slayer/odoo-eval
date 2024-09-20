@@ -27,9 +27,8 @@ class Property(models.Model):
     _name = 'ir.property'
     _description = 'Company Property'
     _allow_sudo_commands = False
-    _sql_constraints = [
-        ("unique_index", "UNIQUE INDEX (fields_id, COALESCE(company_id, 0), COALESCE(res_id, ''))"),
-    ]
+    _unique_index = models.UniqueIndex(
+        "(fields_id, COALESCE(company_id, 0), COALESCE(res_id, ''))")
 
     name = fields.Char(index=True)
     res_id = fields.Char(string='Resource', index=True, help="If not set, acts as a default value for new resources",)

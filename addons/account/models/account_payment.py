@@ -180,13 +180,10 @@ class AccountPayment(models.Model):
     # used to get and display duplicate move warning if partner, amount and date match existing payments
     duplicate_move_ids = fields.Many2many(comodel_name='account.move', compute='_compute_duplicate_move_ids')
 
-    _sql_constraints = [
-        (
-            'check_amount_not_negative',
-            'CHECK(amount >= 0.0)',
-            "The payment amount cannot be negative.",
-        ),
-    ]
+    _check_amount_not_negative = models.Constraint(
+        'CHECK(amount >= 0.0)',
+        lambda env: env._('The payment amount cannot be negative.'),
+    )
 
     def init(self):
         super().init()
