@@ -22,7 +22,7 @@ publicWidget.registry.portalAddress = publicWidget.Widget.extend({
         const setDefaultButton = ev.currentTarget;
         const card = setDefaultButton.closest('.card');
 
-        const oldCard = card.closest('.row').querySelector('.card.border.border-primary');
+        const oldCard = card?.closest('.row').querySelector('.card.border.border-primary');
         if (oldCard) {
             oldCard.classList.add(card.dataset.mode === 'invoice' ? 'js_change_billing' : 'js_change_delivery');
             oldCard.classList.remove('bg-primary', 'border', 'border-primary');

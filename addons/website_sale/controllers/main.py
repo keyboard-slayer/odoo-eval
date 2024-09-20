@@ -1098,7 +1098,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
     #     print("SUPER CHECK from website_sale", res)
     #     return res
 
-    def _prepare_address_form_values(self, partner_sudo, address_type, **_kwargs):
+    def _prepare_address_form_values(self, partner_sudo, address_type, callback='', **_kwargs):
         """ Prepare and return the values to use to render the address form.
         It returns the sudoed partner editing the form and the values used in the form.
 
@@ -1116,28 +1116,30 @@ class WebsiteSale(payment_portal.PaymentPortal):
         val = super()._prepare_address_form_values(partner_sudo, address_type, **_kwargs)
         use_delivery_as_billing = _kwargs.get('use_delivery_as_billing')
         order_sudo = _kwargs.get('order_sudo')
+        if not order_sudo and _kwargs.get('portal_address'):
+            return val
         is_anonymous_cart = order_sudo and order_sudo._is_anonymous_cart()
         parent_id = None
         country_sudo = None
         can_edit_vat = False
         ResCountrySudo = request.env['res.country'].sudo()
-        if order_sudo and not _kwargs.get('portal_address'):
+        if not is_anonymous_cart:
             parent_id = order_sudo.partner_id.commercial_partner_id.id
-            can_edit_vat = (
-                address_type == 'billing' or use_delivery_as_billing
-                and (not partner_sudo or partner_sudo.can_edit_vat())
-            )
-            country_sudo = partner_sudo.country_id
-            if not country_sudo:
-                if is_anonymous_cart:
-                    if request.geoip.country_code:
-                        country_sudo = ResCountrySudo.search([
-                            ('code', '=', request.geoip.country_code),
-                        ], limit=1)
-                    else:
-                        country_sudo = order_sudo.website_id.user_id.country_id
+        can_edit_vat = (
+            address_type == 'billing' or use_delivery_as_billing
+            and (not partner_sudo or partner_sudo.can_edit_vat())
+        )
+        country_sudo = partner_sudo.country_id
+        if not country_sudo:
+            if is_anonymous_cart:
+                if request.geoip.country_code:
+                    country_sudo = ResCountrySudo.search([
+                        ('code', '=', request.geoip.country_code),
+                    ], limit=1)
                 else:
-                    country_sudo = order_sudo.partner_id.country_id
+                    country_sudo = order_sudo.website_id.user_id.country_id
+            else:
+                country_sudo = order_sudo.partner_id.country_id
 
         state_id = partner_sudo.state_id.id
 
@@ -1155,7 +1157,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
             'parent_id': parent_id,
             # 'use_same': use_same,
             'use_delivery_as_billing': order_sudo._is_anonymous_cart(),
-            # 'callback': callback,
+            'callback': callback,
             'discard_url': is_anonymous_cart and '/shop/cart' or '/shop/checkout',
             'country': country_sudo,
             'countries': ResCountrySudo.search([]),
@@ -1217,7 +1219,7 @@ class WebsiteSale(payment_portal.PaymentPortal):
         # else:
         #     breakpoint()
         is_anonymous_cart = order_sudo._is_anonymous_cart()
-        if is_anonymous_cart:
+        if not partner_id:
             is_new_address = True
         partner_id = partner_sudo.id
         partner_fnames = set()
@@ -1241,7 +1243,6 @@ class WebsiteSale(payment_portal.PaymentPortal):
         if is_anonymous_cart:
             # Unsubscribe the public partner if the cart was previously anonymous.
             order_sudo.message_unsubscribe(order_sudo.website_id.partner_id.ids)
-
         if is_new_address or order_sudo.only_services:
             callback = callback or '/shop/checkout?try_skip_step=true'
         else:
@@ -1253,6 +1254,8 @@ class WebsiteSale(payment_portal.PaymentPortal):
 
     def _check_partner_edit_rights(self, partner_id=None, address_type=None, **kwargs):
         order_sudo = request.website.sale_get_order()
+        if not kwargs.get('order_sudo'):
+            kwargs['order_sudo'] = order_sudo
         if order_sudo and not order_sudo._is_anonymous_cart() and partner_id == order_sudo.partner_id.id:
             kwargs['parent_id'] = order_sudo.partner_id.parent_id.id or order_sudo.partner_id.id
         return super()._check_partner_edit_rights(partner_id=partner_id, address_type=address_type, **kwargs)

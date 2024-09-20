@@ -284,7 +284,6 @@ class CustomerPortal(Controller):
             address_type in ['invoice', 'billing']
             and (not partner_sudo or partner_sudo.can_edit_vat())
         )
-        can_edit_vat = partner_sudo.type in ['invoice', 'billing'] and (not partner_sudo or partner_sudo.can_edit_vat())
 
         ResCountrySudo = request.env['res.country'].sudo()
         country_sudo = partner_sudo.country_id
@@ -299,6 +298,7 @@ class CustomerPortal(Controller):
             'address_type': address_type,  # 'billing' or 'delivery'
             'type': address_type,
             'can_edit_vat': can_edit_vat,
+            'parent_id': request.env.user.partner_id.id,
             'discard_url': '/my/addresses',
             'country': country_sudo,
             'countries': ResCountrySudo.search([]),
@@ -397,7 +397,7 @@ class CustomerPortal(Controller):
 
     def _get_address_submit_result(self, partner_id=None, address_type='other', **form_data):
         partner_id = partner_id and int(partner_id)
-        partner_sudo = self._check_partner_edit_rights(partner_id=partner_id)
+        partner_sudo = self._check_partner_edit_rights(partner_id=partner_id, address_type=address_type)
         # Parse form data into address values, and extract incompatible data as extra form data.
         address_values, extra_form_data = self._parse_form_data(form_data)
         if 'country_id' not in address_values and partner_sudo.country_id:
@@ -423,7 +423,7 @@ class CustomerPortal(Controller):
             address_values['type'] = 'delivery'
         if not partner_sudo:  # Creation of a new address.
             # arj todo: NOT WORKING WITH anonymous cart !!! we should override it in website_sale to avoid adding the partner to the public user
-            address_values['parent_id'] = address_values.get('parent_id') or request.env.user.partner_id.id
+            address_values['parent_id'] = address_values.get('parent_id')
             create_context = tools.clean_context(request.env.context)
             create_context.update({
                 'tracking_disable': True,
@@ -433,6 +433,8 @@ class CustomerPortal(Controller):
                 create_context
             ).create(address_values)
         else:
+            if address_values.get('parent_id'):
+                address_values.pop('parent_id')
             partner_sudo.write(address_values)
         callback = form_data.get('callback') or '/my/addresses'
         return partner_sudo, {'successUrl': callback}
@@ -543,8 +545,10 @@ class CustomerPortal(Controller):
 
     @route('/address/update_address', type='json', auth="user", website=True)
     def portal_update_address(self, partner_id, address_type='', action=None, **kwargs):
+        if not partner_id:
+            return {}
         partner_id = int(partner_id)
-        partner_sudo = self._check_partner_edit_rights(partner_id=partner_id)
+        partner_sudo = self._check_partner_edit_rights(partner_id=partner_id, address_type=address_type)
         if not partner_sudo._can_be_edited_by_current_partner(**kwargs):
             raise MissingError(_("The address can't be found"))
         if action == 'archive':
